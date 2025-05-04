@@ -1,10 +1,10 @@
-import Button from './components/Button';
+import { Login } from './features/auth/pages';
 
 function App() {
   return (
     <>
       <div>
-        <Button />
+        <Login />
       </div>
     </>
   );

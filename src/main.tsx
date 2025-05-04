@@ -1,12 +1,38 @@
 import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot, Root } from 'react-dom/client';
+import { unstableSetRender } from 'antd';
 import { ConfigProvider } from 'antd';
 import ruRu from 'antd/es/locale/ru_RU';
 import { BrowserRouter } from 'react-router';
-import App from './App.tsx';
+import App from './App';
+import '@ant-design/v5-patch-for-react-19'; // Патч для совместимости с React 19
 import 'antd/dist/reset.css';
 
-createRoot(document.getElementById('root')!).render(
+declare global {
+  interface HTMLElement {
+    _reactRoot?: Root;
+  }
+}
+
+unstableSetRender((node, container) => {
+  container._reactRoot ||= createRoot(container);
+  const root = container._reactRoot;
+
+  root.render(node);
+
+  return async () => {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    root.unmount();
+  };
+});
+
+const mainContainer = document.getElementById('root');
+if (!mainContainer) {
+  throw new Error('Элемент #root не найден в DOM');
+}
+
+const mainRoot = createRoot(mainContainer);
+mainRoot.render(
   <StrictMode>
     <ConfigProvider locale={ruRu}>
       <BrowserRouter>
