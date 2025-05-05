@@ -1,9 +1,9 @@
 import { FC, useState } from 'react';
+import { Link } from 'react-router';
 import type { FormProps } from 'antd';
 import { Button, Flex, Form, Input, Typography } from 'antd';
-import { Link } from 'react-router';
+import logo from 'assets/icons/logo.svg';
 import bg from 'assets/images/login-bg.png';
-import logo from 'assets/images/logo.png';
 import './style.scss';
 
 const Login: FC = () => {

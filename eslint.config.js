@@ -36,7 +36,7 @@ export default tseslint.config(
           groups: [
             [
               '^react$',
-              '^react-router-dom',
+              '^react-router',
               '^react-dom',
               '^react-i18next',
               '^react-redux',

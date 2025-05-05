@@ -35,7 +35,8 @@
       "styles/*": ["styles/*"],
       "utils/*": ["utils/*"],
       "ui/*": ["common/ui/*"]
-    }
+    },
+    
   },
   "include": ["src"]
 }

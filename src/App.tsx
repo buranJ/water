@@ -1,11 +1,12 @@
-import { Login } from './features/auth/pages';
+import { useRoutes } from 'react-router';
+
+import { routerConfig } from 'routes/routes';
 
 function App() {
+  const routes = useRoutes(routerConfig);
   return (
     <>
-      <div>
-        <Login />
-      </div>
+      <div>{routes}</div>
     </>
   );
 }
