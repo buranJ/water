@@ -1,3 +1,3 @@
-import Login from './Login/index.tsx';
+import { Login } from './Login';
 
 export { Login };

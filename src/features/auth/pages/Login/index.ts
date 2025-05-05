@@ -1,3 +1,3 @@
-import Login from '.';
+import Login from './Login.tsx';
 
 export { Login };

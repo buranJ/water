@@ -9,20 +9,20 @@ import '@ant-design/v5-patch-for-react-19'; // Патч для совмести�
 import 'antd/dist/reset.css';
 
 declare global {
-  interface HTMLElement {
+  interface Element {
     _reactRoot?: Root;
   }
 }
 
 unstableSetRender((node, container) => {
-  container._reactRoot ||= createRoot(container);
-  const root = container._reactRoot;
+  (container as Element)._reactRoot ||= createRoot(container);
+  const root = (container as Element)._reactRoot;
 
-  root.render(node);
+  root!.render(node);
 
   return async () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
-    root.unmount();
+    root!.unmount();
   };
 });
 

@@ -2,8 +2,8 @@ import { FC, useState } from 'react';
 import type { FormProps } from 'antd';
 import { Button, Flex, Form, Input, Typography } from 'antd';
 import { Link } from 'react-router';
-import bg from '../../../../assets/images/login-bg.png';
-import logo from '../../../../assets/images/logo.png';
+import bg from 'assets/images/login-bg.png';
+import logo from 'assets/images/logo.png';
 import './style.scss';
 
 const Login: FC = () => {
@@ -50,11 +50,11 @@ const Login: FC = () => {
           style={{ marginTop: '24px' }}
           onFinish={onFinish}
           onValuesChange={onValuesChange}
+          validateTrigger='onBlur'
         >
           <Form.Item
             name='id'
             label='ID'
-            validateTrigger={['onBlur']}
             rules={[
               { required: true, message: 'Введите ваш ID' },
               { type: 'string', min: 5, message: 'ID должен быть минимум 5 символов' }
@@ -65,7 +65,6 @@ const Login: FC = () => {
           <Form.Item
             name='password'
             label='Пароль'
-            validateTrigger={['onBlur']}
             rules={[
               { required: true, message: 'Введите пароль' },
               { type: 'string', min: 5, message: 'Пароль должен быть минимум 5 символов' }
