@@ -4,6 +4,7 @@ import { RouteObject } from 'react-router';
 const Login = lazy(() => import('features/auth/pages'));
 const Geoportal = lazy(() => import('pages/Geoportal'));
 const AddTuForms = lazy(() => import('pages/AddTuForms'));
+const ExportData = lazy(() => import('pages/ExportData'));
 
 export const routerConfig: RouteObject[] = [
   {
@@ -17,5 +18,9 @@ export const routerConfig: RouteObject[] = [
   {
     path: '/dashboard/add-tu-forms',
     element: <AddTuForms title='Добавление ТУ' />
+  },
+  {
+    path: '/dashboard/export-data',
+    element: <ExportData title='Экспорт данных' />
   }
 ];
