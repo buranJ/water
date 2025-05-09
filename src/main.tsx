@@ -1,9 +1,9 @@
 import { StrictMode } from 'react';
+import { BrowserRouter } from 'react-router';
 import { createRoot, Root } from 'react-dom/client';
 import { unstableSetRender } from 'antd';
 import { ConfigProvider } from 'antd';
 import ruRu from 'antd/es/locale/ru_RU';
-import { BrowserRouter } from 'react-router';
 import App from './App';
 import '@ant-design/v5-patch-for-react-19'; // Патч для совместимости с React 19
 import 'antd/dist/reset.css';
