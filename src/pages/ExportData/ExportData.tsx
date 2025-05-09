@@ -23,7 +23,7 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
 
         {/* ПАРАМЕТРЫ ВЫБОРКИ */}
         <Form.Item label='Типы данных' name='dataType' rules={[{ required: true, message: 'Выберите раздел' }]}>
-          <Select placeholder='Выберите раздел'>
+          <Select placeholder='Выберите раздел' size='large'>
             <Option value='orders'>Заказы</Option>
             <Option value='clients'>Клиенты</Option>
             <Option value='requests'>Запросы</Option>
@@ -33,7 +33,7 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item label='Статусы' name='statuses' rules={[{ required: false }]}>
-              <Select placeholder='Все'>
+              <Select placeholder='Все' size='large'>
                 <Option value='all'>Все</Option>
                 <Option value='new'>Новые</Option>
                 <Option value='progress'>В работе</Option>
@@ -43,7 +43,7 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
           </Col>
           <Col span={12}>
             <Form.Item label='Ответственный' name='responsible' rules={[{ required: false }]}>
-              <Select placeholder='ФИО или отдел'>
+              <Select placeholder='ФИО или отдел' size='large'>
                 <Option value='departmentA'>Отдел A</Option>
                 <Option value='departmentB'>Отдел B</Option>
                 <Option value='ivanov'>Иванов И.И.</Option>
@@ -55,12 +55,12 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item label='Дата от' name='dateFrom' rules={[{ required: false }]}>
-              <DatePicker placeholder='10-03-2025' style={{ width: '100%' }} />
+              <DatePicker placeholder='10-03-2025' style={{ width: '100%' }} size='large' />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item label='Дата до' name='dateTo' rules={[{ required: false }]}>
-              <DatePicker placeholder='10-04-2025' style={{ width: '100%' }} />
+              <DatePicker placeholder='10-04-2025' style={{ width: '100%' }} size='large' />
             </Form.Item>
           </Col>
         </Row>
