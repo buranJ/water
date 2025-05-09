@@ -8,7 +8,7 @@ import { DashboardLayout } from 'components/DashboardLayout';
 const { Option } = Select;
 
 const AddTuForms: FC<{ title: string }> = ({ title }) => {
-  const onFinish = (values: any) => {
+  const onFinish = (values: FormData) => {
     console.log('Форма отправлена:', values);
   };
 
