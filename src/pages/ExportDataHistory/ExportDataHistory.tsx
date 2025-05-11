@@ -30,7 +30,7 @@ const tableColumns = [
   {
     title: 'Действия',
     key: 'actions',
-    render: (_: any, record: any) => (
+    render: (_: number, record: { key: number; date: string; employee: string; dataType: string; format: string }) => (
       <Space>
         <Button icon={<RetweetOutlined />} shape='circle' onClick={() => message.info(`Повторная выгрузка для #${record.key}`)} />
         <Button icon={<DeleteOutlined />} shape='circle' danger onClick={() => message.error(`Удалён элемент #${record.key}`)} />
