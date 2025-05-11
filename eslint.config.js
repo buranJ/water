@@ -57,7 +57,7 @@ export default tseslint.config(
               'pages',
               'containers',
               'common/ui',
-              'common/components',
+              'components',
               'common/helpers',
               'common/hooks',
               'common/constants',

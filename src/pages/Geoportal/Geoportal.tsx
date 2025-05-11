@@ -2,7 +2,6 @@ import { FC } from 'react';
 import type { MenuProps } from 'antd';
 import { Button, Dropdown, Flex, Input, message, Space } from 'antd';
 import { DownOutlined, PlusOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons';
-
 import { DashboardLayout } from 'components';
 
 const items: MenuProps['items'] = [
