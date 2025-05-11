@@ -5,6 +5,7 @@ const Login = lazy(() => import('features/auth/pages'));
 const Geoportal = lazy(() => import('pages/Geoportal'));
 const AddTuForms = lazy(() => import('pages/AddTuForms'));
 const ExportData = lazy(() => import('pages/ExportData'));
+const ExportDataHistory = lazy(() => import('pages/ExportDataHistory'));
 
 export const routerConfig: RouteObject[] = [
   {
@@ -22,5 +23,9 @@ export const routerConfig: RouteObject[] = [
   {
     path: '/dashboard/export-data',
     element: <ExportData title='Экспорт данных' />
+  },
+  {
+    path: '/dashboard/export-data/history',
+    element: <ExportDataHistory title='История экспорта данных' />
   }
 ];

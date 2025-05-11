@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { Button, Flex, Layout, Menu, theme } from 'antd';
-import { BellOutlined, LogoutOutlined, NotificationOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
+import { BellOutlined, LeftOutlined, LogoutOutlined, NotificationOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import logo from 'assets/icons/logo.svg';
 
 const { Header, Sider, Content } = Layout;
@@ -56,7 +56,7 @@ export const DashboardLayout = ({ children, title }: Props) => {
     <Layout style={{ minHeight: '100vh' }}>
       <Sider width={200} style={{ background: '#001529' }}>
         <Flex align='center' gap={8} style={{ color: '#fff', textAlign: 'center', padding: 16, fontWeight: 600 }}>
-          <img src={logo} alt='Logo' /> СУУУУУУ
+          <img src={logo} alt='Logo' /> Бишкексууканал
         </Flex>
         <Menu theme='dark' mode='inline' selectedKeys={[location.pathname]} items={items} onClick={({ key }) => navigate(key)} />
       </Sider>
@@ -65,13 +65,11 @@ export const DashboardLayout = ({ children, title }: Props) => {
         <Header style={{ background: colorBgContainer, paddingLeft: 24 }}>
           <Flex justify='space-between' align='center' gap={16}>
             <Flex align='center' gap={8}>
-              {window.location.pathname.split('/').length > 3 && <span>arrow</span>}
-              <h2>{title || 'Панель управления'}</h2>
+              {window.location.pathname.split('/').length > 3 && <LeftOutlined onClick={() => navigate(-1)} />}
+              <h2 style={{ margin: 0 }}>{title || 'Панель управления'}</h2>
             </Flex>
             <div>
-              <h2 style={{ marginLeft: 'auto', fontSize: 16, color: '#000' }}>
-                <Button icon={<BellOutlined />} />
-              </h2>
+              <Button icon={<BellOutlined />} />
             </div>
           </Flex>
         </Header>
