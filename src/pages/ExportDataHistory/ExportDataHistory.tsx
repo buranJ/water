@@ -1,12 +1,9 @@
-// src/pages/ExportDataHistory/index.tsx
 import { FC } from 'react';
 import type { MenuProps } from 'antd';
 import { Button, Dropdown, Flex, Input, message, Space, Table } from 'antd';
 import { DeleteOutlined, DownOutlined, RetweetOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons';
-
 import { DashboardLayout } from 'components/DashboardLayout';
 
-// Dropdown menu items
 const menuItems: MenuProps['items'] = [
   { label: '1st menu item', key: '1', icon: <UserOutlined /> },
   { label: '2nd menu item', key: '2', icon: <UserOutlined /> }

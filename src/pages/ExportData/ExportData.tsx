@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import { Button, Checkbox, Col, DatePicker, Form, Row, Select, Typography } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
-
 import { DashboardLayout } from 'components/DashboardLayout';
 
 const { Title } = Typography;
