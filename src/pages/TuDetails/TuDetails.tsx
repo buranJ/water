@@ -91,7 +91,7 @@ export const TuDetails: FC<TuDetailsProps> = ({ title }) => {
                     marginTop: 16
                   }}
                 >
-                  <Title level={3}>Сохраненный запрос на геопортал</Title>
+                  <Title level={5}>Сохраненный запрос на геопортал</Title>
                   <Text type='secondary'>Автоматически загружено</Text>
                 </div>
               </div>
