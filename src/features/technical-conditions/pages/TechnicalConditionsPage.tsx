@@ -59,7 +59,15 @@ export const TechnicalConditionsPage = () => {
     <DashboardLayout title='Технические условия'>
       <div className='technical-conditions-page'>
         <TUFilterBar onFilterChange={handleFilterChange} onAddClick={handleAddClick} onDownloadClick={handleDownloadClick} />
-        <Table pagination={false} columns={columns} dataSource={filteredData} rowKey='key' bordered scroll={{ x: 'max-content' }} />
+        <Table
+          tableLayout='fixed'
+          pagination={false}
+          columns={columns}
+          dataSource={filteredData}
+          rowKey='key'
+          bordered
+          scroll={{ x: 'max-content' }}
+        />
         <Pagination />
       </div>
     </DashboardLayout>

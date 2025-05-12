@@ -31,40 +31,36 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
       dataIndex: 'number',
       key: 'number',
       render: (text) => <Typography.Text strong>{text}</Typography.Text>,
-      width: 90,
-      align: 'center'
+      width: 90
     },
-    { title: 'Дата регистрации', dataIndex: 'date', key: 'date', width: 150, align: 'center' },
-    { title: 'Заказчик', dataIndex: 'customer', key: 'customer', width: 170, align: 'center' },
-    { title: 'Адрес', dataIndex: 'address', key: 'address', width: 170, align: 'center' },
-    { title: 'Наименование объекта', dataIndex: 'objectName', key: 'objectName', width: 260, align: 'center' },
-    { title: 'Количество водопроводной воды', dataIndex: 'waterAmount', key: 'waterAmount', width: 135, align: 'center' },
+    { title: 'Дата регистрации', dataIndex: 'date', key: 'date', width: 150 },
+    { title: 'Заказчик', dataIndex: 'customer', key: 'customer', width: 170 },
+    { title: 'Адрес', dataIndex: 'address', key: 'address', width: 170 },
+    { title: 'Наименование объекта', dataIndex: 'objectName', key: 'objectName', width: 260 },
+    { title: 'Количество водопроводной воды', dataIndex: 'waterAmount', key: 'waterAmount', width: 135 },
     {
       title: 'Количество стоков',
       dataIndex: 'wastewaterAmount',
       key: 'wastewaterAmount',
-      width: 135,
-      align: 'center'
+      width: 135
     },
     {
       title: 'Nº и дата договора на оплату за ТУ и разреш.',
       dataIndex: 'contractNumber',
       key: 'contractNumber',
-      width: 160,
-      align: 'center'
+      width: 160
     },
-    { title: '№ счета на оплату', dataIndex: 'invoiceNumber', key: 'invoiceNumber', width: 160, align: 'center' },
-    { title: 'Сумма оплаты за ТУ и разреш', dataIndex: 'paymentAmount', key: 'paymentAmount', width: 145, align: 'center' },
-    { title: 'Опачено', dataIndex: 'paid', key: 'paid', width: 145, align: 'center' },
-    { title: 'Дата оплаты', dataIndex: 'paymentDate', key: 'paymentDate', width: 145, align: 'center' },
-    { title: 'Остаток', dataIndex: 'balance', key: 'balance', width: 145, align: 'center' },
+    { title: '№ счета на оплату', dataIndex: 'invoiceNumber', key: 'invoiceNumber', width: 160 },
+    { title: 'Сумма оплаты за ТУ и разреш', dataIndex: 'paymentAmount', key: 'paymentAmount', width: 145 },
+    { title: 'Опачено', dataIndex: 'paid', key: 'paid', width: 145 },
+    { title: 'Дата оплаты', dataIndex: 'paymentDate', key: 'paymentDate', width: 145 },
+    { title: 'Остаток', dataIndex: 'balance', key: 'balance', width: 145 },
     {
       title: 'Статус',
       dataIndex: 'status',
       key: 'status',
       render: (status) => (status === 'approved' ? <Tag color='green'>Утверждено</Tag> : <Tag color='red'>Отклонено</Tag>),
-      width: 145,
-      align: 'center'
+      width: 145
     },
     {
       title: 'Действия',
@@ -75,8 +71,7 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
           <Button icon={<DeleteOutlined />} onClick={() => onClick(record, 'delete')} danger />
         </Space>
       ),
-      width: 145,
-      align: 'center'
+      width: 145
     }
   ];
 };
