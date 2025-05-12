@@ -1,8 +1,10 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { Link, useParams } from 'react-router';
-import { Button, Card, Col, Flex, List, Row, Space, Tabs, Typography } from 'antd';
-import { ClockCircleTwoTone, CloseCircleTwoTone, DownloadOutlined, FileOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Card, Col, Flex, List, Row, Space, Tabs, Typography, Upload, UploadFile } from 'antd';
+import { UploadChangeParam, UploadProps } from 'antd/es/upload';
+import { ClockCircleTwoTone, CloseCircleTwoTone, DownloadOutlined, FileOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
+import { MyModal } from './MyModal';
 
 const { TabPane } = Tabs;
 const { Title, Text } = Typography;
@@ -18,23 +20,32 @@ export const TuDetails: FC<TuDetailsProps> = ({ title }) => {
   const isDocumentsDisabled = false;
   const isAccountingDisabled = false;
 
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [uploadFileList, setUploadFileList] = useState<UploadFile<File>[]>([]);
+
   const handleRejectClick = () => {
-    console.log('Нажали "Отказать ТУ"');
+    setIsModalVisible(true);
+  };
+
+  const handleUploadChange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile<File>>) => {
+    setUploadFileList(info.fileList);
+  };
+
+  const handleRemoveFile = (file: UploadFile<File>) => {
+    setUploadFileList((prev) => prev.filter((f) => f.uid !== file.uid));
+  };
+
+  const handleModalCancel = () => {
+    setIsModalVisible(false);
   };
 
   return (
     <DashboardLayout title={`${title} ${id}`}>
-      <Flex justify='end' align='center' gap={16} style={{ marginBottom: 16 }}>
+      <Flex justify='end' align='center' gap={24} style={{ marginBottom: 16 }}>
         <Link to='/history'>История увеличения нагрузок</Link>
         <Link to='/change'>Изменить данные ТУ</Link>
-        <Button>
-          Скачать Т
-          <DownloadOutlined />
-        </Button>
-        <Button>
-          Добавить нагрузку
-          <PlusOutlined />
-        </Button>
+        <Button icon={<DownloadOutlined />}>Скачать ТУ</Button>
+        <Button icon={<PlusOutlined />}>Добавить нагрузку</Button>
         <Button danger onClick={handleRejectClick}>
           Отказать ТУ
         </Button>
@@ -124,26 +135,34 @@ export const TuDetails: FC<TuDetailsProps> = ({ title }) => {
               }}
             />
             <Text type='secondary'>Загрузите соответствующий документ, чтобы завершить создание ТУ</Text>
-            <List
-              style={{ margin: '16px 0' }}
-              bordered
-              dataSource={[
-                { id: 1, title: 'Документ 3' },
-                { id: 2, title: 'Документ 4' }
-              ]}
-              renderItem={(item) => (
-                <List.Item>
-                  <Space>
-                    <CloseCircleTwoTone twoToneColor='#E63A3A' style={{ marginRight: 8, cursor: 'pointer' }} />
-                    <FileOutlined style={{ color: '#327BE8' }} />
-                    {item.title}
-                  </Space>
-                </List.Item>
-              )}
-            />
-            <Button type='primary' style={{ width: '100%' }}>
-              Загрузить
-            </Button>
+            {uploadFileList.length > 0 && (
+              <List
+                style={{ margin: '16px 0' }}
+                bordered
+                dataSource={uploadFileList}
+                renderItem={(item) => (
+                  <List.Item>
+                    <Space>
+                      <CloseCircleTwoTone
+                        twoToneColor='#E63A3A'
+                        style={{ marginRight: 8, cursor: 'pointer' }}
+                        onClick={() => handleRemoveFile(item)}
+                      />
+                      <FileOutlined style={{ color: '#327BE8' }} />
+                      {item.name}
+                    </Space>
+                  </List.Item>
+                )}
+              />
+            )}
+
+            <div style={{ marginTop: 16, width: '100%', textAlign: 'center' }}>
+              <Upload multiple showUploadList={false} fileList={uploadFileList} beforeUpload={() => false} onChange={handleUploadChange}>
+                <Button type='primary' block icon={<UploadOutlined />}>
+                  Загрузить
+                </Button>
+              </Upload>
+            </div>
           </Card>
 
           <Card>
@@ -155,6 +174,8 @@ export const TuDetails: FC<TuDetailsProps> = ({ title }) => {
           </Card>
         </Col>
       </Row>
+
+      <MyModal onClose={handleModalCancel} visible={isModalVisible} />
     </DashboardLayout>
   );
 };
