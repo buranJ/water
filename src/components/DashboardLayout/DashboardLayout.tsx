@@ -31,7 +31,7 @@ export const DashboardLayout = ({ children, title }: Props) => {
       label: 'ТУ'
     },
     {
-      key: '/dashboard/users',
+      key: '/dashboard/customers',
       icon: <TeamOutlined />,
       label: 'Заказчики'
     },
