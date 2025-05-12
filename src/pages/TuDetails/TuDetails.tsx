@@ -14,19 +14,16 @@ interface TuDetailsProps {
 export const TuDetails: FC<TuDetailsProps> = ({ title }) => {
   const { id } = useParams();
 
-  // Mock access rights for tabs
   const isArchitectureDisabled = false;
   const isDocumentsDisabled = false;
   const isAccountingDisabled = false;
 
-  // Handler for "Reject TU" button
   const handleRejectClick = () => {
     console.log('Нажали "Отказать ТУ"');
   };
 
   return (
     <DashboardLayout title={`${title} ${id}`}>
-      {/* Action buttons and links */}
       <Flex justify='end' align='center' gap={16} style={{ marginBottom: 16 }}>
         <Link to='/history'>История увеличения нагрузок</Link>
         <Link to='/change'>Изменить данные ТУ</Link>
@@ -46,9 +43,7 @@ export const TuDetails: FC<TuDetailsProps> = ({ title }) => {
       <Row gutter={24}>
         <Col span={16}>
           <Tabs defaultActiveKey='1'>
-            {/* Tab 1: Data */}
             <TabPane tab='Данные' key='1'>
-              {/* Object Information */}
               <Card style={{ marginBottom: 24 }}>
                 <Title level={4}>Наименование объекта</Title>
                 <Text>
@@ -57,7 +52,6 @@ export const TuDetails: FC<TuDetailsProps> = ({ title }) => {
                 </Text>
               </Card>
 
-              {/* Additional Details */}
               <Card style={{ marginBottom: 24 }}>
                 <Title level={4}>Заказчик</Title>
                 <Text>Смаилов А.Э.</Text>
@@ -75,7 +69,6 @@ export const TuDetails: FC<TuDetailsProps> = ({ title }) => {
                 <Text>22.00 м.вод.ст</Text>
               </Card>
 
-              {/* Geoportal Request */}
               <div style={{ marginBottom: 24 }}>
                 <Row justify='space-between' align='middle'>
                   <Title level={4}>Запрос на создание геопортала</Title>
@@ -96,7 +89,6 @@ export const TuDetails: FC<TuDetailsProps> = ({ title }) => {
                 </div>
               </div>
 
-              {/* Water Supply */}
               <Card style={{ marginBottom: 24 }}>
                 <Title level={4}>Водопровод</Title>
                 <Text>
@@ -105,7 +97,6 @@ export const TuDetails: FC<TuDetailsProps> = ({ title }) => {
                 </Text>
               </Card>
 
-              {/* Sewerage */}
               <Card>
                 <Title level={4}>Канализация</Title>
                 <Text>
@@ -115,20 +106,9 @@ export const TuDetails: FC<TuDetailsProps> = ({ title }) => {
               </Card>
             </TabPane>
 
-            {/* Tab 2: Architecture */}
-            <TabPane tab='Архитектура' key='2' disabled={isArchitectureDisabled}>
-              {/* Placeholder content */}
-            </TabPane>
-
-            {/* Tab 3: Documents */}
-            <TabPane tab='Документы' key='3' disabled={isDocumentsDisabled}>
-              {/* Placeholder content */}
-            </TabPane>
-
-            {/* Tab 4: Accounting */}
-            <TabPane tab='Бухгалтерия' key='4' disabled={isAccountingDisabled}>
-              {/* Placeholder content */}
-            </TabPane>
+            <TabPane tab='Архитектура' key='2' disabled={isArchitectureDisabled}></TabPane>
+            <TabPane tab='Документы' key='3' disabled={isDocumentsDisabled}></TabPane>
+            <TabPane tab='Бухгалтерия' key='4' disabled={isAccountingDisabled}></TabPane>
           </Tabs>
         </Col>
 
