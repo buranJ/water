@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { Button, Col, Form, Input, Row, Select } from 'antd';
 import Title from 'antd/es/typography/Title';
-import { DashboardLayout } from 'components/DashboardLayout';
+import { DashboardLayout } from 'components';
 import './style.scss';
 
 const { Option } = Select;

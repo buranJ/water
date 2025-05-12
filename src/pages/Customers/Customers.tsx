@@ -3,9 +3,8 @@ import { Button, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
 import { Pagination, Table } from 'common/ui';
-import { DashboardLayout } from 'components/DashboardLayout';
-import { FilterBar } from 'components/FilterBar';
-import { FilterValues } from 'components/FilterBar/FilterBar';
+import { DashboardLayout, FilterBar } from 'components';
+import type { FilterValues } from 'components/FilterBar/FilterBar';
 import './styles.scss';
 
 interface CustomerRecord {
