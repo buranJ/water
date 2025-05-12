@@ -26,7 +26,7 @@ export const DashboardLayout = ({ children, title }: Props) => {
       label: 'Геопортал'
     },
     {
-      key: '/dashboard/',
+      key: '/dashboard/technical-conditions',
       icon: null,
       label: 'ТУ'
     },
