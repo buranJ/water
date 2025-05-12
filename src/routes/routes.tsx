@@ -8,6 +8,7 @@ const AddTuForms = lazy(() => import('pages/AddTuForms'));
 const ExportData = lazy(() => import('pages/ExportData'));
 const ExportDataHistory = lazy(() => import('pages/ExportDataHistory'));
 const Customers = lazy(() => import('pages/Customers'));
+const TuDetails = lazy(() => import('pages/TuDetails'));
 
 export const routerConfig: RouteObject[] = [
   {
@@ -21,6 +22,10 @@ export const routerConfig: RouteObject[] = [
   {
     path: '/dashboard/technical-conditions',
     element: <TechnicalConditions />
+  },
+  {
+    path: '/dashboard/technical-conditions/tu-details/:id',
+    element: <TuDetails title='ТУ №' />
   },
   {
     path: '/dashboard/add-tu-forms',
