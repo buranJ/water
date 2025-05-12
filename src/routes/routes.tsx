@@ -7,6 +7,7 @@ const TechnicalConditions = lazy(() => import('features/technical-conditions'));
 const AddTuForms = lazy(() => import('pages/AddTuForms'));
 const ExportData = lazy(() => import('pages/ExportData'));
 const ExportDataHistory = lazy(() => import('pages/ExportDataHistory'));
+const Customers = lazy(() => import('pages/Customers'));
 
 export const routerConfig: RouteObject[] = [
   {
@@ -32,5 +33,9 @@ export const routerConfig: RouteObject[] = [
   {
     path: '/dashboard/export-data/history',
     element: <ExportDataHistory title='История экспорта данных' />
+  },
+  {
+    path: '/dashboard/customers',
+    element: <Customers title='Заказчики' />
   }
 ];
