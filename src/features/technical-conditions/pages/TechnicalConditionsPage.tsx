@@ -3,6 +3,9 @@ import { Table, Tag, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { TUFilterBar } from '../components/TUFilterBar/TUFilterBar';
 import { DashboardLayout } from 'components/DashboardLayout';
+import './styles.scss';
+
+import { Pagination } from 'ui/index';
 
 interface TURecord {
   key: string;
@@ -138,15 +141,11 @@ export const TechnicalConditionsPage = () => {
 
   return (
     <DashboardLayout title='Технические условия'>
-      <TUFilterBar onFilterChange={handleFilterChange} onAddClick={handleAddClick} onDownloadClick={handleDownloadClick} />
-      <Table
-        columns={columns}
-        dataSource={filteredData}
-        pagination={{ position: ['bottomCenter'] }}
-        rowKey='key'
-        bordered
-        scroll={{ x: 'max-content' }}
-      />
+      <div className='technical-conditions-page'>
+        <TUFilterBar onFilterChange={handleFilterChange} onAddClick={handleAddClick} onDownloadClick={handleDownloadClick} />
+        <Table pagination={false} columns={columns} dataSource={filteredData} rowKey='key' bordered scroll={{ x: 'max-content' }} />
+        <Pagination />
+      </div>
     </DashboardLayout>
   );
 };
