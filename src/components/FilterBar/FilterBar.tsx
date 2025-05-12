@@ -14,8 +14,6 @@ export interface FilterValues {
 
 interface Props {
   onFilterChange: (values: FilterValues) => void;
-  onAddClick?: () => void;
-  onDownloadClick?: () => void;
   showAlphabet?: boolean;
   showType?: boolean;
   showStatus?: boolean;
@@ -74,15 +72,7 @@ export const FilterBar = ({ onFilterChange, showAlphabet, showDate, showStatus, 
         )}
       </Form>
 
-      <Space>
-        {actionButtons}
-        {/* <Button type='primary' icon={<PlusOutlined />} onClick={onAddClick}>
-          Добавить
-        </Button>
-        <Button icon={<DownloadOutlined />} onClick={onDownloadClick}>
-          PDF
-        </Button> */}
-      </Space>
+      <Space>{actionButtons}</Space>
     </div>
   );
 };
