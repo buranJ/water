@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { Button, Card, Col, List, Row, Space, Tabs, Typography, Upload, UploadFile, UploadProps } from 'antd';
+import { Button, Card, Col, List, Row, Space, Table, Tabs, Tag, Typography, Upload, UploadFile, UploadProps } from 'antd';
 import { ClockCircleTwoTone, CloseCircleTwoTone, DownloadOutlined, EditOutlined, FileOutlined, UploadOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 
@@ -8,6 +8,15 @@ const { TabPane } = Tabs;
 
 interface IProps {
   title: string;
+}
+
+interface IPaymentRecord {
+  key: string;
+  paymentNum: string;
+  date: string;
+  amount: string;
+  source: string;
+  status: string;
 }
 
 export const ProtocolDetail: FC<IProps> = ({ title }) => {
@@ -23,6 +32,46 @@ export const ProtocolDetail: FC<IProps> = ({ title }) => {
 
   const isProtocolDisabled = false;
   const isPaymentsDisabled = false;
+
+  const [paymentData] = useState<IPaymentRecord[]>([
+    {
+      key: '1',
+      paymentNum: '001',
+      date: '03-03-2025',
+      amount: '1500 KGZ',
+      source: '1C',
+      status: 'Поступили'
+    }
+  ]);
+
+  const paymentColumns = [
+    {
+      title: '№ платежа',
+      dataIndex: 'paymentNum',
+      key: 'paymentNum'
+    },
+    {
+      title: 'Дата',
+      dataIndex: 'date',
+      key: 'date'
+    },
+    {
+      title: 'Сумма',
+      dataIndex: 'amount',
+      key: 'amount'
+    },
+    {
+      title: 'Источник',
+      dataIndex: 'source',
+      key: 'source'
+    },
+    {
+      title: 'Статус',
+      dataIndex: 'status',
+      key: 'status',
+      render: (text: string) => (text === 'Поступили' ? <Tag color='green'>Поступили</Tag> : text)
+    }
+  ];
 
   return (
     <DashboardLayout title={title}>
@@ -109,10 +158,18 @@ export const ProtocolDetail: FC<IProps> = ({ title }) => {
             </TabPane>
 
             <TabPane tab='Платежи' key='2' disabled={isPaymentsDisabled}>
-              <Card>
-                <Title level={4}>Какие-то данные по платежам</Title>
-                <Text>Заглушка под контент вкладки Платежи</Text>
-              </Card>
+              <Table columns={paymentColumns} dataSource={paymentData} pagination={false} />
+
+              <Row justify='space-between' style={{ marginTop: 24 }}>
+                <Col>
+                  <Text>
+                    Оплачено: <b>11000 KGZ</b> / <b>11000 KGZ</b>
+                  </Text>
+                </Col>
+                <Col>
+                  <Button danger>Закрыть счёт</Button>
+                </Col>
+              </Row>
             </TabPane>
           </Tabs>
         </Col>
