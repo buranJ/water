@@ -13,6 +13,7 @@ const HistoryOfLoads = lazy(() => import('pages/HistoryOfLoads'));
 const Architecture = lazy(() => import('pages/Architecture'));
 const ArchitectureDetails = lazy(() => import('pages/ArchitectureDetails'));
 const Protocol = lazy(() => import('pages/Protocol'));
+const ProtocolDetail = lazy(() => import('pages/ProtocolDetail'));
 
 export const routerConfig: RouteObject[] = [
   {
@@ -62,5 +63,9 @@ export const routerConfig: RouteObject[] = [
   {
     path: '/dashboard/protocol',
     element: <Protocol title='Протокол' />
+  },
+  {
+    path: '/dashboard/protocol-details/:id',
+    element: <ProtocolDetail title='Протокол' />
   }
 ];

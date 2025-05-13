@@ -23,7 +23,7 @@ const mockData: ProtocolRecord[] = [
   // пример: { key: '1', tuNumber: '04-123', customer: 'Иванов', regDate: '12.09.2025', address: 'ул. Пушкина', protocol: 'Пр.1', status: 'Готово' },
 ];
 
-const Protocol: FC<IProps> = ({ title }) => {
+export const Protocol: FC<IProps> = ({ title }) => {
   const [searchText, setSearchText] = useState('');
   const [activeTab, setActiveTab] = useState('1');
 
@@ -107,5 +107,3 @@ const Protocol: FC<IProps> = ({ title }) => {
     </DashboardLayout>
   );
 };
-
-export default Protocol;

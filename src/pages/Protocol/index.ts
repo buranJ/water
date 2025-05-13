@@ -1,3 +1,3 @@
-import Protocol from './Protocol';
+import { Protocol } from './Protocol';
 
 export default Protocol;
