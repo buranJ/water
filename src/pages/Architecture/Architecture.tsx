@@ -26,24 +26,6 @@ export const Architecture: FC<IProps> = ({ title }) => {
     console.log('Скачать PDF');
   };
 
-  const sortMenu = (
-    <Menu
-      items={[
-        {
-          key: 'alphabet',
-          label: 'По алфавиту'
-        },
-        {
-          key: 'date',
-          label: 'По дате'
-        }
-      ]}
-      onClick={(info) => {
-        handleSortChange(info.key);
-      }}
-    />
-  );
-
   const docData = [
     {
       key: '1',
@@ -71,7 +53,24 @@ export const Architecture: FC<IProps> = ({ title }) => {
         <Col>
           <Space>
             <Input placeholder='Найти' prefix={<SearchOutlined />} style={{ width: 240 }} value={searchText} onChange={handleSearch} />
-            <Dropdown menu={sortMenu} trigger={['click']}>
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    key: 'alphabet',
+                    label: 'По алфавиту'
+                  },
+                  {
+                    key: 'date',
+                    label: 'По дате'
+                  }
+                ],
+                onClick: (info) => {
+                  handleSortChange(info.key);
+                }
+              }}
+              trigger={['click']}
+            >
               <Button>
                 По алфавиту <DownOutlined />
               </Button>
