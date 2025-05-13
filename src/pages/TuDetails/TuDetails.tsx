@@ -9,11 +9,11 @@ import { MyModal } from './MyModal';
 const { TabPane } = Tabs;
 const { Title, Text } = Typography;
 
-interface TuDetailsProps {
+interface IProps {
   title: string;
 }
 
-export const TuDetails: FC<TuDetailsProps> = ({ title }) => {
+export const TuDetails: FC<IProps> = ({ title }) => {
   const { id } = useParams();
 
   const isArchitectureDisabled = false;
