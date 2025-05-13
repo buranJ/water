@@ -12,6 +12,7 @@ const TuDetails = lazy(() => import('pages/TuDetails'));
 const HistoryOfLoads = lazy(() => import('pages/HistoryOfLoads'));
 const Architecture = lazy(() => import('pages/Architecture'));
 const ArchitectureDetails = lazy(() => import('pages/ArchitectureDetails'));
+const Protocol = lazy(() => import('pages/Protocol'));
 
 export const routerConfig: RouteObject[] = [
   {
@@ -57,5 +58,9 @@ export const routerConfig: RouteObject[] = [
   {
     path: '/dashboard/architecture/details/:id',
     element: <ArchitectureDetails title='Документ №' />
+  },
+  {
+    path: '/dashboard/protocol',
+    element: <Protocol title='Протокол' />
   }
 ];
