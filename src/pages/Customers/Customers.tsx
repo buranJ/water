@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useNavigate } from 'react-router';
 import { Button, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
@@ -63,7 +64,7 @@ export const Customers: FC<IProps> = ({ title }) => {
   const onDownloadClick = () => {
     console.log('Download button clicked');
   };
-
+  const navigate = useNavigate();
   const columns: ColumnsType<CustomerRecord> = [
     {
       title: '№',
@@ -106,7 +107,12 @@ export const Customers: FC<IProps> = ({ title }) => {
       dataIndex: 'address',
       key: 'address',
       align: 'center',
-      width: 200
+      width: 200,
+      render: (_, record) => (
+        <div style={{ color: '#000000', cursor: 'pointer' }} onClick={() => navigate(`/dashboard/protocol-details/${record.key}`)}>
+          {record.address}
+        </div>
+      )
     },
     {
       title: 'Контакты',
@@ -130,7 +136,15 @@ export const Customers: FC<IProps> = ({ title }) => {
       dataIndex: 'action',
       key: 'action',
       align: 'center',
-      width: 126
+      width: 126,
+      render: (_, record) => (
+        <div
+          style={{ color: '#000000', cursor: 'pointer' }}
+          onClick={() => navigate(`/dashboard/technical-conditions/tu-details/${record.key}`)}
+        >
+          {record.action}
+        </div>
+      )
     }
   ];
 

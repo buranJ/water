@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { Table } from 'antd';
 import { Pagination } from 'common/ui';
 import { TUFilterBar } from '../components/TUFilterBar/TUFilterBar';
@@ -17,6 +18,7 @@ interface TUFilterValues {
 export const TechnicalConditionsPage = () => {
   const [data] = useState<TURecord[]>(initialData);
   const [filteredData, setFilteredData] = useState<TURecord[]>(initialData);
+  const navigate = useNavigate();
 
   const handleFilterChange = (filters: TUFilterValues) => {
     let filtered = [...data];
@@ -43,17 +45,14 @@ export const TechnicalConditionsPage = () => {
   const columns = useMemo(() => {
     return getColumns({
       onClick(record, action) {
-        switch (action) {
-          case 'edit':
-            console.log('Редактировать', record);
-            break;
-          case 'delete':
-            console.log('Удалить', record);
-            break;
+        if (action === 'edit') {
+          navigate(`/dashboard/technical-conditions/tu-details/${record.key}`);
+        } else if (action === 'delete') {
+          console.log('Удалить:', record);
         }
       }
     });
-  }, []);
+  }, [navigate]);
 
   return (
     <DashboardLayout title='Технические условия'>

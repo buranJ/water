@@ -42,7 +42,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   return (
     <DashboardLayout title={`${title} ${id}`}>
       <Flex justify='end' align='center' gap={24} style={{ marginBottom: 16 }}>
-        <Link to='/history'>История увеличения нагрузок</Link>
+        <Link to='/dashboard/technical-conditions/history-of-loads'>История увеличения нагрузок</Link>
         <Link to='/change'>Изменить данные ТУ</Link>
         <Button icon={<DownloadOutlined />}>Скачать ТУ</Button>
         <Button icon={<PlusOutlined />}>Добавить нагрузку</Button>

@@ -1,17 +1,18 @@
 import { FC, useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import type { FormProps } from 'antd';
 import { Button, Flex, Form, Input, Typography } from 'antd';
 import logo from 'assets/icons/logo.svg';
 import bg from 'assets/images/login-bg.png';
 import './style.scss';
-
 const Login: FC = () => {
+  const navigate = useNavigate();
   const [form] = Form.useForm();
   const [isFormValid, setIsFormValid] = useState(false);
 
   const onFinish: FormProps['onFinish'] = (values) => {
     console.log('Form values:', values);
+    navigate('/dashboard/geo');
   };
 
   const onValuesChange: FormProps['onValuesChange'] = () => {
