@@ -1,56 +1,20 @@
+
 import { FC } from 'react';
 import { useNavigate } from 'react-router';
 import { Button, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
+import { FC, useMemo } from 'react';
+import { Button } from 'antd';
 import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
 import { Pagination, Table } from 'common/ui';
 import { DashboardLayout, FilterBar } from 'components';
 import type { FilterValues } from 'components/FilterBar/FilterBar';
+import { getColumns, initialData } from './Customers.helpers';
 import './styles.scss';
-
-interface CustomerRecord {
-  key: string;
-  number: string;
-  customer: string;
-  categories: 1 | 0;
-  passportData: string;
-  registrationDate: string;
-  address: string;
-  contacts: string;
-  status: 'active' | 'inactive';
-  action: string;
-}
 
 interface IProps {
   title: string;
 }
-
-const initialData: CustomerRecord[] = [
-  {
-    key: '1',
-    number: '1',
-    customer: 'ОсОО "Сайрус"',
-    categories: 1,
-    passportData: 'AN 8829921',
-    registrationDate: '14 марта 2025',
-    address: 'г.Бишкек ул.Токтогула 122',
-    contacts: '+996 700 121 314',
-    status: 'active',
-    action: 'Редактировать'
-  },
-  {
-    key: '2',
-    number: '2',
-    customer: 'ТОО "Сайрус"',
-    categories: 0,
-    passportData: 'AN 8829921',
-    registrationDate: '14 марта 2025',
-    address: 'г.Бишкек ул.Северо-Ипподромная 40',
-    contacts: '+996 702 801 490',
-    status: 'inactive',
-    action: 'Редактировать'
-  }
-];
 
 export const Customers: FC<IProps> = ({ title }) => {
   const handleFilterChange = (filter: FilterValues) => {
@@ -147,6 +111,21 @@ export const Customers: FC<IProps> = ({ title }) => {
       )
     }
   ];
+
+  const columns = useMemo(() => {
+    return getColumns({
+      onClick: (record, action) => {
+        switch (action) {
+          case 'edit':
+            console.log('Edit action clicked for record:', record);
+            break;
+          case 'delete':
+            console.log('Delete action clicked for record:', record);
+            break;
+        }
+      }
+    });
+  }, []);
 
   return (
     <DashboardLayout title={title}>
