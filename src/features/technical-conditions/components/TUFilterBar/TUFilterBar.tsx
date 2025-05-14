@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router';
 import { Button, Form, Input, Select, Space } from 'antd';
 import { DownloadOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import './styles.scss';
@@ -20,11 +21,15 @@ interface Props {
 
 export const TUFilterBar = ({ onFilterChange, onAddClick, onDownloadClick }: Props) => {
   const [form] = Form.useForm();
+  const navigate = useNavigate();
 
   const handleValuesChange = (_: unknown, allValues: TUFilterValues) => {
     onFilterChange(allValues);
   };
-
+  const handleAddClick = () => {
+    onAddClick();
+    navigate('/dashboard/add-tu-forms');
+  };
   return (
     <div className='tu-filter-bar'>
       <Form form={form} layout='inline' onValuesChange={handleValuesChange} style={{ flexWrap: 'wrap', rowGap: 12 }}>
@@ -62,7 +67,14 @@ export const TUFilterBar = ({ onFilterChange, onAddClick, onDownloadClick }: Pro
       </Form>
 
       <Space>
-        <Button type='primary' icon={<PlusOutlined />} onClick={onAddClick}>
+        <Button
+          type='primary'
+          icon={<PlusOutlined />}
+          onClick={() => {
+            handleAddClick();
+            onAddClick();
+          }}
+        >
           Добавить
         </Button>
         <Button icon={<DownloadOutlined />} onClick={onDownloadClick}>

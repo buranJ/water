@@ -1,4 +1,5 @@
 import { FC, useMemo } from 'react';
+import { useNavigate } from 'react-router';
 import { Button } from 'antd';
 import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
 import { Pagination, Table } from 'common/ui';
@@ -12,6 +13,8 @@ interface IProps {
 }
 
 export const Customers: FC<IProps> = ({ title }) => {
+  const navigate = useNavigate();
+
   const handleFilterChange = (filter: FilterValues) => {
     console.log('Filter changed:', filter);
   };
@@ -23,13 +26,12 @@ export const Customers: FC<IProps> = ({ title }) => {
   const onDownloadClick = () => {
     console.log('Download button clicked');
   };
-
   const columns = useMemo(() => {
     return getColumns({
       onClick: (record, action) => {
         switch (action) {
           case 'edit':
-            console.log('Edit action clicked for record:', record);
+            navigate(`/dashboard/technical-conditions/tu-details/${record.key}`);
             break;
           case 'delete':
             console.log('Delete action clicked for record:', record);
@@ -37,7 +39,7 @@ export const Customers: FC<IProps> = ({ title }) => {
         }
       }
     });
-  }, []);
+  }, [navigate]);
 
   return (
     <DashboardLayout title={title}>
