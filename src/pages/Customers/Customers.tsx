@@ -36,6 +36,8 @@ export const Customers: FC<IProps> = ({ title }) => {
           case 'delete':
             console.log('Delete action clicked for record:', record);
             break;
+          case 'registrationDate':
+            navigate(`/dashboard/protocol-details/${record.key}`);
         }
       }
     });
