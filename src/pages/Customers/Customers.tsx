@@ -13,6 +13,8 @@ interface IProps {
 }
 
 export const Customers: FC<IProps> = ({ title }) => {
+  const navigate = useNavigate();
+
   const handleFilterChange = (filter: FilterValues) => {
     console.log('Filter changed:', filter);
   };
@@ -24,7 +26,6 @@ export const Customers: FC<IProps> = ({ title }) => {
   const onDownloadClick = () => {
     console.log('Download button clicked');
   };
-  const navigate = useNavigate();
   const columns = useMemo(() => {
     return getColumns({
       onClick: (record, action) => {

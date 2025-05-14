@@ -16,9 +16,10 @@ interface TUFilterValues {
 }
 
 export const TechnicalConditionsPage = () => {
+  const navigate = useNavigate();
+
   const [data] = useState<TURecord[]>(initialData);
   const [filteredData, setFilteredData] = useState<TURecord[]>(initialData);
-  const navigate = useNavigate();
 
   const handleFilterChange = (filters: TUFilterValues) => {
     let filtered = [...data];
@@ -44,11 +45,14 @@ export const TechnicalConditionsPage = () => {
 
   const columns = useMemo(() => {
     return getColumns({
-      onClick(record, action) {
-        if (action === 'edit') {
-          navigate(`/dashboard/technical-conditions/tu-details/${record.key}`);
-        } else if (action === 'delete') {
-          console.log('Удалить:', record);
+      onClick: (record, action) => {
+        switch (action) {
+          case 'edit':
+            navigate(`/dashboard/technical-conditions/tu-details/${record.key}`);
+            break;
+          case 'delete':
+            console.log('Delete action clicked for record:', record);
+            break;
         }
       }
     });
