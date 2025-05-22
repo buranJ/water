@@ -14,6 +14,8 @@ const Architecture = lazy(() => import('pages/Architecture'));
 const ArchitectureDetails = lazy(() => import('pages/ArchitectureDetails'));
 const Protocol = lazy(() => import('pages/Protocol'));
 const ProtocolDetail = lazy(() => import('pages/ProtocolDetail'));
+const CustomerDetails = lazy(() => import('pages/CustomerDetails'));
+const AddCustomer = lazy(() => import('pages/AddCustomer'));
 
 export const routerConfig: RouteObject[] = [
   {
@@ -51,6 +53,14 @@ export const routerConfig: RouteObject[] = [
   {
     path: '/dashboard/customers',
     element: <Customers title='Заказчики' />
+  },
+  {
+    path: '/dashboard/customers/:customerId',
+    element: <CustomerDetails title='Детали клиента' />
+  },
+  {
+    path: '/dashboard/add-customer',
+    element: <AddCustomer title='Добавление заказчика' />
   },
   {
     path: '/dashboard/architecture',

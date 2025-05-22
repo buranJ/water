@@ -20,7 +20,7 @@ export const Customers: FC<IProps> = ({ title }) => {
   };
 
   const onAddClick = () => {
-    console.log('Add button clicked');
+    navigate('/dashboard/add-customer');
   };
 
   const onDownloadClick = () => {
