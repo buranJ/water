@@ -16,6 +16,7 @@ const Protocol = lazy(() => import('pages/Protocol'));
 const ProtocolDetail = lazy(() => import('pages/ProtocolDetail'));
 const CustomerDetails = lazy(() => import('pages/CustomerDetails'));
 const AddCustomer = lazy(() => import('pages/AddCustomer'));
+const Applications = lazy(() => import('pages/Applications'));
 
 export const routerConfig: RouteObject[] = [
   {
@@ -77,5 +78,9 @@ export const routerConfig: RouteObject[] = [
   {
     path: '/dashboard/protocol-details/:id',
     element: <ProtocolDetail title='Протокол' />
+  },
+  {
+    path: '/dashboard/applications',
+    element: <Applications title='Заявки' />
   }
 ];

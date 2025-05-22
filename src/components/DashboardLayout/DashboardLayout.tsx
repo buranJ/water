@@ -1,8 +1,9 @@
 import { ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { Button, Flex, Layout, Menu, theme } from 'antd';
-import { BellOutlined, LeftOutlined, LogoutOutlined, NotificationOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
+import Icon, { BellOutlined, LeftOutlined, LogoutOutlined, NotificationOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import logo from 'assets/icons/logo.svg';
+import ApplicationIcon from 'assets/icons/sidebar/applications.svg?react';
 
 const { Header, Sider, Content } = Layout;
 
@@ -29,6 +30,11 @@ export const DashboardLayout = ({ children, title }: Props) => {
       key: '/dashboard/technical-conditions',
       icon: null,
       label: 'ТУ'
+    },
+    {
+      key: '/dashboard/applications',
+      icon: <Icon component={ApplicationIcon} />,
+      label: 'Заявки'
     },
     {
       key: '/dashboard/customers',
