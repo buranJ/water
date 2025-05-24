@@ -1,7 +1,6 @@
 import { FC, useMemo } from 'react';
 import { Button, Table, Tabs } from 'antd';
 import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
-import { Pagination } from 'common/ui';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { FilterBar } from 'components/FilterBar';
 import { data, getColumns, tabItems } from './Applications.helpers';
@@ -61,7 +60,6 @@ export const Applications: FC<IProps> = ({ title }) => {
       />
       <Tabs items={tabItems} onChange={(value) => console.log(value)} />
       <Table bordered columns={columns} dataSource={data} scroll={{ x: 'max-content' }} pagination={false} />
-      <Pagination />
     </DashboardLayout>
   );
 };
