@@ -13,7 +13,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
   return (
     <DashboardLayout title={title}>
-      <Form name='add-tu-form' layout='vertical' onFinish={onFinish} className='add-tu-forms'>
+      <Form requiredMark={false} name='add-tu-form' layout='vertical' onFinish={onFinish} className='add-tu-forms'>
         <Title level={4} style={{ borderBottom: '1px solid #D9D9D9', paddingBottom: '4px' }}>
           Основная информация
         </Title>
@@ -56,7 +56,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Col>
           <Col span={12}>
             <Form.Item label='Тип технического условия' name='techConditionType' rules={[{ required: true, message: 'Выберите тип' }]}>
-              <Select placeholder='Активен / Неактивен'>
+              <Select size='large' placeholder='Активен / Неактивен'>
                 <Option value='active'>Активен</Option>
                 <Option value='inactive'>Неактивен</Option>
               </Select>
@@ -99,7 +99,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item label='Стадия' name='stage' rules={[{ required: false }]}>
-              <Select placeholder='Активен / Неактивен'>
+              <Select size='large' placeholder='Активен / Неактивен'>
                 <Option value='active'>Активен</Option>
                 <Option value='inactive'>Неактивен</Option>
               </Select>
@@ -107,7 +107,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Col>
           <Col span={12}>
             <Form.Item label='Ответственный' name='responsible' rules={[{ required: false }]}>
-              <Select placeholder='Активен / Неактивен'>
+              <Select size='large' placeholder='Активен / Неактивен'>
                 <Option value='active'>Активен</Option>
                 <Option value='inactive'>Неактивен</Option>
               </Select>
