@@ -20,7 +20,8 @@ export default defineConfig({
       styles: path.resolve(__dirname, 'src/styles'),
       utils: path.resolve(__dirname, 'src/utils'),
       ui: path.resolve(__dirname, 'src/common/ui'),
-      common: path.resolve(__dirname, 'src/common')
+      common: path.resolve(__dirname, 'src/common'),
+      store: path.resolve(__dirname, 'src/store')
     }
   }
 });
