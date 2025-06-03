@@ -86,14 +86,14 @@ export const tyApi = createApi({
   endpoints: (build) => ({
     getAllTy: build.query<TyItem[], void>({
       query: () => ({
-        url: '/api/v1/ty/',
+        url: '/ty/',
         method: 'GET'
       })
     }),
 
     createTy: build.mutation<TyItem, TyBody>({
       query: (body) => ({
-        url: '/api/v1/ty/',
+        url: '/ty/',
         method: 'POST',
         body
       })
@@ -101,14 +101,14 @@ export const tyApi = createApi({
 
     getTyById: build.query<TyItem, number>({
       query: (id) => ({
-        url: `/api/v1/ty/${id}/`,
+        url: `/ty/${id}/`,
         method: 'GET'
       })
     }),
 
     updateTy: build.mutation<TyItem, { id: number; body: TyBody }>({
       query: ({ id, body }) => ({
-        url: `/api/v1/ty/${id}/`,
+        url: `/ty/${id}/`,
         method: 'PUT',
         body
       })
@@ -116,7 +116,7 @@ export const tyApi = createApi({
 
     patchTy: build.mutation<TyItem, { id: number; body: Partial<TyBody> }>({
       query: ({ id, body }) => ({
-        url: `/api/v1/ty/${id}/`,
+        url: `/ty/${id}/`,
         method: 'PATCH',
         body
       })
@@ -124,7 +124,7 @@ export const tyApi = createApi({
 
     deleteTy: build.mutation<void, number>({
       query: (id) => ({
-        url: `/api/v1/ty/${id}/`,
+        url: `/ty/${id}/`,
         method: 'DELETE'
       })
     })

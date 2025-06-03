@@ -14,7 +14,7 @@ import { BaseQueryFn, FetchArgs, fetchBaseQuery, FetchBaseQueryError } from '@re
 
 export const getBaseQuery = (): BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> => async (args, api, extraOptions) => {
   const fetchQuery = fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_BASE_URL,
+    baseUrl: 'http://172.16.6.228:8000/api/v1/',
     credentials: 'same-origin',
     prepareHeaders: (headers) => {
       const token = JSON.parse(localStorage.getItem('access_token') || '{}');
@@ -28,11 +28,11 @@ export const getBaseQuery = (): BaseQueryFn<string | FetchArgs, unknown, FetchBa
   });
   const result = await fetchQuery(args, api, extraOptions);
 
-  if (result.meta?.response?.status === 401) {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    window.location.href = '/auth';
-  }
+  // if (result.meta?.response?.status === 401) {
+  //   localStorage.removeItem('access_token');
+  //   localStorage.removeItem('refresh_token');
+  //   window.location.href = '/auth';
+  // }
 
   return result;
 };

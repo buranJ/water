@@ -1,11 +1,13 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Table } from 'antd';
 import { Pagination } from 'common/ui';
 import { TUFilterBar } from '../components/TUFilterBar/TUFilterBar';
 import { DashboardLayout } from 'components';
-import { getColumns, initialData, TURecord } from './TechnicalConditionsPage.helpers';
+import { getColumns, TURecord } from './TechnicalConditionsPage.helpers';
 import './styles.scss';
+
+import { TyItem, useGetAllTyQuery } from 'api/Ty.api';
 
 interface TUFilterValues {
   search?: string;
@@ -15,17 +17,49 @@ interface TUFilterValues {
   date?: string;
 }
 
+function transformTyItemsToTURecords(items: TyItem[]): TURecord[] {
+  return items.map((item) => {
+    return {
+      key: String(item.id),
+      number: item.request_number || '',
+      date: item.request_date || '',
+      customer: `Клиент #${item.customer}`, // Заказчик (в бэке customer - это id)
+      address: item.address || '',
+      objectName: item.object_name || '',
+      waterAmount: item.water_required || '',
+      wastewaterAmount: item.sewage_amount || '',
+      contractNumber: item.payment_connection || '',
+      invoiceNumber: item.payment_invoice_number || '',
+      paymentAmount: item.payment_amount || '',
+      paid: '0',
+      paymentDate: '',
+      balance: '',
+      status: item.status === 'approved' ? 'approved' : 'rejected'
+    };
+  });
+}
+
 export const TechnicalConditionsPage = () => {
   const navigate = useNavigate();
+  const { data: tuData } = useGetAllTyQuery();
 
-  const [data] = useState<TURecord[]>(initialData);
-  const [filteredData, setFilteredData] = useState<TURecord[]>(initialData);
+  const [data, setData] = useState<TURecord[]>([]);
+  const [filteredData, setFilteredData] = useState<TURecord[]>([]);
+
+  useEffect(() => {
+    if (tuData) {
+      const newRecords = transformTyItemsToTURecords(tuData);
+      setData(newRecords);
+      setFilteredData(newRecords);
+    }
+  }, [tuData]);
 
   const handleFilterChange = (filters: TUFilterValues) => {
     let filtered = [...data];
 
-    if (filters.search) {
-      filtered = filtered.filter((item) => item.customer.toLowerCase().includes(filters.search?.toLowerCase() || ''));
+    if (filters && filters.search) {
+      const searchValue = filters.search.toLowerCase() ?? '';
+      filtered = filtered.filter((item) => item.customer.toLowerCase().includes(searchValue));
     }
 
     if (filters.status) {

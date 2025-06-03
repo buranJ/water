@@ -13,14 +13,14 @@ const Login: FC = () => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [login, { isLoading, isError, error }] = useLoginMutation();
 
-  const onFinish = async (values: { id: string; password: string }) => {
+  const onFinish = async (values: { email: string; password: string }) => {
     try {
       const response = await login(values).unwrap();
-      if (response?.access_token) {
-        localStorage.setItem('access_token', JSON.stringify(response.access_token));
+      if (response?.access) {
+        localStorage.setItem('access_token', JSON.stringify(response.access));
       }
-      if (response?.refresh_token) {
-        localStorage.setItem('refresh_token', JSON.stringify(response.refresh_token));
+      if (response?.refresh) {
+        localStorage.setItem('refresh_token', JSON.stringify(response.refresh));
       }
       navigate('/dashboard/geo');
     } catch (e) {
@@ -62,14 +62,14 @@ const Login: FC = () => {
           validateTrigger='onBlur'
         >
           <Form.Item
-            name='id'
-            label='ID'
+            name='email'
+            label='email'
             rules={[
-              { required: true, message: 'Введите ваш ID' },
-              { min: 5, message: 'ID должен быть минимум 5 символов' }
+              { required: true, message: 'Введите ваш email' },
+              { min: 5, message: 'Email должен быть минимум 5 символов' }
             ]}
           >
-            <Input placeholder='Введите ID' size='large' style={{ background: '#f0f1f2' }} />
+            <Input placeholder='Введите Email' size='large' style={{ background: '#f0f1f2' }} />
           </Form.Item>
           <Form.Item
             name='password'
