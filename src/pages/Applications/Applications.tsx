@@ -4,7 +4,7 @@ import { Button, Table, Tabs } from 'antd';
 import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { FilterBar } from 'components/FilterBar';
-import { data, getColumns, tabItems } from './Applications.helpers';
+import { data, getColumns, tabItems, useRejectModal } from './Applications.helpers';
 
 interface IProps {
   title: string;
@@ -12,6 +12,9 @@ interface IProps {
 
 export const Applications: FC<IProps> = ({ title }) => {
   const navigate = useNavigate();
+
+  const { openRejectModal, RejectModalComponent } = useRejectModal();
+
   const handleFilterChange = (filter: unknown) => {
     console.log(filter);
   };
@@ -38,9 +41,12 @@ export const Applications: FC<IProps> = ({ title }) => {
             console.log('Registration date action clicked for record:', record);
             break;
         }
+      },
+      onReject: (record) => {
+        openRejectModal(record);
       }
     });
-  }, []);
+  }, [openRejectModal]);
 
   return (
     <DashboardLayout title={title}>
@@ -62,6 +68,7 @@ export const Applications: FC<IProps> = ({ title }) => {
       />
       <Tabs items={tabItems} onChange={(value) => console.log(value)} />
       <Table bordered columns={columns} dataSource={data} scroll={{ x: 'max-content' }} pagination={false} />
+      <RejectModalComponent />
     </DashboardLayout>
   );
 };

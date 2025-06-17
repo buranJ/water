@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { Button, Flex, TabsProps, Tag, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
+import { RejectApplicationModal } from '../../components/Modal'; // импорт модального окна
 
-type actionType = 'create' | 'reject' | 'approve' | 'tuDetails';
+export type actionType = 'create' | 'reject' | 'approve' | 'tuDetails';
 
 export const tabItems: TabsProps['items'] = [
   { key: 'all', label: 'Все', children: null },
@@ -27,9 +29,56 @@ export interface ApplicationData {
   hasTu?: boolean;
 }
 
-type IGetColumnsFn = (options: { onClick: (record: ApplicationData, action: actionType) => void }) => ColumnsType<ApplicationData>;
+export interface RejectFormData {
+  reason: string;
+  comment: string;
+  attachments?: File[];
+}
 
-export const getColumns: IGetColumnsFn = ({ onClick }) => {
+// Хук для управления модальным окном отклонения
+export const useRejectModal = () => {
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [selectedApplication, setSelectedApplication] = useState<ApplicationData | undefined>();
+
+  const openRejectModal = (application: ApplicationData) => {
+    setSelectedApplication(application);
+    setIsRejectModalOpen(true);
+  };
+
+  const closeRejectModal = () => {
+    setIsRejectModalOpen(false);
+    setSelectedApplication(undefined);
+  };
+
+  const handleReject = (rejectData: RejectFormData) => {
+    console.log('Rejecting application:', selectedApplication, rejectData);
+    closeRejectModal();
+  };
+
+  const RejectModalComponent = () => (
+    <RejectApplicationModal
+      open={isRejectModalOpen}
+      onCancel={closeRejectModal}
+      onReject={handleReject}
+      applicationData={selectedApplication}
+    />
+  );
+
+  return {
+    openRejectModal,
+    closeRejectModal,
+    RejectModalComponent,
+    isRejectModalOpen,
+    selectedApplication
+  };
+};
+
+type IGetColumnsFn = (options: {
+  onClick: (record: ApplicationData, action: actionType) => void;
+  onReject?: (record: ApplicationData) => void;
+}) => ColumnsType<ApplicationData>;
+
+export const getColumns: IGetColumnsFn = ({ onClick, onReject }) => {
   const renderStatus = (status: StatusCode) => {
     switch (status) {
       case 'approved':
@@ -45,7 +94,17 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
     if (record.status === 'pending') {
       return (
         <Flex gap={12}>
-          <Button size='large' type='default' color='default' variant='filled' onClick={() => onClick(record, 'reject')}>
+          <Button
+            size='large'
+            type='default'
+            onClick={() => {
+              if (onReject) {
+                onReject(record);
+              } else {
+                onClick(record, 'reject');
+              }
+            }}
+          >
             Отказать
           </Button>
           <Button size='large' type='primary' onClick={() => onClick(record, 'approve')}>
@@ -109,7 +168,7 @@ export const data: ApplicationData[] = [
     objectName: '9-ти этажный многоквартирный жилой дом с торговыми помещениями на собственной территории',
     waterAmount: '62,436',
     wastewaterAmount: '62,436',
-    hasTu: true // ТУ существует
+    hasTu: true
   },
   {
     key: '2',
@@ -145,7 +204,7 @@ export const data: ApplicationData[] = [
     objectName: '10-ти этажный жилой дом',
     waterAmount: '70,000',
     wastewaterAmount: '70,000',
-    hasTu: false // ТУ не существует
+    hasTu: false
   },
   {
     key: '5',
