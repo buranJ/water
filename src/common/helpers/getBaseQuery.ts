@@ -14,7 +14,7 @@ import { BaseQueryFn, FetchArgs, fetchBaseQuery, FetchBaseQueryError } from '@re
 
 export const getBaseQuery = (): BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> => async (args, api, extraOptions) => {
   const fetchQuery = fetchBaseQuery({
-    baseUrl: 'http://172.16.6.228:8000/api/v1/',
+    baseUrl: 'https://bsv.sino0on.ru/api/v1/',
     credentials: 'same-origin',
     prepareHeaders: (headers) => {
       const token = JSON.parse(localStorage.getItem('access_token') || '{}');
