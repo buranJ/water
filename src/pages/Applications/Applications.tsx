@@ -1,4 +1,5 @@
 import { FC, useMemo } from 'react';
+import { useNavigate } from 'react-router';
 import { Button, Table, Tabs } from 'antd';
 import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
@@ -10,12 +11,13 @@ interface IProps {
 }
 
 export const Applications: FC<IProps> = ({ title }) => {
+  const navigate = useNavigate();
   const handleFilterChange = (filter: unknown) => {
     console.log(filter);
   };
 
   const onAddClick = () => {
-    console.log('Add button clicked');
+    navigate('create');
   };
 
   const onDownloadClick = () => {

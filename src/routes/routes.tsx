@@ -18,11 +18,13 @@ const CustomerDetails = lazy(() => import('pages/CustomerDetails'));
 const AddCustomer = lazy(() => import('pages/AddCustomer'));
 const Applications = lazy(() => import('pages/Applications'));
 const NotFound = lazy(() => import('pages/NotFound'));
+const ApplicationsCreate = lazy(() => import('pages/ApplicationsCreate'));
 
 export const routerConfig: RouteObject[] = [
   {
-    path: '/auth',
-    element: <Login />
+    path: '/',
+    element: <Login />,
+    index: true
   },
   {
     path: '/dashboard/geo',
@@ -83,6 +85,10 @@ export const routerConfig: RouteObject[] = [
   {
     path: '/dashboard/applications',
     element: <Applications title='Заявки' />
+  },
+  {
+    path: '/dashboard/applications/create',
+    element: <ApplicationsCreate title='Оформление заявки' />
   },
   {
     path: '*',
