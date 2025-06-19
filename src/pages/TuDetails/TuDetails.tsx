@@ -1,8 +1,7 @@
 import { FC, useState } from 'react';
 import { Link, useParams } from 'react-router';
-import { Button, Card, Col, Flex, List, Row, Space, Tabs, Typography, Upload, UploadFile } from 'antd';
-import { UploadChangeParam, UploadProps } from 'antd/es/upload';
-import { ClockCircleTwoTone, CloseCircleTwoTone, DownloadOutlined, FileOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import { Button, Card, Col, Flex, List, Row, Space, Tabs, Typography, UploadFile } from 'antd';
+import { ClockCircleTwoTone, CloseCircleTwoTone, DownloadOutlined, FileOutlined, PlusOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { MyModal } from './MyModal';
 
@@ -21,18 +20,19 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const isAccountingDisabled = false;
 
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [uploadFileList, setUploadFileList] = useState<UploadFile<File>[]>([]);
+  const [uploadFileList] = useState<UploadFile<File>[]>([
+    {
+      name: 'Документ 1',
+      uid: '1'
+    },
+    {
+      name: 'Документ 2',
+      uid: '2'
+    }
+  ]);
 
   const handleRejectClick = () => {
     setIsModalVisible(true);
-  };
-
-  const handleUploadChange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile<File>>) => {
-    setUploadFileList(info.fileList);
-  };
-
-  const handleRemoveFile = (file: UploadFile<File>) => {
-    setUploadFileList((prev) => prev.filter((f) => f.uid !== file.uid));
   };
 
   const handleModalCancel = () => {
@@ -143,11 +143,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
                 renderItem={(item) => (
                   <List.Item>
                     <Space>
-                      <CloseCircleTwoTone
-                        twoToneColor='#E63A3A'
-                        style={{ marginRight: 8, cursor: 'pointer' }}
-                        onClick={() => handleRemoveFile(item)}
-                      />
+                      <CloseCircleTwoTone twoToneColor='#E63A3A' style={{ marginRight: 8 }} />
                       <FileOutlined style={{ color: '#327BE8' }} />
                       {item.name}
                     </Space>
@@ -157,11 +153,9 @@ export const TuDetails: FC<IProps> = ({ title }) => {
             )}
 
             <div style={{ marginTop: 16, width: '100%', textAlign: 'center' }}>
-              <Upload multiple showUploadList={false} fileList={uploadFileList} beforeUpload={() => false} onChange={handleUploadChange}>
-                <Button type='primary' block icon={<UploadOutlined />}>
-                  Загрузить
-                </Button>
-              </Upload>
+              <Button type='primary' block>
+                Загрузить
+              </Button>
             </div>
           </Card>
 

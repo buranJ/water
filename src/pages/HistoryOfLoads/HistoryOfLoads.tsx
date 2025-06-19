@@ -17,7 +17,7 @@ interface LoadRecord {
 }
 
 export const HistoryOfLoads: FC<IProps> = ({ title }) => {
-  const [data, setData] = useState<LoadRecord[]>([
+  const [data] = useState<LoadRecord[]>([
     {
       key: '1',
       tuNumber: '04-472',
@@ -44,7 +44,7 @@ export const HistoryOfLoads: FC<IProps> = ({ title }) => {
     }
   ]);
 
-  const [searchText, setSearchText] = useState('');
+  const [, setSearchText] = useState('');
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);

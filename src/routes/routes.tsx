@@ -14,11 +14,17 @@ const Architecture = lazy(() => import('pages/Architecture'));
 const ArchitectureDetails = lazy(() => import('pages/ArchitectureDetails'));
 const Protocol = lazy(() => import('pages/Protocol'));
 const ProtocolDetail = lazy(() => import('pages/ProtocolDetail'));
+const CustomerDetails = lazy(() => import('pages/CustomerDetails'));
+const AddCustomer = lazy(() => import('pages/AddCustomer'));
+const Applications = lazy(() => import('pages/Applications'));
+const NotFound = lazy(() => import('pages/NotFound'));
+const ApplicationsCreate = lazy(() => import('pages/ApplicationsCreate'));
 
 export const routerConfig: RouteObject[] = [
   {
-    path: '/auth',
-    element: <Login />
+    path: '/',
+    element: <Login />,
+    index: true
   },
   {
     path: '/dashboard/geo',
@@ -53,6 +59,14 @@ export const routerConfig: RouteObject[] = [
     element: <Customers title='Заказчики' />
   },
   {
+    path: '/dashboard/customers/:customerId',
+    element: <CustomerDetails title='Детали клиента' />
+  },
+  {
+    path: '/dashboard/add-customer',
+    element: <AddCustomer title='Добавление заказчика' />
+  },
+  {
     path: '/dashboard/architecture',
     element: <Architecture title='Архитектура' />
   },
@@ -67,5 +81,17 @@ export const routerConfig: RouteObject[] = [
   {
     path: '/dashboard/protocol-details/:id',
     element: <ProtocolDetail title='Протокол' />
+  },
+  {
+    path: '/dashboard/applications',
+    element: <Applications title='Заявки' />
+  },
+  {
+    path: '/dashboard/applications/create',
+    element: <ApplicationsCreate title='Оформление заявки' />
+  },
+  {
+    path: '*',
+    element: <NotFound />
   }
 ];
