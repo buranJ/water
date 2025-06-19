@@ -32,14 +32,16 @@ export const Applications: FC<IProps> = ({ title }) => {
       onClick: (record, action) => {
         switch (action) {
           case 'create':
-            console.log('Delete action clicked for record:', record);
+            navigate('/dashboard/add-tu-forms');
             break;
           case 'reject':
             console.log('Customer details action clicked for record:', record);
             break;
           case 'approve':
-            console.log('Registration date action clicked for record:', record);
+            navigate(`/dashboard/application/approve/${record.id}`);
             break;
+          case 'tuDetails':
+            navigate(`/dashboard/technical-conditions/tu-details/${record.id}`);
         }
       },
       onReject: (record) => {

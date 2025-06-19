@@ -35,7 +35,6 @@ export interface RejectFormData {
   attachments?: File[];
 }
 
-// Хук для управления модальным окном отклонения
 export const useRejectModal = () => {
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [selectedApplication, setSelectedApplication] = useState<ApplicationData | undefined>();
@@ -54,13 +53,12 @@ export const useRejectModal = () => {
     console.log('Rejecting application:', selectedApplication, rejectData);
     closeRejectModal();
   };
-
   const RejectModalComponent = () => (
     <RejectApplicationModal
       open={isRejectModalOpen}
       onCancel={closeRejectModal}
       onReject={handleReject}
-      applicationData={selectedApplication}
+      // Remove applicationData or replace with the correct prop if needed
     />
   );
 
