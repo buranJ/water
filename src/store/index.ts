@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import Slice from './Slice';
 
-import { authApi, buhgalteriaApi, customerApi, docsApi, filefolderApi, objectApi, refusalApi, tyApi } from 'api/index';
+import { applicationsApi, authApi, buhgalteriaApi, customerApi, docsApi, filefolderApi, objectApi, refusalApi, tyApi } from 'api/index';
 
 const store = configureStore({
   reducer: {
@@ -13,7 +13,8 @@ const store = configureStore({
     [filefolderApi.reducerPath]: filefolderApi.reducer,
     [objectApi.reducerPath]: objectApi.reducer,
     [refusalApi.reducerPath]: refusalApi.reducer,
-    [tyApi.reducerPath]: tyApi.reducer
+    [tyApi.reducerPath]: tyApi.reducer,
+    [applicationsApi.reducerPath]: applicationsApi.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -24,7 +25,8 @@ const store = configureStore({
       filefolderApi.middleware,
       objectApi.middleware,
       refusalApi.middleware,
-      tyApi.middleware
+      tyApi.middleware,
+      applicationsApi.middleware
     )
 });
 

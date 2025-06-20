@@ -1,3 +1,4 @@
+export { applicationsApi } from './Application.api';
 export { authApi } from './Auth.api';
 export { buhgalteriaApi } from './Buhgalteria.api';
 export { customerApi } from './Customer.api';

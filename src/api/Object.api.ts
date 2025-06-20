@@ -37,31 +37,31 @@ export const objectApi = createApi({
   endpoints: (build) => ({
     getAllObjects: build.query<ObjectListResponse, void>({
       query: () => ({
-        url: '/api/v1/object/',
+        url: 'object/',
         method: 'GET'
       })
     }),
 
     getObjectById: build.query<ObjectItem, number>({
       query: (id) => ({
-        url: `/api/v1/object/${id}`,
+        url: `object/${id}`,
         method: 'GET'
       })
     }),
 
     updateObject: build.mutation<ObjectItem, { id: number; body: ObjectBody }>({
       query: ({ id, body }) => ({
-        url: `/api/v1/object/${id}`,
+        url: `object/${id}`,
         method: 'PUT',
         body
       })
     }),
 
-    // PATCH /api/v1/object/{id} — частичное обновление
+    // PATCH object/{id} — частичное обновление
     // (если структура полей совпадает, используем тот же ObjectBody)
     patchObject: build.mutation<ObjectItem, { id: number; body: Partial<ObjectBody> }>({
       query: ({ id, body }) => ({
-        url: `/api/v1/object/${id}`,
+        url: `object/${id}`,
         method: 'PATCH',
         body
       })
@@ -69,21 +69,21 @@ export const objectApi = createApi({
 
     deleteObject: build.mutation<void, number>({
       query: (id) => ({
-        url: `/api/v1/object/${id}`,
+        url: `object/${id}`,
         method: 'DELETE'
       })
     }),
 
     getObjectHistory: build.query<ObjectHistoryResponse, number>({
       query: (id) => ({
-        url: `/api/v1/object/${id}/history`,
+        url: `object/${id}/history`,
         method: 'GET'
       })
     }),
-    // POST /api/v1/object/create
+    // POST object/create
     createObject: build.mutation<ObjectItem, ObjectBody>({
       query: (body) => ({
-        url: '/api/v1/object/create',
+        url: 'object/create',
         method: 'POST',
         body
       })
