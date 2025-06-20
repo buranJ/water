@@ -7,21 +7,21 @@ export const customerApi = createApi({
   endpoints: (build) => ({
     getAllCustomers: build.query({
       query: () => ({
-        url: '/api/v1/customer/',
+        url: 'customer/',
         method: 'GET'
       })
     }),
 
     getCustomerById: build.query({
       query: (id) => ({
-        url: `/api/v1/customer/${id}`,
+        url: `customer/${id}`,
         method: 'GET'
       })
     }),
 
     updateCustomer: build.mutation({
       query: ({ id, body }) => ({
-        url: `/api/v1/customer/${id}`,
+        url: `customer/${id}`,
         method: 'PUT',
         body
       })
@@ -29,7 +29,7 @@ export const customerApi = createApi({
 
     patchCustomer: build.mutation({
       query: ({ id, body }) => ({
-        url: `/api/v1/customer/${id}`,
+        url: `customer/${id}`,
         method: 'PATCH',
         body
       })
@@ -37,21 +37,21 @@ export const customerApi = createApi({
 
     deleteCustomer: build.mutation({
       query: (id) => ({
-        url: `/api/v1/customer/${id}`,
+        url: `customer/${id}`,
         method: 'DELETE'
       })
     }),
 
     getCustomerHistory: build.query({
       query: (id) => ({
-        url: `/api/v1/customer/${id}/history`,
+        url: `customer/${id}/history`,
         method: 'GET'
       })
     }),
 
     createCustomer: build.mutation({
       query: (body) => ({
-        url: '/api/v1/customer/create',
+        url: 'customer/create',
         method: 'POST',
         body
       })

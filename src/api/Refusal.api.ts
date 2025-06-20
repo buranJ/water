@@ -47,21 +47,21 @@ export const refusalApi = createApi({
   endpoints: (build) => ({
     getRefusals: build.query<RefusalResponse[], void>({
       query: () => ({
-        url: '/api/v1/refusal/',
+        url: 'refusal/',
         method: 'GET'
       })
     }),
 
     getRefusalById: build.query<RefusalResponse, number>({
       query: (id) => ({
-        url: `/api/v1/refusal/${id}`,
+        url: `refusal/${id}`,
         method: 'GET'
       })
     }),
 
     updateRefusal: build.mutation<RefusalResponse, { id: number; body: RefusalBody }>({
       query: ({ id, body }) => ({
-        url: `/api/v1/refusal/${id}`,
+        url: `refusal/${id}`,
         method: 'PUT',
         body
       })
@@ -69,7 +69,7 @@ export const refusalApi = createApi({
 
     patchRefusal: build.mutation<RefusalResponse, { id: number; body: Partial<RefusalBody> }>({
       query: ({ id, body }) => ({
-        url: `/api/v1/refusal/${id}`,
+        url: `refusal/${id}`,
         method: 'PATCH',
         body
       })
@@ -77,42 +77,42 @@ export const refusalApi = createApi({
 
     deleteRefusal: build.mutation<void, number>({
       query: (id) => ({
-        url: `/api/v1/refusal/${id}`,
+        url: `refusal/${id}`,
         method: 'DELETE'
       })
     }),
 
     getRefusalHistory: build.query<RefusalHistoryItem[], number>({
       query: (id) => ({
-        url: `/api/v1/refusal/${id}/history/`,
+        url: `refusal/${id}/history/`,
         method: 'GET'
       })
     }),
 
     getRefusalCauses: build.query<RefusalCause[], void>({
       query: () => ({
-        url: '/api/v1/refusal/causes',
+        url: 'refusal/causes',
         method: 'GET'
       })
     }),
 
     checkRefuseByCustomer: build.query<RefusalResponse, number>({
       query: (customerId) => ({
-        url: `/api/v1/refusal/check-refuse/customer/${customerId}/`,
+        url: `refusal/check-refuse/customer/${customerId}/`,
         method: 'GET'
       })
     }),
 
     checkRefuseByEntity: build.query<RefusalResponse, number>({
       query: (entityId) => ({
-        url: `/api/v1/refusal/check-refuse/entity/${entityId}/`,
+        url: `refusal/check-refuse/entity/${entityId}/`,
         method: 'GET'
       })
     }),
 
     createRefusal: build.mutation<RefusalResponse, RefusalBody>({
       query: (body) => ({
-        url: '/api/v1/refusal/create',
+        url: 'refusal/create',
         method: 'POST',
         body
       })

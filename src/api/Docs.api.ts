@@ -21,7 +21,7 @@ export const docsApi = createApi({
   endpoints: (build) => ({
     getDocs: build.query<DocsResponse, GetDocsQueryParams>({
       query: ({ format, lang } = {}) => ({
-        url: '/api/v1/docs/',
+        url: 'docs/',
         method: 'GET',
         params: { format, lang }
       })

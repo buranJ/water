@@ -31,14 +31,14 @@ export const filefolderApi = createApi({
   endpoints: (build) => ({
     getFilefolderFiles: build.query<FileListResponse, number>({
       query: (folderId) => ({
-        url: `/api/v1/filefolder/${folderId}/files/`,
+        url: `filefolder/${folderId}/files/`,
         method: 'GET'
       })
     }),
 
     createFilefolder: build.mutation<CreateFolderResponse, CreateFolderBody>({
       query: (body) => ({
-        url: '/api/v1/filefolder/create/',
+        url: 'filefolder/create/',
         method: 'POST',
         body
       })
@@ -46,7 +46,7 @@ export const filefolderApi = createApi({
 
     uploadFile: build.mutation({
       query: (body) => ({
-        url: '/api/v1/filefolder/files/upload/',
+        url: 'filefolder/files/upload/',
         method: 'POST',
         body
       })

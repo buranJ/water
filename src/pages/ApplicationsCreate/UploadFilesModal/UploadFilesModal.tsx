@@ -87,7 +87,7 @@ export const UploadFilesModal: FC<IProps> = ({ isOpen, currentFiles, onClose, on
       className='upload-files-modal'
     >
       <Form.Item
-        name='files'
+        name='entity'
         getValueFromEvent={(e: UploadChangeParam<UploadFile>) => e && e.fileList}
         rules={[{ required: true, message: 'Пожалуйста, прикрепите файл' }]}
       >
