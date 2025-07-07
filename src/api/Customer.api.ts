@@ -5,7 +5,7 @@ export const customerApi = createApi({
   reducerPath: 'customerApi',
   baseQuery: getBaseQuery(),
   endpoints: (build) => ({
-    getAllCustomers: build.query({
+    getAllCustomers: build.query<Customer, void>({
       query: () => ({
         url: 'customer/',
         method: 'GET'
@@ -68,3 +68,21 @@ export const {
   useGetCustomerHistoryQuery,
   useCreateCustomerMutation
 } = customerApi;
+
+export enum CategoryEnum {
+  ЮрЛицо = 0,
+  ФизЛицо = 1
+}
+
+export interface Customer {
+  id: number;
+  inn: string;
+  full_name?: string | null;
+  category: CategoryEnum;
+  created_at: string; // ISO date string
+  updated_at: string; // ISO date string
+  passport?: string | null;
+  address?: string | null;
+  contact?: string | null;
+  status?: string | null;
+}

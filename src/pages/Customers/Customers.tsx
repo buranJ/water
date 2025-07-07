@@ -5,15 +5,19 @@ import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
 import { Pagination, Table } from 'common/ui';
 import { DashboardLayout, FilterBar } from 'components';
 import type { FilterValues } from 'components/FilterBar/FilterBar';
-import { getColumns, initialData } from './Customers.helpers';
+import { getColumns } from './Customers.helpers';
 import './styles.scss';
+
+import { useGetAllCustomersQuery } from 'api/Customer.api';
 
 interface IProps {
   title: string;
 }
 
 export const Customers: FC<IProps> = ({ title }) => {
+  const customersQuery = useGetAllCustomersQuery();
   const navigate = useNavigate();
+  console.log(customersQuery.data);
 
   const handleFilterChange = (filter: FilterValues) => {
     console.log('Filter changed:', filter);
@@ -60,7 +64,7 @@ export const Customers: FC<IProps> = ({ title }) => {
             </>
           }
         />
-        <Table pagination={false} columns={columns} dataSource={initialData} bordered scroll={{ x: 'max-content' }} />
+        <Table pagination={false} columns={columns} dataSource={customersQuery?.data} bordered scroll={{ x: 'max-content' }} />
         <Pagination />
       </div>
     </DashboardLayout>

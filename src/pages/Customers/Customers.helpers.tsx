@@ -2,17 +2,20 @@ import { Button, Col, Row, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
+import { format } from 'date-fns';
+import { ru } from 'date-fns/locale';
+
 type actionType = 'edit' | 'delete' | 'registrationDate';
 
 export interface CustomerRecord {
   key: string;
-  number: string;
+  id: string;
   customer: string;
-  categories: 1 | 0;
-  passportData: string;
-  registrationDate: string;
+  category: '1' | '0';
+  pasport?: string;
+  created_at: string;
   address: string;
-  contacts: string;
+  contact: string;
   status: 'active' | 'inactive';
   action: string;
 }
@@ -23,8 +26,8 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
   return [
     {
       title: '№',
-      dataIndex: 'number',
-      key: 'number',
+      dataIndex: 'id',
+      key: 'id',
       align: 'center'
     },
     {
@@ -36,30 +39,34 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
     },
     {
       title: 'Категории',
-      dataIndex: 'categories',
-      key: 'categories',
+      dataIndex: 'category',
+      key: 'category',
       render: (text) => {
-        return text === 1 ? <Tag color='processing'>Физ. лицо</Tag> : <Tag color='success'>Юр. лицо</Tag>;
+        return +text === 1 ? <Tag color='processing'>Физ. лицо</Tag> : <Tag color='success'>Юр. лицо</Tag>;
       },
       align: 'center'
     },
     {
       title: 'Паспортные данные',
-      dataIndex: 'passportData',
-      key: 'passportData',
+      dataIndex: 'pasport',
+      key: 'pasport',
       align: 'center',
       width: 200
     },
     {
       title: 'Дата регистрации',
-      dataIndex: 'registrationDate',
-      key: 'registrationDate',
+      dataIndex: 'created_at',
+      key: 'created_at',
       align: 'center',
       width: 200,
       render: (_, record) => {
+        const dataFormatter = (date: string) => {
+          const dateObj = new Date(date);
+          return isNaN(dateObj.getTime()) ? 'Некорректная дата' : format(dateObj, 'd MMMM yyyy', { locale: ru });
+        };
         return (
           <div style={{ cursor: 'pointer' }} onClick={() => onClick(record, 'registrationDate')}>
-            {record.registrationDate}
+            {dataFormatter(record.created_at)}
           </div>
         );
       }
@@ -73,8 +80,8 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
     },
     {
       title: 'Контакты',
-      dataIndex: 'contacts',
-      key: 'contacts',
+      dataIndex: 'contact',
+      key: 'contact',
       align: 'center',
       width: 180
     },
@@ -113,25 +120,25 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
 export const initialData: CustomerRecord[] = [
   {
     key: '1',
-    number: '1',
+    id: '1',
     customer: 'ОсОО "Сайрус"',
-    categories: 1,
-    passportData: 'AN 8829921',
-    registrationDate: '14 марта 2025',
+    category: '1',
+    pasport: 'AN 8829921',
+    created_at: '14 марта 2025',
     address: 'г.Бишкек ул.Токтогула 122',
-    contacts: '+996 700 121 314',
+    contact: '+996 700 121 314',
     status: 'active',
     action: 'Редактировать'
   },
   {
     key: '2',
-    number: '2',
+    id: '2',
     customer: 'ТОО "Сайрус"',
-    categories: 0,
-    passportData: 'AN 8829921',
-    registrationDate: '14 марта 2025',
+    category: '0',
+    pasport: 'AN 8829921',
+    created_at: '14 марта 2025',
     address: 'г.Бишкек ул.Северо-Ипподромная 40',
-    contacts: '+996 702 801 490',
+    contact: '+996 702 801 490',
     status: 'inactive',
     action: 'Редактировать'
   }
