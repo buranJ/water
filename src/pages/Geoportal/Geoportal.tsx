@@ -1,8 +1,10 @@
 import { FC } from 'react';
 import type { MenuProps } from 'antd';
-import { Button, Dropdown, Flex, Input, message, Space } from 'antd';
-import { DownOutlined, PlusOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons';
+import { Flex, message } from 'antd';
+import {  UserOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components';
+import { FilterBar } from 'components';
+import { FilterValues } from 'components/FilterBar/FilterBar';
 
 const items: MenuProps['items'] = [
   {
@@ -28,37 +30,13 @@ const menuProps = {
 };
 
 export const Geoportal: FC<{ title: string }> = ({ title }) => {
+  const handleFilterChange = (values: FilterValues) => {
+    console.log('Filter values:', values);
+  };
   return (
     <DashboardLayout title={title}>
       <Flex gap={12}>
-        <Input addonBefore={<SearchOutlined />} placeholder='large size' />
-        <Dropdown menu={menuProps}>
-          <Button>
-            <Space>
-              По типу
-              <DownOutlined />
-            </Space>
-          </Button>
-        </Dropdown>
-        <Dropdown menu={menuProps}>
-          <Button>
-            <Space>
-              По статусу
-              <DownOutlined />
-            </Space>
-          </Button>
-        </Dropdown>
-        <Dropdown menu={menuProps}>
-          <Button>
-            <Space>
-              По дате
-              <DownOutlined />
-            </Space>
-          </Button>
-        </Dropdown>
-        <Button type='primary' icon={<PlusOutlined />}>
-          Добавить
-        </Button>
+        <FilterBar onFilterChange={handleFilterChange}/>
       </Flex>
     </DashboardLayout>
   );

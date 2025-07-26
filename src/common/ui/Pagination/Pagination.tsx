@@ -4,7 +4,7 @@ import './styles.scss';
 export const Pagination = () => {
   return (
     <div className='pagination-container'>
-      <AntPagination total={50} align='center' />
+      <AntPagination total={50} />
     </div>
   );
 };

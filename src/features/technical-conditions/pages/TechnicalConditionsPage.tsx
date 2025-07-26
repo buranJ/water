@@ -4,7 +4,7 @@ import { Table } from 'antd';
 import { Pagination } from 'common/ui';
 import { TUFilterBar } from '../components/TUFilterBar/TUFilterBar';
 import { DashboardLayout } from 'components';
-import { getColumns, TURecord } from './TechnicalConditionsPage.helpers';
+import { getColumns, initialData, TURecord } from './TechnicalConditionsPage.helpers';
 import './styles.scss';
 
 import { TyItem, useGetAllTyQuery } from 'api/Ty.api';
@@ -23,7 +23,7 @@ function transformTyItemsToTURecords(items: TyItem[]): TURecord[] {
       key: String(item.id),
       number: item.request_number || '',
       date: item.request_date || '',
-      customer: `Клиент #${item.customer}`, // Заказчик (в бэке customer - это id)
+      customer: `Клиент #${item.customer}`,
       address: item.address || '',
       objectName: item.object_name || '',
       waterAmount: item.water_required || '',
@@ -48,7 +48,9 @@ export const TechnicalConditionsPage = () => {
 
   useEffect(() => {
     if (tuData) {
-      const newRecords = transformTyItemsToTURecords(tuData);
+      console.log('tuData:', tuData);
+      const items: TyItem[] = Array.isArray(tuData) ? tuData : [];
+      const newRecords = transformTyItemsToTURecords(items);
       setData(newRecords);
       setFilteredData(newRecords);
     }
@@ -100,7 +102,7 @@ export const TechnicalConditionsPage = () => {
           tableLayout='fixed'
           pagination={false}
           columns={columns}
-          dataSource={filteredData}
+          dataSource={initialData}
           rowKey='key'
           bordered
           scroll={{ x: 'max-content' }}
