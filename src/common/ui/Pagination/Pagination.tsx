@@ -1,10 +1,17 @@
-import { Pagination as AntPagination } from 'antd';
+import { FC } from 'react';
+import { Pagination as AntPagination, PaginationProps } from 'antd';
 import './styles.scss';
 
-export const Pagination = () => {
+type IProps = PaginationProps & {
+  handlePageChange?: (page: number, pageSize?: number) => void;
+};
+
+export const Pagination: FC<IProps> = (props) => {
+  console.log(props);
+
   return (
     <div className='pagination-container'>
-      <AntPagination total={50} align='center' />
+      <AntPagination {...props} align='center' />
     </div>
   );
 };
