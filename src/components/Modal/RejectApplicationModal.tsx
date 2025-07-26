@@ -137,7 +137,7 @@ export const RejectApplicationModal: React.FC<RejectApplicationModalProps> = ({ 
           </Button>
         </Space>
       }
-      destroyOnClose
+      destroyOnHidden
     >
       <Space direction='vertical' size='large' style={{ width: '100%' }}>
         <div>
