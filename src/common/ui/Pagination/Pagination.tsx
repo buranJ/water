@@ -7,8 +7,6 @@ type IProps = PaginationProps & {
 };
 
 export const Pagination: FC<IProps> = (props) => {
-  console.log(props);
-
   return (
     <div className='pagination-container'>
       <AntPagination {...props} align='center' />
