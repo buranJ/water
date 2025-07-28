@@ -71,7 +71,8 @@ export const Applications: FC<IProps> = ({ title }) => {
       key: String(item.id),
       id: String(item.id),
       date: item.created_at ? new Date(item.created_at).toLocaleDateString() : '',
-      customer: String(item.customer),
+      customer: String(item.customer), // временно используем id как строку, если нет имени
+      customerId: item.customer,
       address: item.address,
       objectName: item.object,
       waterAmount: item.waterRequired,

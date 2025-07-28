@@ -1,8 +1,7 @@
 import { Button, Space, Tag, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-
-import { ITechnicalCondition } from 'api/Ty.api';
+import { ITechnicalCondition } from 'types/entities/tu';
 
 type actionType = 'edit' | 'delete';
 

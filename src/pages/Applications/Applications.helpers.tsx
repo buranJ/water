@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Flex, TabsProps, Tag, Typography } from 'antd';
+import { Button, Flex, TabsProps, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { RejectApplicationModal } from '../../components/Modal'; // импорт модального окна
 
@@ -18,7 +18,8 @@ export interface ApplicationData {
   key: string;
   id: string;
   date: string;
-  customer: string;
+  customer: string; // имя заказчика
+  customerId: string | number; // id заказчика для перехода
   address: string;
   objectName: string;
   waterAmount: string;
@@ -56,12 +57,7 @@ export const useRejectModal = () => {
   };
 
   const RejectModalComponent = () => (
-    <RejectApplicationModal
-      open={isRejectModalOpen}
-      onCancel={closeRejectModal}
-      onReject={handleReject}
-      applicationData={selectedApplication}
-    />
+    <RejectApplicationModal open={isRejectModalOpen} onCancel={closeRejectModal} onReject={handleReject} />
   );
 
   return {
@@ -133,7 +129,7 @@ export const getColumns: IGetColumnsFn = ({ onClick, onReject }) => {
       dataIndex: 'id',
       key: 'id',
       align: 'center',
-      render: (id: string, record: ApplicationData) => {
+      render: (id: string) => {
         // Для перехода на детальную страницу заявки
         // navigate должен быть передан через options, иначе используем window.location
         return (
@@ -158,7 +154,18 @@ export const getColumns: IGetColumnsFn = ({ onClick, onReject }) => {
       dataIndex: 'customer',
       key: 'customer',
       align: 'center',
-      render: (text, record) => <Typography.Link onClick={() => onClick(record, 'reject')}>{text}</Typography.Link>
+      render: (text: string, record: ApplicationData) => (
+        <span
+          style={{ color: '#1677ff', cursor: 'pointer', textDecoration: 'underline' }}
+          onClick={() => {
+            if (record.customerId) {
+              window.location.href = `/dashboard/customers/${record.customerId}`;
+            }
+          }}
+        >
+          {text}
+        </span>
+      )
     },
     { title: 'Адрес', dataIndex: 'address', key: 'address', align: 'center' },
     { title: 'Наименование объекта', dataIndex: 'objectName', key: 'objectName', width: 260 },
@@ -186,6 +193,7 @@ export const data: ApplicationData[] = [
     id: '04-472',
     date: '03-03-2025',
     customer: 'ОССО "Сайрус"',
+    customerId: 1,
     address: 'пр. Дон Сайрус, 304',
     status: 'approved',
     objectName: '9-ти этажный многоквартирный жилой дом с торговыми помещениями на собственной территории',
@@ -198,6 +206,7 @@ export const data: ApplicationData[] = [
     id: '04-472',
     date: '03-03-2025',
     customer: 'ОССО "Сайрус"',
+    customerId: 2,
     address: 'пр. Дон Сайрус, 304',
     status: 'rejected',
     objectName: '9-ти этажный многоквартирный жилой дом с торговыми помещениями на собственной территории',
@@ -211,6 +220,7 @@ export const data: ApplicationData[] = [
     id: '04-472',
     date: '03-03-2025',
     customer: 'ОССО "Сайрус"',
+    customerId: 3,
     address: 'пр. Дон Сайрус, 304',
     status: 'pending',
     objectName: '9-ти этажный многоквартирный жилой дом с торговыми помещениями на собственной территории',
@@ -222,6 +232,7 @@ export const data: ApplicationData[] = [
     id: '04-473',
     date: '04-03-2025',
     customer: 'ОССО "Сайрус"',
+    customerId: 4,
     address: 'пр. Дон Сайрус, 305',
     status: 'approved',
     objectName: '10-ти этажный жилой дом',
@@ -234,6 +245,7 @@ export const data: ApplicationData[] = [
     id: '04-474',
     date: '05-03-2025',
     customer: 'ОССО "Сайрус"',
+    customerId: 5,
     address: 'пр. Дон Сайрус, 306',
     status: 'pending',
     objectName: '11-ти этажный жилой дом',
@@ -245,6 +257,7 @@ export const data: ApplicationData[] = [
     id: '04-475',
     date: '06-03-2025',
     customer: 'ОССО "Сайрус"',
+    customerId: 6,
     address: 'пр. Дон Сайрус, 307',
     status: 'pending',
     objectName: '12-ти этажный жилой дом',
@@ -256,6 +269,7 @@ export const data: ApplicationData[] = [
     id: '04-476',
     date: '07-03-2025',
     customer: 'ОССО "Сайрус"',
+    customerId: 7,
     address: 'пр. Дон Сайрус, 308',
     status: 'pending',
     objectName: '13-ти этажный жилой дом',

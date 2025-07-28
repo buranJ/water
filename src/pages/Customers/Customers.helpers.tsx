@@ -2,7 +2,7 @@ import { Button, Col, Row, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
-type actionType = 'edit' | 'delete' | 'registrationDate';
+type actionType = 'edit' | 'delete' | 'registrationDate' | 'details';
 
 export interface CustomerRecord {
   key: string;
@@ -25,7 +25,12 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
       title: '№',
       dataIndex: 'number',
       key: 'number',
-      align: 'center'
+      align: 'center',
+      render: (number: string, record: CustomerRecord) => (
+        <span style={{ color: '#1677ff', cursor: 'pointer', textDecoration: 'underline' }} onClick={() => onClick(record, 'details')}>
+          {number}
+        </span>
+      )
     },
     {
       title: 'Заказчик',

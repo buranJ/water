@@ -5,8 +5,10 @@ import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
 import { Pagination, Table } from 'common/ui';
 import { DashboardLayout, FilterBar } from 'components';
 import type { FilterValues } from 'components/FilterBar/FilterBar';
-import { getColumns, initialData } from './Customers.helpers';
+import { getColumns } from './Customers.helpers';
 import './styles.scss';
+
+import { ICustomer, useGetAllCustomersQuery } from 'api/Customer.api';
 
 interface IProps {
   title: string;
@@ -14,6 +16,8 @@ interface IProps {
 
 export const Customers: FC<IProps> = ({ title }) => {
   const navigate = useNavigate();
+
+  const { data = [], isLoading } = useGetAllCustomersQuery();
 
   const handleFilterChange = (filter: FilterValues) => {
     console.log('Filter changed:', filter);
@@ -26,18 +30,39 @@ export const Customers: FC<IProps> = ({ title }) => {
   const onDownloadClick = () => {
     console.log('Download button clicked');
   };
+
+  // Преобразование данных к формату таблицы
+  const tableData = useMemo(() => {
+    return data.map((item: ICustomer, idx: number) => ({
+      key: String(item.id),
+      number: String(idx + 1),
+      customer: item.full_name,
+      categories: (item.category === '1' ? 1 : 0) as 0 | 1,
+      passportData: item.passport || '',
+      registrationDate: item.created_at ? new Date(item.created_at).toLocaleDateString() : '',
+      address: item.address,
+      contacts: item.contact,
+      status: (item.status === 'active' ? 'active' : 'inactive') as 'active' | 'inactive',
+      action: 'Редактировать'
+    }));
+  }, [data]);
+
   const columns = useMemo(() => {
     return getColumns({
       onClick: (record, action) => {
         switch (action) {
-          case 'edit':
-            navigate(`/dashboard/technical-conditions/tu-details/${record.key}`);
-            break;
-          case 'delete':
-            console.log('Delete action clicked for record:', record);
+          case 'details':
+            navigate(`/dashboard/customers/${record.key}`);
             break;
           case 'registrationDate':
-            navigate(`/dashboard/protocol-details/${record.key}`);
+            navigate(`/dashboard/customers/${record.key}`);
+            break;
+          case 'edit':
+            // Можно реализовать редактирование
+            break;
+          case 'delete':
+            // Можно реализовать удаление
+            break;
         }
       }
     });
@@ -60,7 +85,7 @@ export const Customers: FC<IProps> = ({ title }) => {
             </>
           }
         />
-        <Table pagination={false} columns={columns} dataSource={initialData} bordered scroll={{ x: 'max-content' }} />
+        <Table pagination={false} columns={columns} dataSource={tableData} bordered scroll={{ x: 'max-content' }} loading={isLoading} />
         <Pagination />
       </div>
     </DashboardLayout>
