@@ -128,7 +128,30 @@ export const getColumns: IGetColumnsFn = ({ onClick, onReject }) => {
   };
 
   return [
-    { title: '№ заявки', dataIndex: 'id', key: 'id', align: 'center' },
+    {
+      title: '№ заявки',
+      dataIndex: 'id',
+      key: 'id',
+      align: 'center',
+      render: (id: string, record: ApplicationData) => {
+        // Для перехода на детальную страницу заявки
+        // navigate должен быть передан через options, иначе используем window.location
+        return (
+          <span
+            style={{ color: '#1677ff', cursor: 'pointer', textDecoration: 'underline' }}
+            onClick={() => {
+              if ((window as any).navigate) {
+                (window as any).navigate(`/dashboard/applications/${id}`);
+              } else {
+                window.location.href = `/dashboard/applications/${id}`;
+              }
+            }}
+          >
+            {id}
+          </span>
+        );
+      }
+    },
     { title: 'Дата регистрации', dataIndex: 'date', key: 'date', align: 'center' },
     {
       title: 'Заказчик',
