@@ -1,6 +1,6 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Button, Table, Tabs, Pagination } from 'antd';
+import { Button, Pagination, Table, Tabs } from 'antd';
 import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { FilterBar } from 'components/FilterBar';
@@ -140,14 +140,7 @@ export const Applications: FC<IProps> = ({ title }) => {
         }
       />
       <Tabs items={tabItems} onChange={handleTabChange} />
-      <Table
-        bordered
-        columns={columns}
-        dataSource={tableData}
-        scroll={{ x: 'max-content' }}
-        pagination={false}
-        loading={isLoading}
-      />
+      <Table bordered columns={columns} dataSource={tableData} scroll={{ x: 'max-content' }} pagination={false} loading={isLoading} />
       <Pagination
         current={page}
         pageSize={pageSize}
