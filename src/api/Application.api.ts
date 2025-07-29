@@ -30,6 +30,8 @@ export interface IGetApplicationsParams {
   customer?: number;
   entity?: number;
   ordering?: string;
+  page?: number;
+  page_size?: number;
 }
 
 export interface IApplicationResponse {
@@ -52,6 +54,13 @@ export interface IApplicationResponse {
   updated_at: string;
 }
 
+export interface IApplicationsListResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: IApplicationResponse[];
+}
+
 export const applicationsApi = createApi({
   reducerPath: 'applicationsApi',
   baseQuery: getBaseQuery(),
@@ -63,7 +72,7 @@ export const applicationsApi = createApi({
         body: data
       })
     }),
-    getApplications: build.query<IApplicationResponse[], IGetApplicationsParams | void>({
+    getApplications: build.query<IApplicationsListResponse, IGetApplicationsParams | void>({
       query: (params) => ({
         url: 'application/',
         method: 'GET',

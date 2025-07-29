@@ -1,6 +1,6 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Button, Table, Tabs } from 'antd';
+import { Button, Table, Tabs, Pagination } from 'antd';
 import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { FilterBar } from 'components/FilterBar';
@@ -36,6 +36,8 @@ export const Applications: FC<IProps> = ({ title }) => {
   const [search, setSearch] = useState<string>('');
   const [debouncedSearch, setDebouncedSearch] = useState<string>('');
   const [status, setStatus] = useState<string>('all');
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
 
   // Debounce для поиска
   useEffect(() => {
@@ -48,26 +50,29 @@ export const Applications: FC<IProps> = ({ title }) => {
   // Обработка фильтрации из FilterBar
   const handleFilterChange = useCallback((filter: FilterValues) => {
     setSearch(filter.search || '');
-    // Можно добавить обработку других фильтров, если потребуется
+    setPage(1); // сбрасываем на первую страницу при фильтрации
   }, []);
 
   // Обработка смены таба (статуса)
   const handleTabChange = useCallback((key: string) => {
     setStatus(key);
+    setPage(1); // сбрасываем на первую страницу при смене таба
   }, []);
 
   // Получение данных с бэка
-  const { data = [], isLoading } = useGetApplicationsQuery(
+  const { data, isLoading } = useGetApplicationsQuery(
     {
       search: debouncedSearch || undefined,
-      status: STATUS_TAB_MAP[status]
+      status: STATUS_TAB_MAP[status],
+      page,
+      page_size: pageSize
     },
     { refetchOnMountOrArgChange: true }
   );
 
   // Преобразование данных к формату таблицы (если нужно)
   const tableData: ApplicationData[] = useMemo(() => {
-    return data.map((item) => ({
+    return (data?.results || []).map((item) => ({
       key: String(item.id),
       id: String(item.id),
       date: item.created_at ? new Date(item.created_at).toLocaleDateString() : '',
@@ -113,6 +118,11 @@ export const Applications: FC<IProps> = ({ title }) => {
     console.log('Download button clicked');
   };
 
+  const handlePaginationChange = (page: number, pageSize?: number) => {
+    setPage(page);
+    if (pageSize) setPageSize(pageSize);
+  };
+
   return (
     <DashboardLayout title={title}>
       <FilterBar
@@ -130,7 +140,22 @@ export const Applications: FC<IProps> = ({ title }) => {
         }
       />
       <Tabs items={tabItems} onChange={handleTabChange} />
-      <Table bordered columns={columns} dataSource={tableData} scroll={{ x: 'max-content' }} pagination={false} loading={isLoading} />
+      <Table
+        bordered
+        columns={columns}
+        dataSource={tableData}
+        scroll={{ x: 'max-content' }}
+        pagination={false}
+        loading={isLoading}
+      />
+      <Pagination
+        current={page}
+        pageSize={pageSize}
+        total={data?.count || 0}
+        onChange={handlePaginationChange}
+        showSizeChanger
+        style={{ marginTop: 16, textAlign: 'right' }}
+      />
       <RejectModalComponent />
     </DashboardLayout>
   );
