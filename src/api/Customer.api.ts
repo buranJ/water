@@ -14,14 +14,27 @@ export interface ICustomer {
   status: string;
 }
 
+export interface ICustomersListResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: ICustomer[];
+}
+
+export interface IGetCustomersParams {
+  page?: number;
+  page_size?: number;
+}
+
 export const customerApi = createApi({
   reducerPath: 'customerApi',
   baseQuery: getBaseQuery(),
   endpoints: (build) => ({
-    getAllCustomers: build.query<ICustomer[], void>({
-      query: () => ({
+    getAllCustomers: build.query<ICustomersListResponse, IGetCustomersParams | void>({
+      query: (params) => ({
         url: 'customer/',
-        method: 'GET'
+        method: 'GET',
+        params: params || {}
       })
     }),
 

@@ -1,12 +1,12 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Button, Pagination, Table, Tabs } from 'antd';
+import { Button, Pagination, Table } from 'antd';
 import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { FilterBar } from 'components/FilterBar';
-import { ApplicationData, getColumns, tabItems, useRejectModal } from './Applications.helpers';
+import { ApplicationData, getColumns, useRejectModal } from './Applications.helpers';
 
-import { IApplicationResponse, useGetApplicationsQuery } from 'api/Application.api';
+import { useGetApplicationsQuery } from 'api/Application.api';
 
 type FilterValues = {
   search?: string;
@@ -20,13 +20,13 @@ interface IProps {
   title: string;
 }
 
-const STATUS_TAB_MAP: Record<string, IApplicationResponse['status'] | undefined> = {
-  all: undefined,
-  accepted: 'approved',
-  pending: 'pending',
-  rejected: 'rejected',
-  contracted: 'contracted'
-};
+const STATUS_OPTIONS = [
+  { value: '', label: 'Все' },
+  { value: 'pending', label: 'В ожидании' },
+  { value: 'rejected', label: 'Отказано' },
+  { value: 'approved', label: 'Одобрено' },
+  { value: 'contracted', label: 'ТУ заключён' }
+];
 
 export const Applications: FC<IProps> = ({ title }) => {
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ export const Applications: FC<IProps> = ({ title }) => {
   // Фильтры
   const [search, setSearch] = useState<string>('');
   const [debouncedSearch, setDebouncedSearch] = useState<string>('');
-  const [status, setStatus] = useState<string>('all');
+  const [status, setStatus] = useState<string>('');
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
 
@@ -50,20 +50,15 @@ export const Applications: FC<IProps> = ({ title }) => {
   // Обработка фильтрации из FilterBar
   const handleFilterChange = useCallback((filter: FilterValues) => {
     setSearch(filter.search || '');
+    setStatus(filter.status || '');
     setPage(1); // сбрасываем на первую страницу при фильтрации
-  }, []);
-
-  // Обработка смены таба (статуса)
-  const handleTabChange = useCallback((key: string) => {
-    setStatus(key);
-    setPage(1); // сбрасываем на первую страницу при смене таба
   }, []);
 
   // Получение данных с бэка
   const { data, isLoading } = useGetApplicationsQuery(
     {
       search: debouncedSearch || undefined,
-      status: STATUS_TAB_MAP[status],
+      status: (status || undefined) as 'pending' | 'rejected' | 'approved' | 'contracted' | undefined,
       page,
       page_size: pageSize
     },
@@ -87,7 +82,7 @@ export const Applications: FC<IProps> = ({ title }) => {
       comment: undefined,
       hasTu: item.status === 'contracted'
     }));
-  }, [data]);
+  }, [data, page, pageSize]);
 
   const columns = useMemo(() => {
     return getColumns({
@@ -126,8 +121,9 @@ export const Applications: FC<IProps> = ({ title }) => {
   return (
     <DashboardLayout title={title}>
       <FilterBar
-        showAlphabet
         onFilterChange={handleFilterChange}
+        showStatusSelect
+        statusOptions={STATUS_OPTIONS}
         actionButtons={
           <>
             <Button type='primary' icon={<PlusOutlined />} onClick={onAddClick}>
@@ -139,8 +135,7 @@ export const Applications: FC<IProps> = ({ title }) => {
           </>
         }
       />
-      <Tabs items={tabItems} onChange={handleTabChange} />
-      <Table bordered columns={columns} dataSource={tableData} scroll={{ x: 'max-content' }} pagination={false} loading={isLoading} />
+      <Table pagination={false} columns={columns} dataSource={tableData} bordered scroll={{ x: 'max-content' }} loading={isLoading} />
       <Pagination
         current={page}
         pageSize={pageSize}

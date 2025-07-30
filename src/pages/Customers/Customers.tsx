@@ -1,8 +1,8 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Button } from 'antd';
+import { Button, Pagination } from 'antd';
 import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
-import { Pagination, Table } from 'common/ui';
+import { Table } from 'common/ui';
 import { DashboardLayout, FilterBar } from 'components';
 import type { FilterValues } from 'components/FilterBar/FilterBar';
 import { getColumns } from './Customers.helpers';
@@ -14,13 +14,28 @@ interface IProps {
   title: string;
 }
 
+const CATEGORY_OPTIONS = [
+  { value: '', label: 'Все' },
+  { value: '0', label: 'Юр. лицо' },
+  { value: '1', label: 'Физ. лицо' }
+];
+
 export const Customers: FC<IProps> = ({ title }) => {
   const navigate = useNavigate();
 
-  const { data = [], isLoading } = useGetAllCustomersQuery();
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [category, setCategory] = useState<string>('');
+
+  const { data, isLoading } = useGetAllCustomersQuery({
+    page,
+    page_size: pageSize,
+    ...(category ? { category } : {})
+  });
 
   const handleFilterChange = (filter: FilterValues) => {
-    console.log('Filter changed:', filter);
+    setCategory(filter.category || '');
+    setPage(1); // сбрасываем на первую страницу при фильтрации
   };
 
   const onAddClick = () => {
@@ -33,9 +48,9 @@ export const Customers: FC<IProps> = ({ title }) => {
 
   // Преобразование данных к формату таблицы
   const tableData = useMemo(() => {
-    return data.map((item: ICustomer, idx: number) => ({
+    return (data?.results || []).map((item: ICustomer, idx: number) => ({
       key: String(item.id),
-      number: String(idx + 1),
+      number: String((page - 1) * pageSize + idx + 1),
       customer: item.full_name,
       categories: (item.category === '1' ? 1 : 0) as 0 | 1,
       passportData: item.passport || '',
@@ -45,7 +60,7 @@ export const Customers: FC<IProps> = ({ title }) => {
       status: (item.status === 'active' ? 'active' : 'inactive') as 'active' | 'inactive',
       action: 'Редактировать'
     }));
-  }, [data]);
+  }, [data, page, pageSize]);
 
   const columns = useMemo(() => {
     return getColumns({
@@ -68,12 +83,19 @@ export const Customers: FC<IProps> = ({ title }) => {
     });
   }, [navigate]);
 
+  const handlePaginationChange = (page: number, pageSize?: number) => {
+    setPage(page);
+    if (pageSize) setPageSize(pageSize);
+  };
+
   return (
     <DashboardLayout title={title}>
       <div className='customers-page'>
         <FilterBar
           onFilterChange={handleFilterChange}
           showAlphabet
+          showCategory
+          categoryOptions={CATEGORY_OPTIONS}
           actionButtons={
             <>
               <Button type='primary' icon={<PlusOutlined />} onClick={onAddClick}>
@@ -86,7 +108,14 @@ export const Customers: FC<IProps> = ({ title }) => {
           }
         />
         <Table pagination={false} columns={columns} dataSource={tableData} bordered scroll={{ x: 'max-content' }} loading={isLoading} />
-        <Pagination />
+        <Pagination
+          current={page}
+          pageSize={pageSize}
+          total={data?.count || 0}
+          onChange={handlePaginationChange}
+          showSizeChanger
+          style={{ marginTop: 16, textAlign: 'right' }}
+        />
       </div>
     </DashboardLayout>
   );
