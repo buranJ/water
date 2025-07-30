@@ -25,7 +25,6 @@ interface ApplicationFormProps {
   submitText?: string;
   attachedFiles?: UploadFile[];
   setAttachedFiles?: (files: UploadFile[]) => void;
-  isModalVisible?: boolean;
   setIsModalVisible?: (v: boolean) => void;
 }
 
@@ -37,26 +36,15 @@ export const ApplicationForm: FC<ApplicationFormProps> = ({
   submitText,
   attachedFiles,
   setAttachedFiles,
-  isModalVisible,
   setIsModalVisible
 }) => {
   const [form] = Form.useForm<ApplicationFormData>();
   const usedForm = externalForm || form;
 
-  const buttonText =
-    attachedFiles && attachedFiles.length > 0
-      ? `${attachedFiles.length} файлы прикреплены`
-      : 'Прикрепить файл';
+  const buttonText = attachedFiles && attachedFiles.length > 0 ? `${attachedFiles.length} файлы прикреплены` : 'Прикрепить файл';
 
   return (
-    <Form
-      form={usedForm}
-      layout='vertical'
-      variant='filled'
-      requiredMark={false}
-      onFinish={onSave}
-      initialValues={initialValues}
-    >
+    <Form form={usedForm} layout='vertical' variant='filled' requiredMark={false} onFinish={onSave} initialValues={initialValues}>
       <Form.Item name='INN' label='ИНН' rules={[{ required: true, message: 'Обязательное поле' }]}>
         <Input size='large' placeholder='Введите ИНН' />
       </Form.Item>
@@ -80,7 +68,11 @@ export const ApplicationForm: FC<ApplicationFormProps> = ({
       </Flex>
       <Flex gap={16}>
         <Col span={12}>
-          <Form.Item name='quantity' label='Требуемое количество воды' rules={[{ required: true, message: 'Обязательное поле' }, { max: 5 }]}>
+          <Form.Item
+            name='quantity'
+            label='Требуемое количество воды'
+            rules={[{ required: true, message: 'Обязательное поле' }, { max: 5 }]}
+          >
             <Input size='large' placeholder='16,93' type='number' maxLength={5} />
           </Form.Item>
         </Col>
@@ -93,7 +85,11 @@ export const ApplicationForm: FC<ApplicationFormProps> = ({
       <Form.Item label='Вода требуется на' name='waterRequired' rules={[{ required: true, message: 'Обязательное поле' }]}>
         <Input size='large' placeholder='Адрес' />
       </Form.Item>
-      <Form.Item label='Расходы воды на внутр. пожаротушение' name='firefightingExpenses' rules={[{ required: true, message: 'Обязательное поле' }]}>
+      <Form.Item
+        label='Расходы воды на внутр. пожаротушение'
+        name='firefightingExpenses'
+        rules={[{ required: true, message: 'Обязательное поле' }]}
+      >
         <Input size='large' placeholder='Адрес' />
       </Form.Item>
       <Flex gap={16}>
