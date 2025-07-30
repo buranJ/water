@@ -69,7 +69,7 @@ export const EditCustomer: FC<IProps> = ({ title }) => {
 
   return (
     <DashboardLayout title={title}>
-      <CustomerForm onCancel={onCancel} onSave={onSave} initialValues={initialValues} form={form} />
+      <CustomerForm onCancel={onCancel} onSave={onSave} initialValues={initialValues} form={form} submitText="Сохранить" />
     </DashboardLayout>
   );
 };

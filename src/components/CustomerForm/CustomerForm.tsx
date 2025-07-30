@@ -27,7 +27,7 @@ interface CustomerFormProps {
   submitText?: string;
 }
 
-export const CustomerForm: FC<CustomerFormProps> = ({ initialValues, onSave, onCancel, form: externalForm }) => {
+export const CustomerForm: FC<CustomerFormProps> = ({ initialValues, onSave, onCancel, form: externalForm, submitText }) => {
   const [form] = Form.useForm<CustomerFormData>();
   const usedForm = externalForm || form;
 
