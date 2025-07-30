@@ -17,14 +17,19 @@ export interface CustomerFormData {
   status: 'active' | 'rejected';
 }
 
+import { FormInstance } from 'antd';
+
 interface CustomerFormProps {
   initialValues?: CustomerFormData;
   onSave: (values: CustomerFormData) => void;
   onCancel: () => void;
+  form?: FormInstance<CustomerFormData>;
+  submitText?: string;
 }
 
-export const CustomerForm: FC<CustomerFormProps> = ({ initialValues, onSave, onCancel }) => {
+export const CustomerForm: FC<CustomerFormProps> = ({ initialValues, onSave, onCancel, form: externalForm }) => {
   const [form] = Form.useForm<CustomerFormData>();
+  const usedForm = externalForm || form;
 
   const handleFinish = (values: CustomerFormData) => {
     onSave(values);
@@ -35,7 +40,7 @@ export const CustomerForm: FC<CustomerFormProps> = ({ initialValues, onSave, onC
     <div className='customer-form'>
       <Title level={3}>Добавить заказчика</Title>
       <Form
-        form={form}
+        form={usedForm}
         layout='vertical'
         name='customer_form'
         variant='filled'
@@ -67,7 +72,7 @@ export const CustomerForm: FC<CustomerFormProps> = ({ initialValues, onSave, onC
 
         <Form.Item>
           <Button size='large' type='primary' htmlType='submit' style={{ marginRight: 8 }}>
-            Добавить
+            {typeof submitText === 'string' ? submitText : 'Добавить'}
           </Button>
           <Button size='large' onClick={onCancel}>
             Назад

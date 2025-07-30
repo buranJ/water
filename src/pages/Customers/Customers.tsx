@@ -73,7 +73,7 @@ export const Customers: FC<IProps> = ({ title }) => {
             navigate(`/dashboard/customers/${record.key}`);
             break;
           case 'edit':
-            // Можно реализовать редактирование
+            navigate(`/dashboard/customers/${record.key}/edit`);
             break;
           case 'delete':
             // Можно реализовать удаление

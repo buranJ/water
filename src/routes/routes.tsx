@@ -9,6 +9,7 @@ const ExportData = lazy(() => import('pages/ExportData'));
 const ExportDataHistory = lazy(() => import('pages/ExportDataHistory'));
 const Customers = lazy(() => import('pages/Customers'));
 const CustomerDetails = lazy(() => import('pages/CustomerDetails'));
+const EditCustomer = lazy(() => import('pages/EditCustomer'));
 const TuDetails = lazy(() => import('pages/TuDetails'));
 const HistoryOfLoads = lazy(() => import('pages/HistoryOfLoads'));
 const Architecture = lazy(() => import('pages/Architecture'));
@@ -62,6 +63,10 @@ export const routerConfig: RouteObject[] = [
   {
     path: '/dashboard/customers/:customerId',
     element: <CustomerDetails title='Детали клиента' />
+  },
+  {
+    path: '/dashboard/customers/:customerId/edit',
+    element: <EditCustomer title='Редактировать заказчика' />
   },
   {
     path: '/dashboard/add-customer',
