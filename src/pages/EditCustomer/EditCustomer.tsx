@@ -18,19 +18,27 @@ export const EditCustomer: FC<IProps> = ({ title }) => {
   const [form] = Form.useForm<CustomerFormData>();
 
   // Корректное формирование initialValues для формы
-  const initialValues: CustomerFormData & { fio?: string; companyName?: string } = {
-    type: data?.category === '0' ? 'legal' : 'individual',
-    inn: data?.inn || '',
-    passportData: data?.passport || '',
-    companyName: data?.category === '0' ? data?.full_name || '' : '',
-    fio: data?.category === '1' ? data?.full_name || '' : '',
-    contactData: data?.contact || '',
-    address: data?.address || '',
-    status: (data?.status as 'active' | 'rejected') || 'active'
-  };
+  const initialValues: (CustomerFormData & { fio?: string; companyName?: string }) | undefined = useMemo(
+    () =>
+      data
+        ? {
+            type: data.category === '0' ? 'legal' : 'individual',
+            inn: data.inn || '',
+            passportData: data.passport || '',
+            companyName: data.category === '0' ? data.full_name || '' : '',
+            fio: data.category === '1' ? data.full_name || '' : '',
+            contactData: data.contact || '',
+            address: data.address || '',
+            status: (data.status as 'active' | 'rejected') || 'active'
+          }
+        : undefined,
+    [data]
+  );
 
   useEffect(() => {
-    form.setFieldsValue(initialValues);
+    if (initialValues) {
+      form.setFieldsValue(initialValues);
+    }
   }, [form, initialValues]);
 
   const onSave = async (value: CustomerFormData & { fio?: string; companyName?: string }) => {
@@ -69,7 +77,7 @@ export const EditCustomer: FC<IProps> = ({ title }) => {
 
   return (
     <DashboardLayout title={title}>
-      <CustomerForm onCancel={onCancel} onSave={onSave} initialValues={initialValues} form={form} submitText="Сохранить" />
+      <CustomerForm onCancel={onCancel} onSave={onSave} initialValues={initialValues} form={form} submitText='Сохранить' />
     </DashboardLayout>
   );
 };
