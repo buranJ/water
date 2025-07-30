@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Form, message } from 'antd';
 import { CustomerForm, CustomerFormData } from 'components/CustomerForm/CustomerForm';
