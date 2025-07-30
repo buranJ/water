@@ -21,6 +21,7 @@ const Applications = lazy(() => import('pages/Applications'));
 const NotFound = lazy(() => import('pages/NotFound'));
 const ApplicationsCreate = lazy(() => import('pages/ApplicationsCreate'));
 const ApplicationDetails = lazy(() => import('pages/ApplicationDetails'));
+const EditApplication = lazy(() => import('pages/EditApplication'));
 
 export const routerConfig: RouteObject[] = [
   {
@@ -95,6 +96,10 @@ export const routerConfig: RouteObject[] = [
   {
     path: '/dashboard/applications/:id',
     element: <ApplicationDetails title='Заявка №' />
+  },
+  {
+    path: '/dashboard/applications/:id/edit',
+    element: <EditApplication title='Редактировать заявку' />
   },
   {
     path: '/dashboard/applications/create',

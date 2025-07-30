@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { useParams } from 'react-router';
+import { useParams, useNavigate } from 'react-router';
 import { Alert, Button, Card, Spin, Tabs, Tag, Typography } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
@@ -14,6 +14,7 @@ const tabItems = [
 export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'Заявка №' }) => {
   const { id } = useParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState('data');
+  const navigate = useNavigate();
 
   const { data, isLoading, isError } = useGetApplicationByIdQuery(id || '');
 
@@ -21,6 +22,7 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'Заявк
     <DashboardLayout title={title + id}>
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginBottom: 16 }}>
         <Button icon={<DownloadOutlined />}>PDF</Button>
+        <Button onClick={() => navigate(`/dashboard/applications/${id}/edit`)}>Редактировать</Button>
         <Button type='primary'>Оформление ТУ</Button>
         <Button danger>Отказать ТУ</Button>
       </div>

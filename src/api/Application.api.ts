@@ -84,8 +84,15 @@ export const applicationsApi = createApi({
         url: `application/${id}`,
         method: 'GET'
       })
+    }),
+    updateApplication: build.mutation<IApplicationResponse, { id: number; body: Partial<IApplicationResponse> }>({
+      query: ({ id, body }) => ({
+        url: `application/${id}`,
+        method: 'PUT',
+        body
+      })
     })
   })
 });
 
-export const { useCreateApplicationMutation, useGetApplicationsQuery, useGetApplicationByIdQuery } = applicationsApi;
+export const { useCreateApplicationMutation, useGetApplicationsQuery, useGetApplicationByIdQuery, useUpdateApplicationMutation } = applicationsApi;
