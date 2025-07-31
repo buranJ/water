@@ -1,7 +1,18 @@
 import { configureStore } from '@reduxjs/toolkit';
 import Slice from './Slice';
 
-import { applicationsApi, authApi, buhgalteriaApi, customerApi, docsApi, filefolderApi, objectApi, refusalApi, tyApi } from 'api/index';
+import {
+  applicationsApi,
+  authApi,
+  buhgalteriaApi,
+  customerApi,
+  docsApi,
+  filefolderApi,
+  geoportalApi,
+  objectApi,
+  refusalApi,
+  tyApi
+} from 'api/index';
 
 const store = configureStore({
   reducer: {
@@ -11,6 +22,7 @@ const store = configureStore({
     [customerApi.reducerPath]: customerApi.reducer,
     [docsApi.reducerPath]: docsApi.reducer,
     [filefolderApi.reducerPath]: filefolderApi.reducer,
+    [geoportalApi.reducerPath]: geoportalApi.reducer,
     [objectApi.reducerPath]: objectApi.reducer,
     [refusalApi.reducerPath]: refusalApi.reducer,
     [tyApi.reducerPath]: tyApi.reducer,
@@ -23,6 +35,7 @@ const store = configureStore({
       customerApi.middleware,
       docsApi.middleware,
       filefolderApi.middleware,
+      geoportalApi.middleware,
       objectApi.middleware,
       refusalApi.middleware,
       tyApi.middleware,
