@@ -91,8 +91,45 @@ export const applicationsApi = createApi({
         method: 'PUT',
         body
       })
+    }),
+    uploadApplicationFiles: build.mutation<any, { application: number; files: File[] }>({
+      query: ({ application, files }) => {
+        const formData = new FormData();
+        formData.append('application', String(application));
+        files.forEach((file) => formData.append('files', file));
+        return {
+          url: 'application/files/upload/',
+          method: 'POST',
+          body: formData
+        };
+      }
+    }),
+    replaceApplicationFile: build.mutation<any, { id: number; file: File }>({
+      query: ({ id, file }) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        return {
+          url: `application-files/${id}/replace/`,
+          method: 'PUT',
+          body: formData
+        };
+      }
+    }),
+    deleteApplicationFile: build.mutation<void, { id: number }>({
+      query: ({ id }) => ({
+        url: `application-files/${id}/delete/`,
+        method: 'DELETE'
+      })
     })
   })
 });
 
-export const { useCreateApplicationMutation, useGetApplicationsQuery, useGetApplicationByIdQuery, useUpdateApplicationMutation } = applicationsApi;
+export const {
+  useCreateApplicationMutation,
+  useGetApplicationsQuery,
+  useGetApplicationByIdQuery,
+  useUpdateApplicationMutation,
+  useUploadApplicationFilesMutation,
+  useReplaceApplicationFileMutation,
+  useDeleteApplicationFileMutation
+} = applicationsApi;

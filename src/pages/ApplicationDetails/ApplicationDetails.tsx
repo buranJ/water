@@ -1,10 +1,18 @@
 import { FC, useState } from 'react';
-import { useParams, useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { Alert, Button, Card, Spin, Tabs, Tag, Typography } from 'antd';
-import { DownloadOutlined } from '@ant-design/icons';
+import {
+  ArrowDownOutlined,
+  DeleteOutlined,
+  DownloadOutlined,
+  FileImageOutlined,
+  FileOutlined,
+  FilePdfOutlined,
+  FileWordOutlined
+} from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 
-import { useGetApplicationByIdQuery } from 'api/Application.api';
+import { useDeleteApplicationFileMutation, useGetApplicationByIdQuery } from 'api/Application.api';
 
 const tabItems = [
   { key: 'data', label: 'Данные' },
@@ -17,6 +25,7 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'Заявк
   const navigate = useNavigate();
 
   const { data, isLoading, isError } = useGetApplicationByIdQuery(id || '');
+  const [deleteApplicationFile] = useDeleteApplicationFileMutation();
 
   return (
     <DashboardLayout title={title + id}>
@@ -79,8 +88,69 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'Заявк
           )}
           {activeTab === 'documents' && (
             <div style={{ background: '#fff', borderRadius: 12, padding: 24 }}>
-              {/* Здесь будет список документов */}
-              Документы (заглушка)
+              <Typography.Title level={5} style={{ marginBottom: 16 }}>
+                Документы
+              </Typography.Title>
+              {data.application_files && data.application_files.length > 0 ? (
+                <table style={{ width: '100%' }}>
+                  <thead>
+                    <tr>
+                      <th style={{ textAlign: 'left' }}>Название</th>
+                      <th style={{ textAlign: 'left' }}>Дата загрузки</th>
+                      <th style={{ textAlign: 'left' }}>Действия</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.application_files.map((file: any) => (
+                      <tr key={file.id}>
+                        <td>
+                          {(() => {
+                            const name = file.file.split('/').pop() || '';
+                            const ext = name.split('.').pop()?.toLowerCase();
+                            if (ext === 'pdf') return <FilePdfOutlined style={{ color: '#d4380d', fontSize: 18, marginRight: 8 }} />;
+                            if (['doc', 'docx'].includes(ext || ''))
+                              return <FileWordOutlined style={{ color: '#1890ff', fontSize: 18, marginRight: 8 }} />;
+                            if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'].includes(ext || ''))
+                              return <FileImageOutlined style={{ color: '#52c41a', fontSize: 18, marginRight: 8 }} />;
+                            return <FileOutlined style={{ fontSize: 18, marginRight: 8 }} />;
+                          })()}
+                          <a href={file.file} target='_blank' rel='noopener noreferrer'>
+                            {file.file.split('/').pop()}
+                          </a>
+                        </td>
+                        <td>{file.created_at ? new Date(file.created_at).toLocaleDateString() : ''}</td>
+                        <td>
+                          <Button
+                            type='text'
+                            danger
+                            icon={
+                              <span style={{ fontWeight: 'bold', fontSize: 18 }}>
+                                <DeleteOutlined />
+                              </span>
+                            }
+                            onClick={async () => {
+                              await deleteApplicationFile({ id: file.id });
+                            }}
+                          />
+                          <Button
+                            type='text'
+                            icon={
+                              <span style={{ fontWeight: 'bold', fontSize: 18 }}>
+                                <ArrowDownOutlined />
+                              </span>
+                            }
+                            href={file.file}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <Typography.Text type='secondary'>Нет загруженных документов</Typography.Text>
+              )}
             </div>
           )}
         </>
