@@ -45,6 +45,57 @@ export interface ITechnicalCondition {
   application: number | null;
 }
 
+export interface IGetTyById {
+  id: number;
+  customer: {
+    id: string;
+    full_name: string;
+  };
+  application: {
+    id: number;
+    x: number;
+    y: number;
+  };
+  status_display: string;
+  stage_display: string;
+  request_source: string;
+  request_number: string;
+  request_date: Date;
+  object_name: string;
+  address: string;
+  eni: string;
+  type?: 'connection' | 'reconnection' | 'load_increase';
+  status?: IStatus6b3Enum;
+  sewage_amount: string;
+  water_required: string;
+  pressure_required: string;
+  fire_fighting: string;
+  is_water?: boolean;
+  is_kanal?: boolean;
+  stage?: IStageEnum;
+  connection_target: string;
+  street_pass: string;
+  collector: string;
+  water_pipe: string;
+  sewer: string;
+  fire_input_1?: string;
+  fire_input_2?: string;
+  notes?: string;
+  payment_id?: number;
+  payment_paper: string;
+  payment_connection: string;
+  payment_amount: string;
+  payment_deadline: Date;
+  payment_date?: Date;
+  payment_invoice_number: string;
+  created_at: string;
+  updated_at: string;
+  entity: number;
+  author: number;
+  formula: number;
+  responsible?: number;
+}
+
 export interface ITyItem {
   id: number;
   status_display: string;

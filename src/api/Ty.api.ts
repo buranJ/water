@@ -36,8 +36,8 @@ export const tyApi = createApi({
     }),
 
     getTyById: build.query<IGetTechnicalConditionByIdResponse, IGetTechnicalConditionByIdParams>({
-      query: ({ id }) => ({
-        url: `/ty/${id}/`,
+      query: ({ applicationId }) => ({
+        url: `/ty/${applicationId}/`,
         method: 'GET'
       })
     }),

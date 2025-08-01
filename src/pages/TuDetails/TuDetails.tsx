@@ -16,8 +16,7 @@ interface IProps {
 
 export const TuDetails: FC<IProps> = ({ title }) => {
   const { id } = useParams();
-  const { data } = useGetTyByIdQuery({ id: id || '' });
-  console.log(data);
+  const { data: objectData } = useGetTyByIdQuery({ applicationId: id || '' });
 
   const isArchitectureDisabled = false;
   const isDocumentsDisabled = false;
@@ -61,27 +60,24 @@ export const TuDetails: FC<IProps> = ({ title }) => {
             <TabPane tab='Данные' key='1'>
               <Card style={{ marginBottom: 24 }}>
                 <Title level={4}>Наименование объекта</Title>
-                <Text>
-                  3-х эт. гостиница с цокольным этажом и эксплуатируемой кровлей на собственной территории (без права перепрофилирования под
-                  многоквартирный жилой дом)
-                </Text>
+                <Text>{objectData?.object_name || 'Не указано'}</Text>
               </Card>
 
               <Card style={{ marginBottom: 24 }}>
                 <Title level={4}>Заказчик</Title>
-                <Text>Смаилов А.Э.</Text>
+                <Text>{objectData?.customer.full_name}</Text>
                 <Title level={4} style={{ marginTop: 16 }}>
                   Место нахождения объекта
                 </Title>
-                <Text>ул. Турусбекова, 185</Text>
+                <Text>{objectData?.address}</Text>
                 <Title level={4} style={{ marginTop: 16 }}>
                   Требуемое количество водопроводной воды
                 </Title>
-                <Text>16.5000 м³/сут</Text>
+                <Text>{objectData?.water_required} м³/сут</Text>
                 <Title level={4} style={{ marginTop: 16 }}>
                   Требуемый свободный напор
                 </Title>
-                <Text>22.00 м.вод.ст</Text>
+                <Text>{objectData?.pressure_required} м.вод.ст</Text>
               </Card>
 
               <div style={{ marginBottom: 24 }}>
@@ -106,18 +102,12 @@ export const TuDetails: FC<IProps> = ({ title }) => {
 
               <Card style={{ marginBottom: 24 }}>
                 <Title level={4}>Водопровод</Title>
-                <Text>
-                  3-х эт. гостиница с цокольным этажом и эксплуатируемой кровлей на собственной территории (без права перепрофилирования под
-                  многоквартирный жилой дом)
-                </Text>
+                <Text>{objectData?.water_pipe || 'Не указано'}</Text>
               </Card>
 
               <Card>
                 <Title level={4}>Канализация</Title>
-                <Text>
-                  3-х эт. гостиница с цокольным этажом и эксплуатируемой кровлей на собственной территории (без права перепрофилирования под
-                  многоквартирный жилой дом)
-                </Text>
+                <Text>{objectData?.sewer || 'Не указано'}</Text>
               </Card>
             </TabPane>
 
