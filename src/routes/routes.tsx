@@ -39,10 +39,10 @@ export const routerConfig: RouteObject[] = [
     path: '/dashboard/objects',
     element: <Objects title='Объекты' />
   },
- {
-  path: '/dashboard/objects/:id',
-  element: <ObjectDetail />
-},
+  {
+    path: '/dashboard/objects/:id',
+    element: <ObjectDetail />
+  },
   {
     path: '/dashboard/technical-conditions',
     element: <TechnicalConditions />
