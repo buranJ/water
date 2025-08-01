@@ -8,4 +8,4 @@ export type {
   ObjectItem,
   ObjectListResponse
 } from './objects';
-export type { ITechnicalCondition, ITyBody, ITyItem, ITyListQueryParams } from './tu';
+export type { IGetTyById, ITechnicalCondition, ITyBody, ITyItem, ITyListQueryParams } from './tu';
