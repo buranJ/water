@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Col, Empty, message, Row, Spin } from 'antd';
 import { DashboardLayout } from 'components/DashboardLayout';

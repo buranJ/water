@@ -29,7 +29,7 @@ export interface IGetCustomersParams {
 
 export interface ICreateCustomerParams {
   inn: string;
-  full_name?: string;
+  full_name?: string | number;
   category?: '1' | '2';
   passport?: string | null;
   address?: string;
