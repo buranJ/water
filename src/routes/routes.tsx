@@ -3,6 +3,7 @@ import { RouteObject } from 'react-router';
 
 const Login = lazy(() => import('features/auth/pages'));
 const Geoportal = lazy(() => import('pages/Geoportal'));
+const Objects = lazy(() => import('pages/Objects'));
 const TechnicalConditions = lazy(() => import('features/technical-conditions'));
 const AddTuForms = lazy(() => import('pages/AddTuForms'));
 const ExportData = lazy(() => import('pages/ExportData'));
@@ -32,6 +33,10 @@ export const routerConfig: RouteObject[] = [
   {
     path: '/dashboard/geo',
     element: <Geoportal title='Геопортал' />
+  },
+  {
+    path: '/dashboard/objects',
+    element: <Objects title='Объекты' />
   },
   {
     path: '/dashboard/technical-conditions',
