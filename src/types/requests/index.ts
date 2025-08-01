@@ -1,3 +1,4 @@
+export type { IGetProtocolParams, IGetProtocolResponse } from './buhgalteria.requests';
 export type { IGetCustomerParams, IGetCustomerResponse } from './customer.requests';
 export type {
   ICreateTechnicalConditionParams,

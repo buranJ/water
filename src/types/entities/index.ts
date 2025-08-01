@@ -1,3 +1,4 @@
+export type { IProtocol } from './buhgalteria';
 export type { ICustomer, ICustomerParams } from './customer';
 export type {
   IGetObjectParams,
