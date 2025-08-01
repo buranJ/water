@@ -8,6 +8,12 @@ export interface ObjectItem {
   created_at: string;
   updated_at: string;
   customer: number;
+  contract_date?: string;
+  type?: string;
+  usage_type?: string;
+  tu_status?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface ObjectFilters {
@@ -25,6 +31,12 @@ export interface ObjectBody {
   kadastr_number: string;
   status: string;
   customer: number;
+  contract_date?: string;
+  type?: string;
+  usage_type?: string;
+  tu_status?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface ObjectHistoryItem {
