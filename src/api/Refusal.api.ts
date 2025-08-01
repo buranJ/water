@@ -15,12 +15,17 @@ interface RefusalFile {
 }
 
 interface RefusalResponse {
-  causes: RefusalCause[];
-  comment: string;
-  ty: number;
-  application: number;
-  created_at: string;
-  refusal_files: RefusalFile[];
+  next?: string;
+  previous?: string;
+  count?: number;
+  results?: {
+    causes: RefusalCause[];
+    comment: string;
+    ty: number;
+    application: number;
+    created_at: string;
+    refusal_files: RefusalFile[];
+  }[];
 }
 
 interface RefusalBody {
@@ -45,7 +50,7 @@ export const refusalApi = createApi({
   reducerPath: 'refusalApi',
   baseQuery: getBaseQuery(),
   endpoints: (build) => ({
-    getRefusals: build.query<RefusalResponse[], void>({
+    getRefusals: build.query<RefusalResponse, void>({
       query: () => ({
         url: 'refusal/',
         method: 'GET'
@@ -129,6 +134,8 @@ export const {
   useGetRefusalHistoryQuery,
   useGetRefusalCausesQuery,
   useCheckRefuseByCustomerQuery,
+  useLazyCheckRefuseByCustomerQuery,
   useCheckRefuseByEntityQuery,
+  useLazyCheckRefuseByEntityQuery,
   useCreateRefusalMutation
 } = refusalApi;

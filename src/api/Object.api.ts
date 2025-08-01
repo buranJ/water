@@ -1,16 +1,27 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { getBaseQuery } from 'common/helpers';
-import { ObjectBody, ObjectHistoryResponse, ObjectItem, ObjectListResponse } from 'types/entities/objects';
+import { IGetObjectParams, ObjectBody, ObjectHistoryResponse, ObjectItem, ObjectListResponse } from 'types/entities/objects';
+
+export interface IGetObjectsParams {
+  customer?: number;
+  ordering?: string;
+  page?: number;
+  page_size?: number;
+  search?: string;
+  status?: string;
+  type?: string;
+}
 
 export const objectApi = createApi({
   reducerPath: 'objectApi',
   baseQuery: getBaseQuery(),
   tagTypes: ['Object'],
   endpoints: (build) => ({
-    getAllObjects: build.query<{ results: ObjectListResponse }, void>({
-      query: () => ({
+    getAllObjects: build.query<{ results: ObjectListResponse }, IGetObjectParams>({
+      query: (params) => ({
         url: 'object/',
-        method: 'GET'
+        method: 'GET',
+        params
       }),
       providesTags: ['Object']
     }),
@@ -81,6 +92,7 @@ export const objectApi = createApi({
 
 export const {
   useGetAllObjectsQuery,
+  useLazyGetAllObjectsQuery,
   useGetObjectByIdQuery,
   useUpdateObjectMutation,
   usePatchObjectMutation,

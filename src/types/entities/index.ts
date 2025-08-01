@@ -1,2 +1,11 @@
-export type { ObjectBody, ObjectFilters, ObjectHistoryItem, ObjectHistoryResponse, ObjectItem, ObjectListResponse } from './objects';
+export type { ICustomer, ICustomerParams } from './customer';
+export type {
+  IGetObjectParams,
+  ObjectBody,
+  ObjectFilters,
+  ObjectHistoryItem,
+  ObjectHistoryResponse,
+  ObjectItem,
+  ObjectListResponse
+} from './objects';
 export type { ITechnicalCondition, ITyBody, ITyItem, ITyListQueryParams } from './tu';

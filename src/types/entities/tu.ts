@@ -6,7 +6,7 @@ export interface ITechnicalCondition {
   stage_display: string;
   request_source: string;
   request_number: string;
-  request_date: string;
+  request_date: Date;
   object_name: string;
   address: string;
   eni: string;
@@ -51,7 +51,8 @@ export interface ITyItem {
   stage_display: string;
   request_source: string;
   request_number: string;
-  request_date: string;
+  request_date: Date;
+  inn: string;
   object_name: string;
   address: string;
   eni: string;
@@ -79,18 +80,19 @@ export interface ITyItem {
   payment_invoice_number: string;
   created_at: string;
   updated_at: string;
-  customer: number;
+  customer: number | string;
   entity: number;
   author: number;
   formula: number;
   responsible: number;
   application: number;
+  payment_deadline: Date;
 }
 
 export interface ITyBody {
   request_source: string;
   request_number: string;
-  request_date: string;
+  request_date: Date;
   object_name: string;
   address: string;
   eni: string;
@@ -118,10 +120,9 @@ export interface ITyBody {
   payment_invoice_number: string;
   customer: number;
   entity: number;
-  author: number;
   formula: number;
-  responsible: number;
   application: number;
+  payment_deadline: Date;
 }
 
 export interface ITyListQueryParams {

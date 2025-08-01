@@ -5,6 +5,8 @@ import { ClockCircleTwoTone, CloseCircleTwoTone, DownloadOutlined, FileOutlined,
 import { DashboardLayout } from 'components/DashboardLayout';
 import { MyModal } from './MyModal';
 
+import { useGetTyByIdQuery } from 'api/Ty.api';
+
 const { TabPane } = Tabs;
 const { Title, Text } = Typography;
 
@@ -14,6 +16,8 @@ interface IProps {
 
 export const TuDetails: FC<IProps> = ({ title }) => {
   const { id } = useParams();
+  const { data } = useGetTyByIdQuery({ id: id || '' });
+  console.log(data);
 
   const isArchitectureDisabled = false;
   const isDocumentsDisabled = false;

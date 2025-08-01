@@ -1,5 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { getBaseQuery } from 'common/helpers';
+import { IGetCustomerParams, IGetCustomerResponse } from 'types/requests';
 
 export interface ICustomer {
   id: number;
@@ -26,10 +27,27 @@ export interface IGetCustomersParams {
   page_size?: number;
 }
 
+export interface ICreateCustomerParams {
+  inn: string;
+  full_name?: string;
+  category?: '1' | '2';
+  passport?: string | null;
+  address?: string;
+  contact?: string;
+  status?: string;
+}
+
 export const customerApi = createApi({
   reducerPath: 'customerApi',
   baseQuery: getBaseQuery(),
   endpoints: (build) => ({
+    getCustomer: build.query<IGetCustomerResponse, IGetCustomerParams>({
+      query: (params) => ({
+        url: '/customer/',
+        method: 'GET',
+        params
+      })
+    }),
     getAllCustomers: build.query<ICustomersListResponse, IGetCustomersParams | void>({
       query: (params) => ({
         url: 'customer/',
@@ -75,7 +93,7 @@ export const customerApi = createApi({
       })
     }),
 
-    createCustomer: build.mutation({
+    createCustomer: build.mutation<ICustomer, ICreateCustomerParams>({
       query: (body) => ({
         url: 'customer/create',
         method: 'POST',
@@ -86,6 +104,8 @@ export const customerApi = createApi({
 });
 
 export const {
+  useGetCustomerQuery,
+  useLazyGetCustomerQuery,
   useGetAllCustomersQuery,
   useGetCustomerByIdQuery,
   useUpdateCustomerMutation,

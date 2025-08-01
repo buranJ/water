@@ -46,3 +46,12 @@ export interface ObjectHistoryItem {
 }
 
 export type ObjectHistoryResponse = ObjectHistoryItem[];
+
+export interface IGetObjectParams {
+  category?: '0' | '1';
+  ordering?: string;
+  search?: string;
+  status?: 'active' | 'inactive';
+  page: number;
+  page_size: number;
+}

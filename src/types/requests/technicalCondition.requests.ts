@@ -9,7 +9,7 @@ export type IGetAllTechnicalConditionParams = ITyListQueryParams;
 export type ICreateTechnicalConditionRequest = ITyItem;
 export type ICreateTechnicalConditionParams = ITyBody;
 
-export type IGetTechnicalConditionByIdParams = number;
+export type IGetTechnicalConditionByIdParams = { id: string };
 export type IGetTechnicalConditionByIdResponse = ITyItem;
 
 export interface IUpdateTechnicalConditionParams {

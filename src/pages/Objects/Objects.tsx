@@ -21,7 +21,7 @@ export const Objects: FC<ObjectsProps> = ({ title }) => {
   });
   const [filteredObjects, setFilteredObjects] = useState<ObjectItem[]>([]);
 
-  const { data: objects, isLoading, error } = useGetAllObjectsQuery();
+  const { data: objects, isLoading, error } = useGetAllObjectsQuery({ page: 1, page_size: 16 });
   const [updateObjectTitle] = useUpdateObjectTitleMutation();
 
   // Применение фильтров

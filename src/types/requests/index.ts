@@ -1,3 +1,4 @@
+export type { IGetCustomerParams, IGetCustomerResponse } from './customer.requests';
 export type {
   ICreateTechnicalConditionParams,
   ICreateTechnicalConditionRequest,
