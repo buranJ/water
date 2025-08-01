@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { Card, Tag, Typography } from 'antd';
 import { EditableText } from 'components/EditableText/EditableText';
 import { ObjectItem } from 'types/entities/objects';

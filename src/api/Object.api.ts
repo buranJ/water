@@ -31,7 +31,7 @@ export const objectApi = createApi({
         url: `object/${id}`,
         method: 'GET'
       }),
-      providesTags: (result, error, id) => [{ type: 'Object', id }]
+      providesTags: (_, __, id) => [{ type: 'Object', id }]
     }),
 
     updateObject: build.mutation<ObjectItem, { id: number; body: ObjectBody }>({
@@ -40,7 +40,7 @@ export const objectApi = createApi({
         method: 'PUT',
         body
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Object', id }, 'Object']
+      invalidatesTags: (_, __, { id }) => [{ type: 'Object', id }, 'Object']
     }),
 
     // PATCH object/{id} — частичное обновление
@@ -50,7 +50,7 @@ export const objectApi = createApi({
         method: 'PATCH',
         body
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Object', id }, 'Object']
+      invalidatesTags: (_, __, { id }) => [{ type: 'Object', id }, 'Object']
     }),
 
     deleteObject: build.mutation<void, number>({
@@ -85,7 +85,7 @@ export const objectApi = createApi({
         method: 'PATCH',
         body: { title }
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Object', id }, 'Object']
+      invalidatesTags: (_, __, { id }) => [{ type: 'Object', id }, 'Object']
     })
   })
 });
