@@ -19,9 +19,7 @@ interface MenuItem {
 const statusItems: MenuItem[] = [
   { label: 'По статусу', key: 'all' },
   { label: 'Активен', key: 'active' },
-  { label: 'Неактивен', key: 'inactive' },
-  { label: 'В ожидании', key: 'pending' },
-  { label: 'Отклонен', key: 'rejected' }
+  { label: 'Неактивен', key: 'inactive' }
 ];
 
 const dateItems: MenuItem[] = [

@@ -60,7 +60,9 @@ export const ObjectCard: FC<ObjectCardProps> = ({ object, onTitleChange, onCardC
         marginBottom: 16,
         cursor: 'pointer'
       }}
-      bodyStyle={{ padding: 20 }}
+      styles={{
+        body: { padding: 20 }
+      }}
       onClick={handleCardClick}
     >
       <div style={{ marginBottom: 12 }}>

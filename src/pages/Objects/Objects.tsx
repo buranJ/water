@@ -1,15 +1,21 @@
-import { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Col, Empty, message, Row, Spin } from 'antd';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { ObjectCard } from 'components/ObjectCard/ObjectCard';
+import { ObjectForm, ObjectFormData } from 'components/ObjectForm/ObjectForm';
 import { ObjectsFilters } from 'components/ObjectsFilters';
-import { ObjectFilters, ObjectItem } from 'types/entities/objects';
+import { IGetObjectParams, ObjectFilters } from 'types/entities/objects';
 
-import { useGetAllObjectsQuery, useUpdateObjectTitleMutation } from 'api/Object.api';
+import { useCreateObjectMutation, useGetAllObjectsQuery, useUpdateObjectTitleMutation } from 'api/Object.api';
 
 interface ObjectsProps {
   title: string;
+}
+
+interface ApiError {
+  data?: Record<string, string | string[]>;
+  message?: string;
 }
 
 export const Objects: FC<ObjectsProps> = ({ title }) => {
@@ -19,33 +25,32 @@ export const Objects: FC<ObjectsProps> = ({ title }) => {
     status: null,
     date: null
   });
-  const [filteredObjects, setFilteredObjects] = useState<ObjectItem[]>([]);
+  const [showAddForm, setShowAddForm] = useState(false);
 
-  const { data: objects, isLoading, error } = useGetAllObjectsQuery({ page: 1, page_size: 16 });
+  // Подготавливаем параметры для API с обязательными page и page_size
+  const queryParams: IGetObjectParams = {
+    page: 1,
+    page_size: 50,
+    search: filters.search || undefined,
+    status: (filters.status as 'active' | 'inactive') || undefined,
+    ordering: '-created_at' // Сортировка по дате создания (новые сначала)
+  };
+
+  // Используем новый API с параметрами
+  const { data: objectsResponse, isLoading, error } = useGetAllObjectsQuery(queryParams);
   const [updateObjectTitle] = useUpdateObjectTitleMutation();
+  const [createObject, { isLoading: isCreating }] = useCreateObjectMutation();
 
-  // Применение фильтров
-  useEffect(() => {
-    let filtered = objects?.results || [];
+  const objects = objectsResponse?.results || [];
 
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      filtered = filtered?.filter(
-        (obj) =>
-          obj.title.toLowerCase().includes(searchLower) ||
-          obj.address_street.toLowerCase().includes(searchLower) ||
-          obj.address_number.toLowerCase().includes(searchLower) ||
-          obj.kadastr_number.toLowerCase().includes(searchLower)
-      );
-    }
+  // Применение локальных фильтров (для фильтров, которые не поддерживаются API)
+  const filteredObjects = React.useMemo(() => {
+    let filtered = objects;
 
-    if (filters.status) {
-      filtered = filtered?.filter((obj) => obj.status === filters.status);
-    }
-
+    // Фильтр по дате (локально, если не поддерживается API)
     if (filters.date) {
       const now = new Date();
-      filtered = filtered?.filter((obj) => {
+      filtered = filtered.filter((obj) => {
         const objDate = new Date(obj.created_at);
         let compareDate: Date;
 
@@ -60,14 +65,15 @@ export const Objects: FC<ObjectsProps> = ({ title }) => {
             compareDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
             break;
           default:
-            return true; // Если неизвестный dateRange, не фильтруем
+            return true;
         }
 
         return objDate >= compareDate;
       });
     }
-    setFilteredObjects(filtered);
-  }, [objects, filters]);
+
+    return filtered;
+  }, [objects, filters.date]);
 
   const handleFilterChange = (filterType: keyof ObjectFilters, value: string | null): void => {
     setFilters((prev) => ({ ...prev, [filterType]: value }));
@@ -78,7 +84,45 @@ export const Objects: FC<ObjectsProps> = ({ title }) => {
   };
 
   const handleAddNew = (): void => {
-    navigate('/dashboard/objects/add');
+    setShowAddForm(true);
+  };
+
+  const handleCreateObject = async (formData: ObjectFormData): Promise<void> => {
+    try {
+      const objectData = {
+        title: formData.title,
+        address_street: formData.address_street,
+        address_number: formData.address_number || '',
+        kadastr_number: formData.kadastr_number,
+        status: formData.status,
+        customer: formData.customer || 1
+      };
+
+      await createObject(objectData).unwrap();
+      message.success('Объект успешно создан');
+      setShowAddForm(false);
+    } catch (error) {
+      const apiError = error as ApiError;
+
+      if (apiError?.data && typeof apiError.data === 'object') {
+        const messages = Object.entries(apiError.data)
+          .map(([field, msg]) => {
+            const errorMsg = Array.isArray(msg) ? msg.join(', ') : msg;
+            return `${field}: ${errorMsg}`;
+          })
+          .join('; ');
+        message.error(`Ошибка: ${messages}`);
+      } else if (apiError?.message) {
+        message.error(`Ошибка: ${apiError.message}`);
+      } else {
+        message.error('Ошибка при создании объекта');
+      }
+      console.error('Create object error:', error);
+    }
+  };
+
+  const handleCancelCreate = (): void => {
+    setShowAddForm(false);
   };
 
   const handleTitleChange = async (id: number, newTitle: string): Promise<void> => {
@@ -121,6 +165,9 @@ export const Objects: FC<ObjectsProps> = ({ title }) => {
       ) : (
         <Empty description='Объекты не найдены' style={{ marginTop: '50px' }} />
       )}
+
+      {/* Модальное окно создания объекта */}
+      {showAddForm && <ObjectForm onSubmit={handleCreateObject} onCancel={handleCancelCreate} loading={isCreating} />}
     </DashboardLayout>
   );
 };
