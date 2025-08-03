@@ -8,11 +8,12 @@ import {
   FileImageOutlined,
   FileOutlined,
   FilePdfOutlined,
-  FileWordOutlined
+  FileWordOutlined,
+  UploadOutlined
 } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 
-import { useDeleteApplicationFileMutation, useGetApplicationByIdQuery } from 'api/Application.api';
+import { useDeleteApplicationFileMutation, useGetApplicationByIdQuery, useUploadApplicationFilesMutation } from 'api/Application.api';
 
 const tabItems = [
   { key: 'data', label: 'Данные' },
@@ -24,8 +25,9 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'Заявк
   const [activeTab, setActiveTab] = useState('data');
   const navigate = useNavigate();
 
-  const { data, isLoading, isError } = useGetApplicationByIdQuery(id || '');
+  const { data, isLoading, isError, refetch } = useGetApplicationByIdQuery(id || '');
   const [deleteApplicationFile] = useDeleteApplicationFileMutation();
+  const [uploadApplicationFiles] = useUploadApplicationFilesMutation();
 
   return (
     <DashboardLayout title={title + id}>
@@ -91,6 +93,28 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'Заявк
               <Typography.Title level={5} style={{ marginBottom: 16 }}>
                 Документы
               </Typography.Title>
+              <label style={{ display: 'inline-block', marginBottom: 16 }}>
+                <Button type='primary' icon={<UploadOutlined />}>
+                  Добавить файл
+                </Button>
+                <input
+                  type='file'
+                  style={{ display: 'none' }}
+                  onChange={async (e) => {
+                    const files = e.target.files ? Array.from(e.target.files) : [];
+                    if (files.length > 0 && id) {
+                      try {
+                        await uploadApplicationFiles({ application: Number(id), files });
+                        refetch();
+                        // Можно добавить message.success('Файл успешно загружен');
+                      } catch {
+                        // Можно добавить message.error('Ошибка при загрузке файла');
+                      }
+                    }
+                    e.target.value = '';
+                  }}
+                />
+              </label>
               {data.application_files && data.application_files.length > 0 ? (
                 <table style={{ width: '100%' }}>
                   <thead>
