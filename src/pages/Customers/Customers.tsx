@@ -1,22 +1,41 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Button } from 'antd';
+import { Button, Pagination } from 'antd';
 import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
-import { Pagination, Table } from 'common/ui';
+import { Table } from 'common/ui';
 import { DashboardLayout, FilterBar } from 'components';
 import type { FilterValues } from 'components/FilterBar/FilterBar';
-import { getColumns, initialData } from './Customers.helpers';
+import { getColumns } from './Customers.helpers';
 import './styles.scss';
+
+import { ICustomer, useGetAllCustomersQuery } from 'api/Customer.api';
 
 interface IProps {
   title: string;
 }
 
+const CATEGORY_OPTIONS = [
+  { value: '', label: 'Все' },
+  { value: '0', label: 'Юр. лицо' },
+  { value: '1', label: 'Физ. лицо' }
+];
+
 export const Customers: FC<IProps> = ({ title }) => {
   const navigate = useNavigate();
 
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [category, setCategory] = useState<string>('');
+
+  const { data, isLoading } = useGetAllCustomersQuery({
+    page,
+    page_size: pageSize,
+    ...(category ? { category } : {})
+  });
+
   const handleFilterChange = (filter: FilterValues) => {
-    console.log('Filter changed:', filter);
+    setCategory(filter.category || '');
+    setPage(1); // сбрасываем на первую страницу при фильтрации
   };
 
   const onAddClick = () => {
@@ -26,22 +45,48 @@ export const Customers: FC<IProps> = ({ title }) => {
   const onDownloadClick = () => {
     console.log('Download button clicked');
   };
+
+  // Преобразование данных к формату таблицы
+  const tableData = useMemo(() => {
+    return (data?.results || []).map((item: ICustomer, idx: number) => ({
+      key: String(item.id),
+      number: String((page - 1) * pageSize + idx + 1),
+      customer: item.full_name,
+      categories: (item.category === '1' ? 1 : 0) as 0 | 1,
+      passportData: item.passport || '',
+      registrationDate: item.created_at ? new Date(item.created_at).toLocaleDateString() : '',
+      address: item.address,
+      contacts: item.contact,
+      status: (item.status === 'active' ? 'active' : 'inactive') as 'active' | 'inactive',
+      action: 'Редактировать'
+    }));
+  }, [data, page, pageSize]);
+
   const columns = useMemo(() => {
     return getColumns({
       onClick: (record, action) => {
         switch (action) {
-          case 'edit':
-            navigate(`/dashboard/technical-conditions/tu-details/${record.key}`);
-            break;
-          case 'delete':
-            console.log('Delete action clicked for record:', record);
+          case 'details':
+            navigate(`/dashboard/customers/${record.key}`);
             break;
           case 'registrationDate':
-            navigate(`/dashboard/protocol-details/${record.key}`);
+            navigate(`/dashboard/customers/${record.key}`);
+            break;
+          case 'edit':
+            navigate(`/dashboard/customers/${record.key}/edit`);
+            break;
+          case 'delete':
+            // Можно реализовать удаление
+            break;
         }
       }
     });
   }, [navigate]);
+
+  const handlePaginationChange = (page: number, pageSize?: number) => {
+    setPage(page);
+    if (pageSize) setPageSize(pageSize);
+  };
 
   return (
     <DashboardLayout title={title}>
@@ -49,6 +94,8 @@ export const Customers: FC<IProps> = ({ title }) => {
         <FilterBar
           onFilterChange={handleFilterChange}
           showAlphabet
+          showCategory
+          categoryOptions={CATEGORY_OPTIONS}
           actionButtons={
             <>
               <Button type='primary' icon={<PlusOutlined />} onClick={onAddClick}>
@@ -60,8 +107,15 @@ export const Customers: FC<IProps> = ({ title }) => {
             </>
           }
         />
-        <Table pagination={false} columns={columns} dataSource={initialData} bordered scroll={{ x: 'max-content' }} />
-        <Pagination />
+        <Table pagination={false} columns={columns} dataSource={tableData} bordered scroll={{ x: 'max-content' }} loading={isLoading} />
+        <Pagination
+          current={page}
+          pageSize={pageSize}
+          total={data?.count || 0}
+          onChange={handlePaginationChange}
+          showSizeChanger
+          style={{ marginTop: 16, textAlign: 'right' }}
+        />
       </div>
     </DashboardLayout>
   );

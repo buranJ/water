@@ -5,7 +5,7 @@ import { DashboardLayout } from 'components/DashboardLayout';
 import { UploadFilesModal } from './UploadFilesModal/UploadFilesModal';
 import './styles.scss';
 
-import { IApplication, useCreateApplicationMutation } from 'api/Application.api';
+import { IApplication, useCreateApplicationMutation, useUploadApplicationFilesMutation } from 'api/Application.api';
 import { useCreateCustomerMutation } from 'api/Customer.api';
 import { useCreateObjectMutation } from 'api/Object.api';
 
@@ -15,6 +15,7 @@ interface IProps {
 
 export const ApplicationsCreate: FC<IProps> = ({ title }) => {
   const [createApplication] = useCreateApplicationMutation();
+  const [uploadApplicationFiles] = useUploadApplicationFilesMutation();
   const [createCustomer] = useCreateCustomerMutation();
   const [createObject] = useCreateObjectMutation();
   const [form] = Form.useForm<IApplication>();
@@ -51,13 +52,21 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
         contact: values.contact,
         status: 'active'
       });
-      await createApplication({
+      const application = await createApplication({
         ...values,
         object: objectId,
         customer: customerId,
         status: 'pending',
         entity: 1
       }).unwrap();
+
+      // Загрузка файлов, если есть
+      if (attachedFiles.length > 0) {
+        const files = attachedFiles.map((f) => (f as any).originFileObj).filter((f: File | undefined): f is File => !!f);
+        if (files.length > 0) {
+          await uploadApplicationFiles({ application: application.id, files });
+        }
+      }
     } catch (error) {
       console.error('Ошибка:', error);
     }
@@ -72,53 +81,61 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
     <DashboardLayout title={title}>
       <div className='applications-create'>
         <Form form={form} layout='vertical' variant='filled' requiredMark={false} onFinish={handleFinish}>
-          <Form.Item name='INN' label='ИНН'>
+          <Form.Item name='INN' label='ИНН' rules={[{ required: true, message: 'Обязательное поле' }]}>
             <Input size='large' placeholder='Введите ИНН' />
           </Form.Item>
-          <Form.Item name='customer' label='Заказчик'>
+          <Form.Item name='customer' label='Заказчик' rules={[{ required: true, message: 'Обязательное поле' }]}>
             <Input size='large' placeholder='Имя и фамилия' />
           </Form.Item>
-          <Form.Item name='object' label='Объект'>
+          <Form.Item name='object' label='Объект' rules={[{ required: true, message: 'Обязательное поле' }]}>
             <Input size='large' placeholder='Название компании' />
           </Form.Item>
           <Flex gap={16}>
             <Col span={18}>
-              <Form.Item name='address' label='Улица'>
+              <Form.Item name='address' label='Улица' rules={[{ required: true, message: 'Обязательное поле' }]}>
                 <Input size='large' placeholder='Адрес' />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item name='contact' label='Дом'>
+              <Form.Item name='contact' label='Дом' rules={[{ required: true, message: 'Обязательное поле' }]}>
                 <Input size='large' placeholder='№' />
               </Form.Item>
             </Col>
           </Flex>
           <Flex gap={16}>
             <Col span={12}>
-              <Form.Item name='quantity' label='Требуемое количество воды' rules={[{ max: 5 }]}>
+              <Form.Item
+                name='quantity'
+                label='Требуемое количество воды'
+                rules={[{ required: true, message: 'Обязательное поле' }, { max: 5 }]}
+              >
                 <Input size='large' placeholder='16,93' type='number' maxLength={5} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item name='pressure' label='Требуемый напор' rules={[{ max: 5 }]}>
+              <Form.Item name='pressure' label='Требуемый напор' rules={[{ required: true, message: 'Обязательное поле' }, { max: 5 }]}>
                 <Input size='large' placeholder='16,93' type='number' maxLength={5} />
               </Form.Item>
             </Col>
           </Flex>
-          <Form.Item label='Вода требуется на' name='waterRequired'>
+          <Form.Item label='Вода требуется на' name='waterRequired' rules={[{ required: true, message: 'Обязательное поле' }]}>
             <Input size='large' placeholder='Адрес' />
           </Form.Item>
-          <Form.Item label='Расходы воды на внутр. пожаротушение' name='firefightingExpenses'>
+          <Form.Item
+            label='Расходы воды на внутр. пожаротушение'
+            name='firefightingExpenses'
+            rules={[{ required: true, message: 'Обязательное поле' }]}
+          >
             <Input size='large' placeholder='Адрес' />
           </Form.Item>
           <Flex gap={16}>
             <Col span={12}>
-              <Form.Item name='x' label='Координата X'>
+              <Form.Item name='x' label='Координата X' rules={[{ required: true, message: 'Обязательное поле' }]}>
                 <Input variant='filled' size='large' placeholder='123' type='number' />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item name='y' label='Координата Y'>
+              <Form.Item name='y' label='Координата Y' rules={[{ required: true, message: 'Обязательное поле' }]}>
                 <Input variant='filled' size='large' placeholder='321' type='number' />
               </Form.Item>
             </Col>

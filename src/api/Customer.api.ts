@@ -1,18 +1,62 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { getBaseQuery } from 'common/helpers';
+import { IGetCustomerParams, IGetCustomerResponse } from 'types/requests';
+
+export interface ICustomer {
+  id: number;
+  inn: string;
+  full_name: string;
+  category: string;
+  created_at: string;
+  updated_at: string;
+  passport: string | null;
+  address: string;
+  contact: string;
+  status: string;
+}
+
+export interface ICustomersListResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: ICustomer[];
+}
+
+export interface IGetCustomersParams {
+  page?: number;
+  page_size?: number;
+}
+
+export interface ICreateCustomerParams {
+  inn: string;
+  full_name?: string | number;
+  category?: '0' | '1';
+  passport?: string | null;
+  address?: string;
+  contact?: string;
+  status?: string;
+}
 
 export const customerApi = createApi({
   reducerPath: 'customerApi',
   baseQuery: getBaseQuery(),
   endpoints: (build) => ({
-    getAllCustomers: build.query({
-      query: () => ({
+    getCustomer: build.query<IGetCustomerResponse, IGetCustomerParams>({
+      query: (params) => ({
+        url: '/customer/',
+        method: 'GET',
+        params
+      })
+    }),
+    getAllCustomers: build.query<ICustomersListResponse, IGetCustomersParams | void>({
+      query: (params) => ({
         url: 'customer/',
-        method: 'GET'
+        method: 'GET',
+        params: params || {}
       })
     }),
 
-    getCustomerById: build.query({
+    getCustomerById: build.query<ICustomer, number | string>({
       query: (id) => ({
         url: `customer/${id}`,
         method: 'GET'
@@ -49,7 +93,7 @@ export const customerApi = createApi({
       })
     }),
 
-    createCustomer: build.mutation({
+    createCustomer: build.mutation<ICustomer, ICreateCustomerParams>({
       query: (body) => ({
         url: 'customer/create',
         method: 'POST',
@@ -60,6 +104,8 @@ export const customerApi = createApi({
 });
 
 export const {
+  useGetCustomerQuery,
+  useLazyGetCustomerQuery,
   useGetAllCustomersQuery,
   useGetCustomerByIdQuery,
   useUpdateCustomerMutation,

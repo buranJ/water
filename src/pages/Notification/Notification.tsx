@@ -16,7 +16,7 @@ export const Notification: FC<IProps> = ({ title }) => {
   };
 
   return (
-    <DashboardLayout title={title} notificationData={data}>
+    <DashboardLayout title={title}>
       <div className='notification'>
         <FilterBar
           onFilterChange={(value) => console.log(value)}

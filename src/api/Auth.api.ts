@@ -1,6 +1,18 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { getBaseQuery } from 'common/helpers';
 
+interface IUserInfo {
+  id: number;
+  first_name: string;
+  last_name: string;
+  phone: string;
+  email: string;
+  auth_provider: string;
+  avatar: string;
+  is_confirm: boolean;
+  allowed_categories: number[];
+}
+
 export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: getBaseQuery(),
@@ -12,7 +24,7 @@ export const authApi = createApi({
         body: data
       })
     }),
-    getUserInfo: build.query({
+    getUserInfo: build.query<IUserInfo, void>({
       query: () => ({
         url: '/authentication/users/me',
         method: 'GET'
@@ -53,5 +65,6 @@ export const {
   useLogoutMutation,
   useResetPasswordMutation,
   useGetUserInfoQuery,
-  useGetPermissionsQuery
+  useGetPermissionsQuery,
+  useLazyGetUserInfoQuery
 } = authApi;

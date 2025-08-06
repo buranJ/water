@@ -4,10 +4,12 @@ import { Table } from 'antd';
 import { Pagination } from 'common/ui';
 import { TUFilterBar } from '../components/TUFilterBar/TUFilterBar';
 import { DashboardLayout } from 'components';
-import { getColumns, initialData, TURecord } from './TechnicalConditionsPage.helpers';
+import { ITechnicalCondition } from 'types/entities';
+import { IGetAllTechnicalConditionParams } from 'types/requests';
+import { getColumns } from './TechnicalConditionsPage.helpers';
 import './styles.scss';
 
-import { TyItem, useGetAllTyQuery } from 'api/Ty.api';
+import { useGetAllTyQuery } from 'api/Ty.api';
 
 interface TUFilterValues {
   search?: string;
@@ -23,7 +25,7 @@ function transformTyItemsToTURecords(items: TyItem[]): TURecord[] {
       key: String(item.id),
       number: item.request_number || '',
       date: item.request_date || '',
-      customer: `Клиент #${item.customer}`,
+      customer: `Клиент #${item.customer}`, // Заказчик (в бэке customer - это id)
       address: item.address || '',
       objectName: item.object_name || '',
       waterAmount: item.water_required || '',
@@ -41,34 +43,35 @@ function transformTyItemsToTURecords(items: TyItem[]): TURecord[] {
 
 export const TechnicalConditionsPage = () => {
   const navigate = useNavigate();
-  const { data: tuData } = useGetAllTyQuery();
 
-  const [data, setData] = useState<TURecord[]>([]);
-  const [filteredData, setFilteredData] = useState<TURecord[]>([]);
+  const [filters, setFilters] = useState<IGetAllTechnicalConditionParams>({
+    page: 1,
+    page_size: 8
+  });
+
+  const { data: tuData, isLoading } = useGetAllTyQuery(filters, {
+    refetchOnMountOrArgChange: true
+  });
+
+  const [tableData, setTableData] = useState<ITechnicalCondition[]>([]);
 
   useEffect(() => {
     if (tuData) {
-      console.log('tuData:', tuData);
-      const items: TyItem[] = Array.isArray(tuData) ? tuData : [];
-      const newRecords = transformTyItemsToTURecords(items);
+      const newRecords = transformTyItemsToTURecords(tuData);
       setData(newRecords);
       setFilteredData(newRecords);
     }
   }, [tuData]);
 
-  const handleFilterChange = (filters: TUFilterValues) => {
-    let filtered = [...data];
-
-    if (filters && filters.search) {
-      const searchValue = filters.search.toLowerCase() ?? '';
-      filtered = filtered.filter((item) => item.customer.toLowerCase().includes(searchValue));
-    }
-
-    if (filters.status) {
-      filtered = filtered.filter((item) => item.status === filters.status);
-    }
-
-    setFilteredData(filtered);
+  const handleFilterChange = (values: TUFilterValues) => {
+    setFilters((prev) => ({
+      ...prev,
+      search: values.search || undefined,
+      ordering: values.alphabet || undefined,
+      stage: (values.type as IGetAllTechnicalConditionParams['stage']) || undefined,
+      status: (values.status as IGetAllTechnicalConditionParams['status']) || undefined,
+      page: 1
+    }));
   };
 
   const handleAddClick = () => {
@@ -79,20 +82,30 @@ export const TechnicalConditionsPage = () => {
     console.log('Генерация PDF');
   };
 
-  const columns = useMemo(() => {
-    return getColumns({
-      onClick: (record, action) => {
-        switch (action) {
-          case 'edit':
-            navigate(`/dashboard/technical-conditions/tu-details/${record.key}`);
-            break;
-          case 'delete':
-            console.log('Delete action clicked for record:', record);
-            break;
+  const columns = useMemo(
+    () =>
+      getColumns({
+        onClick: (record, action) => {
+          switch (action) {
+            case 'edit':
+              navigate(`/dashboard/technical-conditions/tu-details/${record.id}`);
+              break;
+            case 'delete':
+              console.log('Delete action clicked for record:', record);
+              break;
+          }
         }
-      }
-    });
-  }, [navigate]);
+      }),
+    [navigate]
+  );
+
+  const handlePageChange = (newPage: number, newPageSize?: number) => {
+    setFilters((prev) => ({
+      ...prev,
+      page: newPage,
+      page_size: newPageSize ?? prev.page_size
+    }));
+  };
 
   return (
     <DashboardLayout title='Технические условия'>
@@ -101,13 +114,14 @@ export const TechnicalConditionsPage = () => {
         <Table
           tableLayout='fixed'
           pagination={false}
+          loading={isLoading}
           columns={columns}
-          dataSource={initialData}
+          dataSource={filteredData}
           rowKey='key'
           bordered
           scroll={{ x: 'max-content' }}
         />
-        <Pagination />
+        <Pagination total={tuData?.count || 0} current={filters.page} pageSize={filters.page_size} onChange={handlePageChange} />
       </div>
     </DashboardLayout>
   );

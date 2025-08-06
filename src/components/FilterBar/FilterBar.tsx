@@ -10,6 +10,7 @@ export interface FilterValues {
   type?: string;
   status?: string;
   date?: string;
+  category?: string;
 }
 
 interface Props {
@@ -18,10 +19,25 @@ interface Props {
   showType?: boolean;
   showStatus?: boolean;
   showDate?: boolean;
+  showCategory?: boolean;
+  categoryOptions?: { value: string; label: string }[];
+  showStatusSelect?: boolean;
+  statusOptions?: { value: string; label: string }[];
   actionButtons?: React.ReactNode;
 }
 
-export const FilterBar = ({ onFilterChange, showAlphabet, showDate, showStatus, showType, actionButtons }: Props) => {
+export const FilterBar = ({
+  onFilterChange,
+  showAlphabet,
+  showDate,
+  showStatus,
+  showType,
+  showCategory,
+  categoryOptions,
+  showStatusSelect,
+  statusOptions,
+  actionButtons
+}: Props) => {
   const [form] = Form.useForm();
 
   const handleValuesChange = (_: unknown, allValues: FilterValues) => {
@@ -41,6 +57,30 @@ export const FilterBar = ({ onFilterChange, showAlphabet, showDate, showStatus, 
             <Select variant='filled' placeholder='По алфавиту' allowClear style={{ width: 140 }}>
               <Option value='asc'>А-Я</Option>
               <Option value='desc'>Я-А</Option> 
+            </Select>
+          </Form.Item>
+        )}
+
+        {showCategory && categoryOptions && (
+          <Form.Item name='category'>
+            <Select variant='filled' placeholder='Категория' allowClear style={{ width: 140 }}>
+              {categoryOptions.map((opt) => (
+                <Option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+        )}
+
+        {showStatusSelect && statusOptions && (
+          <Form.Item name='status'>
+            <Select variant='filled' placeholder='Статус' allowClear style={{ width: 140 }}>
+              {statusOptions.map((opt) => (
+                <Option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </Option>
+              ))}
             </Select>
           </Form.Item>
         )}

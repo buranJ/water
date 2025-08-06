@@ -1,0 +1,191 @@
+import { IStageEnum, IStatus6b3Enum } from 'types/common';
+
+export interface ITechnicalCondition {
+  id: number;
+  status_display: string;
+  stage_display: string;
+  request_source: string;
+  request_number: string;
+  request_date: Date;
+  object_name: string;
+  address: string;
+  eni: string;
+  status: IStatus6b3Enum;
+  sewage_amount: string;
+  water_required: string;
+  pressure_required: string;
+  fire_fighting: string;
+  is_water: boolean;
+  is_kanal: boolean;
+  stage: IStageEnum;
+  connection_target: string;
+  street_pass: string;
+  collector: string;
+  water_pipe: string;
+  sewer: string;
+  fire_input_1: string | null;
+  fire_input_2: string | null;
+  notes: string | null;
+  payment_paper: string;
+  payment_connection: string;
+  payment_status: string;
+  payment_amount: string;
+  payment_date: string;
+  payment_invoice_number: string;
+  created_at: string;
+  updated_at: string;
+  customer: {
+    id: string;
+    full_name: string;
+  };
+  entity: number;
+  author: number;
+  formula: number;
+  responsible: number | null;
+  application: number | null;
+}
+
+export interface IGetTyById {
+  id: number;
+  customer: {
+    id: string;
+    full_name: string;
+  };
+  application: {
+    id: number;
+    x: number;
+    y: number;
+  };
+  status_display: string;
+  stage_display: string;
+  request_source: string;
+  request_number: string;
+  request_date: Date;
+  object_name: string;
+  address: string;
+  eni: string;
+  type?: 'connection' | 'reconnection' | 'load_increase';
+  status?: IStatus6b3Enum;
+  sewage_amount: string;
+  water_required: string;
+  pressure_required: string;
+  fire_fighting: string;
+  is_water?: boolean;
+  is_kanal?: boolean;
+  stage?: IStageEnum;
+  connection_target: string;
+  street_pass: string;
+  collector: string;
+  water_pipe: string;
+  sewer: string;
+  fire_input_1?: string;
+  fire_input_2?: string;
+  notes?: string;
+  payment_id?: number;
+  payment_paper: string;
+  payment_connection: string;
+  payment_amount: string;
+  payment_deadline: Date;
+  payment_date?: Date;
+  payment_invoice_number: string;
+  created_at: string;
+  updated_at: string;
+  entity: number;
+  author: number;
+  formula: number;
+  responsible?: number;
+}
+
+export interface ITyItem {
+  id: number;
+  status_display: string;
+  stage_display: string;
+  request_source: string;
+  request_number: string;
+  request_date: Date;
+  inn: string;
+  object_name: string;
+  address: string;
+  eni: string;
+  status: string;
+  sewage_amount: string;
+  water_required: string;
+  pressure_required: string;
+  fire_fighting: string;
+  is_water: boolean;
+  is_kanal: boolean;
+  stage: string;
+  connection_target: string;
+  street_pass: string;
+  collector: string;
+  water_pipe: string;
+  sewer: string;
+  fire_input_1: string;
+  fire_input_2: string;
+  notes: string;
+  payment_paper: string;
+  payment_connection: string;
+  payment_status: string;
+  payment_amount: string;
+  payment_date: string;
+  payment_invoice_number: string;
+  created_at: string;
+  updated_at: string;
+  customer: number | string;
+  entity: number;
+  author: number;
+  formula: number;
+  responsible: number;
+  application: number;
+  payment_deadline: Date;
+}
+
+export interface ITyBody {
+  request_source: string;
+  request_number: string;
+  request_date: Date;
+  object_name: string;
+  address: string;
+  eni: string;
+  status: string;
+  sewage_amount: string;
+  water_required: string;
+  pressure_required: string;
+  fire_fighting: string;
+  is_water: boolean;
+  is_kanal: boolean;
+  stage: string;
+  connection_target: string;
+  street_pass: string;
+  collector: string;
+  water_pipe: string;
+  sewer: string;
+  fire_input_1: string;
+  fire_input_2: string;
+  notes: string;
+  payment_paper: string;
+  payment_connection: string;
+  payment_status: string;
+  payment_amount: string;
+  payment_date: string;
+  payment_invoice_number: string;
+  customer: number;
+  entity: number;
+  formula: number;
+  application: number;
+  payment_deadline: Date;
+}
+
+export interface ITyListQueryParams {
+  customer?: number;
+  entity?: number;
+  formula?: number;
+  is_kanal?: boolean;
+  is_water?: boolean;
+  ordering?: string;
+  page?: number;
+  page_size?: number;
+  search?: string;
+  stage?: 'approved' | 'done' | 'draft' | 'review';
+  status?: 'active' | 'archived' | 'inactive';
+}

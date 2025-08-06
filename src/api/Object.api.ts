@@ -1,52 +1,37 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { getBaseQuery } from 'common/helpers';
+import { IGetObjectParams, ObjectBody, ObjectHistoryResponse, ObjectItem, ObjectListResponse } from 'types/entities/objects';
 
-interface ObjectItem {
-  id: number;
-  title: string;
-  address_street: string;
-  address_number: string;
-  kadastr_number: string;
-  status: string;
-  created_at: string;
-  updated_at: string;
-  customer: number;
+export interface IGetObjectsParams {
+  customer?: number;
+  ordering?: string;
+  page?: number;
+  page_size?: number;
+  search?: string;
+  status?: string;
+  type?: string;
 }
-
-type ObjectListResponse = ObjectItem[];
-
-interface ObjectBody {
-  title: string;
-  address_street: string;
-  address_number: string;
-  kadastr_number: string;
-  status: string;
-  customer: number;
-}
-
-interface ObjectHistoryItem {
-  history_user: string;
-  history_date: string;
-  history_type: string;
-}
-type ObjectHistoryResponse = ObjectHistoryItem[];
 
 export const objectApi = createApi({
   reducerPath: 'objectApi',
   baseQuery: getBaseQuery(),
+  tagTypes: ['Object'],
   endpoints: (build) => ({
-    getAllObjects: build.query<ObjectListResponse, void>({
-      query: () => ({
+    getAllObjects: build.query<{ results: ObjectListResponse }, IGetObjectParams>({
+      query: (params) => ({
         url: 'object/',
-        method: 'GET'
-      })
+        method: 'GET',
+        params
+      }),
+      providesTags: ['Object']
     }),
 
     getObjectById: build.query<ObjectItem, number>({
       query: (id) => ({
         url: `object/${id}`,
         method: 'GET'
-      })
+      }),
+      providesTags: (_, __, id) => [{ type: 'Object', id }]
     }),
 
     updateObject: build.mutation<ObjectItem, { id: number; body: ObjectBody }>({
@@ -54,24 +39,26 @@ export const objectApi = createApi({
         url: `object/${id}`,
         method: 'PUT',
         body
-      })
+      }),
+      invalidatesTags: (_, __, { id }) => [{ type: 'Object', id }, 'Object']
     }),
 
     // PATCH object/{id} — частичное обновление
-    // (если структура полей совпадает, используем тот же ObjectBody)
     patchObject: build.mutation<ObjectItem, { id: number; body: Partial<ObjectBody> }>({
       query: ({ id, body }) => ({
         url: `object/${id}`,
         method: 'PATCH',
         body
-      })
+      }),
+      invalidatesTags: (_, __, { id }) => [{ type: 'Object', id }, 'Object']
     }),
 
     deleteObject: build.mutation<void, number>({
       query: (id) => ({
         url: `object/${id}`,
         method: 'DELETE'
-      })
+      }),
+      invalidatesTags: ['Object']
     }),
 
     getObjectHistory: build.query<ObjectHistoryResponse, number>({
@@ -80,23 +67,37 @@ export const objectApi = createApi({
         method: 'GET'
       })
     }),
+
     // POST object/create
     createObject: build.mutation<ObjectItem, ObjectBody>({
       query: (body) => ({
         url: 'object/create',
         method: 'POST',
         body
-      })
+      }),
+      invalidatesTags: ['Object']
+    }),
+
+    // Удобный метод для обновления только title
+    updateObjectTitle: build.mutation<ObjectItem, { id: number; title: string }>({
+      query: ({ id, title }) => ({
+        url: `object/${id}`,
+        method: 'PATCH',
+        body: { title }
+      }),
+      invalidatesTags: (_, __, { id }) => [{ type: 'Object', id }, 'Object']
     })
   })
 });
 
 export const {
   useGetAllObjectsQuery,
+  useLazyGetAllObjectsQuery,
   useGetObjectByIdQuery,
   useUpdateObjectMutation,
   usePatchObjectMutation,
   useDeleteObjectMutation,
   useGetObjectHistoryQuery,
-  useCreateObjectMutation
+  useCreateObjectMutation,
+  useUpdateObjectTitleMutation
 } = objectApi;

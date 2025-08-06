@@ -1,97 +1,33 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { getBaseQuery } from 'common/helpers';
-
-export interface TyItem {
-  id: number;
-  status_display: string;
-  stage_display: string;
-  request_source: string;
-  request_number: string;
-  request_date: string;
-  object_name: string;
-  address: string;
-  eni: string;
-  status: string;
-  sewage_amount: string;
-  water_required: string;
-  pressure_required: string;
-  fire_fighting: string;
-  is_water: boolean;
-  is_kanal: boolean;
-  stage: string;
-  connection_target: string;
-  street_pass: string;
-  collector: string;
-  water_pipe: string;
-  sewer: string;
-  fire_input_1: string;
-  fire_input_2: string;
-  notes: string;
-  payment_paper: string;
-  payment_connection: string;
-  payment_status: string;
-  payment_amount: string;
-  payment_deadline: string;
-  payment_invoice_number: string;
-  created_at: string;
-  updated_at: string;
-  customer: number;
-  entity: number;
-  author: number;
-  formula: number;
-  responsible: number;
-  application: number;
-}
-
-export interface TyBody {
-  request_source: string;
-  request_number: string;
-  request_date: string;
-  object_name: string;
-  address: string;
-  eni: string;
-  status: string;
-  sewage_amount: string;
-  water_required: string;
-  pressure_required: string;
-  fire_fighting: string;
-  is_water: boolean;
-  is_kanal: boolean;
-  stage: string;
-  connection_target: string;
-  street_pass: string;
-  collector: string;
-  water_pipe: string;
-  sewer: string;
-  fire_input_1: string;
-  fire_input_2: string;
-  notes: string;
-  payment_paper: string;
-  payment_connection: string;
-  payment_status: string;
-  payment_amount: string;
-  payment_deadline: string;
-  payment_invoice_number: string;
-  customer: number;
-  entity: number;
-  author: number;
-  formula: number;
-  responsible: number;
-  application: number;
-}
+import {
+  ICreateTechnicalConditionParams,
+  ICreateTechnicalConditionRequest,
+  IDeleteTechnicalConditionParams,
+  IDeleteTechnicalConditionResponse,
+  IGetAllTechnicalConditionParams,
+  IGetAllTechnicalConditionResponse,
+  IGetTechnicalConditionByIdParams,
+  IGetTechnicalConditionByIdResponse,
+  IPatchTechnicalConditionParams,
+  IPatchTechnicalConditionResponse,
+  IUpdateTechnicalConditionParams,
+  IUpdateTechnicalConditionResponse
+} from 'types/requests';
 
 export const tyApi = createApi({
   reducerPath: 'tyApi',
   baseQuery: getBaseQuery(),
   endpoints: (build) => ({
-    getAllTy: build.query<TyItem[], void>({
-      query: () => ({
+    getAllTy: build.query<IGetAllTechnicalConditionResponse, IGetAllTechnicalConditionParams>({
+      query: (params) => ({
         url: '/ty/',
-        method: 'GET'
+        method: 'GET',
+        params
       })
     }),
 
-    createTy: build.mutation<TyItem, TyBody>({
+    createTy: build.mutation<ICreateTechnicalConditionRequest, ICreateTechnicalConditionParams>({
       query: (body) => ({
         url: '/ty/',
         method: 'POST',
@@ -99,14 +35,14 @@ export const tyApi = createApi({
       })
     }),
 
-    getTyById: build.query<TyItem, number>({
-      query: (id) => ({
-        url: `/ty/${id}/`,
+    getTyById: build.query<IGetTechnicalConditionByIdResponse, IGetTechnicalConditionByIdParams>({
+      query: ({ applicationId }) => ({
+        url: `/ty/${applicationId}/`,
         method: 'GET'
       })
     }),
 
-    updateTy: build.mutation<TyItem, { id: number; body: TyBody }>({
+    updateTy: build.mutation<IUpdateTechnicalConditionResponse, IUpdateTechnicalConditionParams>({
       query: ({ id, body }) => ({
         url: `/ty/${id}/`,
         method: 'PUT',
@@ -114,7 +50,7 @@ export const tyApi = createApi({
       })
     }),
 
-    patchTy: build.mutation<TyItem, { id: number; body: Partial<TyBody> }>({
+    patchTy: build.mutation<IPatchTechnicalConditionResponse, IPatchTechnicalConditionParams>({
       query: ({ id, body }) => ({
         url: `/ty/${id}/`,
         method: 'PATCH',
@@ -122,7 +58,7 @@ export const tyApi = createApi({
       })
     }),
 
-    deleteTy: build.mutation<void, number>({
+    deleteTy: build.mutation<IDeleteTechnicalConditionResponse, IDeleteTechnicalConditionParams>({
       query: (id) => ({
         url: `/ty/${id}/`,
         method: 'DELETE'
