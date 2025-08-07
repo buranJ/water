@@ -20,7 +20,12 @@ import {
 import { CheckCircleOutlined, ClockCircleOutlined, DownloadOutlined, EditOutlined, UploadOutlined } from '@ant-design/icons';
 import { EditProtocolModal } from 'components/EditProtocolModal/EditProtocolModal';
 
-import { useGenerateInvoiceMutation, useGetAccountingProtocolQuery, useGetInvoiceByProtocolQuery } from 'api/Accounting.api';
+import {
+  useGenerateInvoiceMutation,
+  useGetAccountingProtocolQuery,
+  useGetInvoiceByProtocolQuery,
+  useLazyDownloadProtocolQuery
+} from 'api/Accounting.api';
 
 const { Title, Text } = Typography;
 
@@ -56,6 +61,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId }) => {
   } = useGetInvoiceByProtocolQuery({ protocolId: protocolData?.id.toString() || '' }, { skip: !protocolData?.id });
 
   const [generateInvoice, { isLoading: isGenerating }] = useGenerateInvoiceMutation();
+  const [downloadProtocol, { isLoading: isDownloading }] = useLazyDownloadProtocolQuery();
 
   const handleUpload = () => {
     setUploadStatus('uploaded');
@@ -89,6 +95,28 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId }) => {
       window.open(invoiceData.pdf_file, '_blank');
     } else {
       message.info('Файл счета недоступен для скачивания');
+    }
+  };
+
+  const handleDownloadProtocol = async () => {
+    try {
+      const result = await downloadProtocol({ technicalConditionId }).unwrap();
+
+      // Создаем ссылку для скачивания
+      const url = window.URL.createObjectURL(result);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `protocol-${technicalConditionId}.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+
+      // Очищаем ресурсы
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
+
+      message.success('Протокол успешно скачан');
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -168,7 +196,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId }) => {
               <Button icon={<EditOutlined />} type='primary' onClick={handleEditClick}>
                 Изменить
               </Button>
-              <Button icon={<DownloadOutlined />} type='default'>
+              <Button icon={<DownloadOutlined />} type='default' onClick={handleDownloadProtocol} loading={isDownloading}>
                 Скачать протокол
               </Button>
             </Space>

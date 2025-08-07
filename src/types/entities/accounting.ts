@@ -1,3 +1,4 @@
+// src/types/entities/accounting.ts
 export interface IAccountingProtocol {
   id: number;
   load: string;
@@ -55,3 +56,7 @@ export interface IUpdateProtocolParams {
 }
 
 export type IUpdateProtocolResponse = IAccountingProtocol;
+
+export interface IDownloadProtocolParams {
+  technicalConditionId: string;
+}

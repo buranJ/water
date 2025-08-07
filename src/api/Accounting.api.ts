@@ -2,6 +2,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { getBaseQuery } from 'common/helpers';
 import {
+  IDownloadProtocolParams,
   IGenerateInvoiceParams,
   IGenerateInvoiceResponse,
   IGetAccountingProtocolParams,
@@ -49,9 +50,22 @@ export const accountingApi = createApi({
         body
       }),
       invalidatesTags: ['Protocol', 'Invoice']
+    }),
+
+    downloadProtocol: build.query<Blob, IDownloadProtocolParams>({
+      query: ({ technicalConditionId }) => ({
+        url: `/ty/${technicalConditionId}/protocol-excel/`,
+        method: 'GET',
+        responseHandler: (response) => response.blob()
+      })
     })
   })
 });
 
-export const { useGetAccountingProtocolQuery, useGetInvoiceByProtocolQuery, useGenerateInvoiceMutation, useUpdateProtocolMutation } =
-  accountingApi;
+export const {
+  useGetAccountingProtocolQuery,
+  useGetInvoiceByProtocolQuery,
+  useGenerateInvoiceMutation,
+  useUpdateProtocolMutation,
+  useLazyDownloadProtocolQuery
+} = accountingApi;
