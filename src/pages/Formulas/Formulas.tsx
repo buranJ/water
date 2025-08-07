@@ -1,14 +1,14 @@
-// src/pages/Formulas/Formulas.tsx
-
 import React, { FC, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Button, Col, Empty, Input, message, Row, Space, Spin, Typography } from 'antd';
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { FormulaCard } from 'components/FormulaCard/FormulaCard';
-import { IGetFormulasParams } from 'types/entities/';
+import { FormulaEditData, FormulaEditForm } from 'components/FormulaEditForm/FormulaEditForm';
+import { FormulaForm, FormulaFormData } from 'components/FormulaForm/FormulaForm';
+import { FormulaItem, IGetFormulasParams } from 'types/entities';
 
-import { useGetAllFormulasQuery, useUpdateFormulaTitleMutation } from 'api/Formula.api';
+import { useCreateFormulaMutation, useDeleteFormulaMutation, useGetAllFormulasQuery, usePatchFormulaMutation } from 'api/Formula.api';
 
 const { Title } = Typography;
 
@@ -24,17 +24,23 @@ interface ApiError {
 export const Formulas: FC<FormulasProps> = ({ title }) => {
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState('');
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [editingFormula, setEditingFormula] = useState<FormulaItem | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [updatingId, setUpdatingId] = useState<number | null>(null);
 
-  // Подготавливаем параметры для API
   const queryParams: IGetFormulasParams = {
     page: 1,
     page_size: 50,
     search: searchValue || undefined,
-    ordering: '-created_at' // Сортировка по дате создания (новые сначала)
+    ordering: '-created_at'
   };
 
   const { data: formulasResponse, isLoading, error } = useGetAllFormulasQuery(queryParams);
-  const [updateFormulaTitle] = useUpdateFormulaTitleMutation();
+  const [createFormula, { isLoading: isCreating }] = useCreateFormulaMutation();
+  const [patchFormula] = usePatchFormulaMutation();
+  const [deleteFormula] = useDeleteFormulaMutation();
 
   const formulas = formulasResponse?.results || [];
 
@@ -43,19 +49,111 @@ export const Formulas: FC<FormulasProps> = ({ title }) => {
   };
 
   const handleAddNew = (): void => {
-    navigate('/dashboard/formulas/create');
+    setShowAddForm(true);
   };
 
-  const handleTitleChange = async (id: number, newTitle: string): Promise<void> => {
+  const handleCreateFormula = async (formData: FormulaFormData): Promise<void> => {
     try {
-      await updateFormulaTitle({
-        id,
-        title: newTitle
+      await createFormula({
+        title: formData.title,
+        koefficent: formData.koefficent
       }).unwrap();
-      message.success('Название обновлено');
+
+      message.success('Формула успешно создана');
+      setShowAddForm(false);
     } catch (error) {
-      message.error('Ошибка при обновлении названия');
-      console.error('Update title error:', error);
+      const apiError = error as ApiError;
+
+      if (apiError?.data && typeof apiError.data === 'object') {
+        const messages = Object.entries(apiError.data)
+          .map(([field, msg]) => {
+            const errorMsg = Array.isArray(msg) ? msg.join(', ') : msg;
+            return `${field}: ${errorMsg}`;
+          })
+          .join('; ');
+        message.error(`Ошибка: ${messages}`);
+      } else {
+        message.error('Ошибка при создании формулы');
+      }
+      console.error('Create formula error:', error);
+    }
+  };
+
+  const handleCancelCreate = (): void => {
+    setShowAddForm(false);
+  };
+
+  const handleEditFormula = (formula: FormulaItem): void => {
+    setEditingFormula(formula);
+    setShowEditForm(true);
+  };
+
+  const handleUpdateFormula = async (formData: FormulaEditData): Promise<void> => {
+    if (!editingFormula) return;
+
+    try {
+      setUpdatingId(editingFormula.id);
+
+      await patchFormula({
+        id: editingFormula.id,
+        body: {
+          title: formData.title,
+          koefficent: formData.koefficent
+        }
+      }).unwrap();
+
+      message.success('Формула успешно обновлена');
+      setShowEditForm(false);
+      setEditingFormula(null);
+    } catch (error) {
+      const apiError = error as ApiError;
+
+      if (apiError?.data && typeof apiError.data === 'object') {
+        const messages = Object.entries(apiError.data)
+          .map(([field, msg]) => {
+            const errorMsg = Array.isArray(msg) ? msg.join(', ') : msg;
+            return `${field}: ${errorMsg}`;
+          })
+          .join('; ');
+        message.error(`Ошибка: ${messages}`);
+      } else {
+        message.error('Ошибка при обновлении формулы');
+      }
+      console.error('Update formula error:', error);
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const handleCancelEdit = (): void => {
+    setShowEditForm(false);
+    setEditingFormula(null);
+  };
+
+  const handleDelete = async (id: number): Promise<void> => {
+    try {
+      setDeletingId(id);
+
+      await deleteFormula(id).unwrap();
+
+      message.success('Формула успешно удалена');
+    } catch (error) {
+      const apiError = error as ApiError;
+
+      if (apiError?.data && typeof apiError.data === 'object') {
+        const messages = Object.entries(apiError.data)
+          .map(([field, msg]) => {
+            const errorMsg = Array.isArray(msg) ? msg.join(', ') : msg;
+            return `${field}: ${errorMsg}`;
+          })
+          .join('; ');
+        message.error(`Ошибка: ${messages}`);
+      } else {
+        message.error('Ошибка при удалении формулы');
+      }
+      console.error('Delete formula error:', error);
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -70,8 +168,16 @@ export const Formulas: FC<FormulasProps> = ({ title }) => {
   return (
     <DashboardLayout title={title}>
       <Space direction='vertical' size={24} style={{ width: '100%' }}>
-        {/* Заголовок и фильтры */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+        {/* Заголовок и панель управления */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 16
+          }}
+        >
           <Title
             level={2}
             style={{
@@ -116,7 +222,6 @@ export const Formulas: FC<FormulasProps> = ({ title }) => {
           </Space>
         </div>
 
-        {/* Счетчик результатов */}
         {!isLoading && formulasResponse && (
           <div>
             <Typography.Text
@@ -131,7 +236,6 @@ export const Formulas: FC<FormulasProps> = ({ title }) => {
           </div>
         )}
 
-        {/* Контент */}
         {isLoading ? (
           <div style={{ textAlign: 'center', padding: '100px 0' }}>
             <Spin size='large' />
@@ -143,7 +247,13 @@ export const Formulas: FC<FormulasProps> = ({ title }) => {
           <Row gutter={[24, 24]}>
             {formulas.map((formula) => (
               <Col xs={24} sm={12} md={8} lg={6} xl={4} key={formula.id}>
-                <FormulaCard formula={formula} onTitleChange={handleTitleChange} onCardClick={handleCardClick} />
+                <FormulaCard
+                  formula={formula}
+                  onEdit={handleEditFormula}
+                  onDelete={handleDelete}
+                  onCardClick={handleCardClick}
+                  isDeleting={deletingId === formula.id}
+                />
               </Col>
             ))}
           </Row>
@@ -168,6 +278,16 @@ export const Formulas: FC<FormulasProps> = ({ title }) => {
           />
         )}
       </Space>
+
+      <FormulaForm visible={showAddForm} loading={isCreating} onSubmit={handleCreateFormula} onCancel={handleCancelCreate} />
+
+      <FormulaEditForm
+        visible={showEditForm}
+        formula={editingFormula || undefined}
+        loading={updatingId === editingFormula?.id}
+        onSubmit={handleUpdateFormula}
+        onCancel={handleCancelEdit}
+      />
     </DashboardLayout>
   );
 };

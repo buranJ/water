@@ -5,7 +5,7 @@ export interface IApplication {
   status: 'pending' | 'rejected' | 'approved' | 'contracted';
   INN: string;
   customer: number;
-  object: number | string;
+  object: string;
   address: string;
   contact: string;
   quantity: string;
