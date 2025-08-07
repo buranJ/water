@@ -1,9 +1,10 @@
-import { IStageEnum, IStatus6b3Enum } from 'types/common';
+import { IStageEnum, IStatus6b3Enum, ITyTypeEnum } from 'types/common';
 
 export interface ITechnicalCondition {
   id: number;
   status_display: string;
-  stage_display: string;
+  stage_display: IStageEnum;
+  type?: ITyTypeEnum;
   request_source: string;
   request_number: string;
   request_date: Date;
@@ -17,7 +18,7 @@ export interface ITechnicalCondition {
   fire_fighting: string;
   is_water: boolean;
   is_kanal: boolean;
-  stage: IStageEnum;
+  stage: IStageEnum /** Стадия: 'draft' | 'review' | 'approved' | 'done' */;
   connection_target: string;
   street_pass: string;
   collector: string;
@@ -32,6 +33,7 @@ export interface ITechnicalCondition {
   payment_amount: string;
   payment_date: string;
   payment_invoice_number: string;
+  payment_deadline?: string | Date;
   created_at: string;
   updated_at: string;
   customer: {
@@ -51,7 +53,7 @@ export interface IGetTyById {
     id: string;
     full_name: string;
   };
-  application: {
+  application?: {
     id: number;
     x: number;
     y: number;
@@ -60,11 +62,11 @@ export interface IGetTyById {
   stage_display: string;
   request_source: string;
   request_number: string;
-  request_date: Date;
+  request_date: string | Date;
   object_name: string;
   address: string;
   eni: string;
-  type?: 'connection' | 'reconnection' | 'load_increase';
+  type?: ITyTypeEnum;
   status?: IStatus6b3Enum;
   sewage_amount: string;
   water_required: string;
@@ -86,7 +88,7 @@ export interface IGetTyById {
   payment_connection: string;
   payment_amount: string;
   payment_deadline: Date;
-  payment_date?: Date;
+  payment_date?: string;
   payment_invoice_number: string;
   created_at: string;
   updated_at: string;
@@ -169,7 +171,7 @@ export interface ITyBody {
   payment_amount: string;
   payment_date: string;
   payment_invoice_number: string;
-  customer: number;
+  customer: string;
   entity: number;
   formula: number;
   application: number;
@@ -188,4 +190,9 @@ export interface ITyListQueryParams {
   search?: string;
   stage?: 'approved' | 'done' | 'draft' | 'review';
   status?: 'active' | 'archived' | 'inactive';
+}
+
+export interface ITypesTY {
+  id: number;
+  title: string;
 }

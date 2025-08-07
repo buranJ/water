@@ -1,5 +1,5 @@
 import { IPaginationMeta } from 'types/common';
-import { IGetTyById, ITechnicalCondition, ITyBody, ITyItem, ITyListQueryParams } from 'types/entities';
+import { IGetTyById, ITechnicalCondition, ITyBody, ITyItem, ITyListQueryParams, ITypesTY } from 'types/entities';
 
 export type IGetAllTechnicalConditionResponse = IPaginationMeta & {
   results: ITechnicalCondition[];
@@ -7,13 +7,16 @@ export type IGetAllTechnicalConditionResponse = IPaginationMeta & {
 export type IGetAllTechnicalConditionParams = ITyListQueryParams;
 
 export type ICreateTechnicalConditionRequest = ITyItem;
-export type ICreateTechnicalConditionParams = ITyBody;
+export type ICreateTechnicalConditionParams = Omit<ITyBody, 'request_date' | 'payment_deadline'> & {
+  request_date: string;
+  payment_deadline: string;
+};
 
-export type IGetTechnicalConditionByIdParams = { applicationId: string };
+export type IGetTechnicalConditionByIdParams = { tyId: string };
 export type IGetTechnicalConditionByIdResponse = IGetTyById;
 
 export interface IUpdateTechnicalConditionParams {
-  id: number;
+  id: string;
   body: ITyBody;
 }
 export type IUpdateTechnicalConditionResponse = ITyItem;
@@ -28,3 +31,6 @@ export type IDeleteTechnicalConditionParams = number;
 export type IDeleteTechnicalConditionResponse = void;
 
 export type IGetTyByIdParams = { applicationId: string };
+
+export type ITypesTYResponse = ITypesTY[];
+export type IITypesTYParams = void;

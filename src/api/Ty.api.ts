@@ -9,8 +9,10 @@ import {
   IGetAllTechnicalConditionResponse,
   IGetTechnicalConditionByIdParams,
   IGetTechnicalConditionByIdResponse,
+  IITypesTYParams,
   IPatchTechnicalConditionParams,
   IPatchTechnicalConditionResponse,
+  ITypesTYResponse,
   IUpdateTechnicalConditionParams,
   IUpdateTechnicalConditionResponse
 } from 'types/requests';
@@ -36,8 +38,8 @@ export const tyApi = createApi({
     }),
 
     getTyById: build.query<IGetTechnicalConditionByIdResponse, IGetTechnicalConditionByIdParams>({
-      query: ({ applicationId }) => ({
-        url: `/ty/${applicationId}/`,
+      query: ({ tyId }) => ({
+        url: `/ty/${tyId}/`,
         method: 'GET'
       })
     }),
@@ -63,9 +65,22 @@ export const tyApi = createApi({
         url: `/ty/${id}/`,
         method: 'DELETE'
       })
+    }),
+    getTypesTy: build.query<ITypesTYResponse, IITypesTYParams>({
+      query: () => ({
+        url: '/ty/typesTY/',
+        method: 'GET'
+      })
     })
   })
 });
 
-export const { useGetAllTyQuery, useCreateTyMutation, useGetTyByIdQuery, useUpdateTyMutation, usePatchTyMutation, useDeleteTyMutation } =
-  tyApi;
+export const {
+  useGetAllTyQuery,
+  useCreateTyMutation,
+  useGetTyByIdQuery,
+  useUpdateTyMutation,
+  usePatchTyMutation,
+  useDeleteTyMutation,
+  useGetTypesTyQuery
+} = tyApi;
