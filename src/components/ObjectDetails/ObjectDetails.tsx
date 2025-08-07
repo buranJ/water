@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react';
 import { Button, Card, Col, DatePicker, Form, Input, message, Row, Select, Space, Tag, Typography } from 'antd';
 import { CloseOutlined, EditOutlined, SaveOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import { EditableText } from 'components/EditableText/EditableText';
+import { EditableText } from 'components/EditableText';
 import { ObjectItem, ObjectUpdateBody } from 'types/entities/objects';
 
 import { useUpdateObjectMutation } from 'api/Object.api';

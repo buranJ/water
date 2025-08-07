@@ -172,12 +172,7 @@ export const Objects: FC<ObjectsProps> = ({ title }) => {
       ) : (
         <Empty description='Объекты не найдены' style={{ marginTop: '50px' }} />
       )}
-      <CustomPagination
-        current={page}
-        pageSize={pageSize}
-        total={objectsResponse?.count || 0}
-        onChange={handlePaginationChange}
-      />
+      <CustomPagination current={page} pageSize={pageSize} total={objectsResponse?.count || 0} onChange={handlePaginationChange} />
       {showAddForm && <ObjectForm onSubmit={handleCreateObject} onCancel={handleCancelCreate} loading={isCreating} />}
     </DashboardLayout>
   );

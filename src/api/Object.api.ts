@@ -2,7 +2,7 @@
 
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { getBaseQuery } from 'common/helpers';
-import { IGetObjectParams, ObjectHistoryResponse, ObjectItem, ObjectListResponse, ObjectUpdateBody } from 'types/entities/objects';
+import { IGetObjectParams, ObjectHistoryResponse, ObjectItem, ObjectUpdateBody } from 'types/entities/objects';
 
 export interface IGetObjectsParams {
   customer?: number;

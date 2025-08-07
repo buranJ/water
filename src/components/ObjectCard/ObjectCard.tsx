@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Card, Tag, Typography } from 'antd';
-import { EditableText } from 'components/EditableText/EditableText';
+import { EditableText } from 'components/EditableText';
 import { ObjectItem } from 'types/entities/objects';
 
 const { Text, Link } = Typography;
