@@ -30,7 +30,7 @@ export const authApi = createApi({
         method: 'GET'
       })
     }),
-    getPermissions: build.query({
+    getUserPermissions: build.query<IUserPermissionsResponse, void>({
       query: () => ({
         url: '/authentication/users/permissions',
         method: 'GET'
@@ -59,12 +59,24 @@ export const authApi = createApi({
   })
 });
 
+export interface IUserPermission {
+  app_label: string;
+  codename: string;
+  name: string;
+  model: string;
+}
+
+export interface IUserPermissionsResponse {
+  username: string;
+  permissions: IUserPermission[];
+}
+
 export const {
   useForgotPasswordMutation,
   useLoginMutation,
   useLogoutMutation,
   useResetPasswordMutation,
   useGetUserInfoQuery,
-  useGetPermissionsQuery,
+  useGetUserPermissionsQuery,
   useLazyGetUserInfoQuery
 } = authApi;

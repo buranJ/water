@@ -1,23 +1,37 @@
-import { FC } from 'react';
-import { Card, Col, Row, Space, Tag, Typography } from 'antd';
+import React, { FC, useState } from 'react';
+import { Button, Card, Col, DatePicker, Form, Input, message, Row, Select, Space, Tag, Typography } from 'antd';
+import { CloseOutlined, EditOutlined, SaveOutlined } from '@ant-design/icons';
+import dayjs from 'dayjs';
 import { EditableText } from 'components/EditableText/EditableText';
-import { ObjectItem } from 'types/entities/objects';
+import { ObjectItem, ObjectUpdateBody } from 'types/entities/objects';
+
+import { useUpdateObjectMutation } from 'api/object.api';
 
 const { Text, Title } = Typography;
+const { Option } = Select;
 
 interface ObjectDetailsProps {
   object: ObjectItem;
   onTitleChange?: (newTitle: string) => void;
 }
 
+interface ApiError {
+  data?: Record<string, string | string[]>;
+  message?: string;
+}
+
 export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange }) => {
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [form] = Form.useForm();
+  const [updateObject, { isLoading: isSaving }] = useUpdateObjectMutation();
+
   const formatDate = (dateString?: string): string => {
     if (!dateString) return '-';
     return new Date(dateString).toLocaleDateString('ru-RU');
   };
 
   const getFullAddress = (): string => {
-    return `г. Бишкек, ${object.address_street}${object.address_number ? `, ${object.address_number}` : ''}`;
+    return object.full_address || `г. Бишкек, ${object.address_street}${object.address_number ? `, ${object.address_number}` : ''}`;
   };
 
   const getStatusColor = (status: string): string => {
@@ -44,6 +58,92 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
     return `${object.latitude}° N, ${object.longitude}° E`;
   };
 
+  const handleEditToggle = (): void => {
+    if (isEditMode) {
+      if (object) {
+        form.setFieldsValue({
+          contract_date: object.contract_date ? dayjs(object.contract_date) : null,
+          type: object.type,
+          status: object.status,
+          address_street: object.address_street,
+          address_number: object.address_number,
+          kadastr_number: object.kadastr_number,
+          usage_type: object.usage_type,
+          tu_status: object.tu_status,
+          latitude: object.latitude,
+          longitude: object.longitude
+        });
+      }
+      setIsEditMode(false);
+    } else {
+      setIsEditMode(true);
+    }
+  };
+
+  const handleSave = async (): Promise<void> => {
+    try {
+      const values = await form.validateFields();
+
+      const updateData: ObjectUpdateBody = {
+        title: object.title,
+        contract_date: values.contract_date ? values.contract_date.format('YYYY-MM-DD') : object.contract_date || '',
+        type: values.type || object.type || '',
+        status: values.status,
+        address_street: values.address_street,
+        address_number: values.address_number || '',
+        kadastr_number: values.kadastr_number,
+        usage_type: values.usage_type || object.usage_type || '',
+        tu_status: values.tu_status || object.tu_status || '',
+        latitude: values.latitude || object.latitude || 0,
+        longitude: values.longitude || object.longitude || 0,
+        customer: object.customer,
+        creater: object.creater || 0
+      };
+
+      await updateObject({
+        id: object.id,
+        body: updateData
+      }).unwrap();
+
+      message.success('Объект успешно обновлен');
+      setIsEditMode(false);
+    } catch (error) {
+      const apiError = error as ApiError;
+
+      if (apiError?.data && typeof apiError.data === 'object') {
+        const messages = Object.entries(apiError.data)
+          .map(([field, msg]) => {
+            const errorMsg = Array.isArray(msg) ? msg.join(', ') : msg;
+            return `${field}: ${errorMsg}`;
+          })
+          .join('; ');
+        message.error(`Ошибка: ${messages}`);
+      } else if (apiError?.message) {
+        message.error(`Ошибка: ${apiError.message}`);
+      } else {
+        message.error('Ошибка при обновлении объекта');
+      }
+      console.error('Update object error:', error);
+    }
+  };
+
+  React.useEffect(() => {
+    if (object) {
+      form.setFieldsValue({
+        contract_date: object.contract_date ? dayjs(object.contract_date) : null,
+        type: object.type,
+        status: object.status,
+        address_street: object.address_street,
+        address_number: object.address_number,
+        kadastr_number: object.kadastr_number,
+        usage_type: object.usage_type,
+        tu_status: object.tu_status,
+        latitude: object.latitude,
+        longitude: object.longitude
+      });
+    }
+  }, [object, form]);
+
   return (
     <Card
       style={{
@@ -54,225 +154,425 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
       bodyStyle={{ padding: 32 }}
     >
       <Space direction='vertical' size={24} style={{ width: '100%' }}>
-        {/* Заголовок */}
-        <div>
-          <EditableText
-            initialValue={object.title}
-            onChange={onTitleChange}
-            renderDisplay={(value) => (
-              <Title
-                level={3}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div style={{ flex: 1 }}>
+            <EditableText
+              initialValue={object.title}
+              onChange={onTitleChange}
+              renderDisplay={(value) => (
+                <Title
+                  level={3}
+                  style={{
+                    margin: 0,
+                    color: '#1d1d1f',
+                    fontWeight: 600
+                  }}
+                >
+                  {value}
+                </Title>
+              )}
+            />
+          </div>
+
+          <div>
+            {isEditMode ? (
+              <Space>
+                <Button
+                  icon={<CloseOutlined />}
+                  onClick={handleEditToggle}
+                  style={{
+                    borderRadius: 12,
+                    backgroundColor: '#f5f5f7',
+                    border: 'none',
+                    color: '#8e8e93'
+                  }}
+                >
+                  Отмена
+                </Button>
+                <Button
+                  type='primary'
+                  icon={<SaveOutlined />}
+                  onClick={handleSave}
+                  loading={isSaving}
+                  style={{
+                    borderRadius: 12,
+                    backgroundColor: '#007aff',
+                    borderColor: '#007aff'
+                  }}
+                >
+                  Сохранить
+                </Button>
+              </Space>
+            ) : (
+              <Button
+                type='primary'
+                icon={<EditOutlined />}
+                onClick={handleEditToggle}
                 style={{
-                  margin: 0,
-                  color: '#1d1d1f',
-                  fontWeight: 600
+                  borderRadius: 12,
+                  backgroundColor: '#007aff',
+                  borderColor: '#007aff'
                 }}
               >
-                {value}
-              </Title>
+                Редактировать
+              </Button>
             )}
-          />
+          </div>
         </div>
 
-        {/* Основная информация */}
-        <Row gutter={[32, 24]}>
-          <Col xs={24} md={12}>
-            <Space direction='vertical' size={16} style={{ width: '100%' }}>
-              <div>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: '#8e8e93',
-                    fontWeight: 500
-                  }}
-                >
-                  Дата договор
-                </Text>
-                <div style={{ marginTop: 4 }}>
+        <Form form={form} layout='vertical' disabled={!isEditMode}>
+          <Row gutter={[32, 24]}>
+            <Col xs={24} md={12}>
+              <Space direction='vertical' size={16} style={{ width: '100%' }}>
+                <div>
                   <Text
                     style={{
-                      fontSize: 16,
-                      color: '#1d1d1f',
-                      fontWeight: 600
-                    }}
-                  >
-                    {formatDate(object.contract_date)}
-                  </Text>
-                </div>
-              </div>
-
-              <div>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: '#8e8e93',
-                    fontWeight: 500
-                  }}
-                >
-                  Тип
-                </Text>
-                <div style={{ marginTop: 4 }}>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      color: '#1d1d1f',
-                      fontWeight: 600
-                    }}
-                  >
-                    {object.type || 'Новостройка'}
-                  </Text>
-                </div>
-              </div>
-
-              <div>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: '#8e8e93',
-                    fontWeight: 500
-                  }}
-                >
-                  Статус:
-                </Text>
-                <div style={{ marginTop: 8 }}>
-                  <Tag
-                    color={getStatusColor(object.status)}
-                    style={{
-                      borderRadius: 12,
-                      border: 'none',
                       fontSize: 14,
-                      padding: '4px 12px',
-                      fontWeight: 500
+                      color: '#8e8e93',
+                      fontWeight: 500,
+                      marginBottom: 8,
+                      display: 'block'
                     }}
                   >
-                    {object.status || 'Активен'}
-                  </Tag>
+                    Дата договора
+                  </Text>
+                  {isEditMode ? (
+                    <Form.Item name='contract_date' style={{ marginBottom: 0 }}>
+                      <DatePicker
+                        style={{
+                          width: '100%',
+                          borderRadius: 12,
+                          backgroundColor: '#f5f5f7',
+                          border: 'none'
+                        }}
+                        placeholder='Выберите дату'
+                      />
+                    </Form.Item>
+                  ) : (
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        color: '#1d1d1f',
+                        fontWeight: 600
+                      }}
+                    >
+                      {formatDate(object.contract_date)}
+                    </Text>
+                  )}
                 </div>
-              </div>
 
-              <div>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: '#8e8e93',
-                    fontWeight: 500
-                  }}
-                >
-                  Адрес
-                </Text>
-                <div style={{ marginTop: 4 }}>
+                <div>
                   <Text
                     style={{
-                      fontSize: 16,
-                      color: '#1d1d1f',
-                      fontWeight: 600
+                      fontSize: 14,
+                      color: '#8e8e93',
+                      fontWeight: 500,
+                      marginBottom: 8,
+                      display: 'block'
                     }}
                   >
-                    {getFullAddress()}
+                    Тип
                   </Text>
+                  {isEditMode ? (
+                    <Form.Item name='type' style={{ marginBottom: 0 }}>
+                      <Input
+                        style={{
+                          borderRadius: 12,
+                          backgroundColor: '#f5f5f7',
+                          border: 'none',
+                          padding: '12px 16px'
+                        }}
+                        placeholder='Тип объекта'
+                      />
+                    </Form.Item>
+                  ) : (
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        color: '#1d1d1f',
+                        fontWeight: 600
+                      }}
+                    >
+                      {object.type || 'Новостройка'}
+                    </Text>
+                  )}
                 </div>
-              </div>
-            </Space>
-          </Col>
 
-          <Col xs={24} md={12}>
-            <Space direction='vertical' size={16} style={{ width: '100%' }}>
-              <div>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: '#8e8e93',
-                    fontWeight: 500
-                  }}
-                >
-                  Кадастровый номер
-                </Text>
-                <div style={{ marginTop: 4 }}>
+                <div>
                   <Text
                     style={{
-                      fontSize: 16,
-                      color: '#1d1d1f',
-                      fontWeight: 600,
-                      fontFamily: 'monospace'
+                      fontSize: 14,
+                      color: '#8e8e93',
+                      fontWeight: 500,
+                      marginBottom: 8,
+                      display: 'block'
                     }}
                   >
-                    {object.kadastr_number || '-'}
+                    Статус
                   </Text>
+                  {isEditMode ? (
+                    <Form.Item name='status' rules={[{ required: true, message: 'Выберите статус' }]} style={{ marginBottom: 0 }}>
+                      <Select
+                        style={{
+                          borderRadius: 12
+                        }}
+                        placeholder='Выберите статус'
+                      >
+                        <Option value='active'>Активен</Option>
+                        <Option value='inactive'>Неактивен</Option>
+                        <Option value='pending'>В ожидании</Option>
+                        <Option value='rejected'>Отклонен</Option>
+                      </Select>
+                    </Form.Item>
+                  ) : (
+                    <div style={{ marginTop: 8 }}>
+                      <Tag
+                        color={getStatusColor(object.status)}
+                        style={{
+                          borderRadius: 12,
+                          border: 'none',
+                          fontSize: 14,
+                          padding: '4px 12px',
+                          fontWeight: 500
+                        }}
+                      >
+                        {object.status || 'Активен'}
+                      </Tag>
+                    </div>
+                  )}
                 </div>
-              </div>
 
-              <div>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: '#8e8e93',
-                    fontWeight: 500
-                  }}
-                >
-                  Вид использования
-                </Text>
-                <div style={{ marginTop: 4 }}>
+                <div>
                   <Text
                     style={{
-                      fontSize: 16,
-                      color: '#1d1d1f',
-                      fontWeight: 600
+                      fontSize: 14,
+                      color: '#8e8e93',
+                      fontWeight: 500,
+                      marginBottom: 8,
+                      display: 'block'
                     }}
                   >
-                    {object.usage_type || 'Жилой дом'}
+                    Адрес
                   </Text>
+                  {isEditMode ? (
+                    <Space.Compact style={{ width: '100%' }}>
+                      <Form.Item name='address_street' style={{ marginBottom: 0, flex: 1 }}>
+                        <Input
+                          style={{
+                            borderRadius: '12px 0 0 12px',
+                            backgroundColor: '#f5f5f7',
+                            border: 'none',
+                            padding: '12px 16px'
+                          }}
+                          placeholder='Улица'
+                        />
+                      </Form.Item>
+                      <Form.Item name='address_number' style={{ marginBottom: 0, width: '30%' }}>
+                        <Input
+                          style={{
+                            borderRadius: '0 12px 12px 0',
+                            backgroundColor: '#f5f5f7',
+                            border: 'none',
+                            padding: '12px 16px'
+                          }}
+                          placeholder='Дом'
+                        />
+                      </Form.Item>
+                    </Space.Compact>
+                  ) : (
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        color: '#1d1d1f',
+                        fontWeight: 600
+                      }}
+                    >
+                      {getFullAddress()}
+                    </Text>
+                  )}
                 </div>
-              </div>
+              </Space>
+            </Col>
 
-              <div>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: '#8e8e93',
-                    fontWeight: 500
-                  }}
-                >
-                  Статус заявок и выданных ТУ
-                </Text>
-                <div style={{ marginTop: 4 }}>
+            <Col xs={24} md={12}>
+              <Space direction='vertical' size={16} style={{ width: '100%' }}>
+                <div>
                   <Text
                     style={{
-                      fontSize: 16,
-                      color: '#1d1d1f',
-                      fontWeight: 600
+                      fontSize: 14,
+                      color: '#8e8e93',
+                      fontWeight: 500,
+                      marginBottom: 8,
+                      display: 'block'
                     }}
                   >
-                    {object.tu_status || 'ТУ выдано, подключение в процессе'}
+                    Кадастровый номер
                   </Text>
+                  {isEditMode ? (
+                    <Form.Item
+                      name='kadastr_number'
+                      rules={[{ required: true, message: 'Введите кадастровый номер' }]}
+                      style={{ marginBottom: 0 }}
+                    >
+                      <Input
+                        style={{
+                          borderRadius: 12,
+                          backgroundColor: '#f5f5f7',
+                          border: 'none',
+                          padding: '12px 16px',
+                          fontFamily: 'monospace'
+                        }}
+                        placeholder='01:001:1234567'
+                      />
+                    </Form.Item>
+                  ) : (
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        color: '#1d1d1f',
+                        fontWeight: 600,
+                        fontFamily: 'monospace'
+                      }}
+                    >
+                      {object.kadastr_number || '-'}
+                    </Text>
+                  )}
                 </div>
-              </div>
 
-              <div>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: '#8e8e93',
-                    fontWeight: 500
-                  }}
-                >
-                  Географические координаты
-                </Text>
-                <div style={{ marginTop: 4 }}>
+                <div>
                   <Text
                     style={{
-                      fontSize: 16,
-                      color: '#1d1d1f',
-                      fontWeight: 600,
-                      fontFamily: 'monospace'
+                      fontSize: 14,
+                      color: '#8e8e93',
+                      fontWeight: 500,
+                      marginBottom: 8,
+                      display: 'block'
                     }}
                   >
-                    {formatCoordinates()}
+                    Вид использования
                   </Text>
+                  {isEditMode ? (
+                    <Form.Item name='usage_type' style={{ marginBottom: 0 }}>
+                      <Input
+                        style={{
+                          borderRadius: 12,
+                          backgroundColor: '#f5f5f7',
+                          border: 'none',
+                          padding: '12px 16px'
+                        }}
+                        placeholder='Жилой дом'
+                      />
+                    </Form.Item>
+                  ) : (
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        color: '#1d1d1f',
+                        fontWeight: 600
+                      }}
+                    >
+                      {object.usage_type || 'Жилой дом'}
+                    </Text>
+                  )}
                 </div>
-              </div>
-            </Space>
-          </Col>
-        </Row>
+
+                <div>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: '#8e8e93',
+                      fontWeight: 500,
+                      marginBottom: 8,
+                      display: 'block'
+                    }}
+                  >
+                    Статус заявок и выданных ТУ
+                  </Text>
+                  {isEditMode ? (
+                    <Form.Item name='tu_status' style={{ marginBottom: 0 }}>
+                      <Input
+                        style={{
+                          borderRadius: 12,
+                          backgroundColor: '#f5f5f7',
+                          border: 'none',
+                          padding: '12px 16px'
+                        }}
+                        placeholder='ТУ выдано, подключение в процессе'
+                      />
+                    </Form.Item>
+                  ) : (
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        color: '#1d1d1f',
+                        fontWeight: 600
+                      }}
+                    >
+                      {object.tu_status || 'ТУ выдано, подключение в процессе'}
+                    </Text>
+                  )}
+                </div>
+
+                <div>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: '#8e8e93',
+                      fontWeight: 500,
+                      marginBottom: 8,
+                      display: 'block'
+                    }}
+                  >
+                    Географические координаты
+                  </Text>
+                  {isEditMode ? (
+                    <Space.Compact style={{ width: '100%' }}>
+                      <Form.Item name='latitude' style={{ marginBottom: 0, flex: 1 }}>
+                        <Input
+                          type='number'
+                          step='any'
+                          style={{
+                            borderRadius: '12px 0 0 12px',
+                            backgroundColor: '#f5f5f7',
+                            border: 'none',
+                            padding: '12px 16px',
+                            fontFamily: 'monospace'
+                          }}
+                          placeholder='Широта'
+                        />
+                      </Form.Item>
+                      <Form.Item name='longitude' style={{ marginBottom: 0, flex: 1 }}>
+                        <Input
+                          type='number'
+                          step='any'
+                          style={{
+                            borderRadius: '0 12px 12px 0',
+                            backgroundColor: '#f5f5f7',
+                            border: 'none',
+                            padding: '12px 16px',
+                            fontFamily: 'monospace'
+                          }}
+                          placeholder='Долгота'
+                        />
+                      </Form.Item>
+                    </Space.Compact>
+                  ) : (
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        color: '#1d1d1f',
+                        fontWeight: 600,
+                        fontFamily: 'monospace'
+                      }}
+                    >
+                      {formatCoordinates()}
+                    </Text>
+                  )}
+                </div>
+              </Space>
+            </Col>
+          </Row>
+        </Form>
       </Space>
     </Card>
   );
