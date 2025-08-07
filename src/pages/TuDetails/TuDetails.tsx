@@ -16,7 +16,7 @@ interface IProps {
 
 export const TuDetails: FC<IProps> = ({ title }) => {
   const { id } = useParams();
-  const { data: objectData } = useGetTyByIdQuery({ applicationId: id || '' });
+  const { data: objectData } = useGetTyByIdQuery({ tyId: id || '' });
 
   const isArchitectureDisabled = false;
   const isDocumentsDisabled = false;
