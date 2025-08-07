@@ -1,8 +1,8 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Button, Table } from 'antd';
-import CustomPagination from 'common/ui/Pagination/CustomPagination';
 import { PlusOutlined } from '@ant-design/icons';
+import CustomPagination from 'common/ui/Pagination/CustomPagination';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { FilterBar } from 'components/FilterBar';
 import { ApplicationData, getColumns, useRejectModal } from './Applications.helpers';
@@ -130,12 +130,7 @@ export const Applications: FC<IProps> = ({ title }) => {
         }
       />
       <Table pagination={false} columns={columns} dataSource={tableData} bordered scroll={{ x: 'max-content' }} loading={isLoading} />
-      <CustomPagination
-        current={page}
-        pageSize={pageSize}
-        total={data?.count || 0}
-        onChange={handlePaginationChange}
-      />
+      <CustomPagination current={page} pageSize={pageSize} total={data?.count || 0} onChange={handlePaginationChange} />
       <RejectModalComponent />
     </DashboardLayout>
   );

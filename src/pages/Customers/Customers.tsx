@@ -1,9 +1,9 @@
 import { FC, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Button } from 'antd';
-import CustomPagination from 'common/ui/Pagination/CustomPagination';
 import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
 import { Table } from 'common/ui';
+import CustomPagination from 'common/ui/Pagination/CustomPagination';
 import { DashboardLayout, FilterBar } from 'components';
 import type { FilterValues } from 'components/FilterBar/FilterBar';
 import { getColumns } from './Customers.helpers';
@@ -109,12 +109,7 @@ export const Customers: FC<IProps> = ({ title }) => {
           }
         />
         <Table pagination={false} columns={columns} dataSource={tableData} bordered scroll={{ x: 'max-content' }} loading={isLoading} />
-      <CustomPagination
-        current={page}
-        pageSize={pageSize}
-        total={data?.count || 0}
-        onChange={handlePaginationChange}
-      />
+        <CustomPagination current={page} pageSize={pageSize} total={data?.count || 0} onChange={handlePaginationChange} />
       </div>
     </DashboardLayout>
   );

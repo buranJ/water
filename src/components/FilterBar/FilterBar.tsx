@@ -1,6 +1,6 @@
 import { Form, Select } from 'antd';
-import './styles.scss';
 import { TUFilterBar } from 'features/technical-conditions/components/TUFilterBar/TUFilterBar';
+import './styles.scss';
 
 const { Option } = Select;
 
@@ -26,15 +26,7 @@ interface Props {
   actionButtons?: React.ReactNode;
 }
 
-export const FilterBar = ({
-  onFilterChange,
-  showAlphabet,
-  showDate,
-  showStatus,
-  showType,
-  showCategory,
-  categoryOptions
-}: Props) => {
+export const FilterBar = ({ onFilterChange, showAlphabet, showDate, showStatus, showType, showCategory, categoryOptions }: Props) => {
   const [form] = Form.useForm();
 
   const handleValuesChange = (_: unknown, allValues: FilterValues) => {
@@ -47,13 +39,13 @@ export const FilterBar = ({
 
   return (
     <div className='filter-bar'>
-        <Form form={form} layout='inline' onValuesChange={handleValuesChange} style={{ flexWrap: 'wrap', rowGap: 12 }}>
-          <TUFilterBar onFilterChange={onFilterChange} onAddClick={handleAddClick} onDownloadClick={handleAddClick} />
+      <Form form={form} layout='inline' onValuesChange={handleValuesChange} style={{ flexWrap: 'wrap', rowGap: 12 }}>
+        <TUFilterBar onFilterChange={onFilterChange} onAddClick={handleAddClick} onDownloadClick={handleAddClick} />
         {showAlphabet && (
           <Form.Item name='alphabet'>
             <Select variant='filled' placeholder='По алфавиту' allowClear style={{ width: 140 }}>
               <Option value='asc'>А-Я</Option>
-              <Option value='desc'>Я-А</Option> 
+              <Option value='desc'>Я-А</Option>
             </Select>
           </Form.Item>
         )}
@@ -97,7 +89,6 @@ export const FilterBar = ({
           </Form.Item>
         )}
       </Form>
-
     </div>
   );
 };
