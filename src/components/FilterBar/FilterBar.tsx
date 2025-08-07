@@ -1,6 +1,6 @@
-import { Form, Input, Select, Space } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import { Form, Select } from 'antd';
 import './styles.scss';
+import { TUFilterBar } from 'features/technical-conditions/components/TUFilterBar/TUFilterBar';
 
 const { Option } = Select;
 
@@ -33,10 +33,7 @@ export const FilterBar = ({
   showStatus,
   showType,
   showCategory,
-  categoryOptions,
-  showStatusSelect,
-  statusOptions,
-  actionButtons
+  categoryOptions
 }: Props) => {
   const [form] = Form.useForm();
 
@@ -44,18 +41,19 @@ export const FilterBar = ({
     onFilterChange(allValues);
   };
 
+  function handleAddClick(): void {
+    throw new Error('Function not implemented.');
+  }
+
   return (
     <div className='filter-bar'>
-      <Form form={form} layout='inline' onValuesChange={handleValuesChange} style={{ flexWrap: 'wrap', rowGap: 12 }}>
-        <Form.Item name='search'>
-          <Input prefix={<SearchOutlined />} placeholder='Найти' allowClear />
-        </Form.Item>
-
+        <Form form={form} layout='inline' onValuesChange={handleValuesChange} style={{ flexWrap: 'wrap', rowGap: 12 }}>
+          <TUFilterBar onFilterChange={onFilterChange} onAddClick={handleAddClick} onDownloadClick={handleAddClick} />
         {showAlphabet && (
           <Form.Item name='alphabet'>
             <Select variant='filled' placeholder='По алфавиту' allowClear style={{ width: 140 }}>
               <Option value='asc'>А-Я</Option>
-              <Option value='desc'>Я-А</Option>
+              <Option value='desc'>Я-А</Option> 
             </Select>
           </Form.Item>
         )}
@@ -64,18 +62,6 @@ export const FilterBar = ({
           <Form.Item name='category'>
             <Select variant='filled' placeholder='Категория' allowClear style={{ width: 140 }}>
               {categoryOptions.map((opt) => (
-                <Option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
-        )}
-
-        {showStatusSelect && statusOptions && (
-          <Form.Item name='status'>
-            <Select variant='filled' placeholder='Статус' allowClear style={{ width: 140 }}>
-              {statusOptions.map((opt) => (
                 <Option key={opt.value} value={opt.value}>
                   {opt.label}
                 </Option>
@@ -112,7 +98,6 @@ export const FilterBar = ({
         )}
       </Form>
 
-      <Space>{actionButtons}</Space>
     </div>
   );
 };

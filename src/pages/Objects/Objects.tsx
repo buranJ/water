@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Col, Empty, message, Row, Spin } from 'antd';
+import CustomPagination from 'common/ui/Pagination/CustomPagination';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { ObjectCard } from 'components/ObjectCard/ObjectCard';
 import { ObjectForm, ObjectFormData } from 'components/ObjectForm/ObjectForm';
@@ -26,11 +27,13 @@ export const Objects: FC<ObjectsProps> = ({ title }) => {
     date: null
   });
   const [showAddForm, setShowAddForm] = useState(false);
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(12);
 
   // Подготавливаем параметры для API с обязательными page и page_size
   const queryParams: IGetObjectParams = {
-    page: 1,
-    page_size: 50,
+    page,
+    page_size: pageSize,
     search: filters.search || undefined,
     status: (filters.status as 'active' | 'inactive') || undefined,
     ordering: '-created_at' // Сортировка по дате создания (новые сначала)
@@ -146,10 +149,14 @@ export const Objects: FC<ObjectsProps> = ({ title }) => {
     message.error('Ошибка загрузки объектов');
   }
 
+  const handlePaginationChange = (newPage: number, newPageSize?: number) => {
+    setPage(newPage);
+    if (newPageSize) setPageSize(newPageSize);
+  };
+
   return (
     <DashboardLayout title={title}>
       <ObjectsFilters filters={filters} onSearchChange={handleSearchChange} onFilterChange={handleFilterChange} onAddNew={handleAddNew} />
-
       {isLoading ? (
         <div style={{ textAlign: 'center', padding: '50px 0' }}>
           <Spin size='large' />
@@ -165,8 +172,12 @@ export const Objects: FC<ObjectsProps> = ({ title }) => {
       ) : (
         <Empty description='Объекты не найдены' style={{ marginTop: '50px' }} />
       )}
-
-      {/* Модальное окно создания объекта */}
+      <CustomPagination
+        current={page}
+        pageSize={pageSize}
+        total={objectsResponse?.count || 0}
+        onChange={handlePaginationChange}
+      />
       {showAddForm && <ObjectForm onSubmit={handleCreateObject} onCancel={handleCancelCreate} loading={isCreating} />}
     </DashboardLayout>
   );

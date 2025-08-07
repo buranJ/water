@@ -1,7 +1,8 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Button, Pagination, Table } from 'antd';
-import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Table } from 'antd';
+import CustomPagination from 'common/ui/Pagination/CustomPagination';
+import { PlusOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { FilterBar } from 'components/FilterBar';
 import { ApplicationData, getColumns, useRejectModal } from './Applications.helpers';
@@ -37,7 +38,7 @@ export const Applications: FC<IProps> = ({ title }) => {
   const [debouncedSearch, setDebouncedSearch] = useState<string>('');
   const [status, setStatus] = useState<string>('');
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(10);
+  const [pageSize, setPageSize] = useState<number>(8);
 
   // Debounce для поиска
   useEffect(() => {
@@ -109,10 +110,6 @@ export const Applications: FC<IProps> = ({ title }) => {
     navigate('create');
   };
 
-  const onDownloadClick = () => {
-    console.log('Download button clicked');
-  };
-
   const handlePaginationChange = (page: number, pageSize?: number) => {
     setPage(page);
     if (pageSize) setPageSize(pageSize);
@@ -129,20 +126,15 @@ export const Applications: FC<IProps> = ({ title }) => {
             <Button type='primary' icon={<PlusOutlined />} onClick={onAddClick}>
               Добавить
             </Button>
-            <Button icon={<DownloadOutlined />} iconPosition='end' onClick={onDownloadClick}>
-              PDF
-            </Button>
           </>
         }
       />
       <Table pagination={false} columns={columns} dataSource={tableData} bordered scroll={{ x: 'max-content' }} loading={isLoading} />
-      <Pagination
+      <CustomPagination
         current={page}
         pageSize={pageSize}
         total={data?.count || 0}
         onChange={handlePaginationChange}
-        showSizeChanger
-        style={{ marginTop: 16, textAlign: 'right' }}
       />
       <RejectModalComponent />
     </DashboardLayout>

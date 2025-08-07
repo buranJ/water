@@ -19,6 +19,7 @@ interface TUFilterValues {
   date?: string;
 }
 
+
 export const TechnicalConditionsPage = () => {
   const navigate = useNavigate();
 
@@ -34,7 +35,7 @@ export const TechnicalConditionsPage = () => {
   const [tableData, setTableData] = useState<ITechnicalCondition[]>([]);
 
   useEffect(() => {
-    if (tuData?.results) {
+    if (tuData && Array.isArray(tuData.results)) {
       setTableData(tuData.results);
     }
   }, [tuData]);
@@ -93,7 +94,7 @@ export const TechnicalConditionsPage = () => {
           loading={isLoading}
           columns={columns}
           dataSource={tableData}
-          rowKey='id'
+          rowKey='key'
           bordered
           scroll={{ x: 'max-content' }}
         />

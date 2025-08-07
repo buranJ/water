@@ -1,126 +1,43 @@
-import { FC, useEffect, useState } from 'react';
-import { Button, Flex, message, Spin, Typography } from 'antd';
-import { DashboardLayout } from 'components/DashboardLayout';
-import { Filters, GeoportalFilters } from 'components/GeoportalFilters/GeoportalFilters';
-import { MapObjectCard } from 'components/MapObjectCard/MapObjectCard';
-import { YandexMap } from 'components/YandexMap/YandexMap';
+import { FC } from 'react';
+import type { MenuProps } from 'antd';
+import { Flex, message } from 'antd';
+import {  UserOutlined } from '@ant-design/icons';
+import { DashboardLayout } from 'components';
+import { FilterBar } from 'components';
+import { FilterValues } from 'components/FilterBar/FilterBar';
 
-import { MapObject, useGetAllMapObjectsQuery } from 'api/GeoPartal.api';
-import { applyFilters } from 'utils/mapHelpers';
+const items: MenuProps['items'] = [
+  {
+    label: '1st menu item',
+    key: '1',
+    icon: <UserOutlined />
+  },
+  {
+    label: '2nd menu item',
+    key: '2',
+    icon: <UserOutlined />
+  }
+];
 
-const { Text } = Typography;
+const handleMenuClick: MenuProps['onClick'] = (e) => {
+  message.info('Click on menu item.');
+  console.log('click', e);
+};
 
-interface GeoportalProps {
-  title: string;
-}
+const menuProps = {
+  items,
+  onClick: handleMenuClick
+};
 
-export const Geoportal: FC<GeoportalProps> = ({ title }) => {
-  const [filteredObjects, setFilteredObjects] = useState<MapObject[]>([]);
-  const [selectedObject, setSelectedObject] = useState<MapObject | null>(null);
-  const [filters, setFilters] = useState<Filters>({
-    search: '',
-    type: null,
-    status: null,
-    dateRange: null
-  });
-
-  const {
-    data: apiResponse,
-    isLoading,
-    error,
-    refetch
-  } = useGetAllMapObjectsQuery(undefined, {
-    skip: false,
-    refetchOnMountOrArgChange: true,
-    refetchOnFocus: false,
-    refetchOnReconnect: false
-  });
-
-  const objects = apiResponse?.results || [];
-
-  useEffect(() => {
-    if (!filteredObjects.length && objects.length > 0) {
-      setFilteredObjects(objects);
-    }
-  }, [objects, filteredObjects.length]);
-
-  useEffect(() => {
-    if (objects.length > 0) {
-      const filtered = applyFilters(objects, filters);
-      setFilteredObjects(filtered);
-    }
-  }, [objects, filters]);
-
-  useEffect(() => {
-    if (error) {
-      message.error('Ошибка загрузки данных');
-    }
-  }, [error]);
-
-  const handleFilterChange = (filterType: keyof Filters, value: string | null): void => {
-    setFilters((prev) => ({ ...prev, [filterType]: value }));
+export const Geoportal: FC<{ title: string }> = ({ title }) => {
+  const handleFilterChange = (values: FilterValues) => {
+    console.log('Filter values:', values);
   };
-
-  const handleSearchChange = (value: string): void => {
-    setFilters((prev) => ({ ...prev, search: value }));
-  };
-
-  const handleRefresh = (): void => {
-    refetch();
-    message.success('Данные обновлены');
-  };
-
-  const handleResetFilters = (): void => {
-    setFilters({ search: '', type: null, status: null, dateRange: null });
-  };
-
-  const hasActiveFilters = Boolean(filters.search || filters.type || filters.status || filters.dateRange);
-
   return (
     <DashboardLayout title={title}>
-      {isLoading && (
-        <div style={{ textAlign: 'center', marginBottom: 16 }}>
-          <Spin size='large' />
-        </div>
-      )}
-
-      {error && (
-        <div style={{ marginBottom: 16 }}>
-          <Text type='danger'>Не удалось загрузить данные с API. Пожалуйста, попробуйте позже.</Text>
-          <Button type='link' onClick={handleRefresh} style={{ marginLeft: 8 }}>
-            Попробовать снова
-          </Button>
-        </div>
-      )}
-
-      <GeoportalFilters
-        filters={filters}
-        onSearchChange={handleSearchChange}
-        onFilterChange={handleFilterChange}
-        onRefresh={handleRefresh}
-        isLoading={isLoading}
-      />
-
-      <Flex gap={16} wrap='wrap'>
-        <div style={{ flex: 1, minWidth: '600px' }}>
-          <YandexMap objects={filteredObjects} onSelect={setSelectedObject} />
-        </div>
-
-        {selectedObject && <MapObjectCard selectedObject={selectedObject} />}
+      <Flex gap={12}>
+        <FilterBar onFilterChange={handleFilterChange}/>
       </Flex>
-
-      <div style={{ marginTop: 16 }}>
-        <Text type='secondary'>
-          Найдено объектов: {filteredObjects.length} из {objects.length}
-        </Text>
-        {hasActiveFilters && (
-          <Button type='link' size='small' onClick={handleResetFilters} style={{ marginLeft: 8 }}>
-            Сбросить фильтры
-          </Button>
-        )}
-      </div>
     </DashboardLayout>
   );
 };
-
-export default Geoportal;
