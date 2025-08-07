@@ -60,3 +60,33 @@ export type IUpdateProtocolResponse = IAccountingProtocol;
 export interface IDownloadProtocolParams {
   technicalConditionId: string;
 }
+
+export interface IPayment {
+  id: number;
+  payment_number: string;
+  payment_date: string;
+  amount: string;
+  source: string;
+  status: 'pending' | 'completed' | 'failed';
+  receipt_file: string | null;
+  invoice: number;
+  created_at: string;
+}
+
+export interface IGetPaymentsByInvoiceParams {
+  invoiceId: string;
+}
+
+export type IGetPaymentsByInvoiceResponse = IPayment[];
+
+export interface ICreatePaymentParams {
+  payment_number: string;
+  payment_date: string;
+  amount: string;
+  source: string;
+  status: 'pending' | 'completed' | 'failed';
+  receipt_file?: string;
+  invoice: number;
+}
+
+export type ICreatePaymentResponse = IPayment;

@@ -2,6 +2,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { getBaseQuery } from 'common/helpers';
 import {
+  ICreatePaymentResponse,
   IDownloadProtocolParams,
   IGenerateInvoiceParams,
   IGenerateInvoiceResponse,
@@ -9,6 +10,8 @@ import {
   IGetAccountingProtocolResponse,
   IGetInvoiceByProtocolParams,
   IGetInvoiceByProtocolResponse,
+  IGetPaymentsByInvoiceParams,
+  IGetPaymentsByInvoiceResponse,
   IUpdateProtocolParams,
   IUpdateProtocolResponse
 } from 'types/entities/accounting';
@@ -16,7 +19,7 @@ import {
 export const accountingApi = createApi({
   reducerPath: 'accountingApi',
   baseQuery: getBaseQuery(),
-  tagTypes: ['Invoice', 'Protocol'],
+  tagTypes: ['Invoice', 'Protocol', 'Payment'],
   endpoints: (build) => ({
     getAccountingProtocol: build.query<IGetAccountingProtocolResponse, IGetAccountingProtocolParams>({
       query: ({ technicalConditionId }) => ({
@@ -58,6 +61,24 @@ export const accountingApi = createApi({
         method: 'GET',
         responseHandler: (response) => response.blob()
       })
+    }),
+
+    getPaymentsByInvoice: build.query<IGetPaymentsByInvoiceResponse, IGetPaymentsByInvoiceParams>({
+      query: ({ invoiceId }) => ({
+        url: `/buhgalteria/payments/by_invoice/${invoiceId}/`,
+        method: 'GET'
+      }),
+      providesTags: ['Payment']
+    }),
+
+    createPayment: build.mutation<ICreatePaymentResponse, FormData>({
+      query: (formData) => ({
+        url: `/buhgalteria/payments/`,
+        method: 'POST',
+        body: formData,
+        formData: true
+      }),
+      invalidatesTags: ['Payment']
     })
   })
 });
@@ -67,5 +88,7 @@ export const {
   useGetInvoiceByProtocolQuery,
   useGenerateInvoiceMutation,
   useUpdateProtocolMutation,
-  useLazyDownloadProtocolQuery
+  useLazyDownloadProtocolQuery,
+  useGetPaymentsByInvoiceQuery,
+  useCreatePaymentMutation
 } = accountingApi;

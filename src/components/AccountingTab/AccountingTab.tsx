@@ -1,5 +1,5 @@
 // src/components/AccountingTab/AccountingTab.tsx
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import {
   Alert,
   Badge,
@@ -19,6 +19,7 @@ import {
 } from 'antd';
 import { CheckCircleOutlined, ClockCircleOutlined, DownloadOutlined, EditOutlined, UploadOutlined } from '@ant-design/icons';
 import { EditProtocolModal } from 'components/EditProtocolModal/EditProtocolModal';
+import { PaymentsTab } from 'components/PaymentsTab/PaymentsTab';
 
 import {
   useGenerateInvoiceMutation,
@@ -86,7 +87,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId }) => {
       message.success('Счет успешно сгенерирован');
       refetchInvoice();
     } catch (error) {
-      console.log(error);
+      message.error('Ошибка при генерации счета');
     }
   };
 
@@ -116,7 +117,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId }) => {
 
       message.success('Протокол успешно скачан');
     } catch (error) {
-      console.log(error);
+      message.error('Ошибка при скачивании протокола');
     }
   };
 
@@ -217,7 +218,12 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId }) => {
     {
       key: '2',
       label: 'Платежи',
-      children: <div>Содержимое вкладки Платежи</div>
+      children:
+        invoiceData && !invoiceError ? (
+          <PaymentsTab invoiceId={invoiceData.id.toString()} totalAmount={invoiceData.total_sum} />
+        ) : (
+          <div>Для просмотра платежей необходимо сначала создать счет</div>
+        )
     }
   ];
 
