@@ -1,4 +1,3 @@
-// src/api/Accounting.api.ts
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { getBaseQuery } from 'common/helpers';
 import {

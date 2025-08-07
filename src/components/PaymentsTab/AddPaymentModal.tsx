@@ -1,4 +1,3 @@
-// src/components/PaymentsTab/AddPaymentModal.tsx
 import { FC, useEffect, useState } from 'react';
 import { Button, Col, DatePicker, Form, Input, InputNumber, message, Modal, Row, Select, Space, Upload, UploadFile } from 'antd';
 import type { UploadChangeParam } from 'antd/es/upload';
@@ -41,7 +40,6 @@ export const AddPaymentModal: FC<IProps> = ({ visible, onClose, invoiceId }) => 
 
   const handleSubmit = async (values: IFormValues) => {
     try {
-      // Создаем FormData для отправки файла
       const formData = new FormData();
       formData.append('payment_number', values.payment_number);
       formData.append('payment_date', values.payment_date.format('YYYY-MM-DD'));
@@ -71,7 +69,7 @@ export const AddPaymentModal: FC<IProps> = ({ visible, onClose, invoiceId }) => 
   };
 
   const handleFileChange = (info: UploadChangeParam<UploadFile>) => {
-    setFileList(info.fileList.slice(-1)); // Оставляем только последний файл
+    setFileList(info.fileList.slice(-1));
 
     if (info.fileList.length > 0) {
       const file = info.fileList[0]?.originFileObj;
@@ -84,7 +82,6 @@ export const AddPaymentModal: FC<IProps> = ({ visible, onClose, invoiceId }) => 
   };
 
   const beforeUpload = (file: File) => {
-    // Проверяем тип файла
     const isImage = file.type.startsWith('image/');
     const isPDF = file.type === 'application/pdf';
     const isDoc = file.type.includes('document') || file.type.includes('spreadsheet');

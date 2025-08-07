@@ -1,5 +1,4 @@
-// src/components/AccountingTab/AccountingTab.tsx
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import {
   Alert,
   Badge,
@@ -75,7 +74,6 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId }) => {
 
   const handleEditModalClose = () => {
     setIsEditModalVisible(false);
-    // Принудительно обновляем данные после закрытия модалки
     refetchProtocol();
   };
 
@@ -87,7 +85,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId }) => {
       message.success('Счет успешно сгенерирован');
       refetchInvoice();
     } catch (error) {
-      message.error('Ошибка при генерации счета');
+      console.log(error);
     }
   };
 
@@ -102,8 +100,6 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId }) => {
   const handleDownloadProtocol = async () => {
     try {
       const result = await downloadProtocol({ technicalConditionId }).unwrap();
-
-      // Создаем ссылку для скачивания
       const url = window.URL.createObjectURL(result);
       const link = document.createElement('a');
       link.href = url;
@@ -111,13 +107,12 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId }) => {
       document.body.appendChild(link);
       link.click();
 
-      // Очищаем ресурсы
       window.URL.revokeObjectURL(url);
       document.body.removeChild(link);
 
       message.success('Протокол успешно скачан');
     } catch (error) {
-      message.error('Ошибка при скачивании протокола');
+      console.log(error);
     }
   };
 

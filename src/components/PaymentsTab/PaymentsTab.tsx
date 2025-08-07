@@ -1,4 +1,3 @@
-// src/components/PaymentsTab/PaymentsTab.tsx
 import { FC, useState } from 'react';
 import { Alert, Button, Card, Flex, Space, Spin, Table, TableColumnsType, Tag, Typography } from 'antd';
 import { FileTextOutlined, PlusOutlined } from '@ant-design/icons';
@@ -42,7 +41,7 @@ export const PaymentsTab: FC<IProps> = ({ invoiceId, totalAmount }) => {
       case 'failed':
         return <Tag color='error'>Отклонен</Tag>;
       default:
-        return <Tag>{status}</Tag>;
+        return <Tag>Поступили</Tag>;
     }
   };
 

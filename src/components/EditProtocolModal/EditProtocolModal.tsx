@@ -1,4 +1,3 @@
-// src/components/EditProtocolModal/EditProtocolModal.tsx
 import { FC, useEffect } from 'react';
 import { Button, Col, Form, Input, InputNumber, message, Modal, Row, Space, Typography } from 'antd';
 import type { IAccountingProtocol } from 'types/entities/accounting';
@@ -11,7 +10,7 @@ interface IProps {
   visible: boolean;
   onClose: () => void;
   protocolData: IAccountingProtocol | null;
-  onSuccess?: () => void; // Добавляем колбек для успешного сохранения
+  onSuccess?: () => void;
 }
 
 interface IFormValues {
@@ -53,7 +52,7 @@ export const EditProtocolModal: FC<IProps> = ({ visible, onClose, protocolData, 
       }).unwrap();
 
       message.success('Протокол успешно обновлен');
-      onSuccess?.(); // Вызываем колбек для обновления данных
+      onSuccess?.();
       onClose();
     } catch (error) {
       console.log(error);

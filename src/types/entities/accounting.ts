@@ -1,4 +1,3 @@
-// src/types/entities/accounting.ts
 export interface IAccountingProtocol {
   id: number;
   load: string;
