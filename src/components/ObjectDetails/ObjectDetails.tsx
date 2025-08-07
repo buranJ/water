@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import { EditableText } from 'components/EditableText/EditableText';
 import { ObjectItem, ObjectUpdateBody } from 'types/entities/objects';
 
-import { useUpdateObjectMutation } from 'api/object.api';
+import { useUpdateObjectMutation } from 'api/Object.api';
 
 const { Text, Title } = Typography;
 const { Option } = Select;
