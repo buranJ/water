@@ -4,6 +4,7 @@ export { buhgalteriaApi } from './Buhgalteria.api';
 export { customerApi } from './Customer.api';
 export { docsApi } from './Docs.api';
 export { filefolderApi } from './FileFolder.api';
+export { formulaApi } from './Formula.api';
 export { geoportalApi } from './GeoPartal.api';
 export { objectApi } from './Object.api';
 export { refusalApi } from './Refusal.api';
