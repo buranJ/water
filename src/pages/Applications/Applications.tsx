@@ -2,12 +2,12 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Button, Table } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import CustomPagination from 'common/ui/Pagination/CustomPagination';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { FilterBar } from 'components/FilterBar';
 import { ApplicationData, getColumns, useRejectModal } from './Applications.helpers';
 
 import { useGetApplicationsQuery } from 'api/Application.api';
+import CustomPagination from 'ui/Pagination/CustomPagination';
 
 type FilterValues = {
   search?: string;
@@ -38,7 +38,7 @@ export const Applications: FC<IProps> = ({ title }) => {
   const [debouncedSearch, setDebouncedSearch] = useState<string>('');
   const [status, setStatus] = useState<string>('');
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(8);
+  const [pageSize, setPageSize] = useState<number>(10);
 
   // Debounce для поиска
   useEffect(() => {

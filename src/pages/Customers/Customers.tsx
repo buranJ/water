@@ -1,7 +1,6 @@
 import { FC, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Button } from 'antd';
-import CustomPagination from 'common/ui/Pagination/CustomPagination';
+import { Button, Pagination } from 'antd';
 import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
 import { Table } from 'common/ui';
 import { DashboardLayout, FilterBar } from 'components';
@@ -25,7 +24,7 @@ export const Customers: FC<IProps> = ({ title }) => {
   const navigate = useNavigate();
 
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(8);
+  const [pageSize, setPageSize] = useState<number>(10);
   const [category, setCategory] = useState<string>('');
 
   const { data, isLoading } = useGetAllCustomersQuery({
@@ -109,12 +108,14 @@ export const Customers: FC<IProps> = ({ title }) => {
           }
         />
         <Table pagination={false} columns={columns} dataSource={tableData} bordered scroll={{ x: 'max-content' }} loading={isLoading} />
-      <CustomPagination
-        current={page}
-        pageSize={pageSize}
-        total={data?.count || 0}
-        onChange={handlePaginationChange}
-      />
+        <Pagination
+          current={page}
+          pageSize={pageSize}
+          total={data?.count || 0}
+          onChange={handlePaginationChange}
+          showSizeChanger
+          style={{ marginTop: 16, textAlign: 'right' }}
+        />
       </div>
     </DashboardLayout>
   );

@@ -19,7 +19,7 @@ export const objectApi = createApi({
   baseQuery: getBaseQuery(),
   tagTypes: ['Object'],
   endpoints: (build) => ({
-    getAllObjects: build.query<{ results: ObjectItem[]; count: number }, IGetObjectParams>({
+    getAllObjects: build.query<{ results: ObjectListResponse }, IGetObjectParams>({
       query: (params) => ({
         url: 'object/',
         method: 'GET',
