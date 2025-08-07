@@ -25,7 +25,7 @@ export const Customers: FC<IProps> = ({ title }) => {
   const navigate = useNavigate();
 
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(10);
+  const [pageSize, setPageSize] = useState<number>(8);
   const [category, setCategory] = useState<string>('');
 
   const { data, isLoading } = useGetAllCustomersQuery({

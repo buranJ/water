@@ -38,7 +38,7 @@ export const Applications: FC<IProps> = ({ title }) => {
   const [debouncedSearch, setDebouncedSearch] = useState<string>('');
   const [status, setStatus] = useState<string>('');
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(3);
+  const [pageSize, setPageSize] = useState<number>(8);
 
   // Debounce для поиска
   useEffect(() => {
