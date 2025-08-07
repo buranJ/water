@@ -12,3 +12,10 @@ export type IStageEnum = 'draft' | 'review' | 'approved' | 'done';
  * * `approved` - Approved
  * * `done` - Completed
  */
+
+export type ITyTypeEnum = 'connection' | 'relocation' | 'load_increase';
+/** Для поля "type" в ТУ (technical condition) по OpenAPI:
+ *  * `connection` - Подключение
+ *  * `relocation` - Вынос сетей
+ *  * `load_increase` - Увеличение нагрузок
+ */

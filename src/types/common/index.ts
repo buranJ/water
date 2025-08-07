@@ -1,2 +1,2 @@
-export type { IStageEnum, IStatus6b3Enum } from './enum';
+export type { IStageEnum, IStatus6b3Enum, ITyTypeEnum } from './enum';
 export type { IPaginationMeta } from './pagination.interface';

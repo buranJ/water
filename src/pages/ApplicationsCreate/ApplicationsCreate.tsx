@@ -44,20 +44,12 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
       }).unwrap();
       const objectId = objectResponse.id;
 
-      createCustomer({
-        inn: values.INN,
-        full_name: values.customer,
-        passport: 'passport',
-        address: values.address,
-        contact: values.contact,
-        status: 'active'
-      });
       const application = await createApplication({
         ...values,
-        object: objectId,
+        object: values.address,
         customer: customerId,
         status: 'pending',
-        entity: 1
+        entity: objectId
       }).unwrap();
 
       // Загрузка файлов, если есть
