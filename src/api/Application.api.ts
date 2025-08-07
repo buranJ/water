@@ -52,6 +52,7 @@ export interface IApplicationResponse {
   entity: number;
   created_at: string;
   updated_at: string;
+  ty_id?: string;
 }
 
 export interface IApplicationsListResponse {

@@ -81,16 +81,20 @@ export const Applications: FC<IProps> = ({ title }) => {
       status: item.status as 'approved' | 'rejected' | 'pending',
       rejectReason: undefined,
       comment: undefined,
-      hasTu: item.status === 'contracted'
+      hasTu: item.status === 'contracted',
+      ty_id: item.ty_id
     }));
-  }, [data, page, pageSize]);
+  }, [data]);
 
   const columns = useMemo(() => {
     return getColumns({
       onClick: (record, action) => {
         switch (action) {
           case 'create':
-            console.log('Delete action clicked for record:', record);
+            console.log(record);
+
+            navigate(`/dashboard/add-tu-forms/${record.ty_id}`);
+            console.log('Create action clicked for record:', record);
             break;
           case 'reject':
             console.log('Customer details action clicked for record:', record);
@@ -104,7 +108,7 @@ export const Applications: FC<IProps> = ({ title }) => {
         openRejectModal(record);
       }
     });
-  }, [openRejectModal]);
+  }, [navigate, openRejectModal]);
 
   const onAddClick = () => {
     navigate('create');

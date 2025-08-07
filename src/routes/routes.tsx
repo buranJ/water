@@ -61,7 +61,7 @@ export const routerConfig: RouteObject[] = [
     element: <HistoryOfLoads title='История увеличения нагрузок' />
   },
   {
-    path: '/dashboard/add-tu-forms',
+    path: '/dashboard/add-tu-forms/:tyId',
     element: <AddTuForms title='Добавление ТУ' />
   },
   {
