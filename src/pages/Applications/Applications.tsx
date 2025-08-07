@@ -1,6 +1,7 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Button, Pagination, Table } from 'antd';
+import { Button, Table } from 'antd';
+import CustomPagination from 'common/ui/Pagination/CustomPagination';
 import { PlusOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { FilterBar } from 'components/FilterBar';
@@ -37,7 +38,7 @@ export const Applications: FC<IProps> = ({ title }) => {
   const [debouncedSearch, setDebouncedSearch] = useState<string>('');
   const [status, setStatus] = useState<string>('');
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(10);
+  const [pageSize, setPageSize] = useState<number>(3);
 
   // Debounce для поиска
   useEffect(() => {
@@ -129,12 +130,11 @@ export const Applications: FC<IProps> = ({ title }) => {
         }
       />
       <Table pagination={false} columns={columns} dataSource={tableData} bordered scroll={{ x: 'max-content' }} loading={isLoading} />
-      <Pagination
+      <CustomPagination
         current={page}
         pageSize={pageSize}
         total={data?.count || 0}
         onChange={handlePaginationChange}
-        style={{ marginTop: 16, display: 'flex', justifyContent: 'center' }}
       />
       <RejectModalComponent />
     </DashboardLayout>

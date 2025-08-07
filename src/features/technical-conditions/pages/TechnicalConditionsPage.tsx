@@ -19,27 +19,6 @@ interface TUFilterValues {
   date?: string;
 }
 
-function transformTyItemsToTURecords(items: TyItem[]): TURecord[] {
-  return items.map((item) => {
-    return {
-      key: String(item.id),
-      number: item.request_number || '',
-      date: item.request_date || '',
-      customer: `Клиент #${item.customer}`, // Заказчик (в бэке customer - это id)
-      address: item.address || '',
-      objectName: item.object_name || '',
-      waterAmount: item.water_required || '',
-      wastewaterAmount: item.sewage_amount || '',
-      contractNumber: item.payment_connection || '',
-      invoiceNumber: item.payment_invoice_number || '',
-      paymentAmount: item.payment_amount || '',
-      paid: '0',
-      paymentDate: '',
-      balance: '',
-      status: item.status === 'approved' ? 'approved' : 'rejected'
-    };
-  });
-}
 
 export const TechnicalConditionsPage = () => {
   const navigate = useNavigate();
@@ -56,10 +35,8 @@ export const TechnicalConditionsPage = () => {
   const [tableData, setTableData] = useState<ITechnicalCondition[]>([]);
 
   useEffect(() => {
-    if (tuData) {
-      const newRecords = transformTyItemsToTURecords(tuData);
-      setData(newRecords);
-      setFilteredData(newRecords);
+    if (tuData && Array.isArray(tuData.results)) {
+      setTableData(tuData.results);
     }
   }, [tuData]);
 
@@ -116,7 +93,7 @@ export const TechnicalConditionsPage = () => {
           pagination={false}
           loading={isLoading}
           columns={columns}
-          dataSource={filteredData}
+          dataSource={tableData}
           rowKey='key'
           bordered
           scroll={{ x: 'max-content' }}
