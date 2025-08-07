@@ -1,6 +1,8 @@
+// src/api/object.api.ts - обновленный API
+
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { getBaseQuery } from 'common/helpers';
-import { IGetObjectParams, ObjectBody, ObjectHistoryResponse, ObjectItem, ObjectListResponse } from 'types/entities/objects';
+import { IGetObjectParams, ObjectHistoryResponse, ObjectItem, ObjectListResponse, ObjectUpdateBody } from 'types/entities/objects';
 
 export interface IGetObjectsParams {
   customer?: number;
@@ -34,7 +36,7 @@ export const objectApi = createApi({
       providesTags: (_, __, id) => [{ type: 'Object', id }]
     }),
 
-    updateObject: build.mutation<ObjectItem, { id: number; body: ObjectBody }>({
+    updateObject: build.mutation<ObjectItem, { id: number; body: ObjectUpdateBody }>({
       query: ({ id, body }) => ({
         url: `object/${id}`,
         method: 'PUT',
@@ -44,7 +46,7 @@ export const objectApi = createApi({
     }),
 
     // PATCH object/{id} — частичное обновление
-    patchObject: build.mutation<ObjectItem, { id: number; body: Partial<ObjectBody> }>({
+    patchObject: build.mutation<ObjectItem, { id: number; body: Partial<ObjectUpdateBody> }>({
       query: ({ id, body }) => ({
         url: `object/${id}`,
         method: 'PATCH',
@@ -69,7 +71,7 @@ export const objectApi = createApi({
     }),
 
     // POST object/create
-    createObject: build.mutation<ObjectItem, ObjectBody>({
+    createObject: build.mutation<ObjectItem, Partial<ObjectUpdateBody>>({
       query: (body) => ({
         url: 'object/create',
         method: 'POST',

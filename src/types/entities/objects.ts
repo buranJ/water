@@ -14,15 +14,26 @@ export interface ObjectItem {
   tu_status?: string;
   latitude?: number;
   longitude?: number;
+  customer_name?: string;
+  full_address?: string;
+  creater?: number;
 }
 
-export interface ObjectFilters {
-  search: string;
-  status: string | null;
-  date: string | null;
+export interface ObjectUpdateBody {
+  title: string;
+  contract_date: string;
+  type: string;
+  status: string;
+  address_street: string;
+  address_number: string;
+  kadastr_number: string;
+  usage_type: string;
+  tu_status: string;
+  latitude: number;
+  longitude: number;
+  customer: number;
+  creater: number;
 }
-
-export type ObjectListResponse = ObjectItem[];
 
 export interface ObjectBody {
   title: string;
@@ -38,6 +49,14 @@ export interface ObjectBody {
   latitude?: number;
   longitude?: number;
 }
+
+export interface ObjectFilters {
+  search: string;
+  status: string | null;
+  date: string | null;
+}
+
+export type ObjectListResponse = ObjectItem[];
 
 export interface ObjectHistoryItem {
   history_user: string;
