@@ -8,6 +8,7 @@ import {
   customerApi,
   docsApi,
   filefolderApi,
+  formulaApi,
   geoportalApi,
   objectApi,
   refusalApi,
@@ -26,7 +27,8 @@ const store = configureStore({
     [objectApi.reducerPath]: objectApi.reducer,
     [refusalApi.reducerPath]: refusalApi.reducer,
     [tyApi.reducerPath]: tyApi.reducer,
-    [applicationsApi.reducerPath]: applicationsApi.reducer
+    [applicationsApi.reducerPath]: applicationsApi.reducer,
+    [formulaApi.reducerPath]: formulaApi.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -39,7 +41,8 @@ const store = configureStore({
       objectApi.middleware,
       refusalApi.middleware,
       tyApi.middleware,
-      applicationsApi.middleware
+      applicationsApi.middleware,
+      formulaApi.middleware
     )
 });
 
