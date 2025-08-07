@@ -12,6 +12,7 @@ import GeoportalIcon from 'assets/icons/sidebar/geoportal.svg?react';
 import TuIcon from 'assets/icons/sidebar/tu.svg?react';
 import './styles.scss';
 
+import { useGetUserPermissionsQuery } from 'api/Auth.api';
 import clsx from 'clsx';
 
 const { Header, Sider, Content } = Layout;
@@ -30,53 +31,58 @@ export const DashboardLayout = ({ children, title }: Props) => {
     token: { colorBgContainer }
   } = theme.useToken();
 
+  const { data: permissionsData } = useGetUserPermissionsQuery();
+  const userPermissions = permissionsData?.permissions || [];
+
+  const hasPermission = (codename: string) => userPermissions.some((p) => p.codename === codename);
+
   const items: MenuProps['items'] = [
-    {
+    hasPermission('view_geoportal') && {
       key: '/dashboard/geo',
       icon: <GeoportalIcon />,
       label: 'Геопортал'
     },
-    {
+    hasPermission('view_technicalcondition') && {
       key: '/dashboard/technical-conditions',
       icon: <TuIcon />,
       label: 'ТУ'
     },
-    {
+    hasPermission('view_entity') && {
       key: '/dashboard/objects',
       icon: <BuildingIcon />,
       label: 'Объекты'
     },
-    {
+    hasPermission('view_application') && {
       key: '/dashboard/applications',
       icon: <ApplicationIcon />,
       label: 'Заявки'
     },
-    {
+    hasPermission('view_customer') && {
       key: '/dashboard/customers',
       icon: <TeamOutlined />,
       label: 'Заказчики'
     },
-    {
+    hasPermission('view_payment') && {
       key: '/dashboard/bills',
       icon: <CreditCardOutlined />,
       label: 'Счета и платежи'
     },
-    {
+    hasPermission('view_architecture') && {
       key: '/dashboard/architecture',
       icon: <ArchitectureIcon />,
       label: 'Архитектура'
     },
-    {
+    hasPermission('view_export') && {
       key: '/dashboard/export',
       icon: <ExportIcon />,
       label: 'Экспорт'
     },
-    {
+    hasPermission('view_formula') && {
       key: '/dashboard/formulas',
       icon: <ComputingIcon />,
       label: 'Формулы'
     }
-  ];
+  ] as MenuProps['items'];
 
   return (
     <Layout className='dashboard' style={{ minHeight: '100vh' }}>
