@@ -1,20 +1,22 @@
 import { FC } from 'react';
-import { Card, Tag, Typography } from 'antd';
-import { EditableText } from 'components/EditableText/EditableText';
+import { Button, Card, Modal, Typography } from 'antd';
+import { DeleteOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { FormulaItem } from 'types/entities';
 
-const { Text, Link } = Typography;
+const { Text } = Typography;
 
 interface FormulaCardProps {
   formula: FormulaItem;
-  onTitleChange?: (id: number, newTitle: string) => void;
+  onEdit?: (formula: FormulaItem) => void;
+  onDelete?: (id: number) => void;
   onCardClick?: (id: number) => void;
+  isDeleting?: boolean;
 }
 
-export const FormulaCard: FC<FormulaCardProps> = ({ formula, onTitleChange, onCardClick }) => {
-  const handleTitleChange = (newTitle: string): void => {
-    if (onTitleChange) {
-      onTitleChange(formula.id, newTitle);
+export const FormulaCard: FC<FormulaCardProps> = ({ formula, onEdit, onDelete, onCardClick, isDeleting = false }) => {
+  const handleEdit = (): void => {
+    if (onEdit) {
+      onEdit(formula);
     }
   };
 
@@ -24,126 +26,128 @@ export const FormulaCard: FC<FormulaCardProps> = ({ formula, onTitleChange, onCa
     }
   };
 
-  const getKoefficientColor = (koefficent: number): string => {
-    if (koefficent >= 1) return 'success';
-    if (koefficent >= 0.5) return 'processing';
-    return 'warning';
-  };
-
-  const formatDate = (dateString: string): string => {
-    return new Date(dateString).toLocaleDateString('ru-RU');
+  const handleDelete = (): void => {
+    Modal.confirm({
+      title: 'Удаление формулы',
+      icon: <ExclamationCircleOutlined />,
+      content: `Вы уверены, что хотите удалить формулу "${formula.title}"?`,
+      okText: 'Удалить',
+      cancelText: 'Отмена',
+      okType: 'danger',
+      onOk: async () => {
+        if (onDelete) {
+          await onDelete(formula.id);
+        }
+      },
+      centered: true,
+      okButtonProps: {
+        style: { borderRadius: 8 }
+      },
+      cancelButtonProps: {
+        style: { borderRadius: 8 }
+      }
+    });
   };
 
   const formatKoefficent = (value: number): string => {
-    return value % 1 === 0 ? value.toString() : value.toFixed(1);
+    return value % 1 === 0 ? value.toString() : value.toFixed(2);
   };
 
   return (
     <Card
-      hoverable
       style={{
         borderRadius: 16,
-        border: '1px solid #f0f0f0',
+        border: 'none',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
         marginBottom: 16,
-        cursor: 'pointer'
+        transition: 'all 0.3s ease',
+        background: 'linear-gradient(135deg, #ffffff 0%, #fafafa 100%)'
       }}
       styles={{
-        body: { padding: 20 }
+        body: { padding: 24 }
       }}
+      hoverable
       onClick={handleCardClick}
     >
-      <div style={{ marginBottom: 12 }}>
-        <EditableText
-          initialValue={formula.title}
-          onChange={handleTitleChange}
-          renderDisplay={(value) => (
-            <Typography.Title
-              level={5}
-              style={{
-                margin: 0,
-                fontSize: 16,
-                fontWeight: 600,
-                color: '#1d1d1f'
-              }}
-            >
-              {value}
-            </Typography.Title>
-          )}
-        />
-        <div style={{ float: 'right' }}>
-          <Link
+      {/* Заголовок с действиями */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          marginBottom: 16
+        }}
+      >
+        <div style={{ display: 'flex', gap: 4, justifyContent: 'space-between', width: '100%' }}>
+          <Button
+            type='text'
+            icon={<EditOutlined />}
+            size='small'
             style={{
               color: '#007aff',
-              textDecoration: 'none',
-              fontSize: 14
+              border: 'none',
+              backgroundColor: 'transparent',
+              width: 32,
+              height: 32,
+              borderRadius: 8
             }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            Подробнее
-          </Link>
+            onClick={(e) => {
+              e.stopPropagation();
+              handleEdit();
+            }}
+          />
+
+          <Button
+            type='text'
+            icon={<DeleteOutlined />}
+            size='small'
+            loading={isDeleting}
+            style={{
+              color: '#ff4d4f',
+              border: 'none',
+              backgroundColor: 'transparent',
+              width: 32,
+              height: 32,
+              borderRadius: 8
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDelete();
+            }}
+          />
         </div>
-        <div style={{ clear: 'both' }} />
       </div>
-
-      <div style={{ marginBottom: 12 }}>
-        <Text
+      <div>
+        <Typography.Title
+          level={5}
           style={{
-            fontSize: 24,
-            fontWeight: 700,
+            fontSize: 18,
+            fontWeight: 600,
             color: '#1d1d1f',
-            display: 'block'
+            lineHeight: 1.4
           }}
         >
-          Коэффициент: {formatKoefficent(formula.koefficent)}
-        </Text>
+          {formula.title}
+        </Typography.Title>
       </div>
-
-      <div style={{ marginBottom: 8 }}>
-        <Text
-          type='secondary'
-          style={{
-            fontSize: 14,
-            color: '#8e8e93'
-          }}
-        >
-          Дата создания: {formatDate(formula.created_at)}
-        </Text>
-      </div>
-
-      <div style={{ marginBottom: 8 }}>
-        <Text
-          type='secondary'
-          style={{
-            fontSize: 14,
-            color: '#8e8e93'
-          }}
-        >
-          ID формулы: #{formula.id}
-        </Text>
-      </div>
-
-      <div style={{ marginBottom: 0 }}>
-        <Text
-          type='secondary'
-          style={{
-            fontSize: 14,
-            color: '#8e8e93',
-            marginRight: 8
-          }}
-        >
-          Значение:
-        </Text>
-        <Tag
-          color={getKoefficientColor(formula.koefficent)}
-          style={{
-            borderRadius: 12,
-            border: 'none',
-            fontSize: 12,
-            fontWeight: 500
-          }}
-        >
-          {formula.koefficent >= 1 ? 'Высокий' : formula.koefficent >= 0.5 ? 'Средний' : 'Низкий'}
-        </Tag>
+      {/* Коэффициент */}
+      <div style={{ marginBottom: 16, textAlign: 'center' }}>
+        <div style={{ marginBottom: 8 }}>
+          <Text style={{ fontSize: 14, color: '#8e8e93', fontWeight: 500 }}>Коэффициент</Text>
+        </div>
+        <div style={{ marginBottom: 8 }}>
+          <Text
+            style={{
+              fontSize: 32,
+              fontWeight: 700,
+              color: '#1d1d1f',
+              display: 'block',
+              lineHeight: 1
+            }}
+          >
+            {formatKoefficent(formula.koefficent)}
+          </Text>
+        </div>
       </div>
     </Card>
   );
