@@ -63,10 +63,10 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
       dataIndex: 'status',
       key: 'status',
       render: (_, record: ITechnicalCondition) => {
-        if (record.status_display === 'active') {
+        if (record.status === 'active') {
           return <Tag color='green'>Утверждено</Tag>;
         }
-        if (record.status_display === 'inactive') {
+        if (record.status === 'inactive') {
           return <Tag color='red'>Отклонено</Tag>;
         }
         return <Tag color='default'>В архиве</Tag>;
