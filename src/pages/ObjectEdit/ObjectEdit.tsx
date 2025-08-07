@@ -1,12 +1,12 @@
 import React, { FC, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import { Button, Card, Col, DatePicker, Form, Input, message, Row, Select, Space, Spin, Typography } from 'antd';
 import { ArrowLeftOutlined, EditOutlined, SaveOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { DashboardLayout } from 'components/DashboardLayout';
-import { ObjectItem, ObjectUpdateBody } from 'types/entities/objects';
+import { ObjectUpdateBody } from 'types/entities/objects';
 
-import { useGetObjectByIdQuery, useUpdateObjectMutation } from 'api/object.api';
+import { useGetObjectByIdQuery, useUpdateObjectMutation } from 'api/Object.api';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
