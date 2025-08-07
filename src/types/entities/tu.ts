@@ -2,7 +2,7 @@ import { IStageEnum, IStatus6b3Enum, ITyTypeEnum } from 'types/common';
 
 export interface ITechnicalCondition {
   id: number;
-  status_display: string;
+  status_display: IStatus6b3Enum;
   stage_display: IStageEnum;
   type?: ITyTypeEnum;
   request_source: string;
@@ -27,7 +27,10 @@ export interface ITechnicalCondition {
   fire_input_1: string | null;
   fire_input_2: string | null;
   notes: string | null;
-  payment_paper: string;
+  payment_paper: {
+    number: string;
+    date: string;
+  };
   payment_connection: string;
   payment_status: string;
   payment_amount: string;
@@ -188,8 +191,8 @@ export interface ITyListQueryParams {
   page?: number;
   page_size?: number;
   search?: string;
-  stage?: 'approved' | 'done' | 'draft' | 'review';
-  status?: 'active' | 'archived' | 'inactive';
+  stage?: IStageEnum;
+  status?: IStatus6b3Enum;
 }
 
 export interface ITypesTY {

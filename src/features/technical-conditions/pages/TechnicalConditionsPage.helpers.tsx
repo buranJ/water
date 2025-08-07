@@ -1,9 +1,10 @@
 import { Button, Space, Tag, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import dayjs from 'dayjs';
 import { ITechnicalCondition } from 'types/entities/tu';
 
-type actionType = 'edit' | 'delete';
+type actionType = 'edit' | 'delete' | 'view';
 
 type IGetColumnsFn = (options: { onClick: (record: ITechnicalCondition, action: actionType) => void }) => ColumnsType<ITechnicalCondition>;
 
@@ -11,12 +12,22 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
   return [
     {
       title: '№ ТУ',
-      dataIndex: 'number',
-      key: 'number',
-      render: (text) => <Typography.Text strong>{text}</Typography.Text>,
+      dataIndex: 'id',
+      key: 'id',
+      render: (text, record) => (
+        <Typography.Link onClick={() => onClick(record, 'view')} strong>
+          {text}
+        </Typography.Link>
+      ),
       width: 90
     },
-    { title: 'Дата регистрации', dataIndex: 'created_at', key: 'created_at', width: 150 },
+    {
+      title: 'Дата регистрации',
+      dataIndex: 'created_at',
+      key: 'created_at',
+      width: 150,
+      render: (date) => dayjs(date).format('DD-MM-YYYY')
+    },
     { title: 'Заказчик', dataIndex: ['customer', 'full_name'], key: 'customer', width: 170 },
     { title: 'Адрес', dataIndex: 'address', key: 'address', width: 170 },
     { title: 'Наименование объекта', dataIndex: 'object_name', key: 'objectName', width: 260 },
@@ -32,26 +43,34 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
       dataIndex: 'payment_paper',
       key: 'payment_paper',
       width: 160,
-      render: () => {
+      render: (_, record) => {
         return (
           <>
-            <Typography.Text strong>№12345 от 01.01.2023</Typography.Text>
+            <Typography.Text strong>№{record.payment_paper.number}</Typography.Text>
             <br />
-            <Typography.Text type='secondary'>Дата: 01.01.2023</Typography.Text>
+            <Typography.Text type='secondary'>Дата: {dayjs(record.payment_paper.date).format('DD.MM.YYYY')}</Typography.Text>
           </>
         );
       }
     },
     { title: '№ счета на оплату', dataIndex: 'request_number', key: 'payment_invoice_number', width: 160 },
     { title: 'Сумма оплаты за ТУ и разреш', dataIndex: 'payment_amount', key: 'payment_amount', width: 145 },
-    { title: 'Опачено', dataIndex: 'payment_status', key: 'payment_status', width: 145 },
+    { title: 'Оплачено', dataIndex: 'paid_amount', key: 'paid_amount', width: 145 },
     { title: 'Дата оплаты', dataIndex: 'payment_date', key: 'payment_date', width: 145 },
     { title: 'Остаток', dataIndex: 'remaining_amount', key: 'remaining_amount', width: 145 },
     {
       title: 'Статус',
-      dataIndex: 'stage',
-      key: 'stage',
-      render: (status) => (status === 'approved' ? <Tag color='green'>Утверждено</Tag> : <Tag color='red'>Отклонено</Tag>),
+      dataIndex: 'status',
+      key: 'status',
+      render: (_, record: ITechnicalCondition) => {
+        if (record.status_display === 'active') {
+          return <Tag color='green'>Утверждено</Tag>;
+        }
+        if (record.status_display === 'inactive') {
+          return <Tag color='red'>Отклонено</Tag>;
+        }
+        return <Tag color='default'>В архиве</Tag>;
+      },
       width: 145
     },
     {
@@ -67,126 +86,3 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
     }
   ];
 };
-
-export const initialData: TURecord[] = [
-  {
-    key: '1',
-    number: '04-472',
-    date: '03-03-2025',
-    customer: 'ОсОО "Сайрус"',
-    address: 'пр. Дэн Сяопина, 304',
-    objectName: '9-ти этажный многоквартирный жилой дом с торговыми помещениями на собственной территории',
-    waterAmount: '62,436',
-    wastewaterAmount: '62,436',
-    contractNumber: 'Nº332 07.03.2025',
-    invoiceNumber: 'Nº413 05.03.2025',
-    paymentAmount: '26 159,88',
-    paid: '26 159,88',
-    paymentDate: '19.03.2025',
-    balance: '0,00',
-    status: 'approved'
-  },
-  {
-    key: '2',
-    number: 'ТУ-002',
-    date: '2025-03-05',
-    customer: 'ИП "Иванов"',
-    address: 'ул. Ленина, 1',
-    objectName: 'Офисное здание',
-    waterAmount: '200',
-    wastewaterAmount: '100',
-    contractNumber: 'Договор-002',
-    invoiceNumber: 'Счет-002',
-    paymentAmount: '2000',
-    paid: '1500',
-    paymentDate: '2025-03-02',
-    balance: '500',
-    status: 'rejected'
-  }
-  ,
-  {
-    key: '2',
-    number: 'ТУ-002',
-    date: '2025-03-05',
-    customer: 'ИП "Иванов"',
-    address: 'ул. Ленина, 1',
-    objectName: 'Офисное здание',
-    waterAmount: '200',
-    wastewaterAmount: '100',
-    contractNumber: 'Договор-002',
-    invoiceNumber: 'Счет-002',
-    paymentAmount: '2000',
-    paid: '1500',
-    paymentDate: '2025-03-02',
-    balance: '500',
-    status: 'rejected'
-  },
-  {
-    key: '2',
-    number: 'ТУ-002',
-    date: '2025-03-05',
-    customer: 'ИП "Иванов"',
-    address: 'ул. Ленина, 1',
-    objectName: 'Офисное здание',
-    waterAmount: '200',
-    wastewaterAmount: '100',
-    contractNumber: 'Договор-002',
-    invoiceNumber: 'Счет-002',
-    paymentAmount: '2000',
-    paid: '1500',
-    paymentDate: '2025-03-02',
-    balance: '500',
-    status: 'rejected'
-  },
-  {
-    key: '2',
-    number: 'ТУ-002',
-    date: '2025-03-05',
-    customer: 'ИП "Иванов"',
-    address: 'ул. Ленина, 1',
-    objectName: 'Офисное здание',
-    waterAmount: '200',
-    wastewaterAmount: '100',
-    contractNumber: 'Договор-002',
-    invoiceNumber: 'Счет-002',
-    paymentAmount: '2000',
-    paid: '1500',
-    paymentDate: '2025-03-02',
-    balance: '500',
-    status: 'rejected'
-  },
-  {
-    key: '2',
-    number: 'ТУ-002',
-    date: '2025-03-05',
-    customer: 'ИП "Иванов"',
-    address: 'ул. Ленина, 1',
-    objectName: 'Офисное здание',
-    waterAmount: '200',
-    wastewaterAmount: '100',
-    contractNumber: 'Договор-002',
-    invoiceNumber: 'Счет-002',
-    paymentAmount: '2000',
-    paid: '1500',
-    paymentDate: '2025-03-02',
-    balance: '500',
-    status: 'rejected'
-  },
-  {
-    key: '2',
-    number: 'ТУ-002',
-    date: '2025-03-05',
-    customer: 'ИП "Иванов"',
-    address: 'ул. Ленина, 1',
-    objectName: 'Офисное здание',
-    waterAmount: '200',
-    wastewaterAmount: '100',
-    contractNumber: 'Договор-002',
-    invoiceNumber: 'Счет-002',
-    paymentAmount: '2000',
-    paid: '1500',
-    paymentDate: '2025-03-02',
-    balance: '500',
-    status: 'rejected'
-  }
-];
