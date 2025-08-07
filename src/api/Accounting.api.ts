@@ -7,19 +7,22 @@ import {
   IGetAccountingProtocolParams,
   IGetAccountingProtocolResponse,
   IGetInvoiceByProtocolParams,
-  IGetInvoiceByProtocolResponse
+  IGetInvoiceByProtocolResponse,
+  IUpdateProtocolParams,
+  IUpdateProtocolResponse
 } from 'types/entities/accounting';
 
 export const accountingApi = createApi({
   reducerPath: 'accountingApi',
   baseQuery: getBaseQuery(),
-  tagTypes: ['Invoice'],
+  tagTypes: ['Invoice', 'Protocol'],
   endpoints: (build) => ({
     getAccountingProtocol: build.query<IGetAccountingProtocolResponse, IGetAccountingProtocolParams>({
       query: ({ technicalConditionId }) => ({
         url: `/buhgalteria/protocolsbyty/${technicalConditionId}/`,
         method: 'GET'
-      })
+      }),
+      providesTags: ['Protocol']
     }),
 
     getInvoiceByProtocol: build.query<IGetInvoiceByProtocolResponse, IGetInvoiceByProtocolParams>({
@@ -32,13 +35,23 @@ export const accountingApi = createApi({
 
     generateInvoice: build.mutation<IGenerateInvoiceResponse, IGenerateInvoiceParams>({
       query: ({ protocolId }) => ({
-        url: `/buhgalteria/invoices/generate/${protocolId}/`,
+        url: `/buhgaleria/invoices/generate/${protocolId}/`,
         method: 'POST',
         body: {}
       }),
       invalidatesTags: ['Invoice']
+    }),
+
+    updateProtocol: build.mutation<IUpdateProtocolResponse, IUpdateProtocolParams>({
+      query: ({ protocolId, body }) => ({
+        url: `/buhgalteria/protocols/${protocolId}/`,
+        method: 'PUT',
+        body
+      }),
+      invalidatesTags: ['Protocol', 'Invoice']
     })
   })
 });
 
-export const { useGetAccountingProtocolQuery, useGetInvoiceByProtocolQuery, useGenerateInvoiceMutation } = accountingApi;
+export const { useGetAccountingProtocolQuery, useGetInvoiceByProtocolQuery, useGenerateInvoiceMutation, useUpdateProtocolMutation } =
+  accountingApi;

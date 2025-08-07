@@ -18,6 +18,7 @@ import {
   Typography
 } from 'antd';
 import { CheckCircleOutlined, ClockCircleOutlined, DownloadOutlined, EditOutlined, UploadOutlined } from '@ant-design/icons';
+import { EditProtocolModal } from 'components/EditProtocolModal/EditProtocolModal';
 
 import { useGenerateInvoiceMutation, useGetAccountingProtocolQuery, useGetInvoiceByProtocolQuery } from 'api/Accounting.api';
 
@@ -36,11 +37,13 @@ interface IProtocolTableData {
 
 export const AccountingTab: FC<IProps> = ({ technicalConditionId }) => {
   const [uploadStatus, setUploadStatus] = useState<'waiting' | 'uploaded'>('waiting');
+  const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false);
 
   const {
     data: protocolData,
     isLoading: protocolLoading,
-    isError: protocolError
+    isError: protocolError,
+    refetch: refetchProtocol
   } = useGetAccountingProtocolQuery({
     technicalConditionId
   });
@@ -57,6 +60,16 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId }) => {
   const handleUpload = () => {
     setUploadStatus('uploaded');
     message.success('Чек успешно загружен');
+  };
+
+  const handleEditClick = () => {
+    setIsEditModalVisible(true);
+  };
+
+  const handleEditModalClose = () => {
+    setIsEditModalVisible(false);
+    // Принудительно обновляем данные после закрытия модалки
+    refetchProtocol();
   };
 
   const handleGenerateInvoice = async () => {
@@ -105,17 +118,17 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId }) => {
     {
       key: '3',
       item: 'ТУ водопровод',
-      price: `${Math.round(parseFloat(protocolData.water_price) / 2)}KGZ`
+      price: `${protocolData.water_price}KGZ`
     },
     {
       key: '4',
       item: 'ТУ канализация',
-      price: `${Math.round(parseFloat(protocolData.kanal_price) / 2)}KGZ`
+      price: `${protocolData.kanal_price}KGZ`
     },
     {
       key: '5',
       item: 'Всего (без НДС)',
-      price: `${Math.round((parseFloat(protocolData.total_water_sum) + parseFloat(protocolData.total_kanal_sum)) / 1000)}KGZ`,
+      price: `${protocolData.total_water_sum}KGZ`,
       badge: 'На вынос'
     }
   ];
@@ -152,7 +165,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId }) => {
               ТУ №{technicalConditionId}-472
             </Title>
             <Space>
-              <Button icon={<EditOutlined />} type='primary'>
+              <Button icon={<EditOutlined />} type='primary' onClick={handleEditClick}>
                 Изменить
               </Button>
               <Button icon={<DownloadOutlined />} type='default'>
@@ -181,92 +194,100 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId }) => {
   ];
 
   return (
-    <Row gutter={24}>
-      <Col span={16}>
-        <Tabs items={accountingTabItems} />
-      </Col>
+    <>
+      <Row gutter={24}>
+        <Col span={16}>
+          <Tabs items={accountingTabItems} />
+        </Col>
 
-      <Col span={8}>
-        <Card style={{ marginBottom: 16 }}>
-          <Title level={4}>Счет на оплату</Title>
+        <Col span={8}>
+          <Card style={{ marginBottom: 16 }}>
+            <Title level={4}>Счет на оплату</Title>
 
-          {invoiceLoading && (
-            <Flex justify='center' style={{ margin: '16px 0' }}>
-              <Spin />
-            </Flex>
-          )}
+            {invoiceLoading && (
+              <Flex justify='center' style={{ margin: '16px 0' }}>
+                <Spin />
+              </Flex>
+            )}
 
-          {!invoiceLoading && (
-            <Flex align='center' gap={8} style={{ marginBottom: 16 }}>
-              {invoiceData && !invoiceError ? (
-                <>
-                  <CheckCircleOutlined style={{ color: '#52c41a' }} />
-                  <Text>Счет #{invoiceData.invoice_number}</Text>
-                  {invoiceData.is_paid && <Text type='success'>(Оплачено)</Text>}
-                </>
-              ) : (
-                <>
-                  <ClockCircleOutlined style={{ color: '#1890ff' }} />
-                  <Text>В ожидании</Text>
-                </>
-              )}
-            </Flex>
-          )}
+            {!invoiceLoading && (
+              <Flex align='center' gap={8} style={{ marginBottom: 16 }}>
+                {invoiceData && !invoiceError ? (
+                  <>
+                    <CheckCircleOutlined style={{ color: '#52c41a' }} />
+                    <Text>Счет #{invoiceData.invoice_number}</Text>
+                    {invoiceData.is_paid && <Text type='success'>(Оплачено)</Text>}
+                  </>
+                ) : (
+                  <>
+                    <ClockCircleOutlined style={{ color: '#1890ff' }} />
+                    <Text>В ожидании</Text>
+                  </>
+                )}
+              </Flex>
+            )}
 
-          {invoiceData && !invoiceError ? (
-            <Button
-              type='primary'
-              block
-              icon={<DownloadOutlined />}
-              onClick={handleDownloadInvoice}
-              disabled={!invoiceData.pdf_file}
-              style={{ marginBottom: 16 }}
-            >
-              Скачать счет
-            </Button>
-          ) : (
-            <Button type='primary' block onClick={handleGenerateInvoice} loading={isGenerating} style={{ marginBottom: 16 }}>
-              Сгенерировать счет на оплату
-            </Button>
-          )}
-        </Card>
+            {invoiceData && !invoiceError ? (
+              <Button
+                type='primary'
+                block
+                icon={<DownloadOutlined />}
+                onClick={handleDownloadInvoice}
+                disabled={!invoiceData.pdf_file}
+                style={{ marginBottom: 16 }}
+              >
+                Скачать счет
+              </Button>
+            ) : (
+              <Button type='primary' block onClick={handleGenerateInvoice} loading={isGenerating} style={{ marginBottom: 16 }}>
+                Сгенерировать счет на оплату
+              </Button>
+            )}
+          </Card>
 
-        <Card>
-          <Title level={4}>Загрузить чек об оплате</Title>
-          <div
-            style={{
-              backgroundColor: '#327BE8',
-              height: 8,
-              borderRadius: 4,
-              margin: '16px 0'
-            }}
-          />
-          <Text type='secondary' style={{ display: 'block', marginBottom: 16 }}>
-            Загрузите соответствующий документ чтобы завершить создание ТУ
-          </Text>
-
-          {uploadStatus === 'uploaded' && (
-            <Flex
-              align='center'
-              gap={8}
+          <Card>
+            <Title level={4}>Загрузить чек об оплате</Title>
+            <div
               style={{
-                marginBottom: 16,
-                padding: 8,
-                backgroundColor: '#f6ffed',
-                border: '1px solid #b7eb8f',
-                borderRadius: 4
+                backgroundColor: '#327BE8',
+                height: 8,
+                borderRadius: 4,
+                margin: '16px 0'
               }}
-            >
-              <CheckCircleOutlined style={{ color: '#52c41a' }} />
-              <Text>Чек загружен</Text>
-            </Flex>
-          )}
+            />
+            <Text type='secondary' style={{ display: 'block', marginBottom: 16 }}>
+              Загрузите соответствующий документ чтобы завершить создание ТУ
+            </Text>
 
-          <Button type='primary' block icon={<UploadOutlined />} onClick={handleUpload} disabled={uploadStatus === 'uploaded'}>
-            {uploadStatus === 'uploaded' ? 'Загружено' : 'Загрузить'}
-          </Button>
-        </Card>
-      </Col>
-    </Row>
+            {uploadStatus === 'uploaded' && (
+              <Flex
+                align='center'
+                gap={8}
+                style={{
+                  marginBottom: 16,
+                  padding: 8,
+                  backgroundColor: '#f6ffed',
+                  border: '1px solid #b7eb8f',
+                  borderRadius: 4
+                }}
+              >
+                <CheckCircleOutlined style={{ color: '#52c41a' }} />
+                <Text>Чек загружен</Text>
+              </Flex>
+            )}
+
+            <Button type='primary' block icon={<UploadOutlined />} onClick={handleUpload} disabled={uploadStatus === 'uploaded'}>
+              {uploadStatus === 'uploaded' ? 'Загружено' : 'Загрузить'}
+            </Button>
+          </Card>
+        </Col>
+      </Row>
+      <EditProtocolModal
+        visible={isEditModalVisible}
+        onClose={handleEditModalClose}
+        protocolData={protocolData || null}
+        onSuccess={refetchProtocol}
+      />
+    </>
   );
 };

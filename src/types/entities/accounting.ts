@@ -40,3 +40,18 @@ export interface IGenerateInvoiceParams {
 }
 
 export type IGenerateInvoiceResponse = IAccountingInvoice;
+
+export interface IUpdateProtocolParams {
+  protocolId: string;
+  body: {
+    load: string;
+    water_price: string;
+    kanal_price: string;
+    coefficient: number;
+    total_water_sum: string;
+    total_kanal_sum: string;
+    technical_condition: number;
+  };
+}
+
+export type IUpdateProtocolResponse = IAccountingProtocol;
