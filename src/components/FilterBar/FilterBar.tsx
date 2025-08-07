@@ -1,4 +1,4 @@
-import { Form, Select, Space } from 'antd';
+import { Form, Select } from 'antd';
 import './styles.scss';
 import { TUFilterBar } from 'features/technical-conditions/components/TUFilterBar/TUFilterBar';
 
@@ -33,10 +33,7 @@ export const FilterBar = ({
   showStatus,
   showType,
   showCategory,
-  categoryOptions,
-  showStatusSelect,
-  statusOptions,
-  actionButtons
+  categoryOptions
 }: Props) => {
   const [form] = Form.useForm();
 
@@ -73,18 +70,6 @@ export const FilterBar = ({
           </Form.Item>
         )}
 
-        {showStatusSelect && statusOptions && (
-          <Form.Item name='status'>
-            <Select variant='filled' placeholder='Статус' allowClear style={{ width: 140 }}>
-              {statusOptions.map((opt) => (
-                <Option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
-        )}
-
         {showDate && (
           <Form.Item name='type'>
             <Select variant='filled' placeholder='По типу' allowClear style={{ width: 140 }}>
@@ -113,7 +98,6 @@ export const FilterBar = ({
         )}
       </Form>
 
-      <Space>{actionButtons}</Space>
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Button, Pagination, Table } from 'antd';
-import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { FilterBar } from 'components/FilterBar';
 import { ApplicationData, getColumns, useRejectModal } from './Applications.helpers';
@@ -109,10 +109,6 @@ export const Applications: FC<IProps> = ({ title }) => {
     navigate('create');
   };
 
-  const onDownloadClick = () => {
-    console.log('Download button clicked');
-  };
-
   const handlePaginationChange = (page: number, pageSize?: number) => {
     setPage(page);
     if (pageSize) setPageSize(pageSize);
@@ -129,9 +125,6 @@ export const Applications: FC<IProps> = ({ title }) => {
             <Button type='primary' icon={<PlusOutlined />} onClick={onAddClick}>
               Добавить
             </Button>
-            <Button icon={<DownloadOutlined />} iconPosition='end' onClick={onDownloadClick}>
-              PDF
-            </Button>
           </>
         }
       />
@@ -141,8 +134,7 @@ export const Applications: FC<IProps> = ({ title }) => {
         pageSize={pageSize}
         total={data?.count || 0}
         onChange={handlePaginationChange}
-        showSizeChanger
-        style={{ marginTop: 16, textAlign: 'right' }}
+        style={{ marginTop: 16, display: 'flex', justifyContent: 'center' }}
       />
       <RejectModalComponent />
     </DashboardLayout>

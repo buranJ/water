@@ -149,7 +149,6 @@ export const Objects: FC<ObjectsProps> = ({ title }) => {
   return (
     <DashboardLayout title={title}>
       <ObjectsFilters filters={filters} onSearchChange={handleSearchChange} onFilterChange={handleFilterChange} onAddNew={handleAddNew} />
-
       {isLoading ? (
         <div style={{ textAlign: 'center', padding: '50px 0' }}>
           <Spin size='large' />
@@ -165,8 +164,6 @@ export const Objects: FC<ObjectsProps> = ({ title }) => {
       ) : (
         <Empty description='Объекты не найдены' style={{ marginTop: '50px' }} />
       )}
-
-      {/* Модальное окно создания объекта */}
       {showAddForm && <ObjectForm onSubmit={handleCreateObject} onCancel={handleCancelCreate} loading={isCreating} />}
     </DashboardLayout>
   );
