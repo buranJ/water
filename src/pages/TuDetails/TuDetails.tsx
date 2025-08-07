@@ -4,9 +4,10 @@ import { Alert, Button, Card, Col, Flex, List, Row, Space, Spin, Tabs, TabsProps
 import { ClockCircleTwoTone, CloseCircleTwoTone, DownloadOutlined, FileOutlined, PlusOutlined } from '@ant-design/icons';
 import { AccountingTab } from 'components/AccountingTab/AccountingTab';
 import { DashboardLayout } from 'components/DashboardLayout';
-import type { IGetTyById } from 'types/entities/tu';
+import { IStageEnum, IStatus6b3Enum } from 'types/common';
 import { MyModal } from './MyModal';
 
+import { useGetUserInfoQuery } from 'api/Auth.api';
 import { useGetTyByIdQuery } from 'api/Ty.api';
 
 const { Title, Text } = Typography;
@@ -21,6 +22,7 @@ interface IUploadFile extends UploadFile<File> {
 }
 
 export const TuDetails: FC<IProps> = ({ title }) => {
+  const userQuery = useGetUserInfoQuery();
   const { id } = useParams<{ id: string }>();
 
   const {
@@ -35,10 +37,6 @@ export const TuDetails: FC<IProps> = ({ title }) => {
       skip: !id
     }
   );
-
-  const isArchitectureDisabled = false;
-  const isDocumentsDisabled = false;
-  const isAccountingDisabled = false;
 
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>('1');
@@ -65,28 +63,111 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     setActiveTab(key);
   };
 
-  const renderDataContent = (data: IGetTyById) => (
+  const statusRender = (status: IStatus6b3Enum) => {
+    switch (status) {
+      case 'active':
+        return <Text type='warning'>Утверждено</Text>;
+      case 'inactive':
+        return <Text type='success'>Утверждено</Text>;
+      case 'archived':
+        return <Text type='danger'>В Архиве</Text>;
+    }
+  };
+
+  const stageRender = (stage: IStageEnum) => {
+    switch (stage) {
+      case 'draft':
+        return <Text type='secondary'>Черновик</Text>;
+      case 'review':
+        return <Text type='warning'>На рассмотрении</Text>;
+      case 'approved':
+        return <Text type='success'>Утверждено</Text>;
+      case 'done':
+        return <Text type='success'>Завершено</Text>;
+      default:
+        return <Text type='secondary'>Неизвестно</Text>;
+    }
+  };
+
+  const renderDataContent = () => (
     <>
       <Card style={{ marginBottom: 24 }}>
         <Title level={4}>Наименование объекта</Title>
-        <Text>{data.object_name || 'Не указано'}</Text>
+        <Text>{objectData?.object_name || 'Не указано'}</Text>
+      </Card>
+
+      <Card style={{ marginBottom: 24 }}>
+        <Title level={4}>Информация о заявке</Title>
+        <Text strong>Номер заявки:</Text> <Text>{objectData?.request_number || '—'}</Text>
+        <br />
+        <Text strong>Дата заявки:</Text> <Text>{(objectData?.request_date as string) || '—'}</Text>
+        <br />
+        <Text strong>Источник запроса:</Text> <Text>{objectData?.request_source || '—'}</Text>
+        <br />
+        <Text strong>ИНН:</Text> <Text>{objectData?.eni || '—'}</Text>
+        <br />
+        {objectData?.status && (
+          <Space>
+            <Text strong>Статус:</Text>
+            <Text>{statusRender(objectData?.status) || '—'}</Text>
+          </Space>
+        )}
+        <br />
+        {objectData?.stage && (
+          <Space>
+            <Text strong>Этап:</Text>
+            <Text>{stageRender(objectData?.stage) || '—'}</Text>
+          </Space>
+        )}
+      </Card>
+
+      {/* Новый блок: Дополнительные характеристики */}
+      <Card style={{ marginBottom: 24 }}>
+        <Title level={4}>Дополнительные характеристики</Title>
+        <Text strong>Объект подключения:</Text> <Text>{objectData?.connection_target || '—'}</Text>
+        <br />
+        <Text strong>Проход по улице:</Text> <Text>{objectData?.street_pass || '—'}</Text>
+        <br />
+        <Text strong>Коллектор:</Text> <Text>{objectData?.collector || '—'}</Text>
+        <br />
+        <Text strong>Пожаротушение:</Text> <Text>{objectData?.fire_fighting || '—'}</Text>
+        <br />
+        <Text strong>Пожарный ввод 1:</Text> <Text>{objectData?.fire_input_1 || '—'}</Text>
+        <br />
+        <Text strong>Пожарный ввод 2:</Text> <Text>{objectData?.fire_input_2 || '—'}</Text>
+        <br />
+        <Text strong>Примечания:</Text> <Text>{objectData?.notes || '—'}</Text>
+      </Card>
+
+      {/* Новый блок: Оплата */}
+      <Card style={{ marginBottom: 24 }}>
+        <Title level={4}>Оплата</Title>
+        <Text strong>Номер счёта:</Text> <Text>{objectData?.payment_invoice_number || '—'}</Text>
+        <br />
+        <Text strong>Сумма за бумажную работу:</Text> <Text>{objectData?.payment_paper || '—'} сом</Text>
+        <br />
+        <Text strong>Сумма за подключение:</Text> <Text>{objectData?.payment_connection || '—'} сом</Text>
+        <br />
+        <Text strong>Итого к оплате:</Text> <Text>{objectData?.payment_amount || '—'} сом</Text>
+        <br />
+        <Text strong>Крайний срок оплаты:</Text> <Text>{(objectData?.payment_deadline as string) || '—'}</Text>
       </Card>
 
       <Card style={{ marginBottom: 24 }}>
         <Title level={4}>Заказчик</Title>
-        <Text>{data.customer.full_name}</Text>
+        <Text>{objectData?.customer.full_name}</Text>
         <Title level={4} style={{ marginTop: 16 }}>
           Место нахождения объекта
         </Title>
-        <Text>{data.address}</Text>
+        <Text>{objectData?.address}</Text>
         <Title level={4} style={{ marginTop: 16 }}>
           Требуемое количество водопроводной воды
         </Title>
-        <Text>{data.water_required} м³/сут</Text>
+        <Text>{objectData?.water_required} м³/сут</Text>
         <Title level={4} style={{ marginTop: 16 }}>
           Требуемый свободный напор
         </Title>
-        <Text>{data.pressure_required} м.вод.ст</Text>
+        <Text>{objectData?.pressure_required} м.вод.ст</Text>
       </Card>
 
       <div style={{ marginBottom: 24 }}>
@@ -111,40 +192,48 @@ export const TuDetails: FC<IProps> = ({ title }) => {
 
       <Card style={{ marginBottom: 24 }}>
         <Title level={4}>Водопровод</Title>
-        <Text>{data.water_pipe || 'Не указано'}</Text>
+        <Text>{objectData?.water_pipe || 'Не указано'}</Text>
       </Card>
 
       <Card>
         <Title level={4}>Канализация</Title>
-        <Text>{data.sewer || 'Не указано'}</Text>
+        <Text>{objectData?.sewer || 'Не указано'}</Text>
       </Card>
     </>
   );
+
+  const dynamicTabs =
+    userQuery.data?.user.allowed_categories?.map((category, index) => {
+      let content: React.ReactNode = <Text>Контент для "{category.title}" пока не реализован</Text>;
+
+      switch (category.title.toLowerCase()) {
+        case 'архитектура':
+          content = <div>Содержимое вкладки Архитектура</div>;
+          break;
+        case 'документы':
+          content = <div>Содержимое вкладки Документы</div>;
+          break;
+        case 'бухгалтерия':
+          content = id ? <AccountingTab technicalConditionId={id} /> : null;
+          break;
+        default:
+          break;
+      }
+
+      return {
+        key: `dynamic-${index + 2}`,
+        label: category.title,
+        children: content
+      };
+    }) || [];
 
   const tabItems: TabsProps['items'] = [
     {
       key: '1',
       label: 'Данные',
-      children: objectData ? renderDataContent(objectData) : null
+      children: objectData ? renderDataContent() : null
     },
-    {
-      key: '2',
-      label: 'Архитектура',
-      disabled: isArchitectureDisabled,
-      children: <div>Содержимое вкладки Архитектура</div>
-    },
-    {
-      key: '3',
-      label: 'Документы',
-      disabled: isDocumentsDisabled,
-      children: <div>Содержимое вкладки Документы</div>
-    },
-    {
-      key: '4',
-      label: 'Бухгалтерия',
-      disabled: isAccountingDisabled,
-      children: id ? <AccountingTab technicalConditionId={id} /> : null
-    }
+    ...dynamicTabs
   ];
 
   if (isLoading) {
@@ -183,7 +272,6 @@ export const TuDetails: FC<IProps> = ({ title }) => {
         <Col span={activeTab === '1' ? 16 : 24}>
           <Tabs defaultActiveKey='1' items={tabItems} onChange={handleTabChange} />
         </Col>
-
         {activeTab === '1' && (
           <Col span={8}>
             <Card style={{ marginBottom: 16 }}>

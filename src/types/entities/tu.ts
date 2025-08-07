@@ -61,8 +61,8 @@ export interface IGetTyById {
     x: number;
     y: number;
   };
-  status_display: string;
-  stage_display: string;
+  status_display: IStatus6b3Enum;
+  stage_display: IStageEnum;
   request_source: string;
   request_number: string;
   request_date: string | Date;
@@ -90,7 +90,7 @@ export interface IGetTyById {
   payment_paper: string;
   payment_connection: string;
   payment_amount: string;
-  payment_deadline: Date;
+  payment_deadline: Date | string;
   payment_date?: string;
   payment_invoice_number: string;
   created_at: string;
