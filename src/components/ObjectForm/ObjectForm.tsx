@@ -296,9 +296,6 @@ export const ObjectForm: FC<ObjectFormProps> = ({ onSubmit, onCancel, initialVal
               style={{
                 borderRadius: 12
               }}
-              dropdownStyle={{
-                borderRadius: 12
-              }}
             >
               <Option value='active'>Активен</Option>
               <Option value='inactive'>Неактивен</Option>

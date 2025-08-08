@@ -151,7 +151,6 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
         border: 'none',
         boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
       }}
-      bodyStyle={{ padding: 32 }}
     >
       <Space direction='vertical' size={24} style={{ width: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>

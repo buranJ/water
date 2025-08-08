@@ -1,7 +1,7 @@
-import { FC } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { Alert, Button, message, Space, Spin } from 'antd';
-import { ArrowLeftOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { Alert, Button, message, Modal, Space, Spin } from 'antd';
+import { ArrowLeftOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { ObjectDetails } from 'components/ObjectDetails/ObjectDetails';
 
@@ -15,51 +15,119 @@ export const ObjectDetail: FC<ObjectDetailProps> = ({ title = 'Детали об
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const { data: object, isLoading, error } = useGetObjectByIdQuery(Number(id));
+  // Валидация ID
+  const objectId = useMemo(() => {
+    const parsedId = Number(id);
+    return isNaN(parsedId) || parsedId <= 0 ? null : parsedId;
+  }, [id]);
 
-  const [updateObjectTitle] = useUpdateObjectTitleMutation();
-  const [deleteObject] = useDeleteObjectMutation();
+  const {
+    data: object,
+    isLoading,
+    error,
+    refetch
+  } = useGetObjectByIdQuery(objectId!, {
+    skip: !objectId // Пропускаем запрос если ID невалидный
+  });
 
-  const handleTitleChange = async (newTitle: string): Promise<void> => {
+  const [updateObjectTitle, { isLoading: isUpdating }] = useUpdateObjectTitleMutation();
+  const [deleteObject, { isLoading: isDeleting }] = useDeleteObjectMutation();
+
+  // Мемоизированные обработчики для предотвращения лишних рендеров
+  const handleTitleChange = useCallback(
+    async (newTitle: string): Promise<void> => {
+      if (!object || !newTitle.trim()) return;
+
+      try {
+        await updateObjectTitle({
+          id: object.id,
+          title: newTitle.trim()
+        }).unwrap();
+        message.success('Название обновлено');
+      } catch (error) {
+        console.error('Update title error:', error);
+        const errorMessage =
+          error && typeof error === 'object' && 'data' in error && error.data && typeof error.data === 'object' && 'message' in error.data
+            ? String(error.data.message)
+            : 'Ошибка при обновлении названия';
+        message.error(errorMessage);
+      }
+    },
+    [object, updateObjectTitle]
+  );
+
+  const handleDelete = useCallback((): void => {
     if (!object) return;
 
-    try {
-      await updateObjectTitle({
-        id: object.id,
-        title: newTitle
-      }).unwrap();
-      message.success('Название обновлено');
-    } catch (error) {
-      message.error('Ошибка при обновлении названия');
-      console.error('Update title error:', error);
-    }
-  };
+    Modal.confirm({
+      title: 'Подтверждение удаления',
+      icon: <ExclamationCircleOutlined />,
+      content: `Вы уверены, что хотите удалить объект "${object.title}"? Это действие нельзя отменить.`,
+      okText: 'Удалить',
+      cancelText: 'Отмена',
+      okType: 'danger',
+      onOk: async () => {
+        try {
+          await deleteObject(object.id).unwrap();
+          message.success('Объект удален');
+          navigate('/dashboard/objects', { replace: true });
+        } catch (error) {
+          console.error('Delete object error:', error);
+          const errorMessage =
+            error && typeof error === 'object' && 'data' in error && error.data && typeof error.data === 'object' && 'message' in error.data
+              ? String(error.data.message)
+              : 'Ошибка при удалении объекта';
+          message.error(errorMessage);
+        }
+      }
+    });
+  }, [object, deleteObject, navigate]);
 
-  const handleEdit = (): void => {
-    navigate(`/dashboard/objects/${id}/edit`);
-  };
-
-  const handleDelete = async (): Promise<void> => {
-    if (!object) return;
-
-    try {
-      await deleteObject(object.id).unwrap();
-      message.success('Объект удален');
-      navigate('/dashboard/objects');
-    } catch (error) {
-      message.error('Ошибка при удалении объекта');
-      console.error('Delete object error:', error);
-    }
-  };
-
-  const handleBack = (): void => {
+  const handleBack = useCallback((): void => {
     navigate('/dashboard/objects');
-  };
+  }, [navigate]);
 
-  if (error) {
+  const handleRetry = useCallback((): void => {
+    refetch();
+  }, [refetch]);
+
+  // Обработка невалидного ID
+  if (!objectId) {
     return (
       <DashboardLayout title={title}>
-        <Alert message='Ошибка загрузки' description='Не удалось загрузить информацию об объекте' type='error' showIcon />
+        <Alert
+          message='Неверный ID'
+          description='Указан некорректный идентификатор объекта'
+          type='error'
+          showIcon
+          action={<Button onClick={handleBack}>Вернуться к списку</Button>}
+        />
+      </DashboardLayout>
+    );
+  }
+
+  // Обработка ошибок загрузки
+  if (error) {
+    const isNotFound = 'status' in error && error.status === 404;
+
+    return (
+      <DashboardLayout title={title}>
+        <Alert
+          message={isNotFound ? 'Объект не найден' : 'Ошибка загрузки'}
+          description={
+            isNotFound
+              ? 'Объект с указанным ID не существует или был удален'
+              : 'Не удалось загрузить информацию об объекте. Проверьте подключение к интернету.'
+          }
+          type={isNotFound ? 'warning' : 'error'}
+          showIcon
+          action={
+            <Space>
+              {!isNotFound && <Button onClick={handleRetry}>Повторить</Button>}
+              <Button onClick={handleBack}>Вернуться к списку</Button>
+            </Space>
+          }
+        />
       </DashboardLayout>
     );
   }
@@ -78,6 +146,7 @@ export const ObjectDetail: FC<ObjectDetailProps> = ({ title = 'Детали об
         <Button
           icon={<ArrowLeftOutlined />}
           onClick={handleBack}
+          disabled={isDeleting}
           style={{
             borderRadius: 12,
             border: 'none',
@@ -89,21 +158,11 @@ export const ObjectDetail: FC<ObjectDetailProps> = ({ title = 'Детали об
 
         <Space>
           <Button
-            icon={<EditOutlined />}
-            onClick={handleEdit}
-            style={{
-              borderRadius: 12,
-              backgroundColor: '#f5f5f7',
-              border: 'none'
-            }}
-          >
-            Редактировать
-          </Button>
-
-          <Button
             danger
             icon={<DeleteOutlined />}
             onClick={handleDelete}
+            loading={isDeleting}
+            disabled={isUpdating}
             style={{
               borderRadius: 12
             }}
@@ -126,7 +185,13 @@ export const ObjectDetail: FC<ObjectDetailProps> = ({ title = 'Детали об
       ) : object ? (
         <ObjectDetails object={object} onTitleChange={handleTitleChange} />
       ) : (
-        <Alert message='Объект не найден' description='Объект с указанным ID не существует' type='warning' showIcon />
+        <Alert
+          message='Нет данных'
+          description='Данные об объекте отсутствуют'
+          type='info'
+          showIcon
+          action={<Button onClick={handleRetry}>Обновить</Button>}
+        />
       )}
     </DashboardLayout>
   );
