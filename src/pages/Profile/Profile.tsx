@@ -1,7 +1,9 @@
 import { FC, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
+// import type { RadioChangeEvent } from 'antd';
 import { Button, Modal, Typography } from 'antd';
+import { Radio } from 'antd';
 import { FlagOutlined, UserOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components';
 import './style.scss';
@@ -22,12 +24,9 @@ export const Profile: FC<IProps> = ({ title }) => {
   };
 
   const handleLogout = () => {
-    // Очистка токенов
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
-    // Очистка кэша браузера
     window.history.replaceState(null, '', '/');
-    // Редирект на главную страницу
     navigate('/', { replace: true });
   };
 
@@ -56,21 +55,15 @@ export const Profile: FC<IProps> = ({ title }) => {
               <div className='language-settings__box'>
                 <h3>{t('profile.description')}</h3>
                 <p className='language-settings__subtitle'>{t('profile.selectLanguageHint')}</p>
-
-                <div className='language-settings__radio-group'>
-                  <label>
-                    <input type='radio' name='language' value='ru' checked={currentLang === 'ru'} onChange={() => changeLanguage('ru')} />
-                    {t('profile.ru')}
-                  </label>
-                  <label>
-                    <input type='radio' name='language' value='kg' checked={currentLang === 'kg'} onChange={() => changeLanguage('kg')} />
-                    {t('profile.kg')}
-                  </label>
-                  <label>
-                    <input type='radio' name='language' value='en' checked={currentLang === 'en'} onChange={() => changeLanguage('en')} />
-                    {t('profile.en')}
-                  </label>
-                </div>
+                <Radio.Group
+                  onChange={(e) => changeLanguage(e.target.value)}
+                  value={currentLang}
+                  className='language-settings__radio-group'
+                >
+                  <Radio value='ru'>{t('profile.ru')}</Radio>
+                  <Radio value='kg'>{t('profile.kg')}</Radio>
+                  <Radio value='en'>{t('profile.en')}</Radio>
+                </Radio.Group>
               </div>
             </div>
           )}
