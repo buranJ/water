@@ -37,6 +37,7 @@ export const filefolderApi = createApi({
       query: (body) => {
         const formData = new FormData();
         formData.append('folder', body.folder);
+        formData.append('ty', body.ty);
         body.files.forEach((file) => {
           formData.append('files', file);
         });

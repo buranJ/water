@@ -93,7 +93,7 @@ export const FolderDetail: FC<IProps> = ({ title }) => {
   const handleAddConfirm = () => {
     console.log('Добавить файлы:', filesList);
     if (filesList.length > 0) {
-      uploadFiles({ folder: folderId || '', files: filesList.map((file) => file.originFileObj as File) });
+      uploadFiles({ folder: folderId || '', files: filesList.map((file) => file.originFileObj as File), ty: tyId || '' });
     }
     setFilesList([]);
     setIsAddModalVisible(false);

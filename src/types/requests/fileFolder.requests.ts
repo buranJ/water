@@ -35,4 +35,5 @@ export type IGetFileFolderFoldersParams = { ty_id: string };
 export type IUploadFileParams = {
   folder: string;
   files: File[];
+  ty: string;
 };

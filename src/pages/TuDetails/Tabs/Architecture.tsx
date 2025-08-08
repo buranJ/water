@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { Button, Card, Col, Dropdown, Input, message, Row, Space, Typography } from 'antd';
 import { DownloadOutlined, DownOutlined, SearchOutlined } from '@ant-design/icons';
 import { IFileFolderFolder } from 'types/entities';
@@ -19,6 +19,7 @@ interface IProps {
 }
 
 export const Architecture: FC<IProps> = ({ documentsRequire, documentsCustom, categoryId }) => {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [createFolder, { isLoading, isSuccess, isError }] = useCreateFilefolderMutation();
   const [searchText, setSearchText] = useState('');
@@ -37,8 +38,8 @@ export const Architecture: FC<IProps> = ({ documentsRequire, documentsCustom, ca
     console.log('Скачать PDF');
   };
 
-  const handleDownloadClick = ({ ty_id, folder_id }: { ty_id: string; folder_id: string }) => {
-    navigate(`/dashboard/folder-detail/${folder_id}/${ty_id}`);
+  const handleDownloadClick = ({ folder_id }: { folder_id: string }) => {
+    navigate(`/dashboard/folder-detail/${folder_id}/${id}`);
   };
 
   const handleCreateDocument = () => {
@@ -123,7 +124,7 @@ export const Architecture: FC<IProps> = ({ documentsRequire, documentsCustom, ca
                   {doc.title}
                 </Title>
                 <Button
-                  onClick={() => handleDownloadClick({ ty_id: doc.ty!, folder_id: doc.id })}
+                  onClick={() => handleDownloadClick({ folder_id: doc.id })}
                   color='default'
                   variant='outlined'
                   style={{ width: '100%', borderRadius: 6 }}
@@ -193,7 +194,7 @@ export const Architecture: FC<IProps> = ({ documentsRequire, documentsCustom, ca
                       {doc.title}
                     </Title>
                     <Button
-                      onClick={() => handleDownloadClick({ ty_id: doc.ty!, folder_id: doc.id })}
+                      onClick={() => handleDownloadClick({ folder_id: doc.id })}
                       color='default'
                       variant='outlined'
                       style={{ width: '100%', borderRadius: 6 }}
