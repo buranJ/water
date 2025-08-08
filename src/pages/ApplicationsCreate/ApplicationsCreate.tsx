@@ -78,7 +78,7 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
       const application = await createApplication({
         ...values,
         INN: String(values.INN),
-        object: objectId,
+        object: objectId.toString(),
         customer: customerId,
         status: 'pending',
         entity: objectId

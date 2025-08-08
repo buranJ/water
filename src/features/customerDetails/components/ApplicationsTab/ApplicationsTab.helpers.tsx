@@ -10,7 +10,8 @@ export const data: ApplicationData[] = [
     status: 'approved',
     objectName: '9-ти этажный многоквартирный жилой дом с торговыми помещениями на собственной территории',
     waterAmount: '62,436',
-    wastewaterAmount: '62,436'
+    wastewaterAmount: '62,436',
+    ty_id: ''
   },
   {
     key: '2',
@@ -23,6 +24,7 @@ export const data: ApplicationData[] = [
     waterAmount: '62,436',
     wastewaterAmount: '62,436',
     rejectReason: 'Отказ от архитектуры',
-    comment: 'Нарушение санитарных зон или охранных требований.'
+    comment: 'Нарушение санитарных зон или охранных требований.',
+    ty_id: ''
   }
 ];
