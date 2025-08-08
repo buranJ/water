@@ -1,4 +1,32 @@
 {
+  "login":{
+    "title": "Бишкекводаканал",
+    "welcome": "Добро пожаловать",
+    "email": "Введите ваш email",
+    "emailPlaceholder": "Email должен быть минимум 5 символов",
+    "description": "Введите ваш ID и пароль",
+    "password": "Пароль",
+    "passwordInput": "Введите пароль",
+    "passwordPlaceholder": "Пароль должен быть минимум 5 символов",
+    "forgotPassword": "Забыли пароль?",
+    "authorizationError": "Произошла ошибка при авторизации:",
+    "login": "Войти",
+    "loading": "Входим..."
+  },
+  "dashboard": {
+    "pages":{
+      "geoportal": "Геопортал",
+      "ty":"Ty",
+      "objects": "Объекты",
+      "applications": "Заявки",
+      "customers": "Заказчики",
+      "bills":"Счета и платежи",
+      "architecture": "Архитектура",
+      "export":"Экспорт",
+      "formulas":"Формулы"
+    },
+    "panel":"Панель управления"
+  },
   "profile": {
     "title": "Настройки",
     "currentLang": "Языки",

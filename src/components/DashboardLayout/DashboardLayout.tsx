@@ -1,5 +1,6 @@
 import { ReactNode, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { Button, Flex, Layout, Menu, MenuProps, theme, Typography } from 'antd';
 import { BellOutlined, CreditCardOutlined, LeftOutlined, TeamOutlined } from '@ant-design/icons';
 import arrow from 'assets/icons/arrow.svg';
@@ -28,6 +29,7 @@ export const DashboardLayout = ({ children, title }: Props) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const { t } = useTranslation();
 
   const {
     token: { colorBgContainer }
@@ -54,47 +56,47 @@ export const DashboardLayout = ({ children, title }: Props) => {
     {
       key: '/dashboard/geo',
       icon: <GeoportalIcon />,
-      label: 'Геопортал'
+      label: t('dashboard.pages.geoportal')
     },
     hasPermission('view_technicalcondition') && {
       key: '/dashboard/technical-conditions',
       icon: <TuIcon />,
-      label: 'ТУ'
+      label: t('dashboard.pages.ty')
     },
     hasPermission('view_entity') && {
       key: '/dashboard/objects',
       icon: <BuildingIcon />,
-      label: 'Объекты'
+      label: t('dashboard.pages.objects')
     },
     hasPermission('view_application') && {
       key: '/dashboard/applications',
       icon: <ApplicationIcon />,
-      label: 'Заявки'
+      label: t('dashboard.pages.applications')
     },
     hasPermission('view_customer') && {
       key: '/dashboard/customers',
       icon: <TeamOutlined />,
-      label: 'Заказчики'
+      label: t('dashboard.pages.customers')
     },
     hasPermission('view_payment') && {
       key: '/dashboard/bills',
       icon: <CreditCardOutlined />,
-      label: 'Счета и платежи'
+      label: t('dashboard.pages.bills')
     },
     hasPermission('view_architecture') && {
       key: '/dashboard/architecture',
       icon: <ArchitectureIcon />,
-      label: 'Архитектура'
+      label: t('dashboard.pages.architecture')
     },
     hasPermission('view_export') && {
       key: '/dashboard/export',
       icon: <ExportIcon />,
-      label: 'Экспорт'
+      label: t('dashboard.pages.export')
     },
     hasPermission('view_formula') && {
       key: '/dashboard/formulas',
       icon: <ComputingIcon />,
-      label: 'Формулы'
+      label: t('dashboard.pages.formulas')
     }
   ] as MenuProps['items'];
 
@@ -110,7 +112,7 @@ export const DashboardLayout = ({ children, title }: Props) => {
             style={{ color: '#fff', textAlign: 'center', padding: 16, fontWeight: 600 }}
           >
             <img src={logo} alt='Logo' />
-            <Typography.Text className={clsx('dashboard__logo-text', { hidden: collapsed })}>Бишкексууканал</Typography.Text>
+            <Typography.Text className={clsx('dashboard__logo-text', { hidden: collapsed })}>{t('login.title')}</Typography.Text>
           </Flex>
           <Menu
             theme='dark'
@@ -160,7 +162,7 @@ export const DashboardLayout = ({ children, title }: Props) => {
           <Flex justify='space-between' align='center' gap={16}>
             <Flex align='center' gap={8}>
               {window.location.pathname.split('/').length > 3 && <LeftOutlined onClick={() => navigate(-1)} />}
-              <h2 style={{ margin: 0 }}>{title || 'Панель управления'}</h2>
+              <h2 style={{ margin: 0 }}>{title || t('dashboard.panel')}</h2>
             </Flex>
             <div>
               <Button icon={<BellOutlined />} />

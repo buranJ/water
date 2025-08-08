@@ -1,5 +1,6 @@
 import { FC, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { Button, Form, Input, Typography } from 'antd';
 import logo from 'assets/icons/logo.svg';
 import bg from 'assets/images/login-bg.png';
@@ -8,6 +9,7 @@ import './style.scss';
 import { useLoginMutation } from 'api/Auth.api';
 
 const Login: FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [isFormValid, setIsFormValid] = useState(false);
@@ -24,7 +26,7 @@ const Login: FC = () => {
       }
       navigate('/dashboard/geo');
     } catch (e) {
-      console.error('Ошибка авторизации', e);
+      console.error('t{"error"}', e);
     }
   };
 
@@ -45,13 +47,13 @@ const Login: FC = () => {
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <img src={logo} alt='' style={{ width: '38px', height: '38px' }} />
           <Typography.Title level={3} style={{ marginLeft: '8px' }}>
-            Бишкексууканал
+            {t('login.title')}
           </Typography.Title>
         </div>
         <Typography.Title level={3} style={{ marginTop: '107px' }}>
-          Добро пожаловать
+          {t('login.welcome')}
         </Typography.Title>
-        <Typography.Text type='secondary'>Введите ваш ID и пароль</Typography.Text>
+        <Typography.Text type='secondary'>{t('login.description')}</Typography.Text>
         <Form
           form={form}
           name='validateOnly'
@@ -65,31 +67,36 @@ const Login: FC = () => {
             name='email'
             label='email'
             rules={[
-              { required: true, message: 'Введите ваш email' },
-              { min: 5, message: 'Email должен быть минимум 5 символов' }
+              { required: true, message: t('login.email') },
+              { min: 5, message: t('login.emailPlaceholder') }
             ]}
           >
-            <Input placeholder='Введите Email' size='large' style={{ background: '#f0f1f2' }} />
+            <Input placeholder={t('login.email')} size='large' style={{ background: '#f0f1f2' }} />
           </Form.Item>
           <Form.Item
             name='password'
-            label='Пароль'
+            label={t('login.password')}
             rules={[
-              { required: true, message: 'Введите пароль' },
-              { min: 5, message: 'Пароль должен быть минимум 5 символов' }
+              { required: true, message: t('login.passwordInput') },
+              { min: 5, message: t('login.passwordPlaceholder') }
             ]}
           >
-            <Input.Password placeholder='Введите пароль' size='large' style={{ background: '#f0f1f2' }} />
+            <Input.Password placeholder={t('login.password')} size='large' style={{ background: '#f0f1f2' }} />
           </Form.Item>
           <div style={{ textAlign: 'right' }}>
-            <Link to='/auth/forgot'>Забыли пароль?</Link>
+            <Link to='/auth/forgot'>{t('login.forgotPassword')}</Link>
           </div>
           <Form.Item style={{ marginTop: '24px' }}>
             <Button type='primary' htmlType='submit' size='large' style={{ width: '100%' }} disabled={!isFormValid || isLoading}>
-              {isLoading ? 'Входим...' : 'Войти'}
+              {isLoading ? t('login.loading') : t('login.login')}
             </Button>
           </Form.Item>
-          {isError && <Typography.Text type='danger'>Произошла ошибка при авторизации: {JSON.stringify(error)}</Typography.Text>}
+          {isError && (
+            <Typography.Text type='danger'>
+              {' '}
+              {t('login.authorizationError')} {JSON.stringify(error)}
+            </Typography.Text>
+          )}
         </Form>
       </div>
       <div style={{ width: '50%' }}>

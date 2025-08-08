@@ -1,4 +1,32 @@
 {
+  "login": {
+    "title": "Bishkekwaterchannel",
+    "welcome": "Welcome",
+    "email": "Enter your email",
+    "emailPlaceholder": "Email must be at least 5 characters",
+    "description": "Enter your ID and password",
+    "password": "Password",
+    "passwordInput": "Enter password",
+    "passwordPlaceholder": "Password must be at least 5 characters",
+    "forgotPassword": "Forgot password?",
+    "authorizationError": "An error occurred during authorization:",
+    "login": "Log In",
+    "loading": "Logging in..."
+  },
+  "dashboard": {
+    "pages": {
+      "geoportal": "Geoportal",
+      "ty": "Technical Conditions",
+      "objects": "Objects",
+      "applications": "Applications",
+      "customers": "Customers",
+      "bills": "Bills and Payments",
+      "architecture": "Architecture",
+      "export": "Export",
+      "formulas": "Formulas"
+    },
+    "panel": "Dashboard"
+  },
   "profile": {
     "title": "Settings",
     "currentLang": "Languages",
