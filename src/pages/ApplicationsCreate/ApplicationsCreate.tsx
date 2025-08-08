@@ -1,13 +1,13 @@
 import { FC, useMemo, useState } from 'react';
-import { Button, Col, Flex, Form, Input, Row, UploadFile } from 'antd';
+import { Button, Col, Flex, Form, Input, message, Row, UploadFile } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { UploadFilesModal } from './UploadFilesModal/UploadFilesModal';
 import './styles.scss';
 
 import { IApplication, useCreateApplicationMutation, useUploadApplicationFilesMutation } from 'api/Application.api';
-import { useCreateCustomerMutation } from 'api/Customer.api';
-import { useCreateObjectMutation } from 'api/Object.api';
+import { useCreateCustomerMutation, useLazyGetCustomerQuery } from 'api/Customer.api';
+import { useCreateObjectMutation, useLazyGetAllObjectsQuery } from 'api/Object.api';
 
 interface IProps {
   title: string;
@@ -18,56 +18,82 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
   const [uploadApplicationFiles] = useUploadApplicationFilesMutation();
   const [createCustomer] = useCreateCustomerMutation();
   const [createObject] = useCreateObjectMutation();
+  const [triggerGetCustomers] = useLazyGetCustomerQuery();
+  const [triggerGetObjects] = useLazyGetAllObjectsQuery();
   const [form] = Form.useForm<IApplication>();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState<UploadFile[]>([]);
 
   const handleFinish = async (values: IApplication) => {
     try {
-      const customerResponse = await createCustomer({
-        inn: values.INN,
-        full_name: values.customer,
-        passport: 'passport',
-        address: values.address,
-        contact: values.contact,
-        status: 'active'
-      }).unwrap();
-      const customerId = customerResponse.id;
+      // 1. Поиск или создание заказчика
+      let customerId: number | undefined;
+      const customerSearch = await triggerGetCustomers({ search: values.INN, page: 1, page_size: 10 }).unwrap();
+      const foundCustomer = Array.isArray(customerSearch.results)
+        ? customerSearch.results.find((c: any) => c.inn === values.INN)
+        : undefined;
+      if (foundCustomer) {
+        customerId = foundCustomer.id;
+      } else {
+        const customerResponse = await createCustomer({
+          inn: values.INN,
+          full_name: values.customer,
+          passport: 'passport',
+          address: values.address,
+          contact: values.contact,
+          status: 'active'
+        }).unwrap();
+        customerId = customerResponse.id;
+      }
 
-      const objectResponse = await createObject({
-        title: values.object as string,
-        address_street: values.address,
-        address_number: values.contact,
-        kadastr_number: '',
-        status: 'active',
-        customer: customerId
-      }).unwrap();
-      const objectId = objectResponse.id;
+      // 2. Поиск или создание объекта
+      let objectId: number | undefined;
+      const objectSearch = await triggerGetObjects({ search: values.object, page: 1, page_size: 10 }).unwrap();
+      const foundObject = objectSearch.results?.find(
+        (o: any) =>
+          o.title === values.object &&
+          o.address_street === values.address &&
+          o.address_number === values.contact &&
+          o.customer === customerId
+      );
+      if (foundObject) {
+        objectId = foundObject.id;
+      } else {
+        const objectResponse = await createObject({
+          title: values.object as string,
+          address_street: values.address,
+          address_number: values.contact,
+          kadastr_number: '',
+          status: 'active',
+          customer: customerId
+        }).unwrap();
+        objectId = objectResponse.id;
+      }
 
-      createCustomer({
-        inn: values.INN,
-        full_name: values.customer,
-        passport: 'passport',
-        address: values.address,
-        contact: values.contact,
-        status: 'active'
-      });
+      // 3. Создание заявки
+      if (!customerId || !objectId) {
+        message.error('Ошибка: не удалось определить заказчика или объект');
+        return;
+      }
       const application = await createApplication({
         ...values,
+        INN: String(values.INN),
         object: objectId,
         customer: customerId,
         status: 'pending',
-        entity: 1
+        entity: objectId
       }).unwrap();
 
-      // Загрузка файлов, если есть
+      // 4. Загрузка файлов, если есть
       if (attachedFiles.length > 0) {
         const files = attachedFiles.map((f) => (f as any).originFileObj).filter((f: File | undefined): f is File => !!f);
         if (files.length > 0) {
           await uploadApplicationFiles({ application: application.id, files });
         }
       }
+      message.success('Заявка успешно создана');
     } catch (error) {
+      message.error('Ошибка при создании заявки');
       console.error('Ошибка:', error);
     }
   };
@@ -118,8 +144,8 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
               </Form.Item>
             </Col>
           </Flex>
-          <Form.Item label='Вода требуется на' name='waterRequired' rules={[{ required: true, message: 'Обязательное поле' }]}>
-            <Input size='large' placeholder='Адрес' />
+          <Form.Item label='Назначение воды' name='waterRequired' rules={[{ required: true, message: 'Обязательное поле' }]}>
+            <Input size='large' placeholder='Предназначение воды' />
           </Form.Item>
           <Form.Item
             label='Расходы воды на внутр. пожаротушение'

@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import Slice from './Slice';
 
 import {
+  accountingApi,
   applicationsApi,
   authApi,
   buhgalteriaApi,
@@ -27,6 +28,7 @@ const store = configureStore({
     [objectApi.reducerPath]: objectApi.reducer,
     [refusalApi.reducerPath]: refusalApi.reducer,
     [tyApi.reducerPath]: tyApi.reducer,
+    [accountingApi.reducerPath]: accountingApi.reducer,
     [applicationsApi.reducerPath]: applicationsApi.reducer,
     [formulaApi.reducerPath]: formulaApi.reducer
   },
@@ -42,6 +44,7 @@ const store = configureStore({
       refusalApi.middleware,
       tyApi.middleware,
       applicationsApi.middleware,
+      accountingApi.middleware,
       formulaApi.middleware
     )
 });

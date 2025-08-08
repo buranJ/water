@@ -3,6 +3,7 @@ import { RouteObject } from 'react-router';
 
 const Login = lazy(() => import('features/auth/pages'));
 const Geoportal = lazy(() => import('pages/Geoportal'));
+const Formulas = lazy(() => import('pages/Formulas'));
 const Objects = lazy(() => import('pages/Objects'));
 const ObjectDetail = lazy(() => import('pages/ObjectDetail'));
 const TechnicalConditions = lazy(() => import('features/technical-conditions'));
@@ -37,6 +38,10 @@ export const routerConfig: RouteObject[] = [
     element: <Geoportal title='Геопортал' />
   },
   {
+    path: '/dashboard/formulas',
+    element: <Formulas title='Formulas' />
+  },
+  {
     path: '/dashboard/objects',
     element: <Objects title='Объекты' />
   },
@@ -57,7 +62,7 @@ export const routerConfig: RouteObject[] = [
     element: <HistoryOfLoads title='История увеличения нагрузок' />
   },
   {
-    path: '/dashboard/add-tu-forms',
+    path: '/dashboard/add-tu-forms/:tyId',
     element: <AddTuForms title='Добавление ТУ' />
   },
   {

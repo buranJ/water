@@ -1,15 +1,16 @@
 import { useNavigate } from 'react-router';
 import { Button, Form, Input, Select, Space } from 'antd';
 import { DownloadOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { IStageEnum, IStatus6b3Enum } from 'types/common';
 import './styles.scss';
 
 const { Option } = Select;
 
 interface TUFilterValues {
   search?: string;
-  alphabet?: string;
-  type?: string;
-  status?: string;
+  ordering?: string;
+  type?: IStageEnum;
+  status?: IStatus6b3Enum;
   date?: string;
 }
 
@@ -37,31 +38,25 @@ export const TUFilterBar = ({ onFilterChange, onAddClick, onDownloadClick }: Pro
           <Input prefix={<SearchOutlined />} placeholder='Search' allowClear />
         </Form.Item>
 
-        <Form.Item name='alphabet'>
+        <Form.Item name='ordering'>
           <Select variant='filled' placeholder='По алфавиту' allowClear style={{ width: 140 }}>
-            <Option value='asc'>А-Я</Option>
-            <Option value='desc'>Я-А</Option>
-          </Select>
-        </Form.Item>
-
-        <Form.Item name='type'>
-          <Select variant='filled' placeholder='По типу' allowClear style={{ width: 140 }}>
-            <Option value='residential'>Жилой</Option>
-            <Option value='commercial'>Коммерческий</Option>
+            <Option value='object_name'>А-Я</Option>
+            <Option value='-object_name'>Я-А</Option>
           </Select>
         </Form.Item>
 
         <Form.Item name='status'>
           <Select variant='filled' placeholder='По статусу' allowClear style={{ width: 140 }}>
-            <Option value='approved'>Утверждено</Option>
-            <Option value='rejected'>Отклонено</Option>
+            <Option value='active'>Утверждено</Option>
+            <Option value='inactive'>Отклонено</Option>
+            <Option value='archived'>В архиве</Option>
           </Select>
         </Form.Item>
 
         <Form.Item name='date'>
           <Select variant='filled' placeholder='По дате' allowClear style={{ width: 140 }}>
-            <Option value='newest'>Сначала новые</Option>
-            <Option value='oldest'>Сначала старые</Option>
+            <Option value='created_at'>Сначала новые</Option>
+            <Option value='-created_at'>Сначала старые</Option>
           </Select>
         </Form.Item>
       </Form>

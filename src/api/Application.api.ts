@@ -5,7 +5,7 @@ export interface IApplication {
   status: 'pending' | 'rejected' | 'approved' | 'contracted';
   INN: string;
   customer: number;
-  object: number | string;
+  object: string;
   address: string;
   contact: string;
   quantity: string;
@@ -52,6 +52,7 @@ export interface IApplicationResponse {
   entity: number;
   created_at: string;
   updated_at: string;
+  ty_id?: string;
 }
 
 export interface IApplicationsListResponse {

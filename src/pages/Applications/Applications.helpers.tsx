@@ -28,6 +28,7 @@ export interface ApplicationData {
   rejectReason?: string;
   comment?: string;
   hasTu?: boolean;
+  ty_id?: string;
 }
 
 export interface RejectFormData {

@@ -1,5 +1,6 @@
-import { Form, Select } from 'antd';
-import { TUFilterBar } from 'features/technical-conditions/components/TUFilterBar/TUFilterBar';
+import { useState } from 'react';
+import { Input, Select, Space } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import './styles.scss';
 
 const { Option } = Select;
@@ -26,69 +27,129 @@ interface Props {
   actionButtons?: React.ReactNode;
 }
 
-export const FilterBar = ({ onFilterChange, showAlphabet, showDate, showStatus, showType, showCategory, categoryOptions }: Props) => {
-  const [form] = Form.useForm();
+export const FilterBar = ({
+  onFilterChange,
+  showAlphabet,
+  showDate,
+  showStatus,
+  showType,
+  showCategory,
+  categoryOptions,
+  showStatusSelect,
+  statusOptions,
+  actionButtons
+}: Props) => {
+  const [values, setValues] = useState<FilterValues>({});
 
-  const handleValuesChange = (_: unknown, allValues: FilterValues) => {
-    onFilterChange(allValues);
+  const handleChange = (key: keyof FilterValues, value: string) => {
+    const newValues = { ...values, [key]: value };
+    setValues(newValues);
+    onFilterChange(newValues);
   };
-
-  function handleAddClick(): void {
-    throw new Error('Function not implemented.');
-  }
 
   return (
     <div className='filter-bar'>
-      <Form form={form} layout='inline' onValuesChange={handleValuesChange} style={{ flexWrap: 'wrap', rowGap: 12 }}>
-        <TUFilterBar onFilterChange={onFilterChange} onAddClick={handleAddClick} onDownloadClick={handleAddClick} />
+      <Space style={{ flexWrap: 'wrap', rowGap: 12 }}>
+        <Input
+          prefix={<SearchOutlined />}
+          placeholder='Найти'
+          allowClear
+          value={values.search}
+          onChange={(e) => handleChange('search', e.target.value)}
+          style={{ width: 180 }}
+        />
+
         {showAlphabet && (
-          <Form.Item name='alphabet'>
-            <Select variant='filled' placeholder='По алфавиту' allowClear style={{ width: 140 }}>
-              <Option value='asc'>А-Я</Option>
-              <Option value='desc'>Я-А</Option>
-            </Select>
-          </Form.Item>
+          <Select
+            variant='filled'
+            placeholder='По алфавиту'
+            allowClear
+            style={{ width: 140 }}
+            value={values.alphabet}
+            onChange={(v) => handleChange('alphabet', v)}
+          >
+            <Option value='asc'>А-Я</Option>
+            <Option value='desc'>Я-А</Option>
+          </Select>
         )}
 
         {showCategory && categoryOptions && (
-          <Form.Item name='category'>
-            <Select variant='filled' placeholder='Категория' allowClear style={{ width: 140 }}>
-              {categoryOptions.map((opt) => (
-                <Option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
+          <Select
+            variant='filled'
+            placeholder='Категория'
+            allowClear
+            style={{ width: 140 }}
+            value={values.category}
+            onChange={(v) => handleChange('category', v)}
+          >
+            {categoryOptions.map((opt) => (
+              <Option key={opt.value} value={opt.value}>
+                {opt.label}
+              </Option>
+            ))}
+          </Select>
+        )}
+
+        {showStatusSelect && statusOptions && (
+          <Select
+            variant='filled'
+            placeholder='Статус'
+            allowClear
+            style={{ width: 140 }}
+            value={values.status}
+            onChange={(v) => handleChange('status', v)}
+          >
+            {statusOptions.map((opt) => (
+              <Option key={opt.value} value={opt.value}>
+                {opt.label}
+              </Option>
+            ))}
+          </Select>
         )}
 
         {showDate && (
-          <Form.Item name='type'>
-            <Select variant='filled' placeholder='По типу' allowClear style={{ width: 140 }}>
-              <Option value='residential'>Жилой</Option>
-              <Option value='commercial'>Коммерческий</Option>
-            </Select>
-          </Form.Item>
+          <Select
+            variant='filled'
+            placeholder='По типу'
+            allowClear
+            style={{ width: 140 }}
+            value={values.type}
+            onChange={(v) => handleChange('type', v)}
+          >
+            <Option value='residential'>Жилой</Option>
+            <Option value='commercial'>Коммерческий</Option>
+          </Select>
         )}
 
         {showStatus && (
-          <Form.Item name='status'>
-            <Select variant='filled' placeholder='По статусу' allowClear style={{ width: 140 }}>
-              <Option value='approved'>Утверждено</Option>
-              <Option value='rejected'>Отклонено</Option>
-            </Select>
-          </Form.Item>
+          <Select
+            variant='filled'
+            placeholder='По статусу'
+            allowClear
+            style={{ width: 140 }}
+            value={values.status}
+            onChange={(v) => handleChange('status', v)}
+          >
+            <Option value='approved'>Утверждено</Option>
+            <Option value='rejected'>Отклонено</Option>
+          </Select>
         )}
 
         {showType && (
-          <Form.Item name='date'>
-            <Select variant='filled' placeholder='По дате' allowClear style={{ width: 140 }}>
-              <Option value='newest'>Сначала новые</Option>
-              <Option value='oldest'>Сначала старые</Option>
-            </Select>
-          </Form.Item>
+          <Select
+            variant='filled'
+            placeholder='По дате'
+            allowClear
+            style={{ width: 140 }}
+            value={values.date}
+            onChange={(v) => handleChange('date', v)}
+          >
+            <Option value='newest'>Сначала новые</Option>
+            <Option value='oldest'>Сначала старые</Option>
+          </Select>
         )}
-      </Form>
+      </Space>
+      <Space>{actionButtons}</Space>
     </div>
   );
 };
