@@ -1,5 +1,14 @@
 export type { IGetCustomerParams, IGetCustomerResponse } from './customer.requests';
 export type {
+  ICreateFolderParams,
+  ICreateFolderResponse,
+  IFileListResponse,
+  IGetFileFolderFoldersParams,
+  IGetFileFolderFoldersResponse,
+  IGetFileListParams,
+  IUploadFileParams
+} from './fileFolder.requests';
+export type {
   ICreateTechnicalConditionParams,
   ICreateTechnicalConditionRequest,
   IDeleteTechnicalConditionParams,

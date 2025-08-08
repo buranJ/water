@@ -1,13 +1,22 @@
-import { FC, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router';
-import { Alert, Button, Card, Col, Flex, List, Row, Space, Spin, Tabs, TabsProps, Typography, UploadFile } from 'antd';
-import { ClockCircleTwoTone, CloseCircleTwoTone, DownloadOutlined, FileOutlined, PlusOutlined } from '@ant-design/icons';
+import { Alert, Button, Card, Col, Flex, List, Progress, Row, Space, Spin, Tabs, TabsProps, Typography } from 'antd';
+import {
+  CheckCircleTwoTone,
+  ClockCircleTwoTone,
+  CloseCircleTwoTone,
+  DownloadOutlined,
+  FileOutlined,
+  PlusOutlined
+} from '@ant-design/icons';
 import { AccountingTab } from 'components/AccountingTab/AccountingTab';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { IStageEnum, IStatus6b3Enum } from 'types/common';
 import { MyModal } from './MyModal';
+import { Architecture } from './Tabs';
 
 import { useGetUserInfoQuery } from 'api/Auth.api';
+import { useGetFoldersQuery } from 'api/FileFolder.api';
 import { useGetTyByIdQuery } from 'api/Ty.api';
 
 const { Title, Text } = Typography;
@@ -16,14 +25,10 @@ interface IProps {
   title: string;
 }
 
-interface IUploadFile extends UploadFile<File> {
-  name: string;
-  uid: string;
-}
-
 export const TuDetails: FC<IProps> = ({ title }) => {
   const userQuery = useGetUserInfoQuery();
   const { id } = useParams<{ id: string }>();
+  const foldersQuery = useGetFoldersQuery({ ty_id: id || '' });
 
   const {
     data: objectData,
@@ -40,16 +45,6 @@ export const TuDetails: FC<IProps> = ({ title }) => {
 
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>('1');
-  const [uploadFileList] = useState<IUploadFile[]>([
-    {
-      name: 'Документ 1',
-      uid: '1'
-    },
-    {
-      name: 'Документ 2',
-      uid: '2'
-    }
-  ]);
 
   const handleRejectClick = (): void => {
     setIsModalVisible(true);
@@ -202,16 +197,43 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     </>
   );
 
+  const commonFolders = useMemo(
+    () => [...(foldersQuery.data?.custom || []), ...(foldersQuery.data?.required || [])],
+    [foldersQuery.data?.custom, foldersQuery.data?.required]
+  );
+
+  const requireArchitectureDocs = useMemo(
+    () => foldersQuery.data?.required.filter((item) => item.category.title.toLowerCase() === 'архитектура') || [],
+    [foldersQuery.data?.required]
+  );
+
+  const requireDocumentsDocs = useMemo(
+    () => foldersQuery.data?.required.filter((item) => item.category.title.toLowerCase() === 'документы') || [],
+    [foldersQuery.data?.required]
+  );
+
+  const customArchitectureDocs = useMemo(
+    () => foldersQuery.data?.custom.filter((item) => item.category.title.toLowerCase() === 'архитектура') || [],
+    [foldersQuery.data?.custom]
+  );
+
+  const customDocumentsDocs = useMemo(
+    () => foldersQuery.data?.custom.filter((item) => item.category.title.toLowerCase() === 'документы') || [],
+    [foldersQuery.data?.custom]
+  );
+
   const dynamicTabs =
     userQuery.data?.user.allowed_categories?.map((category, index) => {
       let content: React.ReactNode = <Text>Контент для "{category.title}" пока не реализован</Text>;
 
       switch (category.title.toLowerCase()) {
         case 'архитектура':
-          content = <div>Содержимое вкладки Архитектура</div>;
+          content = (
+            <Architecture categoryId={category.id} documentsRequire={requireArchitectureDocs} documentsCustom={customArchitectureDocs} />
+          );
           break;
         case 'документы':
-          content = <div>Содержимое вкладки Документы</div>;
+          content = <Architecture categoryId={category.id} documentsRequire={requireDocumentsDocs} documentsCustom={customDocumentsDocs} />;
           break;
         case 'бухгалтерия':
           content = id ? <AccountingTab technicalConditionId={id} /> : null;
@@ -254,6 +276,17 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     );
   }
 
+  const folders = foldersQuery.data; // где foldersQuery.data имеет тип IFileFolderFolder
+
+  // Подсчитываем общее число необходимых папок
+  const totalRequiredFolders = folders?.required?.length ?? 0;
+
+  // Подсчитываем, сколько из них имеют filled === true
+  const filledRequiredFolders = folders?.required?.filter((item) => item.filled).length ?? 0;
+
+  // Вычисляем процент (если totalRequiredFolders > 0)
+  const percent = totalRequiredFolders > 0 ? (filledRequiredFolders / totalRequiredFolders) * 100 : 0;
+
   return (
     <DashboardLayout title={`${title} ${id}`}>
       {activeTab === '1' && (
@@ -276,31 +309,32 @@ export const TuDetails: FC<IProps> = ({ title }) => {
           <Col span={8}>
             <Card style={{ marginBottom: 16 }}>
               <Title level={4}>Другие документы</Title>
-              <div
-                style={{
-                  backgroundColor: '#327BE8',
-                  height: 8,
-                  borderRadius: 4,
-                  margin: '16px 0'
-                }}
-              />
+              <Progress percent={percent} status={percent < 100 ? 'exception' : 'success'} />
+
               <Text type='secondary'>Загрузите соответствующий документ, чтобы завершить создание ТУ</Text>
-              {uploadFileList.length > 0 && (
+              {commonFolders.length > 0 && (
                 <List
                   style={{ margin: '16px 0' }}
                   bordered
-                  dataSource={uploadFileList}
-                  renderItem={(item: IUploadFile) => (
-                    <List.Item>
-                      <Space>
-                        <CloseCircleTwoTone twoToneColor='#E63A3A' style={{ marginRight: 8 }} />
-                        <FileOutlined style={{ color: '#327BE8' }} />
-                        {item.name}
-                      </Space>
-                    </List.Item>
-                  )}
+                  dataSource={commonFolders}
+                  renderItem={(item) => {
+                    return (
+                      <List.Item>
+                        <Space>
+                          {item.filled ? (
+                            <CheckCircleTwoTone twoToneColor='#6be275ff' style={{ marginRight: 8 }} />
+                          ) : (
+                            <CloseCircleTwoTone twoToneColor='#E63A3A' style={{ marginRight: 8 }} />
+                          )}
+                          <FileOutlined style={{ color: '#327BE8' }} />
+                          {item.title}
+                        </Space>
+                      </List.Item>
+                    );
+                  }}
                 />
               )}
+
               <div style={{ marginTop: 16, width: '100%', textAlign: 'center' }}>
                 <Button type='primary' block>
                   Загрузить

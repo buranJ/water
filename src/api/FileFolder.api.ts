@@ -1,57 +1,61 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { getBaseQuery } from 'common/helpers';
-
-interface FileItem {
-  id: number;
-  folder: number;
-  file: string;
-  uploaded_at: string;
-}
-
-type FileListResponse = FileItem[];
-
-interface CreateFolderBody {
-  title: string;
-  description: string;
-  category: number;
-}
-
-interface CreateFolderResponse {
-  id: number;
-  title: string;
-  description: string;
-  created_at: string;
-  updated_at: string;
-  category: number;
-}
+import {
+  ICreateFolderParams,
+  ICreateFolderResponse,
+  IFileListResponse,
+  IGetFileFolderFoldersParams,
+  IGetFileFolderFoldersResponse,
+  IGetFileListParams,
+  IUploadFileParams
+} from 'types/requests';
 
 export const filefolderApi = createApi({
   reducerPath: 'filefolderApi',
   baseQuery: getBaseQuery(),
+  tagTypes: ['FileFolder', 'FileList'],
   endpoints: (build) => ({
-    getFilefolderFiles: build.query<FileListResponse, number>({
-      query: (folderId) => ({
-        url: `filefolder/${folderId}/files/`,
-        method: 'GET'
-      })
+    getFilefolderFiles: build.query<IFileListResponse, IGetFileListParams>({
+      query: ({ folder_id, ty_id, ...params }) => ({
+        url: `filefolder/${folder_id}/files/${ty_id}`,
+        method: 'GET',
+        params
+      }),
+      providesTags: ['FileFolder', 'FileList']
     }),
 
-    createFilefolder: build.mutation<CreateFolderResponse, CreateFolderBody>({
+    createFilefolder: build.mutation<ICreateFolderResponse, ICreateFolderParams>({
       query: (body) => ({
         url: 'filefolder/create/',
         method: 'POST',
         body
-      })
+      }),
+      invalidatesTags: ['FileFolder', 'FileList']
     }),
 
-    uploadFile: build.mutation({
-      query: (body) => ({
-        url: 'filefolder/files/upload/',
-        method: 'POST',
-        body
-      })
+    uploadFile: build.mutation<void, IUploadFileParams>({
+      query: (body) => {
+        const formData = new FormData();
+        formData.append('folder', body.folder);
+        body.files.forEach((file) => {
+          formData.append('files', file);
+        });
+        return {
+          url: 'filefolder/files/upload/',
+          method: 'POST',
+          body: formData
+        };
+      },
+      invalidatesTags: ['FileFolder', 'FileList']
+    }),
+    getFolders: build.query<IGetFileFolderFoldersResponse, IGetFileFolderFoldersParams>({
+      query: ({ ty_id }) => ({
+        url: `filefolder/tu/${ty_id}/folders/`,
+        method: 'GET'
+      }),
+      providesTags: ['FileFolder', 'FileList']
     })
   })
 });
 
-export const { useGetFilefolderFilesQuery, useCreateFilefolderMutation, useUploadFileMutation } = filefolderApi;
+export const { useGetFilefolderFilesQuery, useCreateFilefolderMutation, useUploadFileMutation, useGetFoldersQuery } = filefolderApi;

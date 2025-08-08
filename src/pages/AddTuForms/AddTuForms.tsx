@@ -44,7 +44,6 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           entity: tuQuery.data?.entity
         };
         updateTy({ id: tyId as string, body: payload });
-        console.log('create');
       } catch (e) {
         console.error(e);
         message.error('Произошла ошибка при создании ТУ.');

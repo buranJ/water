@@ -17,7 +17,7 @@ const TuDetails = lazy(() => import('pages/TuDetails'));
 const HistoryOfLoads = lazy(() => import('pages/HistoryOfLoads'));
 const Architecture = lazy(() => import('pages/Architecture'));
 const ArchitectureDetails = lazy(() => import('pages/ArchitectureDetails'));
-const Protocol = lazy(() => import('pages/Protocol'));
+const FolderDetail = lazy(() => import('pages/FolderDetail'));
 const ProtocolDetail = lazy(() => import('pages/ProtocolDetail'));
 const AddCustomer = lazy(() => import('pages/AddCustomer'));
 const Applications = lazy(() => import('pages/Applications'));
@@ -98,8 +98,8 @@ export const routerConfig: RouteObject[] = [
     element: <ArchitectureDetails title='Документ №' />
   },
   {
-    path: '/dashboard/protocol',
-    element: <Protocol title='Протокол' />
+    path: '/dashboard/folder-detail/:folderId/:tyId',
+    element: <FolderDetail title='Протокол' />
   },
   {
     path: '/dashboard/protocol-details/:id',

@@ -52,8 +52,7 @@ export const useRejectModal = () => {
     setSelectedApplication(undefined);
   };
 
-  const handleReject = (rejectData: RejectFormData) => {
-    console.log('Rejecting application:', selectedApplication, rejectData);
+  const handleReject = () => {
     closeRejectModal();
   };
 
