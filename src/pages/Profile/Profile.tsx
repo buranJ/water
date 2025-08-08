@@ -34,7 +34,7 @@ export const Profile: FC<IProps> = ({ title }) => {
   const currentLang = i18n.language;
 
   return (
-    <DashboardLayout title={title}>
+    <DashboardLayout title={t(title)}>
       <div className='language-settings'>
         <aside className='language-settings__sidebar'>
           <ul>

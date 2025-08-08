@@ -9,6 +9,7 @@ import { ObjectsFilters } from 'components/ObjectsFilters';
 import { IGetObjectParams, ObjectFilters } from 'types/entities/objects';
 
 import { useCreateObjectMutation, useGetAllObjectsQuery, useUpdateObjectTitleMutation } from 'api/Object.api';
+import { t } from 'i18next';
 
 interface ObjectsProps {
   title: string;
@@ -152,7 +153,7 @@ export const Objects: FC<ObjectsProps> = ({ title }) => {
   };
 
   return (
-    <DashboardLayout title={title}>
+    <DashboardLayout title={t(title)}>
       <ObjectsFilters filters={filters} onSearchChange={handleSearchChange} onFilterChange={handleFilterChange} onAddNew={handleAddNew} />
       {isLoading ? (
         <div style={{ textAlign: 'center', padding: '50px 0' }}>

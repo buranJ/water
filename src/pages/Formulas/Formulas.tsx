@@ -9,6 +9,7 @@ import { FormulaForm, FormulaFormData } from 'components/FormulaForm/FormulaForm
 import { FormulaItem, IGetFormulasParams } from 'types/entities';
 
 import { useCreateFormulaMutation, useDeleteFormulaMutation, useGetAllFormulasQuery, usePatchFormulaMutation } from 'api/Formula.api';
+import { t } from 'i18next';
 
 const { Title } = Typography;
 
@@ -166,9 +167,8 @@ export const Formulas: FC<FormulasProps> = ({ title }) => {
   }
 
   return (
-    <DashboardLayout title={title}>
+    <DashboardLayout title={t(title)}>
       <Space direction='vertical' size={24} style={{ width: '100%' }}>
-        {/* Заголовок и панель управления */}
         <div
           style={{
             display: 'flex',
@@ -187,7 +187,7 @@ export const Formulas: FC<FormulasProps> = ({ title }) => {
               fontWeight: 700
             }}
           >
-            {title}
+            {t(title)}
           </Title>
 
           <Space size={16}>

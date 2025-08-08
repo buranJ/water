@@ -6,6 +6,7 @@ import { MapObjectCard } from 'components/MapObjectCard/MapObjectCard';
 import { YandexMap } from 'components/YandexMap/YandexMap';
 
 import { MapObject, useGetAllMapObjectsQuery } from 'api/GeoPartal.api';
+import { t } from 'i18next';
 import { applyFilters } from 'utils/mapHelpers';
 
 const { Text } = Typography;
@@ -80,7 +81,7 @@ export const Geoportal: FC<GeoportalProps> = ({ title }) => {
   const hasActiveFilters = Boolean(filters.search || filters.type || filters.status || filters.dateRange);
 
   return (
-    <DashboardLayout title={title}>
+    <DashboardLayout title={t(title)}>
       {isLoading && (
         <div style={{ textAlign: 'center', marginBottom: 16 }}>
           <Spin size='large' />

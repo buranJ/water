@@ -13,10 +13,27 @@
     "login": "Кирүү",
     "loading": "Кирип жатабыз..."
   },
+  "routers": {
+    "historyOfLoads": "Жүктөрдү жогорулатуу тарыхы",
+    "addTu": "Техникалык шарттарды кошуу",
+    "exportData": "Маалыматтарды экспорттоо",
+    "historyExportData": "Маалыматтарды экспорттоо тарыхы",
+    "customerDetails": "Кардарлардын маалыматы",
+    "editRequister": "Кардарды түзөтүү",
+    "addCustomer": "Кардар кошуу",
+    "document": "Документ №",
+    "protocol": "Протокол",
+    "ApplicationDetails": "Арыз №",
+    "editApplication": "Арызды түзөтүү",
+    "applicationCreate": "Арызды түзүү",
+    "profile": "Профиль",
+    "technicalSpecificatio": "Техникалык шарттар"
+
+  },
   "dashboard": {
     "pages": {
       "geoportal": "Геопортал",
-      "ty": "Техникалык шарттар",
+      "ty": "ТУ",
       "objects": "Объекттер",
       "applications": "Арыздар",
       "customers": "Кардарлар",

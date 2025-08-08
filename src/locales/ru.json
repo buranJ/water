@@ -16,7 +16,7 @@
   "dashboard": {
     "pages":{
       "geoportal": "Геопортал",
-      "ty":"Ty",
+      "ty":"TУ",
       "objects": "Объекты",
       "applications": "Заявки",
       "customers": "Заказчики",
@@ -26,6 +26,22 @@
       "formulas":"Формулы"
     },
     "panel":"Панель управления"
+  },
+  "routers": {
+    "historyOfLoads": "История увеличения нагрузок",
+    "addTu": "Добавление ТУ",
+    "exportData": "Экспорт данных",
+    "historyExportData": "История экспорта данных",
+    "customerDetails": "Детали клиентов",
+    "editRequister": "Редактирование заказчика",
+    "addCustomer": "Добавление заказчика",
+    "document": "Документ №",
+    "protocol": "Протокол",
+    "ApplicationDetails": "заявка №",
+    "editApplication": "Редактирование заявку",
+    "applicationCreate": "Оформление заявки",
+    "profile": "Профиль",
+    "technicalSpecificatio": "Технические условия"
   },
   "profile": {
     "title": "Настройки",

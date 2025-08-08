@@ -16,7 +16,7 @@
   "dashboard": {
     "pages": {
       "geoportal": "Geoportal",
-      "ty": "Technical Conditions",
+      "ty": "TY",
       "objects": "Objects",
       "applications": "Applications",
       "customers": "Customers",
@@ -26,6 +26,23 @@
       "formulas": "Formulas"
     },
     "panel": "Dashboard"
+  },
+  "routers": {
+    "historyOfLoads": "History of Load Increases",
+    "addTu": "Add Technical Conditions",
+    "exportData": "Export Data",
+    "historyExportData": "History of Data Export",
+    "customerDetails": "Customer Details",
+    "editRequister": "Edit Customer",
+    "addCustomer": "Add Customer",
+    "document": "Document No.",
+    "protocol": "Protocol",
+    "ApplicationDetails": "Application No.",
+    "editApplication": "Edit Application",
+    "applicationCreate": "Create Application",
+    "profile": "Profile",
+    "technicalSpecificatio": "technical Specificatio"
+
   },
   "profile": {
     "title": "Settings",
