@@ -39,18 +39,15 @@ export const Objects: FC<ObjectsProps> = ({ title }) => {
     ordering: '-created_at' // Сортировка по дате создания (новые сначала)
   };
 
-  // Используем новый API с параметрами
   const { data: objectsResponse, isLoading, error } = useGetAllObjectsQuery(queryParams);
   const [updateObjectTitle] = useUpdateObjectTitleMutation();
   const [createObject, { isLoading: isCreating }] = useCreateObjectMutation();
 
   const objects = objectsResponse?.results || [];
 
-  // Применение локальных фильтров (для фильтров, которые не поддерживаются API)
   const filteredObjects = React.useMemo(() => {
     let filtered = objects;
 
-    // Фильтр по дате (локально, если не поддерживается API)
     if (filters.date) {
       const now = new Date();
       filtered = filtered.filter((obj) => {
