@@ -7,6 +7,7 @@ import { ConfigProvider } from 'antd';
 import ruRu from 'antd/es/locale/ru_RU';
 import App from './App';
 import '@ant-design/v5-patch-for-react-19'; // Патч для совместимости с React 19
+import './i18n';
 import 'antd/dist/reset.css';
 import './styles/styles.scss';
 

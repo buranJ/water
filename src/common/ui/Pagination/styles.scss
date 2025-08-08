@@ -1,9 +1,3 @@
-.technical-conditions-page {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh; // 🔑 Чтобы занимать всю высоту экрана
-}
-
 .technical-conditions-content {
   flex: 1 0 auto; // 🔑 Контент растягивается
 }

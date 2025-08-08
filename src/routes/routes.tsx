@@ -25,6 +25,7 @@ const NotFound = lazy(() => import('pages/NotFound'));
 const ApplicationsCreate = lazy(() => import('pages/ApplicationsCreate'));
 const ApplicationDetails = lazy(() => import('pages/ApplicationDetails'));
 const EditApplication = lazy(() => import('pages/EditApplication'));
+const Profile = lazy(() => import('pages/Profile'));
 
 export const routerConfig: RouteObject[] = [
   {
@@ -119,6 +120,10 @@ export const routerConfig: RouteObject[] = [
   {
     path: '/dashboard/applications/create',
     element: <ApplicationsCreate title='Оформление заявки' />
+  },
+  {
+    path: '/dashboard/Profile',
+    element: <Profile title='Профиль' />
   },
   {
     path: '*',

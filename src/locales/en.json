@@ -1,0 +1,17 @@
+{
+  "profile": {
+    "title": "Settings",
+    "currentLang": "Languages",
+    "description": "Used Language",
+    "selectLanguageHint": "Select your preferred display language",
+    "ru": "Russian",
+    "kg": "Kyrgyz",
+    "en": "English",
+    "account": "Account",
+    "logout": "Log Out",
+    "confirmTitle": "Logout Confirmation",
+    "confirmLogout": "Are you sure you want to log out?",
+    "yes": "Yes",
+    "no": "No"
+  }
+}
