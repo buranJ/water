@@ -1,3 +1,4 @@
+export type { IAccountingProtocol, IGetAccountingProtocolParams } from './accounting';
 export type { ICustomer, ICustomerParams } from './customer';
 export type { FormulaItem, FormulaListResponse, FormulaUpdateBody, IGetFormulasParams } from './formula';
 export type {
@@ -9,4 +10,4 @@ export type {
   ObjectItem,
   ObjectListResponse
 } from './objects';
-export type { IGetTyById, ITechnicalCondition, ITyBody, ITyItem, ITyListQueryParams } from './tu';
+export type { IGetTyById, ITechnicalCondition, ITyBody, ITyItem, ITyListQueryParams, ITypesTY } from './tu';

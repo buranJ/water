@@ -4,6 +4,7 @@ import { Table } from 'antd';
 import { Pagination } from 'common/ui';
 import { TUFilterBar } from '../components/TUFilterBar/TUFilterBar';
 import { DashboardLayout } from 'components';
+import { IStageEnum, IStatus6b3Enum } from 'types/common';
 import { ITechnicalCondition } from 'types/entities';
 import { IGetAllTechnicalConditionParams } from 'types/requests';
 import { getColumns } from './TechnicalConditionsPage.helpers';
@@ -13,12 +14,11 @@ import { useGetAllTyQuery } from 'api/Ty.api';
 
 interface TUFilterValues {
   search?: string;
-  alphabet?: string;
-  type?: string;
-  status?: string;
+  ordering?: string;
+  type?: IStageEnum;
+  status?: IStatus6b3Enum;
   date?: string;
 }
-
 
 export const TechnicalConditionsPage = () => {
   const navigate = useNavigate();
@@ -43,10 +43,7 @@ export const TechnicalConditionsPage = () => {
   const handleFilterChange = (values: TUFilterValues) => {
     setFilters((prev) => ({
       ...prev,
-      search: values.search || undefined,
-      ordering: values.alphabet || undefined,
-      stage: (values.type as IGetAllTechnicalConditionParams['stage']) || undefined,
-      status: (values.status as IGetAllTechnicalConditionParams['status']) || undefined,
+      ...values,
       page: 1
     }));
   };
@@ -69,6 +66,9 @@ export const TechnicalConditionsPage = () => {
               break;
             case 'delete':
               console.log('Delete action clicked for record:', record);
+              break;
+            case 'view':
+              navigate(`/dashboard/technical-conditions/tu-details/${record.id}`);
               break;
           }
         }
@@ -94,7 +94,7 @@ export const TechnicalConditionsPage = () => {
           loading={isLoading}
           columns={columns}
           dataSource={tableData}
-          rowKey='key'
+          rowKey='id'
           bordered
           scroll={{ x: 'max-content' }}
         />

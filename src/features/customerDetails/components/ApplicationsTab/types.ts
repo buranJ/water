@@ -12,4 +12,5 @@ export interface ApplicationData {
   status: StatusCode;
   rejectReason?: string;
   comment?: string;
+  ty_id: string;
 }

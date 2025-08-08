@@ -1,9 +1,10 @@
-import { IStageEnum, IStatus6b3Enum } from 'types/common';
+import { IStageEnum, IStatus6b3Enum, ITyTypeEnum } from 'types/common';
 
 export interface ITechnicalCondition {
   id: number;
-  status_display: string;
-  stage_display: string;
+  status_display: IStatus6b3Enum;
+  stage_display: IStageEnum;
+  type?: ITyTypeEnum;
   request_source: string;
   request_number: string;
   request_date: Date;
@@ -17,7 +18,7 @@ export interface ITechnicalCondition {
   fire_fighting: string;
   is_water: boolean;
   is_kanal: boolean;
-  stage: IStageEnum;
+  stage: IStageEnum /** Стадия: 'draft' | 'review' | 'approved' | 'done' */;
   connection_target: string;
   street_pass: string;
   collector: string;
@@ -26,12 +27,16 @@ export interface ITechnicalCondition {
   fire_input_1: string | null;
   fire_input_2: string | null;
   notes: string | null;
-  payment_paper: string;
+  payment_paper: {
+    number: string;
+    date: string;
+  };
   payment_connection: string;
   payment_status: string;
   payment_amount: string;
   payment_date: string;
   payment_invoice_number: string;
+  payment_deadline?: string | Date;
   created_at: string;
   updated_at: string;
   customer: {
@@ -51,20 +56,20 @@ export interface IGetTyById {
     id: string;
     full_name: string;
   };
-  application: {
+  application?: {
     id: number;
     x: number;
     y: number;
   };
-  status_display: string;
-  stage_display: string;
+  status_display: IStatus6b3Enum;
+  stage_display: IStageEnum;
   request_source: string;
   request_number: string;
-  request_date: Date;
+  request_date: string | Date;
   object_name: string;
   address: string;
   eni: string;
-  type?: 'connection' | 'reconnection' | 'load_increase';
+  type?: ITyTypeEnum;
   status?: IStatus6b3Enum;
   sewage_amount: string;
   water_required: string;
@@ -85,8 +90,8 @@ export interface IGetTyById {
   payment_paper: string;
   payment_connection: string;
   payment_amount: string;
-  payment_deadline: Date;
-  payment_date?: Date;
+  payment_deadline: Date | string;
+  payment_date?: string;
   payment_invoice_number: string;
   created_at: string;
   updated_at: string;
@@ -169,7 +174,7 @@ export interface ITyBody {
   payment_amount: string;
   payment_date: string;
   payment_invoice_number: string;
-  customer: number;
+  customer: string;
   entity: number;
   formula: number;
   application: number;
@@ -186,6 +191,11 @@ export interface ITyListQueryParams {
   page?: number;
   page_size?: number;
   search?: string;
-  stage?: 'approved' | 'done' | 'draft' | 'review';
-  status?: 'active' | 'archived' | 'inactive';
+  stage?: IStageEnum;
+  status?: IStatus6b3Enum;
+}
+
+export interface ITypesTY {
+  id: number;
+  title: string;
 }

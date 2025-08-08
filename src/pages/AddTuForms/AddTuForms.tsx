@@ -1,115 +1,109 @@
-import { FC, useCallback, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo } from 'react';
+import { useNavigate, useParams } from 'react-router';
 import { Button, Col, DatePicker, Form, Input, message, Row, Select, Typography } from 'antd';
+import dayjs, { Dayjs } from 'dayjs';
 import { DashboardLayout } from 'components';
 import { ITyItem } from 'types/entities';
 import './style.scss';
 
-import { useCreateCustomerMutation, useLazyGetCustomerQuery } from 'api/Customer.api';
-import { useCreateObjectMutation, useLazyGetAllObjectsQuery } from 'api/Object.api';
-import { useLazyCheckRefuseByCustomerQuery, useLazyCheckRefuseByEntityQuery } from 'api/Refusal.api';
-import { useCreateTyMutation } from 'api/Ty.api';
+import { useGetAllFormulasQuery } from 'api/Formula.api';
+import { useLazyGetAllObjectsQuery } from 'api/Object.api';
+import { useGetTyByIdQuery, useGetTypesTyQuery, useUpdateTyMutation } from 'api/Ty.api';
 
 const { Option } = Select;
 const { Title } = Typography;
 
 const AddTuForms: FC<{ title: string }> = ({ title }) => {
-  const [createTy] = useCreateTyMutation();
-  const [getCustomer] = useLazyGetCustomerQuery();
-  const [getObject, { data: object }] = useLazyGetAllObjectsQuery();
-  const [createCustomer] = useCreateCustomerMutation();
-  const [createObject] = useCreateObjectMutation();
-  const [checkRefuseByCustomer] = useLazyCheckRefuseByCustomerQuery();
-  const [checkRefuseByEntity] = useLazyCheckRefuseByEntityQuery();
+  const navigate = useNavigate();
+  const { tyId } = useParams();
+  const formulasQuery = useGetAllFormulasQuery({ page: 1 });
+  const typesTyQuery = useGetTypesTyQuery();
+  const [updateTy, { isLoading, isSuccess }] = useUpdateTyMutation();
+  const tuQuery = useGetTyByIdQuery({ tyId: tyId || '' });
+  const [getObject] = useLazyGetAllObjectsQuery();
   const [form] = Form.useForm<ITyItem>();
 
-  const [foundCustomer, setFoundCustomer] = useState<{ id: number; full_name: string } | null>(null);
+  const formatDate = useCallback((date: Dayjs | undefined) => date?.format('YYYY-MM-DD') || '', []);
+
+  const parseDate = useCallback((dateString: string | undefined) => (dateString ? dayjs(dateString) : null), []);
 
   const onFinish = useCallback(
     async (values: ITyItem) => {
-      let customerId = foundCustomer?.id;
-      let objectId = object?.results[0]?.id;
-
-      if (customerId) {
-        const refuseCustomerResp = await checkRefuseByCustomer(customerId).unwrap();
-        if (refuseCustomerResp?.results?.length) {
-          message.error(`Для заказчика ID=${customerId} найден отказ. Создание ТУ невозможно.`);
+      try {
+        if (!tuQuery.data) {
+          message.error('Не удалось получить данные ТУ.');
           return;
         }
-      } else {
-        const payloadForCustomer = {
-          inn: values.inn,
-          full_name: values.customer as string
+
+        const payload = {
+          ...tuQuery,
+          ...values,
+          customer: tuQuery.data?.customer.id,
+          request_date: values.request_date,
+          payment_deadline: values.payment_deadline,
+          entity: tuQuery.data?.entity
         };
-        const newCustomer = await createCustomer({ inn: payloadForCustomer.inn, full_name: payloadForCustomer.full_name }).unwrap();
-        customerId = newCustomer.id;
+        updateTy({ id: tyId as string, body: payload });
+        console.log('create');
+      } catch (e) {
+        console.error(e);
+        message.error('Произошла ошибка при создании ТУ.');
       }
-
-      if (objectId) {
-        const refuseEntityResp = await checkRefuseByEntity(objectId).unwrap();
-        if (refuseEntityResp?.results?.length) {
-          message.error(`Для объекта ID=${objectId} найден отказ. Создание ТУ невозможно.`);
-          return;
-        }
-      } else {
-        const newObject = await createObject({
-          title: values.object_name,
-          address_street: values.address,
-          customer: customerId,
-          address_number: values.address,
-          kadastr_number: values.eni,
-          status: values.status
-        }).unwrap();
-        objectId = newObject.id;
-      }
-
-      const payload = {
-        ...values,
-        customer: customerId,
-        request_date: values.request_date,
-        payment_deadline: values.payment_deadline,
-        entity: objectId
-      };
-      createTy(payload);
-      setFoundCustomer(null);
     },
-    [checkRefuseByCustomer, checkRefuseByEntity, createCustomer, createObject, createTy, foundCustomer?.id, object?.results]
+    [tuQuery, tyId, updateTy]
   );
 
-  const handleBlurInn = useCallback(async () => {
-    const innValue: string = form.getFieldValue('inn');
-    if (!innValue) {
-      setFoundCustomer(null);
-      return;
+  useEffect(() => {
+    if (isSuccess) {
+      message.success('Техническое условие успешно создано!');
+      form.resetFields();
+      navigate(`/dashboard/technical-conditions/tu-details/${tyId}`);
     }
+  }, [form, isSuccess, navigate, tyId]);
 
-    try {
-      const { results } = await getCustomer({ search: innValue, page: 1, page_size: 5 }).unwrap();
-      if (results && results.length > 0) {
-        setFoundCustomer({ id: results[0].id, full_name: results[0].full_name });
+  useEffect(() => {
+    if (tuQuery.data) {
+      form.setFieldsValue({
+        ...tuQuery.data,
+        customer: tuQuery.data.customer.full_name,
+        application: tuQuery.data.application?.id,
+        request_date: tuQuery.data.request_date,
+        payment_deadline: tuQuery.data.payment_deadline
+      });
+    }
+  }, [form, getObject, tuQuery]);
 
-        form.setFieldsValue({
-          customer: results[0].full_name
-        });
-      } else {
-        setFoundCustomer(null);
-      }
-    } catch (e) {
-      console.error(e);
-      setFoundCustomer(null);
+  const stageOptions = useMemo(
+    () => [
+      { value: 'draft', label: 'Черновик' },
+      { value: 'review', label: 'На рассмотрении' },
+      { value: 'approved', label: 'Одобрено' },
+      { value: 'done', label: 'Завершено' }
+    ],
+    []
+  );
+  const statusOptions = [
+    {
+      value: 'active',
+      label: 'Активен'
+    },
+    {
+      value: 'inactive',
+      label: 'Неактивен'
+    },
+    {
+      value: 'archived',
+      label: 'Архивирован'
     }
-  }, [form, getCustomer]);
+  ];
 
-  const handleBlurObject = useCallback(async () => {
-    const objectName: string = form.getFieldValue('object_name');
-    if (!objectName) {
-      return;
-    }
-    try {
-      getObject({ search: objectName, page: 1, page_size: 5 });
-    } catch (e) {
-      console.error(e);
-    }
-  }, [form, getObject]);
+  const onCustomerEdit = useCallback(() => {
+    navigate(`/dashboard/customers/${tuQuery.data?.customer.id}/edit`);
+  }, [navigate, tuQuery.data?.customer.id]);
+
+  const onAddressEdit = useCallback(() => {
+    navigate(`/dashboard/objects/${tuQuery.data?.entity}`);
+  }, [navigate, tuQuery.data?.entity]);
 
   return (
     <DashboardLayout title={title}>
@@ -122,17 +116,6 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           <Input size='large' placeholder='Название объекта' />
         </Form.Item>
 
-        <Form.Item
-          label='ИНН'
-          name='inn'
-          rules={[
-            { required: true, message: 'Укажите ИНН заказчика' },
-            { min: 14, max: 14, message: 'ИНН должен состоять из 14 цифр' }
-          ]}
-        >
-          <Input minLength={14} maxLength={14} size='large' onBlur={handleBlurInn} placeholder='ИНН заказчика' />
-        </Form.Item>
-
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item label='Номер запроса' name='request_number' rules={[{ required: true, message: 'Укажите номер запроса' }]}>
@@ -140,7 +123,13 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label='Дата запроса' name='request_date' rules={[{ required: true, message: 'Укажите дату запроса' }]}>
+            <Form.Item
+              label='Дата запроса'
+              name='request_date'
+              rules={[{ required: true, message: 'Укажите дату запроса' }]}
+              normalize={(value: Dayjs) => formatDate(value)}
+              getValueProps={(value: string) => ({ value: parseDate(value) })}
+            >
               <DatePicker format='YYYY-MM-DD' size='large' placeholder='01:00|12:34567' />
             </Form.Item>
           </Col>
@@ -149,7 +138,16 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item label='Заказчик' name='customer' rules={[{ required: true, message: 'Укажите заказчика' }]}>
-              <Input disabled={!!foundCustomer} size='large' placeholder='ФИО или организация' />
+              <Input
+                disabled
+                size='large'
+                placeholder='ФИО или организация'
+                addonAfter={
+                  <Button type='link' style={{ padding: 0, height: 'auto' }} onClick={onCustomerEdit}>
+                    <span style={{ fontSize: 14 }}>Изменить</span>
+                  </Button>
+                }
+              />
             </Form.Item>
           </Col>
           <Col span={12}>
@@ -158,7 +156,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               name='object_name'
               rules={[{ required: true, message: 'Укажите наименование объекта' }]}
             >
-              <Input size='large' placeholder='Жилой дом' onBlur={handleBlurObject} />
+              <Input size='large' placeholder='Жилой дом' />
             </Form.Item>
           </Col>
         </Row>
@@ -166,14 +164,26 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item label='Место нахождения объекта' name='address' rules={[{ required: true, message: 'Укажите адрес' }]}>
-              <Input size='large' placeholder='Адрес объекта' />
+              <Input
+                disabled
+                size='large'
+                placeholder='Адрес объекта'
+                addonAfter={
+                  <Button type='link' style={{ padding: 0, height: 'auto' }} onClick={onAddressEdit}>
+                    <span style={{ fontSize: 14 }}>Изменить</span>
+                  </Button>
+                }
+              />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item label='Тип технического условия' name='tech_conditionType' rules={[{ required: true, message: 'Выберите тип' }]}>
-              <Select size='large' placeholder='Активен / Неактивен'>
-                <Option value='active'>Активен</Option>
-                <Option value='inactive'>Неактивен</Option>
+              <Select size='large' placeholder='Тип ТУ'>
+                {typesTyQuery.data?.map((type) => (
+                  <Option key={type.id} value={type.id}>
+                    {type.title}
+                  </Option>
+                ))}
               </Select>
             </Form.Item>
           </Col>
@@ -211,15 +221,29 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           <Input size='large' placeholder='Жилой дом' />
         </Form.Item>
 
-        <Row>
-          <Form.Item label='Стадия' name='stage' rules={[{ required: false }]}>
-            <Select size='large' placeholder='Активен / Неактивен'>
-              <Option value='draft'>Черновик</Option>
-              <Option value='review'>На рассмотрении</Option>
-              <Option value='approved'>Одобрено</Option>
-              <Option value='done'>Завершено</Option>
-            </Select>
-          </Form.Item>
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item label='Стадия' name='stage' rules={[{ required: false }]}>
+              <Select size='large' placeholder='Активен / Неактивен'>
+                {stageOptions.map((option) => (
+                  <Option key={option.value} value={option.value}>
+                    {option.label}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item label='Формулы' name='formula' rules={[{ required: false }]}>
+              <Select size='large' placeholder='Формулы'>
+                {formulasQuery.data?.results.map((formula) => (
+                  <Option key={formula.id} value={formula.id}>
+                    {formula.title}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
         </Row>
 
         {/* =========================
@@ -298,8 +322,14 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label='Статус оплаты' name='payment_status' rules={[{ required: false }]}>
-              <Input size='large' placeholder='Адрес' />
+            <Form.Item label='СтатусОплаты' name='status' rules={[{ required: true }]}>
+              <Select size='large' placeholder='Оплачено / Не оплачено'>
+                {statusOptions.map((option) => (
+                  <Option key={option.value} value={option.value}>
+                    {option.label}
+                  </Option>
+                ))}
+              </Select>
             </Form.Item>
           </Col>
           <Col span={12}>
@@ -311,16 +341,19 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label='Срок оплаты ТУ' name='payment_deadline' rules={[{ required: false }]}>
-              <DatePicker size='large' placeholder='02-02-2025' />
+            <Form.Item
+              label='Срок оплаты ТУ'
+              name='payment_deadline'
+              rules={[{ required: false }]}
+              normalize={(value: Dayjs) => formatDate(value)}
+              getValueProps={(value: string) => ({ value: parseDate(value) })}
+            >
+              <DatePicker size='large' placeholder='02-02-2025' format='YYYY-MM-DD' />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item label='№ счета на оплату' name='payment_invoice_number' rules={[{ required: false }]}>
-              <Select size='large' placeholder='Активен / Неактивен'>
-                <Option value='active'>Активен</Option>
-                <Option value='inactive'>Неактивен</Option>
-              </Select>
+              <Input size='large' placeholder='1234567890' />
             </Form.Item>
           </Col>
         </Row>
@@ -328,7 +361,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         <Row justify='end'>
           <Col>
             <Form.Item style={{ marginTop: '24px' }}>
-              <Button type='primary' htmlType='submit' size='large'>
+              <Button loading={isLoading} type='primary' htmlType='submit' size='large'>
                 Готово
               </Button>
             </Form.Item>

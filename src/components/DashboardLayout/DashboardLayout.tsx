@@ -51,7 +51,7 @@ export const DashboardLayout = ({ children, title }: Props) => {
   };
 
   const items: MenuProps['items'] = [
-    hasPermission('view_geoportal') && {
+    {
       key: '/dashboard/geo',
       icon: <GeoportalIcon />,
       label: 'Геопортал'

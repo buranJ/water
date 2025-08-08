@@ -82,8 +82,8 @@ export const ApplicationForm: FC<ApplicationFormProps> = ({
           </Form.Item>
         </Col>
       </Flex>
-      <Form.Item label='Вода требуется на' name='waterRequired' rules={[{ required: true, message: 'Обязательное поле' }]}>
-        <Input size='large' placeholder='Адрес' />
+      <Form.Item label='Назначение воды' name='waterRequired' rules={[{ required: true, message: 'Обязательное поле' }]}>
+        <Input size='large' placeholder='Предназначение воды' />
       </Form.Item>
       <Form.Item
         label='Расходы воды на внутр. пожаротушение'

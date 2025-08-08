@@ -10,7 +10,7 @@ interface IUserInfo {
   auth_provider: string;
   avatar: string;
   is_confirm: boolean;
-  allowed_categories: number[];
+  allowed_categories: { id: string; title: string }[];
 }
 
 export const authApi = createApi({
@@ -24,7 +24,7 @@ export const authApi = createApi({
         body: data
       })
     }),
-    getUserInfo: build.query<IUserInfo, void>({
+    getUserInfo: build.query<{ user: IUserInfo }, void>({
       query: () => ({
         url: '/authentication/users/me',
         method: 'GET'
