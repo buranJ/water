@@ -1,4 +1,5 @@
 import { FC, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { Button, Col, Flex, Form, Input, message, Row, UploadFile } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
@@ -14,6 +15,7 @@ interface IProps {
 }
 
 export const ApplicationsCreate: FC<IProps> = ({ title }) => {
+  const navigate = useNavigate();
   const [createApplication] = useCreateApplicationMutation();
   const [uploadApplicationFiles] = useUploadApplicationFilesMutation();
   const [createCustomer] = useCreateCustomerMutation();
@@ -92,6 +94,7 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
         }
       }
       message.success('Заявка успешно создана');
+      navigate('/dashboard/applications');
     } catch (error) {
       message.error('Ошибка при создании заявки');
       console.error('Ошибка:', error);
