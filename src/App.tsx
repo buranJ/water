@@ -21,7 +21,7 @@ function App() {
         navigate('/');
         notification.error({
           message: 'Ошибка при входе в аккаунт',
-          description: 'Пожалуйста, пройдите заново авторизацию что иметь доступ к платформе',
+          description: 'Пожалуйста, пройдите заново авторизацию что бы иметь доступ к платформе',
           duration: 5
         });
         localStorage.clear();
