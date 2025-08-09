@@ -55,7 +55,7 @@ export const Customers: FC<IProps> = ({ title }) => {
       number: String((page - 1) * pageSize + idx + 1),
       customer: item.full_name,
       categories: (item.category === '1' ? 1 : 0) as 0 | 1,
-      passportData: item.passport || '',
+      passportData: item.pasport || '',
       registrationDate: item.created_at ? new Date(item.created_at).toLocaleDateString() : '',
       address: item.address,
       contacts: item.contact,

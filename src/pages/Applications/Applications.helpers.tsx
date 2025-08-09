@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Flex, TabsProps, Tag } from 'antd';
+import { Button, TabsProps, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { RejectApplicationModal } from '../../components/Modal'; // импорт модального окна
 
@@ -12,7 +12,7 @@ export const tabItems: TabsProps['items'] = [
   { key: 'rejected', label: 'Отказано', children: null }
 ];
 
-export type StatusCode = 'approved' | 'rejected' | 'pending';
+export type StatusCode = 'approved' | 'rejected' | 'pending' | 'contracted';
 
 export interface ApplicationData {
   key: string;
@@ -74,7 +74,8 @@ type IGetColumnsFn = (options: {
   onReject?: (record: ApplicationData) => void;
 }) => ColumnsType<ApplicationData>;
 
-export const getColumns: IGetColumnsFn = ({ onClick, onReject }) => {
+export const getColumns: IGetColumnsFn = (_opts) => {
+  void _opts;
   const renderStatus = (status: StatusCode) => {
     switch (status) {
       case 'approved':
@@ -83,42 +84,15 @@ export const getColumns: IGetColumnsFn = ({ onClick, onReject }) => {
         return <Tag color='error'>Отказано</Tag>;
       case 'pending':
         return <Tag color='processing'>В ожидании</Tag>;
+      case 'contracted':
+        return <Tag>Заключено</Tag>;
     }
   };
 
-  const renderAction = (record: ApplicationData) => {
-    if (record.status === 'pending') {
-      return (
-        <Flex gap={12}>
-          <Button
-            size='large'
-            type='default'
-            onClick={() => {
-              if (onReject) {
-                onReject(record);
-              } else {
-                onClick(record, 'reject');
-              }
-            }}
-          >
-            Отказать
-          </Button>
-          <Button size='large' type='primary' onClick={() => onClick(record, 'approve')}>
-            Одобрить
-          </Button>
-        </Flex>
-      );
-    }
-    if (record.status === 'approved' && record.hasTu) {
-      return (
-        <Button size='large' type='primary' onClick={() => onClick(record, 'tuDetails')}>
-          Детали ТУ
-        </Button>
-      );
-    }
+  const renderAction = () => {
     return (
-      <Button size='large' type='primary' onClick={() => onClick(record, 'create')}>
-        Оформить
+      <Button size='large' type='primary' onClick={() => {}}>
+        Перейти ТУ
       </Button>
     );
   };
@@ -136,8 +110,9 @@ export const getColumns: IGetColumnsFn = ({ onClick, onReject }) => {
           <span
             style={{ color: '#1677ff', cursor: 'pointer', textDecoration: 'underline' }}
             onClick={() => {
-              if ((window as any).navigate) {
-                (window as any).navigate(`/dashboard/applications/${id}`);
+              const w = window as Window & { navigate?: (path: string) => void };
+              if (w.navigate) {
+                w.navigate(`/dashboard/applications/${id}`);
               } else {
                 window.location.href = `/dashboard/applications/${id}`;
               }
@@ -181,7 +156,7 @@ export const getColumns: IGetColumnsFn = ({ onClick, onReject }) => {
     {
       title: 'Действие',
       key: 'action',
-      render: (_, record: ApplicationData) => renderAction(record),
+      render: () => renderAction(),
       align: 'center'
     }
   ];

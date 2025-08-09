@@ -48,7 +48,7 @@ export const CustomerDetails: FC<{ title?: string }> = ({ title }) => {
               </div>
               <div style={{ marginBottom: 8 }}>
                 <b>Паспортные данные</b>
-                <div>{data.passport || '-'}</div>
+                <div>{data.pasport || '-'}</div>
               </div>
               <div style={{ marginBottom: 8 }}>
                 <b>Адрес</b>

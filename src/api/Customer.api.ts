@@ -9,7 +9,7 @@ export interface ICustomer {
   category: string;
   created_at: string;
   updated_at: string;
-  passport: string | null;
+  pasport: string | null;
   address: string;
   contact: string;
   status: string;
@@ -31,7 +31,7 @@ export interface ICreateCustomerParams {
   inn: string;
   full_name?: string | number;
   category?: '0' | '1';
-  passport?: string | null;
+  pasport?: string | null;
   address?: string;
   contact?: string;
   status?: string;

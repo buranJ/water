@@ -24,7 +24,7 @@ export const EditCustomer: FC<IProps> = ({ title }) => {
         ? {
             type: data.category === '0' ? 'legal' : 'individual',
             inn: data.inn || '',
-            passportData: data.passport || '',
+            passportData: data.pasport || '',
             companyName: data.category === '0' ? data.full_name || '' : '',
             fio: data.category === '1' ? data.full_name || '' : '',
             contactData: data.contact || '',
@@ -50,7 +50,7 @@ export const EditCustomer: FC<IProps> = ({ title }) => {
           inn: value.inn,
           full_name: isLegal ? value.companyName : value.fio,
           category: isLegal ? '0' : '1',
-          passport: value.passportData,
+          pasport: value.passportData,
           address: value.address,
           contact: value.contactData,
           status: value.status

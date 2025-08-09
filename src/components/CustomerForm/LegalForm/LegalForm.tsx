@@ -12,8 +12,20 @@ const LegalForm: FC = () => {
         <Input size='large' placeholder='Название компании' />
       </Form.Item>
 
+      <Form.Item name='inn' label='ИНН' rules={[{ required: true, message: 'Пожалуйста, введите ИНН!' }]}>
+        <Input size='large' placeholder='123456789010' />
+      </Form.Item>
+
       <Form.Item name='ogrn' label='ОГРН' rules={[{ required: true, message: 'Пожалуйста, введите ОГРН!' }]}>
         <Input size='large' placeholder='789010' />
+      </Form.Item>
+
+      <Form.Item
+        name='passportData'
+        label='Паспортные данные'
+        rules={[{ required: true, message: 'Пожалуйста, введите паспортные данные!' }]}
+      >
+        <Input size='large' placeholder='AB123456' />
       </Form.Item>
 
       <Form.Item

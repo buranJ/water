@@ -22,7 +22,7 @@ export const AddCustomer: FC<IProps> = ({ title }) => {
         inn: value.inn,
         full_name: isLegal ? value.companyName : value.fio,
         category: isLegal ? '0' : '1',
-        passport: value.passportData,
+        pasport: value.passportData,
         address: value.address,
         contact: value.contactData,
         status: value.status
