@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, TabsProps, Tag } from 'antd';
+import { Button, TabsProps, Tag, Flex } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { RejectApplicationModal } from '../../components/Modal'; // импорт модального окна
 
@@ -74,8 +74,7 @@ type IGetColumnsFn = (options: {
   onReject?: (record: ApplicationData) => void;
 }) => ColumnsType<ApplicationData>;
 
-export const getColumns: IGetColumnsFn = (_opts) => {
-  void _opts;
+export const getColumns: IGetColumnsFn = ({ onClick, onReject }) => {
   const renderStatus = (status: StatusCode) => {
     switch (status) {
       case 'approved':
@@ -89,12 +88,46 @@ export const getColumns: IGetColumnsFn = (_opts) => {
     }
   };
 
-  const renderAction = () => {
-    return (
-      <Button size='large' type='primary' onClick={() => {}}>
-        Перейти ТУ
-      </Button>
-    );
+  const renderAction = (record: ApplicationData) => {
+    switch (record.status) {
+      case 'pending':
+        return (
+          <Flex gap={12} justify='center'>
+            <Button
+              size='large'
+              type='default'
+              onClick={() => {
+                if (onReject) onReject(record);
+                else onClick(record, 'reject');
+              }}
+            >
+              Отказать
+            </Button>
+            <Button size='large' type='primary' onClick={() => onClick(record, 'approve')}>
+              Одобрить
+            </Button>
+          </Flex>
+        );
+      case 'approved':
+        return (
+          <Button size='large' type='primary' onClick={() => onClick(record, 'create')}>
+            Оформление
+          </Button>
+        );
+      case 'contracted':
+        return (
+          <Button size='large' type='primary' onClick={() => {}}>
+            Перейти ТУ
+          </Button>
+        );
+      case 'rejected':
+      default:
+        return (
+          <Button size='large' danger type='default' onClick={() => {}}>
+            Отказ
+          </Button>
+        );
+    }
   };
 
   return [
@@ -156,7 +189,7 @@ export const getColumns: IGetColumnsFn = (_opts) => {
     {
       title: 'Действие',
       key: 'action',
-      render: () => renderAction(),
+      render: (_: unknown, record: ApplicationData) => renderAction(record),
       align: 'center'
     }
   ];
