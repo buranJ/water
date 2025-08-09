@@ -25,6 +25,10 @@ export interface ICustomersListResponse {
 export interface IGetCustomersParams {
   page?: number;
   page_size?: number;
+  ordering?: string;
+  category?: '0' | '1';
+  search?: string;
+  status?: string;
 }
 
 export interface ICreateCustomerParams {

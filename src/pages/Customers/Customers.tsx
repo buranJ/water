@@ -97,6 +97,7 @@ export const Customers: FC<IProps> = ({ title }) => {
           onFilterChange={handleFilterChange}
           showAlphabet
           showCategory
+          showDate
           categoryOptions={CATEGORY_OPTIONS}
           actionButtons={
             <>

@@ -107,7 +107,7 @@ export const FilterBar = ({
           </Select>
         )}
 
-        {showDate && (
+        {showType && (
           <Select
             variant='filled'
             placeholder='По типу'
@@ -135,7 +135,7 @@ export const FilterBar = ({
           </Select>
         )}
 
-        {showType && (
+        {showDate && (
           <Select
             variant='filled'
             placeholder='По дате'
@@ -144,8 +144,8 @@ export const FilterBar = ({
             value={values.date}
             onChange={(v) => handleChange('date', v)}
           >
-            <Option value='newest'>Сначала новые</Option>
-            <Option value='oldest'>Сначала старые</Option>
+            <Option value='created_at'>Сначала новые</Option>
+            <Option value='-created_at'>Сначала старые</Option>
           </Select>
         )}
       </Space>
