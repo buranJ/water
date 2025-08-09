@@ -10,6 +10,7 @@ import { getColumns } from './Customers.helpers';
 import './styles.scss';
 
 import { ICustomer, useGetAllCustomersQuery } from 'api/Customer.api';
+import { t } from 'i18next';
 
 interface IProps {
   title: string;
@@ -90,7 +91,7 @@ export const Customers: FC<IProps> = ({ title }) => {
   };
 
   return (
-    <DashboardLayout title={title}>
+    <DashboardLayout title={t(title)}>
       <div className='customers-page'>
         <FilterBar
           onFilterChange={handleFilterChange}

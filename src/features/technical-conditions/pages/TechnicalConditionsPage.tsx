@@ -11,6 +11,7 @@ import { getColumns } from './TechnicalConditionsPage.helpers';
 import './styles.scss';
 
 import { useGetAllTyQuery } from 'api/Ty.api';
+import { t } from 'i18next';
 
 interface TUFilterValues {
   search?: string;
@@ -85,7 +86,7 @@ export const TechnicalConditionsPage = () => {
   };
 
   return (
-    <DashboardLayout title='Технические условия'>
+    <DashboardLayout title={t('routers.technicalSpecificatio')}>
       <div className='technical-conditions-page'>
         <TUFilterBar onFilterChange={handleFilterChange} onAddClick={handleAddClick} onDownloadClick={handleDownloadClick} />
         <Table

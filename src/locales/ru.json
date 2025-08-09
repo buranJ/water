@@ -1,4 +1,48 @@
 {
+  "login":{
+    "title": "Бишкекводаканал",
+    "welcome": "Добро пожаловать",
+    "email": "Введите ваш email",
+    "emailPlaceholder": "Email должен быть минимум 5 символов",
+    "description": "Введите ваш ID и пароль",
+    "password": "Пароль",
+    "passwordInput": "Введите пароль",
+    "passwordPlaceholder": "Пароль должен быть минимум 5 символов",
+    "forgotPassword": "Забыли пароль?",
+    "authorizationError": "Произошла ошибка при авторизации:",
+    "login": "Войти",
+    "loading": "Входим..."
+  },
+  "dashboard": {
+    "pages":{
+      "geoportal": "Геопортал",
+      "ty":"TУ",
+      "objects": "Объекты",
+      "applications": "Заявки",
+      "customers": "Заказчики",
+      "bills":"Счета и платежи",
+      "architecture": "Архитектура",
+      "export":"Экспорт",
+      "formulas":"Формулы"
+    },
+    "panel":"Панель управления"
+  },
+  "routers": {
+    "historyOfLoads": "История увеличения нагрузок",
+    "addTu": "Добавление ТУ",
+    "exportData": "Экспорт данных",
+    "historyExportData": "История экспорта данных",
+    "customerDetails": "Детали клиентов",
+    "editRequister": "Редактирование заказчика",
+    "addCustomer": "Добавление заказчика",
+    "document": "Документ №",
+    "protocol": "Протокол",
+    "ApplicationDetails": "заявка №",
+    "editApplication": "Редактирование заявку",
+    "applicationCreate": "Оформление заявки",
+    "profile": "Профиль",
+    "technicalSpecificatio": "Технические условия"
+  },
   "profile": {
     "title": "Настройки",
     "currentLang": "Языки",

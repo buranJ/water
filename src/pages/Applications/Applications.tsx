@@ -8,6 +8,7 @@ import { FilterBar } from 'components/FilterBar';
 import { ApplicationData, getColumns, useRejectModal } from './Applications.helpers';
 
 import { useGetApplicationsQuery } from 'api/Application.api';
+import { t } from 'i18next';
 
 type FilterValues = {
   search?: string;
@@ -115,7 +116,7 @@ export const Applications: FC<IProps> = ({ title }) => {
   };
 
   return (
-    <DashboardLayout title={title}>
+    <DashboardLayout title={t(title)}>
       <FilterBar
         onFilterChange={handleFilterChange}
         showStatusSelect

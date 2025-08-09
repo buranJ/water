@@ -35,15 +35,15 @@ export const routerConfig: RouteObject[] = [
   },
   {
     path: '/dashboard/geo',
-    element: <Geoportal title='Геопортал' />
+    element: <Geoportal title='dashboard.pages.geoportal' />
   },
   {
     path: '/dashboard/formulas',
-    element: <Formulas title='Formulas' />
+    element: <Formulas title='dashboard.pages.formulas' />
   },
   {
     path: '/dashboard/objects',
-    element: <Objects title='Объекты' />
+    element: <Objects title='dashboard.pages.objects' />
   },
   {
     path: '/dashboard/objects/:id',
@@ -59,71 +59,71 @@ export const routerConfig: RouteObject[] = [
   },
   {
     path: '/dashboard/technical-conditions/history-of-loads',
-    element: <HistoryOfLoads title='История увеличения нагрузок' />
+    element: <HistoryOfLoads title='routers.historyOfLoads' />
   },
   {
     path: '/dashboard/add-tu-forms/:tyId',
-    element: <AddTuForms title='Добавление ТУ' />
+    element: <AddTuForms title='routers.addTu' />
   },
   {
     path: '/dashboard/export-data',
-    element: <ExportData title='Экспорт данных' />
+    element: <ExportData title='routers.exportData' />
   },
   {
     path: '/dashboard/export-data/history',
-    element: <ExportDataHistory title='История экспорта данных' />
+    element: <ExportDataHistory title='routers.historyExportData' />
   },
   {
     path: '/dashboard/customers',
-    element: <Customers title='Заказчики' />
+    element: <Customers title='dashboard.pages.customers' />
   },
   {
     path: '/dashboard/customers/:customerId',
-    element: <CustomerDetails title='Детали клиента' />
+    element: <CustomerDetails title='routers.customerDetails' />
   },
   {
     path: '/dashboard/customers/:customerId/edit',
-    element: <EditCustomer title='Редактировать заказчика' />
+    element: <EditCustomer title='routers.editRequister' />
   },
   {
     path: '/dashboard/add-customer',
-    element: <AddCustomer title='Добавление заказчика' />
+    element: <AddCustomer title='routers.addCustomer' />
   },
   {
     path: '/dashboard/architecture',
-    element: <Architecture title='Архитектура' />
+    element: <Architecture title='dashboard.pages.architecture' />
   },
   {
     path: '/dashboard/architecture/details/:id',
-    element: <ArchitectureDetails title='Документ №' />
+    element: <ArchitectureDetails title='routers.document' />
   },
   {
     path: '/dashboard/folder-detail/:folderId/:tyId',
-    element: <FolderDetail title='Протокол' />
+    element: <FolderDetail title='routers.protocol' />
   },
   {
     path: '/dashboard/protocol-details/:id',
-    element: <ProtocolDetail title='Протокол' />
+    element: <ProtocolDetail title='routers.protocol' />
   },
   {
     path: '/dashboard/applications',
-    element: <Applications title='Заявки' />
+    element: <Applications title='dashboard.pages.applications' />
   },
   {
     path: '/dashboard/applications/:id',
-    element: <ApplicationDetails title='Заявка №' />
+    element: <ApplicationDetails title='routers.applicationDetails' />
   },
   {
     path: '/dashboard/applications/:id/edit',
-    element: <EditApplication title='Редактировать заявку' />
+    element: <EditApplication title='routers.editApplication' />
   },
   {
     path: '/dashboard/applications/create',
-    element: <ApplicationsCreate title='Оформление заявки' />
+    element: <ApplicationsCreate title='routers.applicationCreate' />
   },
   {
     path: '/dashboard/Profile',
-    element: <Profile title='Профиль' />
+    element: <Profile title='routers.profile' />
   },
   {
     path: '*',

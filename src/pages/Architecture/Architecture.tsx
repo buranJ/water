@@ -5,6 +5,8 @@ import { DashboardLayout } from 'components/DashboardLayout';
 import fileImg from 'assets/images/Architecture/file.png';
 import moreFileImg from 'assets/images/Architecture/more-file.png';
 
+import { t } from 'i18next';
+
 const { Title } = Typography;
 
 interface IProps {
@@ -48,7 +50,7 @@ export const Architecture: FC<IProps> = ({ title }) => {
   ];
 
   return (
-    <DashboardLayout title={title}>
+    <DashboardLayout title={t(title)}>
       <Row justify='space-between' style={{ marginBottom: 16 }}>
         <Col>
           <Space>
