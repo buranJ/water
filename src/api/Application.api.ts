@@ -73,11 +73,11 @@ export const applicationsApi = createApi({
         body: data
       })
     }),
-    getApplications: build.query<IApplicationsListResponse, IGetApplicationsParams | void>({
-      query: (params) => ({
+    getApplications: build.query<IApplicationsListResponse, IGetApplicationsParams>({
+      query: ({ ordering = 'created_at', ...params }) => ({
         url: 'application/',
         method: 'GET',
-        params: params || {}
+        params: { ...params, ordering }
       })
     }),
     getApplicationById: build.query<IApplicationResponse, number | string>({
