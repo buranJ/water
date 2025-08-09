@@ -91,10 +91,11 @@ const Login: FC = () => {
               {isLoading ? t('login.loading') : t('login.login')}
             </Button>
           </Form.Item>
-          {isError && (
+          {isError && error && (
             <Typography.Text type='danger'>
               {' '}
-              {t('login.authorizationError')} {JSON.stringify(error)}
+              {t('login.authorizationError')}
+              {'data' in error ? (error.data as { detail: string }).detail : ''}
             </Typography.Text>
           )}
         </Form>
