@@ -46,9 +46,9 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
       render: (_, record) => {
         return (
           <>
-            <Typography.Text strong>№{record.payment_paper.number}</Typography.Text>
+            <Typography.Text strong>№{record.payment_paper?.number}</Typography.Text>
             <br />
-            <Typography.Text type='secondary'>Дата: {dayjs(record.payment_paper.date).format('DD.MM.YYYY')}</Typography.Text>
+            <Typography.Text type='secondary'>Дата: {dayjs(record.payment_paper?.date).format('DD.MM.YYYY')}</Typography.Text>
           </>
         );
       }
