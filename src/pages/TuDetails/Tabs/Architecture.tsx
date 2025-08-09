@@ -43,7 +43,7 @@ export const Architecture: FC<IProps> = ({ documentsRequire, documentsCustom, ca
   };
 
   const handleCreateDocument = () => {
-    createFolder({ title: folderTitle, category: categoryId });
+    createFolder({ title: folderTitle, category: categoryId, ty: id });
   };
 
   useEffect(() => {
@@ -166,45 +166,43 @@ export const Architecture: FC<IProps> = ({ documentsRequire, documentsCustom, ca
                 Создать документ
               </Button>
             </Card>
-            <Col>
-              {documentsCustom.map((doc) => (
-                <Col key={doc.id}>
-                  <Card
+            {documentsCustom.map((doc) => (
+              <Col key={doc.id}>
+                <Card
+                  style={{
+                    textAlign: 'center',
+                    borderRadius: 8,
+                    border: '1px solid #eee'
+                  }}
+                >
+                  <div
                     style={{
-                      textAlign: 'center',
+                      height: 160,
+                      width: 208,
                       borderRadius: 8,
-                      border: '1px solid #eee'
+                      backgroundColor: '#E8F5E9',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginBottom: 16
                     }}
                   >
-                    <div
-                      style={{
-                        height: 160,
-                        width: 208,
-                        borderRadius: 8,
-                        backgroundColor: '#E8F5E9',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        marginBottom: 16
-                      }}
-                    >
-                      <img src={customFileImg} alt='' style={{ width: '100%', height: '100%' }} />
-                    </div>
-                    <Title level={5} style={{ marginBottom: 8, fontSize: 12, color: '#737379' }}>
-                      {doc.title}
-                    </Title>
-                    <Button
-                      onClick={() => handleDownloadClick({ folder_id: doc.id })}
-                      color='default'
-                      variant='outlined'
-                      style={{ width: '100%', borderRadius: 6 }}
-                    >
-                      Загрузить
-                    </Button>
-                  </Card>
-                </Col>
-              ))}
-            </Col>
+                    <img src={customFileImg} alt='' style={{ width: '100%', height: '100%' }} />
+                  </div>
+                  <Title level={5} style={{ marginBottom: 8, fontSize: 12, color: '#737379' }}>
+                    {doc.title}
+                  </Title>
+                  <Button
+                    onClick={() => handleDownloadClick({ folder_id: doc.id })}
+                    color='default'
+                    variant='outlined'
+                    style={{ width: '100%', borderRadius: 6 }}
+                  >
+                    Загрузить
+                  </Button>
+                </Card>
+              </Col>
+            ))}
           </Row>
         </div>
         <Modal
