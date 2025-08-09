@@ -6,10 +6,21 @@ export interface MapObject {
   request_number: string;
   object_name: string;
   address: string;
-  status: 'active' | 'inactive';
+  type_ty: string | null;
+  status: 'active' | 'inactive' | 'archived';
   stage: 'draft' | 'approved' | 'completed';
-  type: 'water' | 'sewer' | 'gas' | 'electric' | 'other';
-  created_date: string;
+  x: number;
+  y: number;
+}
+
+interface ApiMapObject {
+  id: number;
+  request_number: string;
+  object_name: string;
+  address: string;
+  type_ty: string | null;
+  status: 'active' | 'inactive' | 'archived';
+  stage: 'draft' | 'approved' | 'completed';
   x: number;
   y: number;
 }
@@ -18,27 +29,19 @@ export interface ApiResponse {
   count: number;
   next: string | null;
   previous: string | null;
-  results: {
-    id: number;
-    request_number: string;
-    object_name: string;
-    address: string;
-    status: 'active' | 'inactive';
-    stage: 'draft' | 'approved' | 'completed';
-    type: 'water' | 'sewer' | 'gas' | 'electric' | 'other';
-    created_date: string;
-    x: string;
-    y: string;
-  }[];
+  results: ApiMapObject[];
 }
 
-// Создаем тип для трансформированного ответа
 export interface TransformedApiResponse {
   count: number;
   next: string | null;
   previous: string | null;
   results: MapObject[];
 }
+
+const isValidCoordinates = (x: number, y: number): boolean => {
+  return typeof x === 'number' && typeof y === 'number' && !Number.isNaN(x) && !Number.isNaN(y) && x !== 0 && y !== 0;
+};
 
 export const geoportalApi = createApi({
   reducerPath: 'geoportalApi',
@@ -52,17 +55,22 @@ export const geoportalApi = createApi({
       }),
       providesTags: ['MapObject'],
       transformResponse: (response: ApiResponse): TransformedApiResponse => {
-        const transformedResults: MapObject[] = response.results
-          .map((obj) => ({
-            ...obj,
-            x: parseFloat(obj.x),
-            y: parseFloat(obj.y)
-          }))
-          .filter((obj) => !isNaN(obj.x) && !isNaN(obj.y));
+        const validResults = response.results.filter((obj) => {
+          const isValid = isValidCoordinates(obj.x, obj.y);
+
+          if (!isValid) {
+            console.warn(`Объект ${obj.id} имеет невалидные координаты:`, {
+              x: obj.x,
+              y: obj.y
+            });
+          }
+
+          return isValid;
+        });
 
         return {
           ...response,
-          results: transformedResults
+          results: validResults
         };
       }
     })
