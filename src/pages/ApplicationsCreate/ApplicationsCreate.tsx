@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 import { Button, Col, Flex, Form, Input, message, Row, UploadFile } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
+import { ObjectItem } from 'types/entities';
 import { UploadFilesModal } from './UploadFilesModal/UploadFilesModal';
 import './styles.scss';
 
@@ -32,7 +33,7 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
       let customerId: number | undefined;
       const customerSearch = await triggerGetCustomers({ search: values.INN, page: 1, page_size: 10 }).unwrap();
       const foundCustomer = Array.isArray(customerSearch.results)
-        ? customerSearch.results.find((c: any) => c.inn === values.INN)
+        ? customerSearch.results.find((c: ICustomer) => c.inn === values.INN)
         : undefined;
       if (foundCustomer) {
         customerId = foundCustomer.id;
@@ -52,7 +53,7 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
       let objectId: number | undefined;
       const objectSearch = await triggerGetObjects({ search: values.object, page: 1, page_size: 10 }).unwrap();
       const foundObject = objectSearch.results?.find(
-        (o: any) =>
+        (o: ObjectItem) =>
           o.title === values.object &&
           o.address_street === values.address &&
           o.address_number === values.contact &&
