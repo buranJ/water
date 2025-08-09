@@ -3,6 +3,8 @@ import { Card, Tag, Typography } from 'antd';
 import { EditableText } from 'components/EditableText';
 import { ObjectItem } from 'types/entities/objects';
 
+import { t } from 'i18next';
+
 const { Text, Link } = Typography;
 
 interface ObjectCardProps {
@@ -40,6 +42,28 @@ export const ObjectCard: FC<ObjectCardProps> = ({ object, onTitleChange, onCardC
         return 'error';
       default:
         return 'default';
+    }
+  };
+
+  const getStatusLabel = (status: string): string => {
+    const s = status?.toLowerCase();
+    switch (s) {
+      case 'active':
+      case 'активен':
+        return t('customers.status.active');
+      case 'inactive':
+      case 'не активен':
+      case 'неактивен':
+        return t('customers.status.inactive');
+      case 'pending':
+      case 'в ожидании':
+        return t('applications.statusTag.pending');
+      case 'rejected':
+      case 'отклонен':
+      case 'отказано':
+        return t('applications.statusTag.rejected');
+      default:
+        return status;
     }
   };
 
@@ -92,7 +116,7 @@ export const ObjectCard: FC<ObjectCardProps> = ({ object, onTitleChange, onCardC
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            Подробнее
+            {t('objectCard.more')}
           </Link>
         </div>
         <div style={{ clear: 'both' }} />
@@ -106,7 +130,7 @@ export const ObjectCard: FC<ObjectCardProps> = ({ object, onTitleChange, onCardC
             color: '#8e8e93'
           }}
         >
-          Дата создания: {formatDate(object.created_at)}
+          {t('objectCard.createdAt')}: {formatDate(object.created_at)}
         </Text>
       </div>
 
@@ -118,7 +142,7 @@ export const ObjectCard: FC<ObjectCardProps> = ({ object, onTitleChange, onCardC
             color: '#8e8e93'
           }}
         >
-          Адрес: {getFullAddress()}
+          {t('objectCard.address')}: {getFullAddress()}
         </Text>
       </div>
 
@@ -131,7 +155,7 @@ export const ObjectCard: FC<ObjectCardProps> = ({ object, onTitleChange, onCardC
               color: '#8e8e93'
             }}
           >
-            Кадастр: {object.kadastr_number}
+            {t('objectCard.cadastral')}: {object.kadastr_number}
           </Text>
         </div>
       )}
@@ -145,7 +169,7 @@ export const ObjectCard: FC<ObjectCardProps> = ({ object, onTitleChange, onCardC
             marginRight: 8
           }}
         >
-          Статус:
+          {t('objectCard.status')}:
         </Text>
         <Tag
           color={getStatusColor(object.status)}
@@ -155,7 +179,7 @@ export const ObjectCard: FC<ObjectCardProps> = ({ object, onTitleChange, onCardC
             fontSize: 12
           }}
         >
-          {object.status}
+          {getStatusLabel(object.status)}
         </Tag>
       </div>
     </Card>

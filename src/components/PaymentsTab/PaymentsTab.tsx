@@ -5,6 +5,7 @@ import type { IPayment } from 'types/entities/accounting';
 import { AddPaymentModal } from './AddPaymentModal';
 
 import { useGetPaymentsByInvoiceQuery } from 'api/Accounting.api';
+import { t } from 'i18next';
 
 const { Title, Text } = Typography;
 
@@ -35,54 +36,58 @@ export const PaymentsTab: FC<IProps> = ({ invoiceId, totalAmount }) => {
   const getStatusTag = (status: string) => {
     switch (status) {
       case 'completed':
-        return <Tag color='success'>Поступили</Tag>;
+        return <Tag color='success'>{t('protocolDetail.payment.status.received')}</Tag>;
       case 'pending':
-        return <Tag color='warning'>В ожидании</Tag>;
+        return <Tag color='warning'>{t('protocolDetail.payment.status.pending')}</Tag>;
       case 'failed':
-        return <Tag color='error'>Отклонен</Tag>;
+        return <Tag color='error'>{t('protocolDetail.payment.status.failed')}</Tag>;
       default:
-        return <Tag>Поступили</Tag>;
+        return <Tag>{t('protocolDetail.payment.status.received')}</Tag>;
     }
   };
 
   const columns: TableColumnsType<IPayment> = [
     {
-      title: '№ платежа',
+      title: t('protocolDetail.payment.columns.paymentNum'),
       dataIndex: 'payment_number',
       key: 'payment_number',
       render: (text: string) => <Text strong>{text}</Text>
     },
     {
-      title: 'Дата',
+      title: t('protocolDetail.payment.columns.date'),
       dataIndex: 'payment_date',
       key: 'payment_date',
       render: (date: string) => new Date(date).toLocaleDateString('ru-RU')
     },
     {
-      title: 'Сумма',
+      title: t('protocolDetail.payment.columns.amount'),
       dataIndex: 'amount',
       key: 'amount',
-      render: (amount: string) => <Text strong>{amount} KGZ</Text>
+      render: (amount: string) => (
+        <Text strong>
+          {amount} {t('tuDetails.currency')}
+        </Text>
+      )
     },
     {
-      title: 'Источник',
+      title: t('protocolDetail.payment.columns.source'),
       dataIndex: 'source',
       key: 'source'
     },
     {
-      title: 'Статус',
+      title: t('protocolDetail.payment.columns.status'),
       dataIndex: 'status',
       key: 'status',
       render: (status: string) => getStatusTag(status)
     },
     {
-      title: 'Действия',
+      title: t('paymentsTab.table.actions'),
       key: 'actions',
       render: (_, record) => (
         <Space>
           {record.receipt_file && (
             <Button size='small' icon={<FileTextOutlined />} onClick={() => window.open(record.receipt_file || '', '_blank')}>
-              Чек
+              {t('paymentsTab.buttons.receipt')}
             </Button>
           )}
         </Space>
@@ -99,7 +104,14 @@ export const PaymentsTab: FC<IProps> = ({ invoiceId, totalAmount }) => {
   }
 
   if (isError) {
-    return <Alert message='Ошибка загрузки' description='Не удалось загрузить данные платежей' type='error' showIcon />;
+    return (
+      <Alert
+        message={t('paymentsTab.messages.loadErrorTitle')}
+        description={t('paymentsTab.messages.loadErrorDesc')}
+        type='error'
+        showIcon
+      />
+    );
   }
 
   const totalPaid = paymentsData?.reduce((sum, payment) => sum + parseFloat(payment.amount), 0) || 0;
@@ -110,13 +122,13 @@ export const PaymentsTab: FC<IProps> = ({ invoiceId, totalAmount }) => {
     <div>
       <Flex justify='space-between' align='center' style={{ marginBottom: 16 }}>
         <Title level={4} style={{ margin: 0 }}>
-          ТУ №04-472
+          {t('routers.tuNumberPrefix')}04-472
         </Title>
         <Space>
           <Button type='primary' icon={<PlusOutlined />} onClick={handleAddPayment}>
-            Добавить
+            {t('paymentsTab.buttons.add')}
           </Button>
-          <Button icon={<FileTextOutlined />}>PDF</Button>
+          <Button icon={<FileTextOutlined />}>{t('paymentsTab.buttons.pdf')}</Button>
         </Space>
       </Flex>
 
@@ -125,22 +137,22 @@ export const PaymentsTab: FC<IProps> = ({ invoiceId, totalAmount }) => {
         columns={columns}
         rowKey='id'
         pagination={false}
-        locale={{ emptyText: 'Нет платежей' }}
+        locale={{ emptyText: t('paymentsTab.table.empty') }}
         style={{ marginBottom: 24 }}
       />
 
       <Card>
         <Flex justify='space-between' align='center'>
           <Text strong>
-            Оплачено: {totalPaid.toFixed(2)} KGZ / {totalAmount} KGZ
+            {t('protocolDetail.paid')} {totalPaid.toFixed(2)} {t('tuDetails.currency')} / {totalAmount} {t('tuDetails.currency')}
           </Text>
           {remainingAmount > 0 ? (
             <Button type='primary' danger>
-              Закрыть счёт
+              {t('paymentsTab.buttons.closeInvoice')}
             </Button>
           ) : (
             <Text type='success' strong>
-              Счёт полностью оплачен
+              {t('paymentsTab.messages.invoiceFullyPaid')}
             </Text>
           )}
         </Flex>

@@ -2,6 +2,8 @@ import { Button, Col, Row, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
+import { t } from 'i18next';
+
 type actionType = 'edit' | 'delete' | 'registrationDate' | 'details';
 
 export interface CustomerRecord {
@@ -22,7 +24,7 @@ type IGetColumnsFn = (options: { onClick: (record: CustomerRecord, action: actio
 export const getColumns: IGetColumnsFn = ({ onClick }) => {
   return [
     {
-      title: '№',
+      title: t('customers.columns.number'),
       dataIndex: 'number',
       key: 'number',
       align: 'center',
@@ -33,30 +35,34 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
       )
     },
     {
-      title: 'Заказчик',
+      title: t('customers.columns.customer'),
       dataIndex: 'customer',
       key: 'customer',
       width: 220,
       align: 'center'
     },
     {
-      title: 'Категории',
+      title: t('customers.columns.categories'),
       dataIndex: 'categories',
       key: 'categories',
       render: (text) => {
-        return text === 1 ? <Tag color='processing'>Физ. лицо</Tag> : <Tag color='success'>Юр. лицо</Tag>;
+        return text === 1 ? (
+          <Tag color='processing'>{t('customers.category.physicalShort')}</Tag>
+        ) : (
+          <Tag color='success'>{t('customers.category.legalShort')}</Tag>
+        );
       },
       align: 'center'
     },
     {
-      title: 'Паспортные данные',
+      title: t('customers.columns.passportData'),
       dataIndex: 'passportData',
       key: 'passportData',
       align: 'center',
       width: 200
     },
     {
-      title: 'Дата регистрации',
+      title: t('customers.columns.registrationDate'),
       dataIndex: 'registrationDate',
       key: 'registrationDate',
       align: 'center',
@@ -70,31 +76,31 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
       }
     },
     {
-      title: 'Адрес',
+      title: t('customers.columns.address'),
       dataIndex: 'address',
       key: 'address',
       align: 'center',
       width: 200
     },
     {
-      title: 'Контакты',
+      title: t('customers.columns.contacts'),
       dataIndex: 'contacts',
       key: 'contacts',
       align: 'center',
       width: 180
     },
     {
-      title: 'Статус',
+      title: t('customers.columns.status'),
       dataIndex: 'status',
       key: 'status',
       render: (text) => {
-        return text === 'active' ? <Tag color='success'>Активен</Tag> : <Tag>Не активен</Tag>;
+        return text === 'active' ? <Tag color='success'>{t('customers.status.active')}</Tag> : <Tag>{t('customers.status.inactive')}</Tag>;
       },
       align: 'center',
       width: 150
     },
     {
-      title: 'Действие',
+      title: t('customers.columns.action'),
       dataIndex: 'action',
       key: 'action',
       align: 'center',

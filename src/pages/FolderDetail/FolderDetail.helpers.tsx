@@ -4,6 +4,8 @@ import { DeleteOutlined, DownloadOutlined, FileOutlined } from '@ant-design/icon
 import dayjs from 'dayjs';
 import { IFileItem } from 'types/entities';
 
+import { t } from 'i18next';
+
 type ActionType = 'download' | 'delete';
 
 type GetColumnsOptions = {
@@ -13,7 +15,7 @@ type GetColumnsOptions = {
 
 export const getColumns = ({ onClick, tyId }: GetColumnsOptions): ColumnsType<IFileItem> => [
   {
-    title: 'Название',
+    title: t('folderDetail.columns.title'),
     dataIndex: 'file',
     key: 'file',
     render: (_: unknown, record) => (
@@ -22,26 +24,27 @@ export const getColumns = ({ onClick, tyId }: GetColumnsOptions): ColumnsType<IF
         <div>
           <div>{record.file.split('/')[record.file.split('/').length - 1]}</div>
           <Typography.Text type='secondary'>
-            {tyId ? `ТУ ${tyId}` : `Папка ${record.folder}`} {` > Документ ${record.id}`}
+            {tyId ? t('folderDetail.prefixes.tu', { id: tyId }) : t('folderDetail.prefixes.folder', { folder: record.folder })}
+            {t('folderDetail.prefixes.document', { id: record.id })}
           </Typography.Text>
         </div>
       </Space>
     )
   },
   {
-    title: 'Дата загрузки',
+    title: t('folderDetail.columns.uploadedAt'),
     dataIndex: 'uploaded_at',
     key: 'uploaded_at',
     render: (text: string) => (text ? dayjs(text).format('DD-MM-YYYY') : '')
   },
   {
-    title: 'Действия',
+    title: t('folderDetail.columns.actions'),
     key: 'action',
     width: 140,
     render: (_: unknown, record) => (
       <Space size='middle'>
-        <Button aria-label='Скачать файл' icon={<DownloadOutlined />} onClick={() => onClick(record, 'download')} />
-        <Button aria-label='Удалить файл' icon={<DeleteOutlined />} danger onClick={() => onClick(record, 'delete')} />
+        <Button aria-label={t('folderDetail.aria.download')} icon={<DownloadOutlined />} onClick={() => onClick(record, 'download')} />
+        <Button aria-label={t('folderDetail.aria.delete')} icon={<DeleteOutlined />} danger onClick={() => onClick(record, 'delete')} />
       </Space>
     )
   }

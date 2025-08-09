@@ -57,7 +57,7 @@ export const Geoportal: FC<GeoportalProps> = ({ title }) => {
   // Обработка ошибок
   useEffect(() => {
     if (error) {
-      message.error('Ошибка загрузки данных');
+      message.error(t('geoportal.errorLoad'));
     }
   }, [error]);
 
@@ -71,7 +71,7 @@ export const Geoportal: FC<GeoportalProps> = ({ title }) => {
 
   const handleRefresh = (): void => {
     refetch();
-    message.success('Данные обновлены');
+    message.success(t('geoportal.dataRefreshed'));
   };
 
   const handleResetFilters = (): void => {
@@ -90,9 +90,9 @@ export const Geoportal: FC<GeoportalProps> = ({ title }) => {
 
       {error && (
         <div style={{ marginBottom: 16 }}>
-          <Text type='danger'>Не удалось загрузить данные с API. Пожалуйста, попробуйте позже.</Text>
+          <Text type='danger'>{t('geoportal.apiError')}</Text>
           <Button type='link' onClick={handleRefresh} style={{ marginLeft: 8 }}>
-            Попробовать снова
+            {t('geoportal.tryAgain')}
           </Button>
         </div>
       )}
@@ -114,12 +114,10 @@ export const Geoportal: FC<GeoportalProps> = ({ title }) => {
       </Flex>
 
       <div style={{ marginTop: 16 }}>
-        <Text type='secondary'>
-          Найдено объектов: {filteredObjects.length} из {objects.length}
-        </Text>
+        <Text type='secondary'>{t('geoportal.foundCount', { count: filteredObjects.length, total: objects.length })}</Text>
         {hasActiveFilters && (
           <Button type='link' size='small' onClick={handleResetFilters} style={{ marginLeft: 8 }}>
-            Сбросить фильтры
+            {t('geoportal.resetFilters')}
           </Button>
         )}
       </div>

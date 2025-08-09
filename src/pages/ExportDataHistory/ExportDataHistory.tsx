@@ -4,6 +4,8 @@ import { Button, Dropdown, Flex, Input, message, Space, Table } from 'antd';
 import { DeleteOutlined, DownOutlined, RetweetOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 
+import { t } from 'i18next';
+
 const menuItems: MenuProps['items'] = [
   { label: '1st menu item', key: '1', icon: <UserOutlined /> },
   { label: '2nd menu item', key: '2', icon: <UserOutlined /> }
@@ -20,17 +22,26 @@ const menuProps = {
 };
 
 const tableColumns = [
-  { title: 'Дата', dataIndex: 'date', key: 'date' },
-  { title: 'Сотрудник', dataIndex: 'employee', key: 'employee' },
-  { title: 'Тип данных', dataIndex: 'dataType', key: 'dataType' },
-  { title: 'Формат', dataIndex: 'format', key: 'format' },
+  { title: t('exportDataHistory.columns.date'), dataIndex: 'date', key: 'date' },
+  { title: t('exportDataHistory.columns.employee'), dataIndex: 'employee', key: 'employee' },
+  { title: t('exportDataHistory.columns.dataType'), dataIndex: 'dataType', key: 'dataType' },
+  { title: t('exportDataHistory.columns.format'), dataIndex: 'format', key: 'format' },
   {
-    title: 'Действия',
+    title: t('exportDataHistory.columns.actions'),
     key: 'actions',
     render: (_: number, record: { key: number; date: string; employee: string; dataType: string; format: string }) => (
       <Space>
-        <Button icon={<RetweetOutlined />} shape='circle' onClick={() => message.info(`Повторная выгрузка для #${record.key}`)} />
-        <Button icon={<DeleteOutlined />} shape='circle' danger onClick={() => message.error(`Удалён элемент #${record.key}`)} />
+        <Button
+          icon={<RetweetOutlined />}
+          shape='circle'
+          onClick={() => message.info(t('exportDataHistory.reexport', { id: record.key }))}
+        />
+        <Button
+          icon={<DeleteOutlined />}
+          shape='circle'
+          danger
+          onClick={() => message.error(t('exportDataHistory.deletedItem', { id: record.key }))}
+        />
       </Space>
     )
   }
@@ -41,43 +52,43 @@ const tableData = [
     key: 1,
     date: '04-04-2025',
     employee: 'Атай Аманов',
-    dataType: 'ТУ',
-    format: 'Excel (.xlsx)'
+    dataType: t('exportDataHistory.dataTypes.tu'),
+    format: t('exportData.formats.excel')
   },
   {
     key: 2,
     date: '04-04-2025',
     employee: 'Атай Аманов',
-    dataType: 'Заявки',
-    format: 'CSV (.csv)'
+    dataType: t('exportDataHistory.dataTypes.requests'),
+    format: t('exportData.formats.csv')
   },
   {
     key: 3,
     date: '04-04-2025',
     employee: 'Атай Аманов',
-    dataType: 'Счет на оплату',
-    format: 'PDF (для отчётов)'
+    dataType: t('exportDataHistory.dataTypes.invoice'),
+    format: t('exportData.formats.pdf')
   },
   {
     key: 4,
     date: '04-04-2025',
     employee: 'Атай Аманов',
-    dataType: 'ТУ',
-    format: 'Excel (.xlsx)'
+    dataType: t('exportDataHistory.dataTypes.tu'),
+    format: t('exportData.formats.excel')
   },
   {
     key: 5,
     date: '04-04-2025',
     employee: 'Атай Аманов',
-    dataType: 'Заявки',
-    format: 'CSV (.csv)'
+    dataType: t('exportDataHistory.dataTypes.requests'),
+    format: t('exportData.formats.csv')
   },
   {
     key: 6,
     date: '04-04-2025',
     employee: 'Атай Аманов',
-    dataType: 'Счет на оплату',
-    format: 'PDF (для отчётов)'
+    dataType: t('exportDataHistory.dataTypes.invoice'),
+    format: t('exportData.formats.pdf')
   }
 ];
 
@@ -89,11 +100,11 @@ const ExportDataHistory: FC<ExportDataHistoryProps> = ({ title }) => {
   return (
     <DashboardLayout title={title}>
       <Flex gap={12}>
-        <Input addonBefore={<SearchOutlined />} placeholder='Найти' size='large' />
+        <Input addonBefore={<SearchOutlined />} placeholder={t('filterBar.search')} size='large' />
         <Dropdown menu={menuProps}>
           <Button size='large'>
             <Space>
-              По типу
+              {t('exportDataHistory.byType')}
               <DownOutlined />
             </Space>
           </Button>
@@ -101,7 +112,7 @@ const ExportDataHistory: FC<ExportDataHistoryProps> = ({ title }) => {
         <Dropdown menu={menuProps}>
           <Button size='large'>
             <Space>
-              По статусу
+              {t('exportDataHistory.byStatus')}
               <DownOutlined />
             </Space>
           </Button>

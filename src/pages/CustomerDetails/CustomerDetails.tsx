@@ -5,13 +5,14 @@ import { DeleteOutlined, DownloadOutlined, EditOutlined } from '@ant-design/icon
 import { DashboardLayout } from 'components/DashboardLayout';
 
 import { useGetCustomerByIdQuery } from 'api/Customer.api';
+import { t } from 'i18next';
 
 const tabItems = [
-  { key: 'data', label: 'Данные' },
-  { key: 'objects', label: 'Объекты' },
-  { key: 'applications', label: 'Заявки' },
-  { key: 'documents', label: 'Документы' },
-  { key: 'payments', label: 'Платежи' }
+  { key: 'data', label: t('customers.details.tabs.data') },
+  { key: 'objects', label: t('customers.details.tabs.objects') },
+  { key: 'applications', label: t('customers.details.tabs.applications') },
+  { key: 'documents', label: t('customers.details.tabs.documents') },
+  { key: 'payments', label: t('customers.details.tabs.payments') }
 ];
 
 export const CustomerDetails: FC<{ title?: string }> = ({ title }) => {
@@ -21,7 +22,7 @@ export const CustomerDetails: FC<{ title?: string }> = ({ title }) => {
   const { data, isLoading, isError } = useGetCustomerByIdQuery(customerId || '');
 
   return (
-    <DashboardLayout title={data?.full_name || title || 'Заказчик'}>
+    <DashboardLayout title={data?.full_name || title || 'dashboard.pages.customers'}>
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginBottom: 16 }}>
         <Button icon={<DownloadOutlined />}>PDF</Button>
         <Button icon={<EditOutlined />} />
@@ -31,7 +32,7 @@ export const CustomerDetails: FC<{ title?: string }> = ({ title }) => {
       {isLoading ? (
         <Spin />
       ) : isError ? (
-        <Alert type='error' message='Ошибка загрузки данных заказчика' />
+        <Alert type='error' message={t('customers.details.loadError')} />
       ) : data ? (
         <>
           {activeTab === 'data' && (
@@ -40,35 +41,37 @@ export const CustomerDetails: FC<{ title?: string }> = ({ title }) => {
                 {data.full_name}
               </Typography.Title>
               <Typography.Text type='secondary' style={{ display: 'block', marginBottom: 16 }}>
-                {data.category === '1' ? 'Физическое лицо' : 'Юридическое лицо'}
+                {data.category === '1' ? t('customers.category.physicalFull') : t('customers.category.legalFull')}
               </Typography.Text>
               <div style={{ marginBottom: 8 }}>
-                <b>Дата регистрации</b>
+                <b>{t('customers.columns.registrationDate')}</b>
                 <div>{data.created_at ? new Date(data.created_at).toLocaleDateString() : ''}</div>
               </div>
               <div style={{ marginBottom: 8 }}>
-                <b>Паспортные данные</b>
+                <b>{t('customers.columns.passportData')}</b>
                 <div>{data.pasport || '-'}</div>
               </div>
               <div style={{ marginBottom: 8 }}>
-                <b>Адрес</b>
+                <b>{t('customers.columns.address')}</b>
                 <div>{data.address}</div>
               </div>
               <div style={{ marginBottom: 8 }}>
-                <b>Контакты</b>
+                <b>{t('customers.columns.contacts')}</b>
                 <div>{data.contact}</div>
               </div>
               <div style={{ marginBottom: 8 }}>
-                <b>Статус</b>
+                <b>{t('customers.columns.status')}</b>
                 <div>
-                  <Tag color={data.status === 'active' ? 'success' : undefined}>{data.status === 'active' ? 'Одобрено' : 'Неактивен'}</Tag>
+                  <Tag color={data.status === 'active' ? 'success' : undefined}>
+                    {data.status === 'active' ? t('customers.status.active') : t('customers.status.inactive')}
+                  </Tag>
                 </div>
               </div>
             </Card>
           )}
           {activeTab !== 'data' && (
             <Card>
-              <Typography.Text type='secondary'>В разработке</Typography.Text>
+              <Typography.Text type='secondary'>{t('common.inDevelopment')}</Typography.Text>
             </Card>
           )}
         </>

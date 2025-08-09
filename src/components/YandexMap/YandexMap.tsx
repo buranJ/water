@@ -1,6 +1,7 @@
 import { FC, useEffect, useRef, useState } from 'react';
 
 import { MapObject } from 'api/GeoPartal.api';
+import i18next, { t } from 'i18next';
 
 // Типы для Yandex Maps API
 type YMapState = {
@@ -111,6 +112,30 @@ export const YandexMap: FC<YandexMapProps> = ({ objects, onSelect }) => {
     return icons[type as keyof typeof icons] || '📍';
   };
 
+  const getStageLabel = (stage: string): string => {
+    switch (stage) {
+      case 'draft':
+        return t('tuDetails.stage.draft');
+      case 'approved':
+        return t('tuDetails.stage.approved');
+      case 'completed':
+        return t('tuDetails.stage.done');
+      default:
+        return t('tuDetails.stage.unknown');
+    }
+  };
+
+  const getLocale = (): string => {
+    switch (i18next.language) {
+      case 'en':
+        return 'en-US';
+      case 'kg':
+        return 'ky-KG';
+      default:
+        return 'ru-RU';
+    }
+  };
+
   const renderPlacemarks = (data: MapObject[]): void => {
     if (!mapInstanceRef.current || !window.ymaps) return;
 
@@ -121,15 +146,16 @@ export const YandexMap: FC<YandexMapProps> = ({ objects, onSelect }) => {
 
     data.forEach((obj) => {
       const getTypeSymbol = (type: string): string => {
+        const isEn = i18next.language === 'en';
         switch (type) {
           case 'water':
-            return 'В';
+            return isEn ? 'W' : 'В';
           case 'sewer':
-            return 'К';
+            return isEn ? 'S' : 'К';
           case 'gas':
-            return 'Г';
+            return isEn ? 'G' : 'Г';
           case 'electric':
-            return 'Э';
+            return isEn ? 'E' : 'Э';
           default:
             return '?';
         }
@@ -163,17 +189,11 @@ export const YandexMap: FC<YandexMapProps> = ({ objects, onSelect }) => {
           balloonContent: `
             <div style="padding: 10px;">
               <strong>${getTypeIcon(obj.type)} ${obj.object_name}</strong><br/>
-              Заявка: ${obj.request_number}<br/>
-              Адрес: ${obj.address}<br/>
-              Статус: ${obj.status === 'active' ? 'Активный' : 'Неактивный'}<br/>
-              Этап: ${
-                {
-                  draft: 'Черновик',
-                  approved: 'Утвержден',
-                  completed: 'Завершен'
-                }[obj.stage]
-              }<br/>
-              Дата создания: ${new Date(obj.created_date).toLocaleDateString('ru-RU')}
+              ${t('yandexMap.labels.request')}: ${obj.request_number}<br/>
+              ${t('yandexMap.labels.address')}: ${obj.address}<br/>
+              ${t('yandexMap.labels.status')}: ${obj.status === 'active' ? t('customers.status.active') : t('customers.status.inactive')}<br/>
+              ${t('yandexMap.labels.stage')}: ${getStageLabel(obj.stage)}<br/>
+              ${t('objectCard.createdAt')}: ${new Date(obj.created_date).toLocaleDateString(getLocale())}
             </div>
           `,
           hintContent: obj.object_name
@@ -220,7 +240,8 @@ export const YandexMap: FC<YandexMapProps> = ({ objects, onSelect }) => {
     if (!window.ymaps && !scriptLoadedRef.current) {
       scriptLoadedRef.current = true;
       const script = document.createElement('script');
-      script.src = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=0bfec104-5c26-4035-8b22-4c4d55448777';
+      const yLang = i18next.language === 'en' ? 'en_US' : 'ru_RU';
+      script.src = `https://api-maps.yandex.ru/2.1/?lang=${yLang}&apikey=0bfec104-5c26-4035-8b22-4c4d55448777`;
       script.onload = () => window.ymaps.ready(initMap);
       document.head.appendChild(script);
     } else if (window.ymaps) {

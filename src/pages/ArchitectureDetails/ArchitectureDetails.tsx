@@ -1,5 +1,6 @@
 import React, { FC, useState } from 'react';
 import { useParams } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { Button, Col, Dropdown, Input, List, Menu, Modal, Row, Space, Table, Tooltip, Typography, Upload } from 'antd';
 import { UploadChangeParam, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import {
@@ -38,6 +39,7 @@ const initialDocs: DocumentRecord[] = [
 
 export const ArchitectureDetails: FC<IProps> = ({ title }) => {
   const params = useParams();
+  const { t } = useTranslation();
   const [searchText, setSearchText] = useState('');
   const [documentData, setDocumentData] = useState<DocumentRecord[]>(initialDocs);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
@@ -56,8 +58,8 @@ export const ArchitectureDetails: FC<IProps> = ({ title }) => {
   const sortMenu = (
     <Menu
       items={[
-        { label: 'По алфавиту', key: 'alphabet' },
-        { label: 'По дате', key: 'date' }
+        { label: t('filterBar.filter.alphabet'), key: 'alphabet' },
+        { label: t('filterBar.filter.date'), key: 'date' }
       ]}
       onClick={({ key }) => handleSortChange(key)}
     />
@@ -106,7 +108,7 @@ export const ArchitectureDetails: FC<IProps> = ({ title }) => {
 
   const columns = [
     {
-      title: 'Название',
+      title: t('applicationDetails.table.name'),
       dataIndex: 'fileName',
       key: 'fileName',
       render: (_: string, record: DocumentRecord) => (
@@ -121,16 +123,16 @@ export const ArchitectureDetails: FC<IProps> = ({ title }) => {
         </Space>
       )
     },
-    { title: 'Дата загрузки', dataIndex: 'date', key: 'date' },
+    { title: t('applicationDetails.table.uploadDate'), dataIndex: 'date', key: 'date' },
     {
-      title: 'Действия',
+      title: t('applicationDetails.table.actions'),
       key: 'actions',
       render: (_: string, record: DocumentRecord) => (
         <Space>
-          <Tooltip title='Удалить'>
+          <Tooltip title={t('architectureDetails.buttons.delete')}>
             <Button danger icon={<DeleteOutlined />} onClick={() => handleDeleteFile(record)} />
           </Tooltip>
-          <Tooltip title='Скачать'>
+          <Tooltip title={t('common.download')}>
             <Button icon={<CloudDownloadOutlined />} onClick={() => console.log('Скачать', record.key)} />
           </Tooltip>
         </Space>
@@ -144,7 +146,7 @@ export const ArchitectureDetails: FC<IProps> = ({ title }) => {
         <Col>
           <Space>
             <Input
-              placeholder='Найти'
+              placeholder={t('filterBar.search')}
               prefix={<SearchOutlined />}
               style={{ width: 240 }}
               value={searchText}
@@ -152,7 +154,7 @@ export const ArchitectureDetails: FC<IProps> = ({ title }) => {
             />
             <Dropdown overlay={sortMenu} trigger={['click']}>
               <Button>
-                По алфавиту <DownOutlined />
+                {t('filterBar.filter.alphabet')} <DownOutlined />
               </Button>
             </Dropdown>
           </Space>
@@ -160,10 +162,10 @@ export const ArchitectureDetails: FC<IProps> = ({ title }) => {
         <Col>
           <Space>
             <Button type='primary' icon={<PlusOutlined />} onClick={showAddModal}>
-              Добавить
+              {t('filterBar.add')}
             </Button>
             <Button icon={<DownloadOutlined />} onClick={() => console.log('Скачать PDF')}>
-              PDF
+              {t('applicationDetails.buttons.pdf')}
             </Button>
           </Space>
         </Col>
@@ -171,21 +173,21 @@ export const ArchitectureDetails: FC<IProps> = ({ title }) => {
 
       <Table style={{ marginTop: 16 }} columns={columns} dataSource={documentData} pagination={false} />
 
-      <Modal title='Удаление' visible={isDeleteModalVisible} onCancel={cancelDelete} footer={null}>
-        <p>Вы действительно хотите удалить документ?</p>
+      <Modal title={t('architectureDetails.titles.delete')} visible={isDeleteModalVisible} onCancel={cancelDelete} footer={null}>
+        <p>{t('architectureDetails.confirmDelete')}</p>
         <Row justify='end' gutter={8}>
           <Col>
-            <Button onClick={cancelDelete}>Отменить</Button>
+            <Button onClick={cancelDelete}>{t('architectureDetails.buttons.cancel')}</Button>
           </Col>
           <Col>
             <Button danger type='primary' onClick={confirmDelete}>
-              Удалить
+              {t('architectureDetails.buttons.delete')}
             </Button>
           </Col>
         </Row>
       </Modal>
 
-      <Modal title='Загрузка документа' visible={isAddModalVisible} onCancel={handleCancelAdd} footer={null}>
+      <Modal title={t('architectureDetails.titles.uploadDocument')} visible={isAddModalVisible} onCancel={handleCancelAdd} footer={null}>
         {filesList.length === 0 ? (
           <>
             <Dragger
@@ -199,25 +201,23 @@ export const ArchitectureDetails: FC<IProps> = ({ title }) => {
               <p className='ant-upload-drag-icon'>
                 <InboxOutlined style={{ fontSize: 40, color: '#999' }} />
               </p>
-              <p>Перетащите файлы сюда для загрузки</p>
-              <Button icon={<CloudDownloadOutlined />}>Загрузить файл</Button>
+              <p>{t('architectureDetails.dragHint')}</p>
+              <Button icon={<CloudDownloadOutlined />}>{t('tuRejectModal.buttons.upload')}</Button>
             </Dragger>
             <Row justify='end' gutter={8}>
               <Col>
-                <Button onClick={handleCancelAdd}>Назад</Button>
+                <Button onClick={handleCancelAdd}>{t('architectureDetails.buttons.cancel')}</Button>
               </Col>
               <Col>
                 <Button type='primary' disabled>
-                  Загрузить
+                  {t('tuRejectModal.buttons.upload')}
                 </Button>
               </Col>
             </Row>
           </>
         ) : (
           <>
-            <Text style={{ display: 'block', marginBottom: 8 }}>
-              {filesList.length} файл{filesList.length > 1 ? 'а' : ''}
-            </Text>
+            <Text style={{ display: 'block', marginBottom: 8 }}>{t('common.selectedFiles', { count: filesList.length })}</Text>
             <List
               bordered
               dataSource={filesList}
@@ -235,7 +235,7 @@ export const ArchitectureDetails: FC<IProps> = ({ title }) => {
                       <Text type='secondary' style={{ fontSize: 12 }}>
                         {file.size
                           ? file.size < 1024
-                            ? `${file.size} байт`
+                            ? `${file.size} ${t('common.bytes')}`
                             : file.size < 1024 * 1024
                               ? `${(file.size / 1024).toFixed(1)} KB`
                               : `${(file.size / (1024 * 1024)).toFixed(1)} MB`
@@ -248,15 +248,15 @@ export const ArchitectureDetails: FC<IProps> = ({ title }) => {
               style={{ marginBottom: 16 }}
             />
             <Upload multiple fileList={[]} showUploadList={false} beforeUpload={() => false} onChange={handleUploadChange}>
-              <Button icon={<CloudDownloadOutlined />}>Загрузить ещё</Button>
+              <Button icon={<CloudDownloadOutlined />}>{t('common.uploadMore')}</Button>
             </Upload>
             <Row justify='end' gutter={8} style={{ marginTop: 16 }}>
               <Col>
-                <Button onClick={handleCancelAdd}>Назад</Button>
+                <Button onClick={handleCancelAdd}>{t('architectureDetails.buttons.cancel')}</Button>
               </Col>
               <Col>
                 <Button type='primary' onClick={handleAddConfirm}>
-                  Добавить
+                  {t('filterBar.add')}
                 </Button>
               </Col>
             </Row>

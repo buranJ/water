@@ -3,13 +3,15 @@ import { Button, Flex, TabsProps, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { RejectApplicationModal } from '../../components/Modal'; // импорт модального окна
 
+import i18next from 'i18next';
+
 export type actionType = 'create' | 'reject' | 'approve' | 'tuDetails';
 
 export const tabItems: TabsProps['items'] = [
-  { key: 'all', label: 'Все', children: null },
-  { key: 'accepted', label: 'Одобрено', children: null },
-  { key: 'pending', label: 'В ожидании', children: null },
-  { key: 'rejected', label: 'Отказано', children: null }
+  { key: 'all', label: i18next.t('applications.tabs.all'), children: null },
+  { key: 'accepted', label: i18next.t('applications.tabs.accepted'), children: null },
+  { key: 'pending', label: i18next.t('applications.tabs.pending'), children: null },
+  { key: 'rejected', label: i18next.t('applications.tabs.rejected'), children: null }
 ];
 
 export type StatusCode = 'approved' | 'rejected' | 'pending' | 'contracted';
@@ -78,13 +80,13 @@ export const getColumns: IGetColumnsFn = ({ onClick, onReject }) => {
   const renderStatus = (status: StatusCode) => {
     switch (status) {
       case 'approved':
-        return <Tag color='success'>Одобрено</Tag>;
+        return <Tag color='success'>{i18next.t('applications.statusTag.approved')}</Tag>;
       case 'rejected':
-        return <Tag color='error'>Отказано</Tag>;
+        return <Tag color='error'>{i18next.t('applications.statusTag.rejected')}</Tag>;
       case 'pending':
-        return <Tag color='processing'>В ожидании</Tag>;
+        return <Tag color='processing'>{i18next.t('applications.statusTag.pending')}</Tag>;
       case 'contracted':
-        return <Tag>Заключено</Tag>;
+        return <Tag>{i18next.t('applications.statusTag.contracted')}</Tag>;
     }
   };
 
@@ -101,30 +103,30 @@ export const getColumns: IGetColumnsFn = ({ onClick, onReject }) => {
                 else onClick(record, 'reject');
               }}
             >
-              Отказать
+              {i18next.t('applications.actions.reject')}
             </Button>
             <Button size='large' type='primary' onClick={() => onClick(record, 'approve')}>
-              Одобрить
+              {i18next.t('applications.actions.approve')}
             </Button>
           </Flex>
         );
       case 'approved':
         return (
           <Button size='large' type='primary' onClick={() => onClick(record, 'create')}>
-            Оформление
+            {i18next.t('applications.actions.create')}
           </Button>
         );
       case 'contracted':
         return (
           <Button size='large' type='primary' onClick={() => {}}>
-            Перейти ТУ
+            {i18next.t('applications.actions.goToTu')}
           </Button>
         );
       case 'rejected':
       default:
         return (
           <Button size='large' danger type='default' onClick={() => {}}>
-            Отказ
+            {i18next.t('applications.actions.decline')}
           </Button>
         );
     }
@@ -132,7 +134,7 @@ export const getColumns: IGetColumnsFn = ({ onClick, onReject }) => {
 
   return [
     {
-      title: '№ заявки',
+      title: i18next.t('applications.columns.id'),
       dataIndex: 'id',
       key: 'id',
       align: 'center',
@@ -156,9 +158,9 @@ export const getColumns: IGetColumnsFn = ({ onClick, onReject }) => {
         );
       }
     },
-    { title: 'Дата регистрации', dataIndex: 'date', key: 'date', align: 'center' },
+    { title: i18next.t('applications.columns.date'), dataIndex: 'date', key: 'date', align: 'center' },
     {
-      title: 'Заказчик',
+      title: i18next.t('applications.columns.customer'),
       dataIndex: 'customer',
       key: 'customer',
       align: 'center',
@@ -175,19 +177,19 @@ export const getColumns: IGetColumnsFn = ({ onClick, onReject }) => {
         </span>
       )
     },
-    { title: 'Адрес', dataIndex: 'address', key: 'address', align: 'center' },
-    { title: 'Наименование объекта', dataIndex: 'objectName', key: 'objectName', width: 260 },
-    { title: 'Количество водопроводной воды', dataIndex: 'waterAmount', key: 'waterAmount', align: 'center' },
-    { title: 'Количество стоков', dataIndex: 'wastewaterAmount', key: 'wastewaterAmount', align: 'center' },
+    { title: i18next.t('applications.columns.address'), dataIndex: 'address', key: 'address', align: 'center' },
+    { title: i18next.t('applications.columns.objectName'), dataIndex: 'objectName', key: 'objectName', width: 260 },
+    { title: i18next.t('applications.columns.waterAmount'), dataIndex: 'waterAmount', key: 'waterAmount', align: 'center' },
+    { title: i18next.t('applications.columns.wastewaterAmount'), dataIndex: 'wastewaterAmount', key: 'wastewaterAmount', align: 'center' },
     {
-      title: 'Статус',
+      title: i18next.t('applications.columns.status'),
       dataIndex: 'status',
       key: 'status',
       render: (status: StatusCode) => renderStatus(status),
       align: 'center'
     },
     {
-      title: 'Действие',
+      title: i18next.t('applications.columns.action'),
       key: 'action',
       render: (_: unknown, record: ApplicationData) => renderAction(record),
       align: 'center'

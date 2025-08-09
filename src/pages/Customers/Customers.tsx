@@ -17,20 +17,14 @@ interface IProps {
 }
 
 const CATEGORY_OPTIONS = [
-  { value: '', label: 'Все' },
-  { value: '0', label: 'Юр. лицо' },
-  { value: '1', label: 'Физ. лицо' }
+  { value: '', label: t('common.all') },
+  { value: '0', label: t('customers.category.legalShort') },
+  { value: '1', label: t('customers.category.physicalShort') }
 ];
 
 const ALPHABET_OPTIONS = [
-  {
-    value: 'full_name',
-    label: 'От А до Я'
-  },
-  {
-    value: '-full_name',
-    label: 'От Я до А'
-  }
+  { value: 'full_name', label: t('filterBar.alphabetAsc') },
+  { value: '-full_name', label: t('filterBar.alphabetDesc') }
 ];
 
 export const Customers: FC<IProps> = ({ title }) => {
@@ -120,10 +114,10 @@ export const Customers: FC<IProps> = ({ title }) => {
           actionButtons={
             <>
               <Button type='primary' icon={<PlusOutlined />} onClick={onAddClick}>
-                Добавить
+                {t('filterBar.add')}
               </Button>
               <Button icon={<DownloadOutlined />} iconPosition='end' onClick={onDownloadClick}>
-                Экспорт
+                {t('common.export')}
               </Button>
             </>
           }

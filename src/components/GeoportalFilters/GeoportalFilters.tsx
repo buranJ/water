@@ -1,8 +1,9 @@
 import React, { FC } from 'react';
 import type { MenuProps } from 'antd';
-import { Button, Flex, Input, message, Space } from 'antd';
-import { Dropdown } from 'antd';
+import { Button, Dropdown, Flex, Input, message, Space } from 'antd';
 import { DownOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
+
+import { t } from 'i18next';
 
 export interface Filters {
   search: string;
@@ -19,29 +20,29 @@ interface GeoportalFiltersProps {
   isLoading: boolean;
 }
 
-const typeItems: MenuProps['items'] = [
-  { label: 'Все типы', key: 'all' },
-  { label: '💧 Водопровод', key: 'water' },
-  { label: '🚰 Канализация', key: 'sewer' },
-  { label: '🔥 Газопровод', key: 'gas' },
-  { label: '⚡ Электросети', key: 'electric' },
-  { label: '📍 Другое', key: 'other' }
-];
-
-const statusItems: MenuProps['items'] = [
-  { label: 'Все статусы', key: 'all' },
-  { label: '✅ Активный', key: 'active' },
-  { label: '❌ Неактивный', key: 'inactive' }
-];
-
-const dateItems: MenuProps['items'] = [
-  { label: 'Все периоды', key: 'all' },
-  { label: 'За последний месяц', key: 'month' },
-  { label: 'За последние 3 месяца', key: 'quarter' },
-  { label: 'За последний год', key: 'year' }
-];
-
 export const GeoportalFilters: FC<GeoportalFiltersProps> = ({ filters, onSearchChange, onFilterChange, onRefresh, isLoading }) => {
+  const typeItems: MenuProps['items'] = [
+    { label: t('geoportalFilters.type.all'), key: 'all' },
+    { label: `💧 ${t('geoportalFilters.type.water')}`, key: 'water' },
+    { label: `🚰 ${t('geoportalFilters.type.sewer')}`, key: 'sewer' },
+    { label: `🔥 ${t('geoportalFilters.type.gas')}`, key: 'gas' },
+    { label: `⚡ ${t('geoportalFilters.type.electric')}`, key: 'electric' },
+    { label: `📍 ${t('geoportalFilters.type.other')}`, key: 'other' }
+  ];
+
+  const statusItems: MenuProps['items'] = [
+    { label: t('geoportalFilters.status.all'), key: 'all' },
+    { label: `✅ ${t('geoportalFilters.status.active')}`, key: 'active' },
+    { label: `❌ ${t('geoportalFilters.status.inactive')}`, key: 'inactive' }
+  ];
+
+  const dateItems: MenuProps['items'] = [
+    { label: t('geoportalFilters.date.all'), key: 'all' },
+    { label: t('geoportalFilters.date.month'), key: 'month' },
+    { label: t('geoportalFilters.date.quarter'), key: 'quarter' },
+    { label: t('geoportalFilters.date.year'), key: 'year' }
+  ];
+
   const getFilterLabel = (items: MenuProps['items'], key: string | null): string => {
     if (!key) {
       const firstItem = items?.[0];
@@ -59,19 +60,19 @@ export const GeoportalFilters: FC<GeoportalFiltersProps> = ({ filters, onSearchC
   const handleTypeFilter: MenuProps['onClick'] = (e) => {
     const type = e.key === 'all' ? null : e.key;
     onFilterChange('type', type);
-    message.success(`Фильтр по типу: ${e.domEvent.currentTarget.textContent}`);
+    message.success(t('geoportalFilters.messages.type', { value: e.domEvent.currentTarget.textContent }));
   };
 
   const handleStatusFilter: MenuProps['onClick'] = (e) => {
     const status = e.key === 'all' ? null : e.key;
     onFilterChange('status', status);
-    message.success(`Фильтр по статусу: ${e.domEvent.currentTarget.textContent}`);
+    message.success(t('geoportalFilters.messages.status', { value: e.domEvent.currentTarget.textContent }));
   };
 
   const handleDateFilter: MenuProps['onClick'] = (e) => {
     const dateRange = e.key === 'all' ? null : e.key;
     onFilterChange('dateRange', dateRange);
-    message.success(`Фильтр по дате: ${e.domEvent.currentTarget.textContent}`);
+    message.success(t('geoportalFilters.messages.date', { value: e.domEvent.currentTarget.textContent }));
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -82,7 +83,7 @@ export const GeoportalFilters: FC<GeoportalFiltersProps> = ({ filters, onSearchC
     <Flex gap={12} style={{ marginBottom: 16 }}>
       <Input
         addonBefore={<SearchOutlined />}
-        placeholder='Поиск по названию, адресу или номеру заявки'
+        placeholder={t('geoportalFilters.searchPlaceholder')}
         value={filters.search}
         onChange={handleSearchChange}
         style={{ width: 350 }}
@@ -91,7 +92,7 @@ export const GeoportalFilters: FC<GeoportalFiltersProps> = ({ filters, onSearchC
       <Dropdown menu={{ items: typeItems, onClick: handleTypeFilter }}>
         <Button>
           <Space>
-            {filters.type ? getFilterLabel(typeItems, filters.type) : 'По типу'}
+            {filters.type ? getFilterLabel(typeItems, filters.type) : t('geoportalFilters.dropdown.type')}
             <DownOutlined />
           </Space>
         </Button>
@@ -100,7 +101,7 @@ export const GeoportalFilters: FC<GeoportalFiltersProps> = ({ filters, onSearchC
       <Dropdown menu={{ items: statusItems, onClick: handleStatusFilter }}>
         <Button>
           <Space>
-            {filters.status ? getFilterLabel(statusItems, filters.status) : 'По статусу'}
+            {filters.status ? getFilterLabel(statusItems, filters.status) : t('geoportalFilters.dropdown.status')}
             <DownOutlined />
           </Space>
         </Button>
@@ -109,18 +110,18 @@ export const GeoportalFilters: FC<GeoportalFiltersProps> = ({ filters, onSearchC
       <Dropdown menu={{ items: dateItems, onClick: handleDateFilter }}>
         <Button>
           <Space>
-            {filters.dateRange ? getFilterLabel(dateItems, filters.dateRange) : 'По дате'}
+            {filters.dateRange ? getFilterLabel(dateItems, filters.dateRange) : t('geoportalFilters.dropdown.date')}
             <DownOutlined />
           </Space>
         </Button>
       </Dropdown>
 
       <Button type='primary' icon={<PlusOutlined />}>
-        Добавить
+        {t('filterBar.add')}
       </Button>
 
       <Button onClick={onRefresh} disabled={isLoading}>
-        Обновить
+        {t('common.refresh')}
       </Button>
     </Flex>
   );

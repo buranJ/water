@@ -41,8 +41,9 @@
     "editApplication": "Edit Application",
     "applicationCreate": "Create Application",
     "profile": "Profile",
-    "technicalSpecificatio": "technical Specificatio"
-
+    "technicalSpecificatio": "Technical Conditions",
+    "applicationDetails": "Application No.",
+    "tuNumberPrefix": "TU No."
   },
   "profile": {
     "title": "Settings",
@@ -58,5 +59,735 @@
     "confirmLogout": "Are you sure you want to log out?",
     "yes": "Yes",
     "no": "No"
+  },
+  "filterBar": {
+    "search": "Search",
+    "residential": "Residential",
+    "commercial": "Commercial",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "archived": "Archived",
+    "newOnesfirst": "Newest First",
+    "newOldFirst": "Oldest First",
+    "add": "Add",
+    "byDate": "By Date",
+    "alphabetAsc": "A-Z",
+    "alphabetDesc": "Z-A",
+    "filter": {
+      "alphabet": "Alphabetically",
+      "type": "By Type",
+      "status": "Status",
+      "date": "Date",
+      "category": "Category"
+    }
+  },
+  "geoportalFilters": {
+    "searchPlaceholder": "Search by name, address, or application number",
+    "dropdown": {
+      "type": "By type",
+      "status": "By status",
+      "date": "By date"
+    },
+    "type": {
+      "all": "All types",
+      "water": "Water supply",
+      "sewer": "Sewer",
+      "gas": "Gas pipeline",
+      "electric": "Power grid",
+      "other": "Other"
+    },
+    "status": {
+      "all": "All statuses",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "date": {
+      "all": "All periods",
+      "month": "Last month",
+      "quarter": "Last 3 months",
+      "year": "Last year"
+    },
+    "messages": {
+      "type": "Filter by type: {{value}}",
+      "status": "Filter by status: {{value}}",
+      "date": "Filter by date: {{value}}"
+    }
+  },
+  "common": {
+    "refresh": "Refresh",
+    "downloadPdf": "Download PDF",
+    "delete": "Delete",
+    "upload": "Upload",
+    "pending": "Pending",
+    "status": "Status",
+    "export": "Export",
+    "all": "All",
+    "download": "Download",
+    "uploadMore": "Upload more",
+    "back": "Back",
+    "uploadFile": "Upload file",
+    "bytes": "bytes",
+    "selectedFiles": "Selected files: {{count}}",
+    "errorPrefix": "Error: "
+  },
+  "geoportal": {
+    "errorLoad": "Failed to load data",
+    "dataRefreshed": "Data refreshed",
+    "apiError": "Failed to load data from the API. Please try again later.",
+    "tryAgain": "Try again",
+    "foundCount": "Found objects: {{count}} of {{total}}",
+    "resetFilters": "Reset filters"
+  },
+  "objectDetail": {
+    "title": "Object details",
+    "titleUpdated": "Title updated",
+    "errorUpdateTitle": "Error updating title",
+    "confirmDeleteTitle": "Delete confirmation",
+    "confirmDeleteContent": "Are you sure you want to delete the object \"{{title}}\"? This action cannot be undone.",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "deleted": "Object deleted",
+    "errorDelete": "Error deleting object",
+    "invalidId": "Invalid ID",
+    "invalidIdDescription": "An incorrect object identifier is specified",
+    "backToList": "Back to list",
+    "notFound": "Object not found",
+    "loadError": "Loading error",
+    "notFoundDescription": "The object with the specified ID does not exist or has been deleted",
+    "loadErrorDescription": "Failed to load object information. Check your internet connection.",
+    "retry": "Retry",
+    "noData": "No data",
+    "noDataDescription": "No object data available",
+    "refresh": "Refresh"
+  },
+  "historyOfLoads": {
+    "addLoad": "Add load",
+    "columns": {
+      "tu": "TU No.",
+      "collaborator": "Employee",
+      "loadAdded": "Added load",
+      "regDate": "Registration date",
+      "status": "Status"
+    }
+  },
+  "tuDetails": {
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "archived": "Archived"
+    },
+    "stage": {
+      "draft": "Draft",
+      "review": "In review",
+      "approved": "Approved",
+      "done": "Completed",
+      "unknown": "Unknown"
+    },
+    "titles": {
+      "objectName": "Object name",
+      "applicationInfo": "Application information",
+      "additionalCharacteristics": "Additional characteristics",
+      "payment": "Payment",
+      "customer": "Customer",
+      "objectLocation": "Object location",
+      "waterRequired": "Required water supply",
+      "pressureRequired": "Required pressure",
+      "geoportalRequest": "Geoportal creation request",
+      "savedGeoportalRequest": "Saved geoportal request",
+      "waterSupply": "Water supply",
+      "sewer": "Sewer",
+      "otherDocuments": "Other documents",
+      "confirmationAct": "Confirmation act"
+    },
+    "labels": {
+      "requestNumber": "Application number:",
+      "requestDate": "Application date:",
+      "requestSource": "Request source:",
+      "inn": "INN:",
+      "connectionTarget": "Connection target:",
+      "streetPass": "Street pass:",
+      "collector": "Collector:",
+      "fireFighting": "Fire fighting:",
+      "fireInput1": "Fire input 1:",
+      "fireInput2": "Fire input 2:",
+      "notes": "Notes:",
+      "paymentInvoiceNumber": "Invoice number:",
+      "paymentPaper": "Paperwork amount:",
+      "paymentConnection": "Connection amount:",
+      "paymentAmount": "Total amount:",
+      "paymentDeadline": "Payment deadline:",
+      "stage": "Stage:"
+    },
+    "units": {
+      "m3PerDay": "m³/day",
+      "mWaterCol": "m water column"
+    },
+    "currency": "KGS",
+    "actions": {
+      "request": "Request",
+      "changeTuData": "Change TU data",
+      "downloadTu": "Download TU",
+      "rejectTu": "Reject TU"
+    },
+    "autoLoaded": "Automatically loaded",
+    "contentNotImplemented": "Content for \"{{title}}\" is not implemented yet",
+    "hint": {
+      "uploadToFinishTu": "Upload the relevant document to complete TU creation"
+    },
+    "tabs": {
+      "data": "Data"
+    },
+    "notSpecified": "Not specified",
+    "loadError": "Loading error",
+    "loadErrorDescription": "Failed to load technical conditions data"
+  },
+  "exportData": {
+    "formSubmitted": "Form submitted:",
+    "title": "Select parameters and export the required data",
+    "fields": {
+      "dataType": "Data types",
+      "statuses": "Statuses",
+      "responsible": "Responsible",
+      "dateFrom": "Date from",
+      "dateTo": "Date to",
+      "selectFields": "Select fields to export"
+    },
+    "validation": {
+      "selectSection": "Select a section"
+    },
+    "placeholders": {
+      "selectSection": "Select a section",
+      "responsible": "Full name or department"
+    },
+    "options": {
+      "orders": "Orders",
+      "clients": "Clients",
+      "requests": "Requests"
+    },
+    "status": {
+      "new": "New",
+      "inProgress": "In progress",
+      "completed": "Completed"
+    },
+    "responsible": {
+      "departmentA": "Department A",
+      "departmentB": "Department B",
+      "ivanov": "Ivanov I.I."
+    },
+    "checkboxes": {
+      "registrationDate": "Registration date",
+      "customer": "Customer",
+      "customerSample": "LLC \"Sairus\"",
+      "rightToAddRequest": "Right to add a request"
+    },
+    "formats": {
+      "excel": "Excel (.xlsx)",
+      "csv": "CSV (.csv)",
+      "pdf": "PDF (for reports)"
+    },
+    "exportHistory": "Export history"
+  },
+  "notFound": {
+    "subtitle": "This page does not exist",
+    "backHome": "Go to Home"
+  },
+  "exportDataHistory": {
+    "byType": "By type",
+    "byStatus": "By status",
+    "reexport": "Re-export record No. {{id}}",
+    "deletedItem": "Record No. {{id}} deleted",
+    "columns": {
+      "date": "Date",
+      "employee": "Employee",
+      "dataType": "Data type",
+      "format": "Format",
+      "actions": "Actions"
+    },
+    "dataTypes": {
+      "tu": "TU",
+      "requests": "Applications",
+      "invoice": "Invoice"
+    }
+  },
+  "customers": {
+    "columns": {
+      "number": "No.",
+      "customer": "Customer",
+      "categories": "Categories",
+      "passportData": "Passport data",
+      "registrationDate": "Registration date",
+      "address": "Address",
+      "contacts": "Contacts",
+      "status": "Status",
+      "action": "Action"
+    },
+    "category": {
+      "legalShort": "Legal entity",
+      "physicalShort": "Individual"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "messages": {
+      "created": "Customer created successfully",
+      "createError": "Error creating customer"
+    }
+  },
+  "formulas": {
+    "add": "Add formula",
+    "searchPlaceholder": "Search by name...",
+    "foundCount": "Formulas found: {{count}}",
+    "loading": "Loading formulas...",
+    "nothingFound": "No results found for your query",
+    "notFound": "No formulas found",
+    "changeSearch": "Try adjusting your search parameters",
+    "startCreate": "Start by creating your first formula",
+    "messages": {
+      "created": "Formula created successfully",
+      "updated": "Formula updated successfully",
+      "deleted": "Formula deleted successfully",
+      "createError": "Error creating formula",
+      "updateError": "Error updating formula",
+      "deleteError": "Error deleting formula",
+      "loadError": "Error loading formulas"
+    }
+  },
+  "objects": {
+    "searchPlaceholder": "Find objects",
+    "notFound": "Objects not found",
+    "add": "Add object",
+    "messages": {
+      "created": "Object created successfully",
+      "createError": "Error creating object",
+      "loadError": "Error loading objects"
+    }
+  },
+  "tuRejectModal": {
+    "title": "Reject TU",
+    "labels": {
+      "reason": "Reason",
+      "comment": "Comment"
+    },
+    "defaultReason": "Missing required documents",
+    "placeholders": {
+      "comment": "Provide more details about the reason..."
+    },
+    "buttons": {
+      "upload": "Upload file",
+      "back": "Back",
+      "reject": "Reject"
+    }
+  },
+  "applicationDetails": {
+    "tabs": {
+      "data": "Data",
+      "documents": "Documents"
+    },
+    "buttons": {
+      "pdf": "PDF",
+      "edit": "Edit",
+      "createTu": "Create TU",
+      "rejectTu": "Reject TU",
+      "addFile": "Add file"
+    },
+    "loadError": "Error loading application data",
+    "labels": {
+      "objectName": "Object name",
+      "registrationDate": "Registration date",
+      "customer": "Customer",
+      "address": "Address",
+      "waterRequired": "Required water supply",
+      "wastewater": "Wastewater volume",
+      "status": "Status"
+    },
+    "status": {
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "pending": "Pending",
+      "tuConcluded": "TU concluded"
+    },
+    "documentsTitle": "Documents",
+    "table": {
+      "name": "Name",
+      "uploadDate": "Upload date",
+      "actions": "Actions"
+    },
+    "noDocs": "No uploaded documents"
+  },
+  "architecture": {
+    "titles": {
+      "documentsToUpload": "Documents to upload",
+      "additionalDocuments": "Additional documents",
+      "createDocument": "Create document"
+    },
+    "buttons": {
+      "createDocument": "Create document",
+      "create": "Create"
+    },
+    "inputs": {
+      "documentName": "Document name"
+    },
+    "messages": {
+      "created": "Document created successfully",
+      "createError": "Error creating document"
+    }
+  },
+  "architectureDetails": {
+    "titles": {
+      "uploadDocument": "Upload document",
+      "delete": "Delete"
+    },
+    "confirmDelete": "Are you sure you want to delete the document?",
+    "buttons": {
+      "cancel": "Cancel",
+      "delete": "Delete"
+    },
+    "dragHint": "Drag files here to upload"
+  },
+  "applicationsCreate": {
+    "uploadModal": {
+      "title": "Attach file",
+      "dropHint": "Drag files here to upload",
+      "validation": {
+        "attachFile": "Please attach a file"
+      }
+    },
+    "form": {
+      "labels": {
+        "inn": "INN",
+        "customer": "Customer",
+        "object": "Object",
+        "street": "Street",
+        "house": "House",
+        "waterAmountRequired": "Required amount of water",
+        "pressureRequired": "Required pressure",
+        "waterPurpose": "Purpose of water",
+        "firefightingExpenses": "Water consumption for internal fire extinguishing",
+        "coordX": "Coordinate X",
+        "coordY": "Coordinate Y"
+      },
+      "placeholders": {
+        "enterInn": "Enter INN",
+        "fullName": "First and last name",
+        "companyName": "Company name",
+        "address": "Address",
+        "houseNumberShort": "No.",
+        "enterValue": "Enter a value",
+        "waterPurpose": "Purpose of water",
+        "xPlaceholder": "123",
+        "yPlaceholder": "321"
+      },
+      "validation": {
+        "required": "Required field"
+      }
+    },
+    "buttons": {
+      "attach": "Attach file",
+      "attachedCount": "Files attached: {{count}}",
+      "submit": "Submit"
+    },
+    "messages": {
+      "created": "Application created successfully",
+      "createError": "Error creating application",
+      "customerOrObjectError": "Error: failed to determine customer or object"
+    }
+  },
+  "folderDetail": {
+    "tabs": {
+      "uploaded": "Uploaded",
+      "recent": "Recent"
+    },
+    "messages": {
+      "uploadSuccess": "Files uploaded successfully",
+      "uploadError": "Error uploading files"
+    },
+    "placeholder": {
+      "recent": "Here will be \"Recent\""
+    },
+    "columns": {
+      "title": "Title",
+      "uploadedAt": "Upload date",
+      "actions": "Actions"
+    },
+    "aria": {
+      "download": "Download file",
+      "delete": "Delete file"
+    },
+    "prefixes": {
+      "tu": "TU {{id}}",
+      "folder": "Folder {{folder}}",
+      "document": " > Document {{id}}"
+    }
+  },
+  "applications": {
+    "tabs": {
+      "all": "All",
+      "accepted": "Approved",
+      "pending": "Pending",
+      "rejected": "Rejected"
+    },
+    "columns": {
+      "id": "Application No.",
+      "date": "Registration date",
+      "customer": "Customer",
+      "address": "Address",
+      "objectName": "Object name",
+      "waterAmount": "Water supply amount",
+      "wastewaterAmount": "Wastewater amount",
+      "status": "Status",
+      "action": "Action"
+    },
+    "statusTag": {
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "pending": "Pending",
+      "contracted": "Concluded"
+    },
+    "actions": {
+      "reject": "Reject",
+      "approve": "Approve",
+      "create": "Create",
+      "goToTu": "Go to TU",
+      "decline": "Decline"
+    }
+  },
+  "protocolDetail": {
+    "tabs": {
+      "protocol": "Protocol",
+      "payments": "Payments"
+    },
+    "buttons": {
+      "downloadProtocol": "Download protocol",
+      "closeInvoice": "Close invoice",
+      "generateInvoice": "Generate invoice"
+    },
+    "paid": "Paid:",
+    "invoice": {
+      "title": "Invoice",
+      "uploadReceipt": "Upload payment receipt"
+    },
+    "payment": {
+      "columns": {
+        "paymentNum": "Payment No.",
+        "date": "Date",
+        "amount": "Amount",
+        "source": "Source",
+        "status": "Status"
+      },
+      "status": {
+        "received": "Received",
+        "pending": "Pending",
+        "failed": "Rejected"
+      }
+    }
+  },
+  "addTuForms": {
+    "titles": {
+      "main": "Main information",
+      "techParams": "Technical parameters",
+      "connection": "Connection",
+      "finance": "Finance"
+    },
+    "form": {
+      "labels": {
+        "requestSource": "Request source",
+        "requestNumber": "Request number",
+        "requestDate": "Request date",
+        "customer": "Customer",
+        "objectName": "Object name",
+        "address": "Object location",
+        "techConditionType": "Technical condition type",
+        "eni": "ENI",
+        "sewageAmount": "Wastewater amount",
+        "waterRequired": "Required water amount",
+        "pressureRequired": "Required pressure",
+        "fireFighting": "Firefighting (internal/external)",
+        "stage": "Stage",
+        "formula": "Formulas",
+        "connectionTarget": "What the object connects to",
+        "streetPass": "Street pass",
+        "collector": "Collector",
+        "waterPipe": "Water supply",
+        "sewer": "Sewer",
+        "fireInput1": "Fire input 1",
+        "fireInput2": "Fire input 2",
+        "notes": "Notes and comments",
+        "paymentPaper": "TU fee (paperwork)",
+        "paymentConnection": "Connection fee",
+        "status": "Payment status",
+        "paymentAmount": "Payment amount",
+        "paymentDeadline": "TU payment deadline",
+        "paymentInvoiceNumber": "Invoice No."
+      },
+      "placeholders": {
+        "requestSource": "Object name",
+        "requestNumber": "12345",
+        "requestDate": "YYYY-MM-DD",
+        "customer": "Full name or organization",
+        "objectName": "Residential house",
+        "address": "Object address",
+        "techConditionType": "TU type",
+        "eni": "1234",
+        "sewageAmount": "For example: 2",
+        "waterRequired": "123",
+        "pressureRequired": "10",
+        "fireFighting": "Residential house",
+        "stage": "Select stage",
+        "formula": "Formulas",
+        "connectionTarget": "Object name",
+        "streetPass": "Passing along the street",
+        "collector": "01:00|12:34567",
+        "waterPipe": "Passing along the street",
+        "sewer": "01:00|12:34567",
+        "fireInput1": "input 1",
+        "fireInput2": "input 2",
+        "notes": "Comment",
+        "status": "Select status",
+        "paymentAmount": "1000",
+        "paymentPaper": "Enter amount",
+        "paymentConnection": "Enter amount",
+        "paymentDeadline": "YYYY-MM-DD",
+        "invoiceNumber": "1234567890"
+      },
+      "validation": {
+        "specifySource": "Specify source",
+        "specifyRequestNumber": "Specify request number",
+        "specifyRequestDate": "Specify request date",
+        "specifyCustomer": "Specify customer",
+        "specifyObjectName": "Specify object name",
+        "specifyAddress": "Specify address",
+        "selectType": "Select type",
+        "required": "Required field"
+      },
+      "options": {
+        "stages": {
+          "draft": "Draft",
+          "review": "In review",
+          "approved": "Approved",
+          "done": "Completed"
+        },
+        "status": {
+          "active": "Active",
+          "inactive": "Inactive",
+          "archived": "Archived"
+        }
+      },
+      "buttons": {
+        "change": "Edit",
+        "submit": "Done"
+      }
+    },
+    "messages": {
+      "loadTuError": "Failed to get TU data.",
+      "createTuSuccess": "Technical condition created successfully!",
+      "createTuError": "An error occurred while creating TU."
+    }
+  },
+  "objectForm": {
+    "labels": {
+      "title": "Object name",
+      "addressStreet": "Address",
+      "addressNumber": "House number",
+      "cadastralNumber": "Cadastral number",
+      "type": "Object type",
+      "usageType": "Usage type",
+      "status": "Status"
+    },
+    "placeholders": {
+      "title": "Object name",
+      "addressStreet": "Address",
+      "addressNumber": "House number",
+      "cadastralNumber": "01:001:1234567",
+      "type": "Residential building",
+      "usageType": "Residential building",
+      "status": "Select status"
+    },
+    "validation": {
+      "titleRequired": "Enter object name",
+      "addressRequired": "Enter address",
+      "cadastralRequired": "Enter cadastral number",
+      "statusRequired": "Select status"
+    },
+    "buttons": {
+      "cancel": "Back",
+      "add": "Add"
+    }
+  },
+  "paymentsModal": {
+    "title": "Add payment",
+    "labels": {
+      "paymentNumber": "Payment number",
+      "paymentDate": "Payment date",
+      "amount": "Payment amount",
+      "source": "Payment source",
+      "status": "Payment status",
+      "optionalReceiptFile": "Receipt file (optional)"
+    },
+    "placeholders": {
+      "paymentNumber": "Enter payment number",
+      "date": "Select date",
+      "amount": "Enter amount",
+      "source": "e.g., 1C",
+      "status": "Select status"
+    },
+    "buttons": {
+      "uploadReceipt": "Upload receipt",
+      "replaceFile": "Replace file",
+      "cancel": "Cancel",
+      "submit": "Add payment"
+    },
+    "messages": {
+      "success": "Payment added successfully",
+      "error": "Error adding payment",
+      "fileTypeError": "Only images, PDF, or documents are allowed",
+      "fileSizeError": "File must be smaller than 10MB",
+      "fileSelectedPrefix": "Selected file:"
+    },
+    "validation": {
+      "required": "This field is required",
+      "amountPositive": "Amount must be greater than 0"
+    }
+  },
+  "objectCard": {
+    "more": "Details",
+    "createdAt": "Created at",
+    "address": "Address",
+    "cadastral": "Cadastral",
+    "status": "Status"
+  },
+  "yandexMap": {
+    "labels": {
+      "request": "Application",
+      "address": "Address",
+      "status": "Status",
+      "stage": "Stage"
+    }
+  },
+  "protocolDoc": {
+    "companyName": "MP \"Bishkekteploset\"",
+    "takeaway": "Takeaway",
+    "vikCostLabel": "Water/sewer connection cost KGS (excl. VAT)",
+    "tuWater": "TU water supply",
+    "tuSewer": "TU sewer",
+    "totalWithoutVat": "Total (excl. VAT)",
+    "extraText": "Additional protocol text or content..."
+  },
+  "paymentsTab": {
+    "buttons": {
+      "add": "Add",
+      "pdf": "PDF",
+      "receipt": "Receipt",
+      "closeInvoice": "Close invoice"
+    },
+    "table": {
+      "empty": "No payments",
+      "actions": "Actions"
+    },
+    "messages": {
+      "loadErrorTitle": "Load error",
+      "loadErrorDesc": "Failed to load payments data",
+      "invoiceFullyPaid": "Invoice fully paid"
+    }
   }
 }
