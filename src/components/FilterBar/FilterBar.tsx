@@ -16,6 +16,7 @@ export interface FilterValues {
 
 interface Props {
   onFilterChange: (values: FilterValues) => void;
+  alphabetOptions?: { value: string; label: string }[];
   showAlphabet?: boolean;
   showType?: boolean;
   showStatus?: boolean;
@@ -37,7 +38,8 @@ export const FilterBar = ({
   categoryOptions,
   showStatusSelect,
   statusOptions,
-  actionButtons
+  actionButtons,
+  alphabetOptions
 }: Props) => {
   const [values, setValues] = useState<FilterValues>({});
 
@@ -59,7 +61,7 @@ export const FilterBar = ({
           style={{ width: 180 }}
         />
 
-        {showAlphabet && (
+        {showAlphabet && !alphabetOptions && (
           <Select
             variant='filled'
             placeholder='По алфавиту'
@@ -70,6 +72,23 @@ export const FilterBar = ({
           >
             <Option value='asc'>А-Я</Option>
             <Option value='desc'>Я-А</Option>
+          </Select>
+        )}
+
+        {showAlphabet && alphabetOptions && (
+          <Select
+            variant='filled'
+            placeholder='По алфавиту'
+            allowClear
+            style={{ width: 140 }}
+            value={values.alphabet}
+            onChange={(v) => handleChange('alphabet', v)}
+          >
+            {alphabetOptions.map((opt) => (
+              <Option key={opt.value} value={opt.value}>
+                {opt.label}
+              </Option>
+            ))}
           </Select>
         )}
 

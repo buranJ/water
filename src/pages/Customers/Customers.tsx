@@ -9,7 +9,7 @@ import type { FilterValues } from 'components/FilterBar/FilterBar';
 import { getColumns } from './Customers.helpers';
 import './styles.scss';
 
-import { ICustomer, useGetAllCustomersQuery } from 'api/Customer.api';
+import { ICustomer, IGetCustomersParams, useGetAllCustomersQuery } from 'api/Customer.api';
 import { t } from 'i18next';
 
 interface IProps {
@@ -22,21 +22,38 @@ const CATEGORY_OPTIONS = [
   { value: '1', label: 'Физ. лицо' }
 ];
 
+const ALPHABET_OPTIONS = [
+  {
+    value: 'full_name',
+    label: 'От А до Я'
+  },
+  {
+    value: '-full_name',
+    label: 'От Я до А'
+  }
+];
+
 export const Customers: FC<IProps> = ({ title }) => {
   const navigate = useNavigate();
 
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(8);
-  const [category, setCategory] = useState<string>('');
+  const [filters, setFilters] = useState<IGetCustomersParams>({
+    page: 1,
+    page_size: 8
+  });
 
   const { data, isLoading } = useGetAllCustomersQuery({
     page,
     page_size: pageSize,
-    ...(category ? { category } : {})
+    ...filters
   });
 
   const handleFilterChange = (filter: FilterValues) => {
-    setCategory(filter.category || '');
+    const { alphabet, date, ...rest } = filter;
+    const orderingValue = [alphabet, date].filter(Boolean).join(', ');
+
+    setFilters({ ...rest, category: filter.category as '0' | '1', ordering: orderingValue });
     setPage(1); // сбрасываем на первую страницу при фильтрации
   };
 
@@ -86,7 +103,7 @@ export const Customers: FC<IProps> = ({ title }) => {
   }, [navigate]);
 
   const handlePaginationChange = (page: number, pageSize?: number) => {
-    setPage(page);
+    setFilters({ ...filters, page });
     if (pageSize) setPageSize(pageSize);
   };
 
@@ -99,6 +116,7 @@ export const Customers: FC<IProps> = ({ title }) => {
           showCategory
           showDate
           categoryOptions={CATEGORY_OPTIONS}
+          alphabetOptions={ALPHABET_OPTIONS}
           actionButtons={
             <>
               <Button type='primary' icon={<PlusOutlined />} onClick={onAddClick}>

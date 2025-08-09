@@ -52,11 +52,11 @@ export const customerApi = createApi({
         params
       })
     }),
-    getAllCustomers: build.query<ICustomersListResponse, IGetCustomersParams | void>({
-      query: (params) => ({
+    getAllCustomers: build.query<ICustomersListResponse, IGetCustomersParams>({
+      query: ({ ordering = 'created_at', ...params }) => ({
         url: 'customer/',
         method: 'GET',
-        params: params || {}
+        params: { ...params, ordering }
       })
     }),
 
