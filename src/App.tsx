@@ -20,8 +20,8 @@ function App() {
       if (checkError({ error, status: 401 }) && code && detail) {
         navigate('/');
         notification.error({
-          message: code,
-          description: detail,
+          message: 'Ошибка при входе в аккаунт',
+          description: 'Пожалуйста, пройдите заново авторизацию что иметь доступ к платформе',
           duration: 5
         });
         localStorage.clear();
