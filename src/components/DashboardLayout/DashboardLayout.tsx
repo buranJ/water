@@ -6,7 +6,6 @@ import { BellOutlined, CreditCardOutlined, LeftOutlined, TeamOutlined } from '@a
 import arrow from 'assets/icons/arrow.svg';
 import logo from 'assets/icons/logo.svg';
 import ApplicationIcon from 'assets/icons/sidebar/applications.svg?react';
-import ArchitectureIcon from 'assets/icons/sidebar/architecture.svg?react';
 import BuildingIcon from 'assets/icons/sidebar/building.svg?react';
 import ComputingIcon from 'assets/icons/sidebar/computing.svg?react';
 import ExportIcon from 'assets/icons/sidebar/export.svg?react';
@@ -83,11 +82,6 @@ export const DashboardLayout = ({ children, title }: Props) => {
       key: '/dashboard/bills',
       icon: <CreditCardOutlined />,
       label: t('dashboard.pages.bills')
-    },
-    hasPermission('view_architecture') && {
-      key: '/dashboard/architecture',
-      icon: <ArchitectureIcon />,
-      label: t('dashboard.pages.architecture')
     },
     hasPermission('view_export') && {
       key: '/dashboard/export',

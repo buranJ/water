@@ -22,11 +22,11 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
       width: 90
     },
     {
-      title: 'Дата регистрации',
+      title: 'Дата создания',
       dataIndex: 'created_at',
       key: 'created_at',
       width: 150,
-      render: (date) => dayjs(date).format('DD-MM-YYYY')
+      render: (date) => dayjs(date).format('DD-MM-YYYY-HH:mm')
     },
     { title: 'Заказчик', dataIndex: ['customer', 'full_name'], key: 'customer', width: 170 },
     { title: 'Адрес', dataIndex: 'address', key: 'address', width: 170 },
