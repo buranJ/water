@@ -89,7 +89,7 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'Заявк
             </>
           )}
           {activeTab === 'documents' && (
-            <div style={{ background: '#fff', borderRadius: 12, padding: 24 }}>
+            <div style={{ background: '#fff', borderRadius: 12, padding: 24, display: 'flex', flexDirection: 'column' }}>
               <Typography.Title level={5} style={{ marginBottom: 16 }}>
                 Документы
               </Typography.Title>
