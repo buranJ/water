@@ -2,6 +2,7 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Button, Table } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import dayjs from 'dayjs';
 import CustomPagination from 'common/ui/Pagination/CustomPagination';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { FilterBar } from 'components/FilterBar';
@@ -72,7 +73,7 @@ export const Applications: FC<IProps> = ({ title }) => {
     return (data?.results || []).map((item) => ({
       key: String(item.id),
       id: String(item.id),
-      date: item.created_at ? new Date(item.created_at).toLocaleDateString() : '',
+      date: item.created_at ? dayjs(item.created_at).format('DD.MM.YYYY-HH:mm') : '',
       customer: String(item.customer), // временно используем id как строку, если нет имени
       customerId: item.customer,
       address: item.address,
