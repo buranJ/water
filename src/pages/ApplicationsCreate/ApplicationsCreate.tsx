@@ -1,9 +1,9 @@
-import { FC, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Button, Col, Flex, Form, Input, message, Row, UploadFile } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
-import { ObjectItem } from 'types/entities';
+import { ICustomer, ObjectItem } from 'types/entities';
 import { UploadFilesModal } from './UploadFilesModal/UploadFilesModal';
 import './styles.scss';
 
@@ -17,10 +17,10 @@ interface IProps {
 
 export const ApplicationsCreate: FC<IProps> = ({ title }) => {
   const navigate = useNavigate();
-  const [createApplication] = useCreateApplicationMutation();
+  const [createApplication, { isLoading, isSuccess, isError, data }] = useCreateApplicationMutation();
   const [uploadApplicationFiles] = useUploadApplicationFilesMutation();
-  const [createCustomer] = useCreateCustomerMutation();
-  const [createObject] = useCreateObjectMutation();
+  const [createCustomer, { isLoading: isCreatingCustomer }] = useCreateCustomerMutation();
+  const [createObject, { isLoading: isCreatingObject }] = useCreateObjectMutation();
   const [triggerGetCustomers] = useLazyGetCustomerQuery();
   const [triggerGetObjects] = useLazyGetAllObjectsQuery();
   const [form] = Form.useForm<IApplication>();
@@ -81,7 +81,7 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
       const application = await createApplication({
         ...values,
         INN: String(values.INN),
-        object: objectId.toString(),
+        object: values.object,
         customer: customerId,
         status: 'pending',
         entity: objectId
@@ -94,13 +94,21 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
           await uploadApplicationFiles({ application: application.id, files });
         }
       }
-      message.success('Заявка успешно создана');
-      navigate('/dashboard/applications');
     } catch (error) {
-      message.error('Ошибка при создании заявки');
       console.error('Ошибка:', error);
     }
   };
+
+  useEffect(() => {
+    if (isSuccess && data?.id) {
+      form.resetFields();
+      message.success('Заявка успешно создана');
+      navigate(`/dashboard/applications/${data.id}`);
+    }
+    if (isError) {
+      message.error('Ошибка при создании заявки');
+    }
+  }, [data?.id, form, isError, isSuccess, navigate]);
 
   const buttonText = useMemo(
     () => (attachedFiles.length > 0 ? `${attachedFiles.length} файлы прикреплены` : 'Прикрепить файл'),
@@ -176,7 +184,12 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
             </Button>
             <Row>
               <Button>Назад</Button>
-              <Button type='primary' htmlType='submit' style={{ marginLeft: '8px' }}>
+              <Button
+                loading={isLoading || isCreatingCustomer || isCreatingObject}
+                type='primary'
+                htmlType='submit'
+                style={{ marginLeft: '8px' }}
+              >
                 Отправить
               </Button>
             </Row>
