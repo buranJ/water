@@ -1,6 +1,8 @@
 import { FC, useEffect, useRef, useState } from 'react';
+import { t } from 'i18next';
 import { useNavigate, useParams } from 'react-router';
-import { Alert, Button, Card, message, Modal, Spin, Tabs, Tag, Typography } from 'antd';
+import { Alert, Button, Card, Modal, Spin, Tabs, Tag, Typography, message } from 'antd';
+import type { TabsProps } from 'antd';
 import {
   ArrowDownOutlined,
   DeleteOutlined,
@@ -13,19 +15,24 @@ import {
 } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { RejectApplicationModal } from 'components/Modal';
-
 import {
   useApproveApplicationMutation,
   useDeleteApplicationFileMutation,
   useGetApplicationByIdQuery,
   useUploadApplicationFilesMutation
 } from 'api/Application.api';
-import { RefusalBody, useCreateRefusalMutation } from 'api/Refusal.api';
-import { t } from 'i18next';
+import { RefusalBody, useCreateRefusalMutation, useLazySearchRefusalQuery } from 'api/Refusal.api';
 
 type ApplicationFileItem = string | { id: number; file: string; created_at?: string };
 
-const tabItems = [
+type RefusalItem = {
+  causes?: { id: number; title: string }[];
+  comment?: string;
+  created_at?: string;
+  refusal_files?: { title?: string; file: string }[];
+};
+
+const tabItems: TabsProps['items'] = [
   { key: 'data', label: t('applicationDetails.tabs.data') },
   { key: 'documents', label: t('applicationDetails.tabs.documents') }
 ];
@@ -41,6 +48,8 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [approveApplication, { isSuccess: isApproveSuccess, isError: isApproveError }] = useApproveApplicationMutation();
   const [createRefuse, { isSuccess: isRejectSuccess, isError: isRejectError }] = useCreateRefusalMutation();
+  const [triggerRefusalSearch, { data: refusalSearch, isFetching: isRefusalFetching }] = useLazySearchRefusalQuery();
+  const [isRefusalInfoOpen, setIsRefusalInfoOpen] = useState(false);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const openRejectModal = () => setIsRejectModalOpen(true);
   const closeRejectModal = () => setIsRejectModalOpen(false);
@@ -94,7 +103,23 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
             {t('applications.actions.goToTu')}
           </Button>
         )}
-        {data?.status === 'rejected' && <Button danger>{t('applications.actions.decline')}</Button>}
+        {data?.status === 'rejected' && (
+          <Button
+            danger
+            onClick={async () => {
+              if (id) {
+                try {
+                  await triggerRefusalSearch({ application: Number(id) });
+                } catch {
+                  // noop
+                }
+              }
+              setIsRefusalInfoOpen(true);
+            }}
+          >
+            {t('applications.actions.decline')}
+          </Button>
+        )}
       </div>
       <Tabs items={tabItems} activeKey={activeTab} onChange={setActiveTab} style={{ marginBottom: 24 }} />
       {isLoading ? (
@@ -257,6 +282,45 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
           )}
         </>
       ) : null}
+      <Modal open={isRefusalInfoOpen} title='Причины отказа' onCancel={() => setIsRefusalInfoOpen(false)} footer={null}>
+        {isRefusalFetching ? (
+          <Spin />
+        ) : Array.isArray(refusalSearch) && (refusalSearch as RefusalItem[]).length > 0 ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {(refusalSearch as RefusalItem[]).map((item, idx) => (
+              <div key={idx} style={{ border: '1px solid #f0f0f0', borderRadius: 8, padding: 12 }}>
+                <div style={{ marginBottom: 8 }}>
+                  <b>Причины:</b> {Array.isArray(item.causes) && item.causes.length ? item.causes.map((c) => c.title).join(', ') : '—'}
+                </div>
+                {item.comment && (
+                  <div style={{ marginBottom: 8 }}>
+                    <b>Комментарий:</b> {item.comment}
+                  </div>
+                )}
+                <div style={{ marginBottom: 8 }}>
+                  <b>Дата:</b> {item.created_at ? new Date(item.created_at).toLocaleString() : '—'}
+                </div>
+                {Array.isArray(item.refusal_files) && item.refusal_files.length > 0 && (
+                  <div>
+                    <b>Файлы:</b>
+                    <ul style={{ marginTop: 4 }}>
+                      {item.refusal_files.map((f, i) => (
+                        <li key={i}>
+                          <a href={f.file} target='_blank' rel='noopener noreferrer'>
+                            {f.title || (f.file ? String(f.file).split('/').pop() : 'file')}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <Typography.Text type='secondary'>Данных об отказе нет</Typography.Text>
+        )}
+      </Modal>
       <RejectApplicationModal open={isRejectModalOpen} onCancel={closeRejectModal} onReject={handleReject} />
     </DashboardLayout>
   );

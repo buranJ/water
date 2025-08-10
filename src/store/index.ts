@@ -13,6 +13,7 @@ import {
   geoportalApi,
   objectApi,
   refusalApi,
+  reportsApi,
   tyApi
 } from 'api/index';
 
@@ -30,7 +31,8 @@ const store = configureStore({
     [tyApi.reducerPath]: tyApi.reducer,
     [accountingApi.reducerPath]: accountingApi.reducer,
     [applicationsApi.reducerPath]: applicationsApi.reducer,
-    [formulaApi.reducerPath]: formulaApi.reducer
+    [formulaApi.reducerPath]: formulaApi.reducer,
+    [reportsApi.reducerPath]: reportsApi.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -45,7 +47,8 @@ const store = configureStore({
       tyApi.middleware,
       applicationsApi.middleware,
       accountingApi.middleware,
-      formulaApi.middleware
+      formulaApi.middleware,
+      reportsApi.middleware
     )
 });
 

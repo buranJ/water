@@ -116,6 +116,14 @@ export const refusalApi = createApi({
       })
     }),
 
+    searchRefusal: build.query<unknown, { application?: number | string; ty?: number | string }>({
+      query: ({ application, ty }) => ({
+        url: 'refusal/search/',
+        method: 'GET',
+        params: { application, ty }
+      })
+    }),
+
     createRefusal: build.mutation<RefusalResponse, RefusalBody>({
       query: (body) => {
         const formData = new FormData();
@@ -170,5 +178,7 @@ export const {
   useLazyCheckRefuseByCustomerQuery,
   useCheckRefuseByEntityQuery,
   useLazyCheckRefuseByEntityQuery,
+  useSearchRefusalQuery,
+  useLazySearchRefusalQuery,
   useCreateRefusalMutation
 } = refusalApi;

@@ -9,4 +9,5 @@ export { formulaApi } from './Formula.api';
 export { geoportalApi } from './GeoPartal.api';
 export { objectApi } from './Object.api';
 export { refusalApi } from './Refusal.api';
+export { reportsApi } from './Reports.api';
 export { tyApi } from './Ty.api';

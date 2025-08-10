@@ -106,8 +106,8 @@ export const DashboardLayout = ({ children, title }: Props) => {
       icon: <TeamOutlined />,
       label: t('dashboard.pages.customers')
     },
-    hasPermission('view_export') && {
-      key: '/dashboard/export',
+    {
+      key: '/dashboard/export-data',
       icon: <ExportIcon />,
       label: t('dashboard.pages.export')
     },
