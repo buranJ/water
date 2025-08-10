@@ -43,12 +43,17 @@ interface ResetPasswordRequest {
   password: string;
 }
 
+interface LoginResponse {
+  access: string;
+  refresh: string;
+}
+
 export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: getBaseQuery(),
   tagTypes: ['User', 'Permissions'],
   endpoints: (build) => ({
-    login: build.mutation<unknown, LoginRequest>({
+    login: build.mutation<LoginResponse, LoginRequest>({
       query: (data) => ({
         url: '/authentication/token/',
         method: 'POST',
