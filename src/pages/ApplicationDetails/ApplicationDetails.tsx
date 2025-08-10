@@ -1,7 +1,6 @@
 import { FC, useEffect, useRef, useState } from 'react';
-import { t } from 'i18next';
 import { useNavigate, useParams } from 'react-router';
-import { Alert, Button, Card, Modal, Spin, Tabs, Tag, Typography, message } from 'antd';
+import { Alert, Button, Card, message, Modal, Spin, Tabs, Tag, Typography } from 'antd';
 import {
   ArrowDownOutlined,
   DeleteOutlined,
@@ -14,6 +13,7 @@ import {
 } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { RejectApplicationModal } from 'components/Modal';
+
 import {
   useApproveApplicationMutation,
   useDeleteApplicationFileMutation,
@@ -21,6 +21,7 @@ import {
   useUploadApplicationFilesMutation
 } from 'api/Application.api';
 import { RefusalBody, useCreateRefusalMutation } from 'api/Refusal.api';
+import { t } from 'i18next';
 
 type ApplicationFileItem = string | { id: number; file: string; created_at?: string };
 
