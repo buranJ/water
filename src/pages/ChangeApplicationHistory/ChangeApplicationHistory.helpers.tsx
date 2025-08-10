@@ -4,50 +4,53 @@ import dayjs from 'dayjs';
 import { IHistoryType } from 'types/common';
 import { IApplicationHistory } from 'types/entities/application';
 
-type IGetColumnsFn = () => ColumnsType<IApplicationHistory>;
+import { TFunction } from 'i18next';
 
-const renderStatus = (text: IHistoryType) => {
+type IGetColumnsFn = (t: TFunction) => ColumnsType<IApplicationHistory>;
+
+const renderStatus = (text: IHistoryType, t: TFunction) => {
   if (text === '+') {
-    return <Tag color='success'>Создано</Tag>;
+    return <Tag color='success'>{t('changeHistory.status.created')}</Tag>;
   }
   if (text === '-') {
-    return <Tag color='error'>Удалено</Tag>;
+    return <Tag color='error'>{t('changeHistory.status.deleted')}</Tag>;
   }
   if (text === '~') {
-    return <Tag color='processing'>Изменено</Tag>;
+    return <Tag color='processing'>{t('changeHistory.status.updated')}</Tag>;
   }
+  return null;
 };
 
-export const getColumns: IGetColumnsFn = () => {
+export const getColumns: IGetColumnsFn = (t) => {
   return [
     {
-      title: 'ID',
+      title: t('changeHistory.columns.id'),
       dataIndex: 'history_id',
       key: 'history_id',
       align: 'center'
     },
     {
-      title: 'Сотрудник',
+      title: t('changeHistory.columns.user'),
       dataIndex: 'history_user',
       key: 'history_user',
       align: 'center'
     },
     {
-      title: 'Дата',
+      title: t('changeHistory.columns.date'),
       dataIndex: 'history_date',
       key: 'history_date',
       align: 'center',
       render: (text: string) => dayjs(text).format('DD-MM-YYYY-HH:mm')
     },
     {
-      title: 'Тип',
+      title: t('changeHistory.columns.type'),
       dataIndex: 'history_type',
       key: 'history_type',
       align: 'center',
-      render: (text: IHistoryType) => renderStatus(text)
+      render: (text: IHistoryType) => renderStatus(text, t)
     },
     {
-      title: 'Поле',
+      title: t('changeHistory.columns.field'),
       dataIndex: 'changes',
       key: 'changes_field',
       render: (changes: { field: string; new: string; old: string }[]) => {
@@ -55,13 +58,13 @@ export const getColumns: IGetColumnsFn = () => {
       }
     },
     {
-      title: 'Старое значение',
+      title: t('changeHistory.columns.oldValue'),
       dataIndex: 'changes',
       key: 'changes_old',
       render: (changes: { field: string; new: string; old: string }[]) => <>{changes?.map((c, i) => <div key={i}>{c.old || '-'}</div>)}</>
     },
     {
-      title: 'Новое значение',
+      title: t('changeHistory.columns.newValue'),
       dataIndex: 'changes',
       key: 'changes_new',
       render: (changes: { field: string; new: string; old: string }[]) => <>{changes?.map((c, i) => <div key={i}>{c.new || '-'}</div>)}</>

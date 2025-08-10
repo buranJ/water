@@ -29,6 +29,7 @@ const Profile = lazy(() => import('pages/Profile'));
 const ChangeHistory = lazy(() => import('pages/ChangeHistory'));
 const ChangeApplicationHistory = lazy(() => import('pages/ChangeApplicationHistory'));
 const ChangeCustomerHistory = lazy(() => import('pages/ChangeCustomerHistory'));
+const ChangeObjectHistory = lazy(() => import('pages/ChangeObjectHistory'));
 
 export const routerConfig: RouteObject[] = [
   {
@@ -51,6 +52,10 @@ export const routerConfig: RouteObject[] = [
   {
     path: '/dashboard/objects/:id',
     element: <ObjectDetail />
+  },
+  {
+    path: '/dashboard/objects/:id/change-history',
+    element: <ChangeObjectHistory title='История изменений объекта' />
   },
   {
     path: '/dashboard/technical-conditions',
@@ -90,7 +95,7 @@ export const routerConfig: RouteObject[] = [
   },
   {
     path: '/dashboard/customers/:customerId/change-history',
-    element: <ChangeCustomerHistory title='История изменений заказчика' />
+    element: <ChangeCustomerHistory title='routers.changeHistory' />
   },
   {
     path: '/dashboard/add-customer',
@@ -134,11 +139,11 @@ export const routerConfig: RouteObject[] = [
   },
   {
     path: '/dashboard/ty/:tyId/change-history',
-    element: <ChangeHistory title='История изменений ТУ' />
+    element: <ChangeHistory title='routers.changeHistory' />
   },
   {
     path: '/dashboard/applications/:id/change-history',
-    element: <ChangeApplicationHistory title='История изменений заявки' />
+    element: <ChangeApplicationHistory title='routers.changeHistory' />
   },
   {
     path: '*',
