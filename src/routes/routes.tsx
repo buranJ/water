@@ -95,7 +95,7 @@ export const routerConfig: RouteObject[] = [
   },
   {
     path: '/dashboard/customers/:customerId/change-history',
-    element: <ChangeCustomerHistory title='История изменений заказчика' />
+    element: <ChangeCustomerHistory title='routers.changeHistory' />
   },
   {
     path: '/dashboard/add-customer',
@@ -139,11 +139,11 @@ export const routerConfig: RouteObject[] = [
   },
   {
     path: '/dashboard/ty/:tyId/change-history',
-    element: <ChangeHistory title='История изменений ТУ' />
+    element: <ChangeHistory title='routers.changeHistory' />
   },
   {
     path: '/dashboard/applications/:id/change-history',
-    element: <ChangeApplicationHistory title='История изменений заявки' />
+    element: <ChangeApplicationHistory title='routers.changeHistory' />
   },
   {
     path: '*',

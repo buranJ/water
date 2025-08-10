@@ -1,5 +1,6 @@
 import { FC, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { Table } from 'antd';
 import CustomPagination from 'common/ui/Pagination/CustomPagination';
 import { DashboardLayout } from 'components/DashboardLayout';
@@ -18,7 +19,8 @@ export const ChangeApplicationHistory: FC<IProps> = ({ title }) => {
 
   const { data, isLoading } = useGetApplicationHistoryQuery({ application_id: id || '', page, page_size: pageSize });
 
-  const columns = useMemo(() => getColumns(), []);
+  const { t } = useTranslation();
+  const columns = useMemo(() => getColumns(t), [t]);
 
   const handlePaginationChange = (nextPage: number, nextPageSize?: number) => {
     setPage(nextPage);
