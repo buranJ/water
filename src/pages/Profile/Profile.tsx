@@ -42,7 +42,7 @@ export const Profile: FC<IProps> = ({ title }) => {
         <Space align='center'>
           <span style={{ fontSize: '20px' }}>🇷🇺</span>
           <div>
-            <div style={{ fontWeight: 500 }}>Русский</div>
+            <div style={{ fontWeight: 500 }}>{t('profile.ru')}</div>
             <div style={{ fontSize: '12px', color: '#666' }}>Russian</div>
           </div>
         </Space>
@@ -54,7 +54,7 @@ export const Profile: FC<IProps> = ({ title }) => {
         <Space align='center'>
           <span style={{ fontSize: '20px' }}>🇰🇬</span>
           <div>
-            <div style={{ fontWeight: 500 }}>Кыргызча</div>
+            <div style={{ fontWeight: 500 }}>{t('profile.kg')}</div>
             <div style={{ fontSize: '12px', color: '#666' }}>Kyrgyz</div>
           </div>
         </Space>
@@ -66,7 +66,7 @@ export const Profile: FC<IProps> = ({ title }) => {
         <Space align='center'>
           <span style={{ fontSize: '20px' }}>🇺🇸</span>
           <div>
-            <div style={{ fontWeight: 500 }}>English</div>
+            <div style={{ fontWeight: 500 }}>{t('profile.en')}</div>
             <div style={{ fontSize: '12px', color: '#666' }}>English</div>
           </div>
         </Space>
@@ -84,7 +84,7 @@ export const Profile: FC<IProps> = ({ title }) => {
   };
 
   const getFullName = (): string => {
-    if (!user) return 'Пользователь';
+    if (!user) return t('profile.user');
 
     const { first_name, last_name, email } = user;
 
@@ -95,7 +95,7 @@ export const Profile: FC<IProps> = ({ title }) => {
     if (first_name) return first_name;
     if (last_name) return last_name;
 
-    return email.split('@')[0] || 'Пользователь';
+    return email.split('@')[0] || t('profile.user');
   };
 
   const getAvatarUrl = (): string | undefined => {
@@ -126,13 +126,13 @@ export const Profile: FC<IProps> = ({ title }) => {
     return (
       <DashboardLayout title={t(title)}>
         <Alert
-          message='Ошибка загрузки профиля'
-          description='Не удалось загрузить данные пользователя'
+          message={t('profile.error.title')}
+          description={t('profile.error.description')}
           type='error'
           showIcon
           action={
             <Button size='small' onClick={() => refetchUser()}>
-              Повторить
+              {t('objectDetail.retry')}
             </Button>
           }
         />
@@ -178,7 +178,7 @@ export const Profile: FC<IProps> = ({ title }) => {
 
               <div style={{ marginTop: '24px' }}>
                 <Typography.Title level={5} style={{ marginBottom: '16px' }}>
-                  Выберите язык интерфейса:
+                  {t('profile.selectLanguageHint')}
                 </Typography.Title>
 
                 <Radio.Group value={currentLang} onChange={(e) => changeLanguage(e.target.value)} style={{ width: '100%' }}>
@@ -251,14 +251,14 @@ export const Profile: FC<IProps> = ({ title }) => {
 
               <div style={{ marginTop: '24px' }}>
                 <Typography.Title level={5} style={{ marginBottom: '16px' }}>
-                  Информация о пользователе:
+                  {t('profile.userInfo.title')}
                 </Typography.Title>
 
                 <Space direction='vertical' style={{ width: '100%' }} size='middle'>
                   <Card size='small' style={{ borderRadius: '8px' }}>
                     <Space>
                       <IdcardOutlined style={{ color: '#1890ff', fontSize: '16px' }} />
-                      <Typography.Text strong>ID пользователя:</Typography.Text>
+                      <Typography.Text strong>{t('profile.userInfo.id')}</Typography.Text>
                       <Typography.Text copyable>{user?.id}</Typography.Text>
                     </Space>
                   </Card>
@@ -266,7 +266,7 @@ export const Profile: FC<IProps> = ({ title }) => {
                   <Card size='small' style={{ borderRadius: '8px' }}>
                     <Space>
                       <MailOutlined style={{ color: '#52c41a', fontSize: '16px' }} />
-                      <Typography.Text strong>Email:</Typography.Text>
+                      <Typography.Text strong>{t('profile.userInfo.email')}</Typography.Text>
                       <Typography.Text copyable>{user?.email}</Typography.Text>
                     </Space>
                   </Card>
@@ -275,7 +275,7 @@ export const Profile: FC<IProps> = ({ title }) => {
                     <Card size='small' style={{ borderRadius: '8px' }}>
                       <Space>
                         <span style={{ fontSize: '16px' }}>📞</span>
-                        <Typography.Text strong>Телефон:</Typography.Text>
+                        <Typography.Text strong>{t('profile.userInfo.phone')}</Typography.Text>
                         <Typography.Text copyable>{user.phone}</Typography.Text>
                       </Space>
                     </Card>
@@ -285,7 +285,7 @@ export const Profile: FC<IProps> = ({ title }) => {
                     <Card size='small' style={{ borderRadius: '8px' }}>
                       <Space>
                         <span style={{ fontSize: '16px' }}>🔐</span>
-                        <Typography.Text strong>Провайдер:</Typography.Text>
+                        <Typography.Text strong>{t('profile.userInfo.provider')}</Typography.Text>
                         <Typography.Text>{user.auth_provider}</Typography.Text>
                       </Space>
                     </Card>

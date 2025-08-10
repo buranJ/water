@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Button, Tag, Typography } from 'antd';
 import { IContract } from '../../types';
 
@@ -20,16 +21,17 @@ interface IContractDetailsProps {
 }
 
 export const ContractDetails: React.FC<IContractDetailsProps> = ({ contract, onBack }) => {
+  const { t } = useTranslation();
   const details = [
-    { label: 'Дата договор', value: contract.contractDate },
-    { label: 'Тип', value: contract.type },
-    { label: 'Адрес', value: contract.address || 'г. Белокуриха, ул. Алтая, 45' },
-    { label: 'Кадастровый номер', value: contract.cadastralNumber || '01:001:1234567' },
-    { label: 'Статус заявок и выдачи ТУ', value: contract.tvStatus || 'ТУ выдано, подключение в процессе' },
-    { label: 'Географические координаты', value: contract.coordinates || '42.8746° N, 74.6122° E' },
-    { label: 'Площадь жилого дома', value: contract.area || 'Квартира: 150 м²' },
-    { label: 'Статус', value: <Tag color={statusColors[contract.status]}>{contract.status}</Tag> },
-    { label: 'Стоимость по договору', value: contract.cost || '42 879 874, 7812 ₽' }
+    { label: t('customers.details.contract.contractDate'), value: contract.contractDate || t('tuDetails.notSpecified') },
+    { label: t('objectForm.labels.type'), value: contract.type || t('tuDetails.notSpecified') },
+    { label: t('applicationDetails.labels.address'), value: contract.address || t('tuDetails.notSpecified') },
+    { label: t('objectForm.labels.cadastralNumber'), value: contract.cadastralNumber || t('tuDetails.notSpecified') },
+    { label: t('customers.details.contract.tuStatus'), value: contract.tvStatus || t('tuDetails.notSpecified') },
+    { label: t('common.coordinates'), value: contract.coordinates || t('tuDetails.notSpecified') },
+    { label: t('common.area'), value: contract.area || t('tuDetails.notSpecified') },
+    { label: t('common.status'), value: <Tag color={statusColors[contract.status]}>{contract.status}</Tag> },
+    { label: t('customers.details.contract.cost'), value: contract.cost || t('tuDetails.notSpecified') }
   ];
 
   const leftColumnSize = 7;
@@ -41,7 +43,7 @@ export const ContractDetails: React.FC<IContractDetailsProps> = ({ contract, onB
       <Title level={4}>{contract.name}</Title>
       <div className='box-wrapper'>
         <div>
-          <Button onClick={onBack}>Назад</Button>
+          <Button onClick={onBack}>{t('common.back')}</Button>
         </div>
         <div style={{ display: 'flex', gap: '32px', marginTop: 16 }}>
           <div style={{ flex: 1 }}>
