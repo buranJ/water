@@ -19,6 +19,7 @@ import { IFileItem } from 'types/entities';
 import { getColumns } from './FolderDetail.helpers';
 
 import { useGetFilefolderFilesQuery, useUploadFileMutation } from 'api/FileFolder.api';
+import { t } from 'i18next';
 
 interface IProps {
   title: string;
@@ -38,8 +39,8 @@ export const FolderDetail: FC<IProps> = ({ title }) => {
 
   const sortMenu = {
     items: [
-      { key: 'alphabet', label: 'По алфавиту' },
-      { key: 'date', label: 'По дате' }
+      { key: 'alphabet', label: t('filterBar.filter.alphabet') },
+      { key: 'date', label: t('filterBar.byDate') }
     ],
     onClick: (info: { key: string }) => handleSortChange(info.key)
   };
@@ -118,10 +119,10 @@ export const FolderDetail: FC<IProps> = ({ title }) => {
     if (isSuccess) {
       setIsAddModalVisible(false);
       setFilesList([]);
-      message.success('Файлы успешно загружены');
+      message.success(t('folderDetail.messages.uploadSuccess'));
     }
     if (isError) {
-      message.error('Ошибка при загрузке файлов');
+      message.error(t('folderDetail.messages.uploadError'));
     }
   }, [isError, isSuccess]);
 
@@ -131,7 +132,7 @@ export const FolderDetail: FC<IProps> = ({ title }) => {
         <Col>
           <Space>
             <Input
-              placeholder='Найти'
+              placeholder={t('filterBar.search')}
               prefix={<SearchOutlined />}
               style={{ width: 200 }}
               value={searchText}
@@ -139,7 +140,7 @@ export const FolderDetail: FC<IProps> = ({ title }) => {
             />
             <Dropdown menu={sortMenu} trigger={['click']}>
               <Button>
-                По алфавиту <DownOutlined />
+                {t('filterBar.filter.alphabet')} <DownOutlined />
               </Button>
             </Dropdown>
           </Space>
@@ -147,7 +148,7 @@ export const FolderDetail: FC<IProps> = ({ title }) => {
         <Col>
           <Space>
             <Button type='primary' icon={<PlusOutlined />} onClick={handleAdd}>
-              Добавить
+              {t('filterBar.add')}
             </Button>
             <Button icon={<DownloadOutlined />} onClick={handleDownloadPDF}>
               PDF
@@ -157,15 +158,15 @@ export const FolderDetail: FC<IProps> = ({ title }) => {
       </Row>
 
       <Tabs activeKey={activeTab} onChange={(key) => setActiveTab(key)}>
-        <TabPane tab='Загруженные' key='1'>
+        <TabPane tab={t('folderDetail.tabs.uploaded')} key='1'>
           <Table columns={columns} dataSource={data} rowKey='id' pagination={false} />
         </TabPane>
-        <TabPane tab='Недавние' key='2'>
+        <TabPane tab={t('folderDetail.tabs.recent')} key='2'>
           {/* Заглушка или своя таблица/контент */}
-          <div>Здесь будут "Недавние"</div>
+          <div>{t('folderDetail.placeholder.recent')}</div>
         </TabPane>
       </Tabs>
-      <Modal title='Загрузка документа' open={isAddModalVisible} onCancel={handleCancelAdd} footer={null}>
+      <Modal title={t('architectureDetails.titles.uploadDocument')} open={isAddModalVisible} onCancel={handleCancelAdd} footer={null}>
         {filesList.length === 0 ? (
           <>
             <Dragger
@@ -179,25 +180,23 @@ export const FolderDetail: FC<IProps> = ({ title }) => {
               <p className='ant-upload-drag-icon'>
                 <InboxOutlined style={{ fontSize: 40, color: '#999' }} />
               </p>
-              <p>Перетащите файлы сюда для загрузки</p>
-              <Button icon={<CloudDownloadOutlined />}>Загрузить файл</Button>
+              <p>{t('applicationsCreate.uploadModal.dropHint')}</p>
+              <Button icon={<CloudDownloadOutlined />}>{t('common.uploadFile')}</Button>
             </Dragger>
             <Row justify='end' gutter={8}>
               <Col>
-                <Button onClick={handleCancelAdd}>Назад</Button>
+                <Button onClick={handleCancelAdd}>{t('common.back')}</Button>
               </Col>
               <Col>
                 <Button type='primary' disabled>
-                  Загрузить
+                  {t('common.upload')}
                 </Button>
               </Col>
             </Row>
           </>
         ) : (
           <>
-            <Text style={{ display: 'block', marginBottom: 8 }}>
-              {filesList.length} файл{filesList.length > 1 ? 'а' : ''}
-            </Text>
+            <Text style={{ display: 'block', marginBottom: 8 }}>{t('common.selectedFiles', { count: filesList.length })}</Text>
             <List
               bordered
               dataSource={filesList}
@@ -215,7 +214,7 @@ export const FolderDetail: FC<IProps> = ({ title }) => {
                       <Text type='secondary' style={{ fontSize: 12 }}>
                         {file.size
                           ? file.size < 1024
-                            ? `${file.size} байт`
+                            ? `${file.size} ${t('common.bytes')}`
                             : file.size < 1024 * 1024
                               ? `${(file.size / 1024).toFixed(1)} KB`
                               : `${(file.size / (1024 * 1024)).toFixed(1)} MB`
@@ -228,15 +227,15 @@ export const FolderDetail: FC<IProps> = ({ title }) => {
               style={{ marginBottom: 16 }}
             />
             <Upload multiple fileList={[]} showUploadList={false} beforeUpload={() => false} onChange={handleUploadChange}>
-              <Button icon={<CloudDownloadOutlined />}>Загрузить ещё</Button>
+              <Button icon={<CloudDownloadOutlined />}>{t('common.uploadMore')}</Button>
             </Upload>
             <Row justify='end' gutter={8} style={{ marginTop: 16 }}>
               <Col>
-                <Button onClick={handleCancelAdd}>Назад</Button>
+                <Button onClick={handleCancelAdd}>{t('common.back')}</Button>
               </Col>
               <Col>
                 <Button loading={isLoading} type='primary' onClick={handleAddConfirm}>
-                  Добавить
+                  {t('filterBar.add')}
                 </Button>
               </Col>
             </Row>

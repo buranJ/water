@@ -58,7 +58,7 @@ export const Formulas: FC<FormulasProps> = ({ title }) => {
         koefficent: formData.koefficent
       }).unwrap();
 
-      message.success('Формула успешно создана');
+      message.success(t('formulas.messages.created'));
       setShowAddForm(false);
     } catch (error) {
       const apiError = error as ApiError;
@@ -72,7 +72,7 @@ export const Formulas: FC<FormulasProps> = ({ title }) => {
           .join('; ');
         message.error(`Ошибка: ${messages}`);
       } else {
-        message.error('Ошибка при создании формулы');
+        message.error(t('formulas.messages.createError'));
       }
       console.error('Create formula error:', error);
     }
@@ -101,7 +101,7 @@ export const Formulas: FC<FormulasProps> = ({ title }) => {
         }
       }).unwrap();
 
-      message.success('Формула успешно обновлена');
+      message.success(t('formulas.messages.updated'));
       setShowEditForm(false);
       setEditingFormula(null);
     } catch (error) {
@@ -116,7 +116,7 @@ export const Formulas: FC<FormulasProps> = ({ title }) => {
           .join('; ');
         message.error(`Ошибка: ${messages}`);
       } else {
-        message.error('Ошибка при обновлении формулы');
+        message.error(t('formulas.messages.updateError'));
       }
       console.error('Update formula error:', error);
     } finally {
@@ -135,7 +135,7 @@ export const Formulas: FC<FormulasProps> = ({ title }) => {
 
       await deleteFormula(id).unwrap();
 
-      message.success('Формула успешно удалена');
+      message.success(t('formulas.messages.deleted'));
     } catch (error) {
       const apiError = error as ApiError;
 
@@ -148,7 +148,7 @@ export const Formulas: FC<FormulasProps> = ({ title }) => {
           .join('; ');
         message.error(`Ошибка: ${messages}`);
       } else {
-        message.error('Ошибка при удалении формулы');
+        message.error(t('formulas.messages.deleteError'));
       }
       console.error('Delete formula error:', error);
     } finally {
@@ -157,7 +157,7 @@ export const Formulas: FC<FormulasProps> = ({ title }) => {
   };
 
   if (error) {
-    message.error('Ошибка загрузки формул');
+    message.error(t('formulas.messages.loadError'));
   }
 
   return (
@@ -186,7 +186,7 @@ export const Formulas: FC<FormulasProps> = ({ title }) => {
 
           <Space size={16}>
             <Input
-              placeholder='Поиск по названию...'
+              placeholder={t('formulas.searchPlaceholder')}
               value={searchValue}
               onChange={handleSearchChange}
               prefix={<SearchOutlined style={{ color: '#8e8e93' }} />}
@@ -211,7 +211,7 @@ export const Formulas: FC<FormulasProps> = ({ title }) => {
                 fontWeight: 500
               }}
             >
-              Добавить формулу
+              {t('formulas.add')}
             </Button>
           </Space>
         </div>
@@ -225,7 +225,7 @@ export const Formulas: FC<FormulasProps> = ({ title }) => {
                 fontWeight: 500
               }}
             >
-              Найдено формул: {formulasResponse.count}
+              {t('formulas.foundCount', { count: formulasResponse.count })}
             </Typography.Text>
           </div>
         )}
@@ -234,7 +234,7 @@ export const Formulas: FC<FormulasProps> = ({ title }) => {
           <div style={{ textAlign: 'center', padding: '100px 0' }}>
             <Spin size='large' />
             <div style={{ marginTop: 16 }}>
-              <Typography.Text style={{ color: '#8e8e93' }}>Загрузка формул...</Typography.Text>
+              <Typography.Text style={{ color: '#8e8e93' }}>{t('formulas.loading')}</Typography.Text>
             </div>
           </div>
         ) : formulas.length > 0 ? (
@@ -250,11 +250,11 @@ export const Formulas: FC<FormulasProps> = ({ title }) => {
             description={
               <div>
                 <Typography.Text style={{ color: '#8e8e93', fontSize: 16 }}>
-                  {searchValue ? 'По вашему запросу ничего не найдено' : 'Формулы не найдены'}
+                  {searchValue ? t('formulas.nothingFound') : t('formulas.notFound')}
                 </Typography.Text>
                 <div style={{ marginTop: 8 }}>
                   <Typography.Text style={{ color: '#8e8e93', fontSize: 14 }}>
-                    {searchValue ? 'Попробуйте изменить параметры поиска' : 'Начните с создания первой формулы'}
+                    {searchValue ? t('formulas.changeSearch') : t('formulas.startCreate')}
                   </Typography.Text>
                 </div>
               </div>
