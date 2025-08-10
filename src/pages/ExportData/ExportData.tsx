@@ -6,6 +6,7 @@ import { DashboardLayout } from 'components/DashboardLayout';
 
 import type { ReportType } from 'api/Reports.api';
 import { useLazyGetReportsQuery } from 'api/Reports.api';
+import { usePermissions } from 'hooks/useAuth';
 import { t } from 'i18next';
 
 const { Title } = Typography;
@@ -27,6 +28,7 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const [getReports, { isFetching }] = useLazyGetReportsQuery();
+  const { hasPermission } = usePermissions();
 
   const onFinish = async (values: { dataType: ReportType }) => {
     try {
@@ -36,6 +38,14 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
       // noop
     }
   };
+
+  if (!hasPermission('view_report')) {
+    return (
+      <DashboardLayout title={title}>
+        <Typography.Text type='danger'>{t('common.noAccess') || 'Недостаточно прав для просмотра отчётов'}</Typography.Text>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout title={title}>
@@ -125,7 +135,13 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
             <Button type='default'>{t('exportData.exportHistory')}</Button>
           </Col>
           <Col>
-            <Button type='primary' htmlType='submit' icon={<DownloadOutlined />} loading={isFetching}>
+            <Button
+              type='primary'
+              htmlType='submit'
+              icon={<DownloadOutlined />}
+              loading={isFetching}
+              disabled={!hasPermission('add_report')}
+            >
               {t('common.export')}
             </Button>
           </Col>

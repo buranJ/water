@@ -19,9 +19,12 @@ export interface CustomerRecord {
   action: string;
 }
 
-type IGetColumnsFn = (options: { onClick: (record: CustomerRecord, action: actionType) => void }) => ColumnsType<CustomerRecord>;
+type IGetColumnsFn = (options: {
+  onClick: (record: CustomerRecord, action: actionType) => void;
+  hasPermission: (value: string) => boolean;
+}) => ColumnsType<CustomerRecord>;
 
-export const getColumns: IGetColumnsFn = ({ onClick }) => {
+export const getColumns: IGetColumnsFn = ({ onClick, hasPermission }) => {
   return [
     {
       title: t('customers.columns.number'),
@@ -108,12 +111,16 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
       render: (_, record) => {
         return (
           <Row gutter={8} justify='center'>
-            <Col>
-              <Button icon={<EditOutlined />} onClick={() => onClick(record, 'edit')} />
-            </Col>
-            <Col>
-              <Button danger icon={<DeleteOutlined />} onClick={() => onClick(record, 'delete')} />
-            </Col>
+            {hasPermission('change_customer') && (
+              <Col>
+                <Button icon={<EditOutlined />} onClick={() => onClick(record, 'edit')} />
+              </Col>
+            )}
+            {hasPermission('delete_customer') && (
+              <Col>
+                <Button danger icon={<DeleteOutlined />} onClick={() => onClick(record, 'delete')} />
+              </Col>
+            )}
           </Row>
         );
       }

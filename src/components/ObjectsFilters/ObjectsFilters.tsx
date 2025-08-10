@@ -4,6 +4,7 @@ import { Dropdown } from 'antd';
 import { DownOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { ObjectFilters } from 'types/entities/objects';
 
+import { usePermissions } from 'hooks/useAuth';
 import { t } from 'i18next';
 
 interface ObjectsFiltersProps {
@@ -36,6 +37,7 @@ const dateItems: MenuItem[] = [
 ];
 
 export const ObjectsFilters: FC<ObjectsFiltersProps> = ({ filters, onSearchChange, onFilterChange, onAddNew }) => {
+  const { hasPermission } = usePermissions();
   const getFilterLabel = (items: MenuItem[], key: string | null): string => {
     if (!key) return items[0]?.label || '';
     const item = items.find((item) => item.key === key);
@@ -103,18 +105,20 @@ export const ObjectsFilters: FC<ObjectsFiltersProps> = ({ filters, onSearchChang
         </Button>
       </Dropdown>
 
-      <Button
-        type='primary'
-        icon={<PlusOutlined />}
-        onClick={onAddNew}
-        style={{
-          borderRadius: 12,
-          backgroundColor: '#007aff',
-          borderColor: '#007aff'
-        }}
-      >
-        {t('filterBar.add')}
-      </Button>
+      {hasPermission('add_entity') && (
+        <Button
+          type='primary'
+          icon={<PlusOutlined />}
+          onClick={onAddNew}
+          style={{
+            borderRadius: 12,
+            backgroundColor: '#007aff',
+            borderColor: '#007aff'
+          }}
+        >
+          {t('filterBar.add')}
+        </Button>
+      )}
     </Flex>
   );
 };

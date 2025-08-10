@@ -1,12 +1,13 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import { useLocation } from 'react-router';
 import type { MenuProps } from 'antd';
-import { Button, Dropdown, Flex, Input, message, Space, Table } from 'antd';
+import { Button, Dropdown, Flex, Input, message, Space, Table, Typography } from 'antd';
 import { DeleteOutlined, DownOutlined, RetweetOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { DashboardLayout } from 'components/DashboardLayout';
 
 import type { ReportsResponse } from 'api/Reports.api';
+import { usePermissions } from 'hooks/useAuth';
 import { t } from 'i18next';
 
 const menuItems: MenuProps['items'] = [
@@ -24,57 +25,6 @@ const menuProps = {
   onClick: handleMenuClick
 };
 
-const tableColumns = [
-  {
-    title: 'Дата',
-    dataIndex: 'created_at',
-    key: 'created_at',
-    render: (text: string) => (text ? dayjs(text).format('DD.MM.YYYY HH:mm') : '-')
-  },
-  { title: 'Тип', dataIndex: 'report_type_display', key: 'report_type_display' },
-  { title: 'Название', dataIndex: 'title', key: 'title', render: (text: string) => text || '-' },
-  {
-    title: 'Файл',
-    dataIndex: 'pdf_file',
-    key: 'pdf_file',
-    render: (url: string | undefined) =>
-      url ? (
-        <a href={url} target='_blank' rel='noopener noreferrer'>
-          PDF
-        </a>
-      ) : (
-        '-'
-      )
-  },
-  {
-    title: 'Действия',
-    key: 'actions',
-    render: (_: unknown, record: { key: number }) => (
-      <Space>
-        <Button
-          icon={<RetweetOutlined />}
-          shape='circle'
-          onClick={() => {
-            // Временно логируем действие
-            // eslint-disable-next-line no-console
-            console.log('re-export', record);
-          }}
-        />
-        <Button
-          icon={<DeleteOutlined />}
-          shape='circle'
-          danger
-          onClick={() => {
-            // Временно логируем действие
-            // eslint-disable-next-line no-console
-            console.log('delete', record);
-          }}
-        />
-      </Space>
-    )
-  }
-];
-
 /* rows будут получены из state при навигации со страницы экспорта */
 
 interface ExportDataHistoryProps {
@@ -83,11 +33,76 @@ interface ExportDataHistoryProps {
 
 const ExportDataHistory: FC<ExportDataHistoryProps> = ({ title }) => {
   const location = useLocation() as { state?: { reports?: ReportsResponse } };
+  const { hasPermission } = usePermissions();
+
+  const columns = useMemo(
+    () => [
+      {
+        title: 'Дата',
+        dataIndex: 'created_at',
+        key: 'created_at',
+        render: (text: string) => (text ? dayjs(text).format('DD.MM.YYYY HH:mm') : '-')
+      },
+      { title: 'Тип', dataIndex: 'report_type_display', key: 'report_type_display' },
+      { title: 'Название', dataIndex: 'title', key: 'title', render: (text: string) => text || '-' },
+      {
+        title: 'Файл',
+        dataIndex: 'pdf_file',
+        key: 'pdf_file',
+        render: (url: string | undefined) =>
+          url ? (
+            <a href={url} target='_blank' rel='noopener noreferrer'>
+              PDF
+            </a>
+          ) : (
+            '-'
+          )
+      },
+      {
+        title: 'Действия',
+        key: 'actions',
+        render: (_: unknown, record: { key: number }) => (
+          <Space>
+            {(hasPermission('change_report') || hasPermission('add_report')) && (
+              <Button
+                icon={<RetweetOutlined />}
+                shape='circle'
+                onClick={() => {
+                  // eslint-disable-next-line no-console
+                  console.log('re-export', record);
+                }}
+              />
+            )}
+            {hasPermission('delete_report') && (
+              <Button
+                icon={<DeleteOutlined />}
+                shape='circle'
+                danger
+                onClick={() => {
+                  // eslint-disable-next-line no-console
+                  console.log('delete', record);
+                }}
+              />
+            )}
+          </Space>
+        )
+      }
+    ],
+    [hasPermission]
+  );
   const rows =
     location.state?.reports?.results?.map((r) => ({
       key: r.id,
       ...r
     })) || [];
+
+  if (!hasPermission('view_report')) {
+    return (
+      <DashboardLayout title={title}>
+        <Typography.Text type='danger'>Недостаточно прав для просмотра отчётов</Typography.Text>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout title={title}>
@@ -112,7 +127,7 @@ const ExportDataHistory: FC<ExportDataHistoryProps> = ({ title }) => {
       </Flex>
 
       <div style={{ marginTop: 24 }}>
-        <Table columns={tableColumns} dataSource={rows} pagination={false} />
+        <Table columns={columns} dataSource={rows} pagination={false} />
       </div>
     </DashboardLayout>
   );

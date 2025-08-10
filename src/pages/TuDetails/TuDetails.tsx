@@ -18,6 +18,7 @@ import { Architecture } from './Tabs';
 import { useGetUserInfoQuery } from 'api/Auth.api';
 import { useGetFoldersQuery } from 'api/FileFolder.api';
 import { useGetTyByIdQuery } from 'api/Ty.api';
+import { usePermissions } from 'hooks/useAuth';
 import { t } from 'i18next';
 
 const { Title, Text } = Typography;
@@ -30,6 +31,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const userQuery = useGetUserInfoQuery();
   const { id } = useParams<{ id: string }>();
   const foldersQuery = useGetFoldersQuery({ ty_id: id || '' });
+  const { hasPermission } = usePermissions();
 
   const {
     data: objectData,
@@ -318,14 +320,18 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     <DashboardLayout title={`${t(title)} ${id}`}>
       {activeTab === '1' && (
         <Flex justify='end' align='center' gap={24} style={{ marginBottom: 16 }}>
-          <Link to={'/dashboard/add-tu-forms/' + id}>{t('routers.editTy')}</Link>
-          <Link to='/dashboard/technical-conditions/history-of-loads'>{t('routers.historyOfLoads')}</Link>
-          <Link to={`/dashboard/ty/${id}/change-history`}>{t('tuDetails.actions.changeTuData')}</Link>
-          <Button icon={<DownloadOutlined />}>{t('tuDetails.actions.downloadTu')}</Button>
-          <Button icon={<PlusOutlined />}>{t('historyOfLoads.addLoad')}</Button>
-          <Button danger onClick={handleRejectClick}>
-            {t('tuDetails.actions.rejectTu')}
-          </Button>
+          {hasPermission('change_technicalcondition') && <Link to={'/dashboard/add-tu-forms/' + id}>{t('routers.editTy')}</Link>}
+          {hasPermission('view_actty') && <Link to='/dashboard/technical-conditions/history-of-loads'>{t('routers.historyOfLoads')}</Link>}
+          {hasPermission('view_historicaltechnicalcondition') && (
+            <Link to={`/dashboard/ty/${id}/change-history`}>{t('tuDetails.actions.changeTuData')}</Link>
+          )}
+          {hasPermission('view_technicalcondition') && <Button icon={<DownloadOutlined />}>{t('tuDetails.actions.downloadTu')}</Button>}
+          {hasPermission('add_actty') && <Button icon={<PlusOutlined />}>{t('historyOfLoads.addLoad')}</Button>}
+          {hasPermission('delete_technicalcondition') && (
+            <Button danger onClick={handleRejectClick}>
+              {t('tuDetails.actions.rejectTu')}
+            </Button>
+          )}
         </Flex>
       )}
 
@@ -364,9 +370,11 @@ export const TuDetails: FC<IProps> = ({ title }) => {
               )}
 
               <div style={{ marginTop: 16, width: '100%', textAlign: 'center' }}>
-                <Button type='primary' block>
-                  {t('common.upload')}
-                </Button>
+                {hasPermission('add_filefolderfile') && (
+                  <Button type='primary' block>
+                    {t('common.upload')}
+                  </Button>
+                )}
               </div>
             </Card>
 

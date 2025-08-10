@@ -10,6 +10,7 @@ import { getColumns } from './Customers.helpers';
 import './styles.scss';
 
 import { ICustomer, IGetCustomersParams, useGetAllCustomersQuery } from 'api/Customer.api';
+import { usePermissions } from 'hooks/useAuth';
 import { t } from 'i18next';
 
 interface IProps {
@@ -29,6 +30,7 @@ const ALPHABET_OPTIONS = [
 
 export const Customers: FC<IProps> = ({ title }) => {
   const navigate = useNavigate();
+  const { hasPermission } = usePermissions();
 
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(8);
@@ -92,9 +94,10 @@ export const Customers: FC<IProps> = ({ title }) => {
             // Можно реализовать удаление
             break;
         }
-      }
+      },
+      hasPermission
     });
-  }, [navigate]);
+  }, [navigate, hasPermission]);
 
   const handlePaginationChange = (page: number, pageSize?: number) => {
     setFilters({ ...filters, page });
@@ -113,9 +116,11 @@ export const Customers: FC<IProps> = ({ title }) => {
           alphabetOptions={ALPHABET_OPTIONS}
           actionButtons={
             <>
-              <Button type='primary' icon={<PlusOutlined />} onClick={onAddClick}>
-                {t('filterBar.add')}
-              </Button>
+              {hasPermission('add_customer') && (
+                <Button type='primary' icon={<PlusOutlined />} onClick={onAddClick}>
+                  {t('filterBar.add')}
+                </Button>
+              )}
               <Button icon={<DownloadOutlined />} iconPosition='end' onClick={onDownloadClick}>
                 {t('common.export')}
               </Button>
