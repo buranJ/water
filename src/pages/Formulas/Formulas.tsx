@@ -1,5 +1,4 @@
 import React, { FC, useState } from 'react';
-import { useNavigate } from 'react-router';
 import { Button, Col, Empty, Input, message, Row, Space, Spin, Typography } from 'antd';
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
@@ -23,7 +22,6 @@ interface ApiError {
 }
 
 export const Formulas: FC<FormulasProps> = ({ title }) => {
-  const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
@@ -158,10 +156,6 @@ export const Formulas: FC<FormulasProps> = ({ title }) => {
     }
   };
 
-  const handleCardClick = (id: number): void => {
-    navigate(`/dashboard/formulas/${id}`);
-  };
-
   if (error) {
     message.error('Ошибка загрузки формул');
   }
@@ -247,13 +241,7 @@ export const Formulas: FC<FormulasProps> = ({ title }) => {
           <Row gutter={[24, 24]}>
             {formulas.map((formula) => (
               <Col xs={24} sm={12} md={8} lg={6} xl={4} key={formula.id}>
-                <FormulaCard
-                  formula={formula}
-                  onEdit={handleEditFormula}
-                  onDelete={handleDelete}
-                  onCardClick={handleCardClick}
-                  isDeleting={deletingId === formula.id}
-                />
+                <FormulaCard formula={formula} onEdit={handleEditFormula} onDelete={handleDelete} isDeleting={deletingId === formula.id} />
               </Col>
             ))}
           </Row>

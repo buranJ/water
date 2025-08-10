@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, TabsProps, Tag, Flex } from 'antd';
+import { Button, Flex, TabsProps, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { RejectApplicationModal } from '../../components/Modal'; // импорт модального окна
 
