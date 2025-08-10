@@ -305,7 +305,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     <DashboardLayout title={`${t(title)} ${id}`}>
       {activeTab === '1' && (
         <Flex justify='end' align='center' gap={24} style={{ marginBottom: 16 }}>
-          <Link to={'/dashboard/add-tu-forms/' + id}>Редактировать ТУ</Link>
+          <Link to={'/dashboard/add-tu-forms/' + id}>{t('routers.editTy')}</Link>
           <Link to='/dashboard/technical-conditions/history-of-loads'>{t('routers.historyOfLoads')}</Link>
           <Link to={`/dashboard/ty/${id}/change-history`}>{t('tuDetails.actions.changeTuData')}</Link>
           <Button icon={<DownloadOutlined />}>{t('tuDetails.actions.downloadTu')}</Button>

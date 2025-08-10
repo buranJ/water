@@ -29,6 +29,7 @@
   },
   "routers": {
     "historyOfLoads": "History of Load Increases",
+    "editTy": "TC Edit",
     "addTu": "Add Technical Conditions",
     "exportData": "Export Data",
     "historyExportData": "History of Data Export",
