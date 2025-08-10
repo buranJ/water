@@ -23,10 +23,14 @@ const statusItems: MenuItem[] = [
 ];
 
 const dateItems: MenuItem[] = [
-  { label: 'По дате', key: 'all' },
-  { label: 'За последний месяц', key: 'month' },
-  { label: 'За последние 3 месяца', key: 'quarter' },
-  { label: 'За последний год', key: 'year' }
+  {
+    label: 'Сначала новые',
+    key: 'created_at'
+  },
+  {
+    label: 'Сначала старые',
+    key: '-created_at'
+  }
 ];
 
 export const ObjectsFilters: FC<ObjectsFiltersProps> = ({ filters, onSearchChange, onFilterChange, onAddNew }) => {

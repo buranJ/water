@@ -25,7 +25,7 @@ export const Objects: FC<ObjectsProps> = ({ title }) => {
   const [filters, setFilters] = useState<ObjectFilters>({
     search: '',
     status: null,
-    date: null
+    date: 'created_at'
   });
   const [showAddForm, setShowAddForm] = useState(false);
   const [page, setPage] = useState<number>(1);
@@ -37,7 +37,7 @@ export const Objects: FC<ObjectsProps> = ({ title }) => {
     page_size: pageSize,
     search: filters.search || undefined,
     status: (filters.status as 'active' | 'inactive') || undefined,
-    ordering: '-created_at' // Сортировка по дате создания (новые сначала)
+    ordering: filters.date || '' // Сортировка по дате создания (новые сначала)
   };
 
   const { data: objectsResponse, isLoading, error } = useGetAllObjectsQuery(queryParams);

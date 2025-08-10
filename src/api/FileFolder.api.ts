@@ -16,10 +16,10 @@ export const filefolderApi = createApi({
   tagTypes: ['FileFolder', 'FileList'],
   endpoints: (build) => ({
     getFilefolderFiles: build.query<IFileListResponse, IGetFileListParams>({
-      query: ({ folder_id, ty_id, ...params }) => ({
+      query: ({ ordering = 'created_at', folder_id, ty_id, ...params }) => ({
         url: `filefolder/${folder_id}/files/${ty_id}`,
         method: 'GET',
-        params
+        params: { ...params, ordering }
       }),
       providesTags: ['FileFolder', 'FileList']
     }),
