@@ -39,13 +39,15 @@ export const Applications: FC<IProps> = ({ title }) => {
   const [status, setStatus] = useState<string>('');
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(8);
+  const [ordering, setOrdering] = useState<string | null>(null);
 
   const { data, isLoading, refetch } = useGetApplicationsQuery(
     {
       search: debouncedSearch || undefined,
       status: (status || undefined) as 'pending' | 'rejected' | 'approved' | 'contracted' | undefined,
       page,
-      page_size: pageSize
+      page_size: pageSize,
+      ordering: ordering ? ordering : 'created_at'
     },
     { refetchOnMountOrArgChange: true }
   );
@@ -85,6 +87,7 @@ export const Applications: FC<IProps> = ({ title }) => {
   const handleFilterChange = useCallback((filter: FilterValues) => {
     setSearch(filter.search || '');
     setStatus(filter.status || '');
+    setOrdering(filter.date || '');
     setPage(1); // сбрасываем на первую страницу при фильтрации
   }, []);
 
@@ -169,6 +172,7 @@ export const Applications: FC<IProps> = ({ title }) => {
       <FilterBar
         onFilterChange={handleFilterChange}
         showStatusSelect
+        showDate
         statusOptions={STATUS_OPTIONS}
         actionButtons={
           <>
