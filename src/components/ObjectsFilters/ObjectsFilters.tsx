@@ -26,11 +26,11 @@ const statusItems: MenuItem[] = [
 
 const dateItems: MenuItem[] = [
   {
-    label: 'Сначала новые',
+    label: t('filterBar.newOnesfirst'),
     key: 'created_at'
   },
   {
-    label: 'Сначала старые',
+    label: t('filterBar.newOldFirst'),
     key: '-created_at'
   }
 ];

@@ -274,7 +274,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
 
   if (isLoading) {
     return (
-      <DashboardLayout title={`${title} ${id}`}>
+      <DashboardLayout title={`${t(title)} ${id}`}>
         <Flex justify='center' align='center' style={{ minHeight: 200 }}>
           <Spin size='large' />
         </Flex>
@@ -284,7 +284,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
 
   if (isError || !objectData) {
     return (
-      <DashboardLayout title={`${title} ${id}`}>
+      <DashboardLayout title={`${t(title)} ${id}`}>
         <Alert message={t('tuDetails.loadError')} description={t('tuDetails.loadErrorDescription')} type='error' showIcon />
       </DashboardLayout>
     );
@@ -302,7 +302,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const percent = totalRequiredFolders > 0 ? (filledRequiredFolders / totalRequiredFolders) * 100 : 0;
 
   return (
-    <DashboardLayout title={`${title} ${id}`}>
+    <DashboardLayout title={`${t(title)} ${id}`}>
       {activeTab === '1' && (
         <Flex justify='end' align='center' gap={24} style={{ marginBottom: 16 }}>
           <Link to='/dashboard/technical-conditions/history-of-loads'>{t('routers.historyOfLoads')}</Link>
