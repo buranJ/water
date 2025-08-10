@@ -11,6 +11,7 @@ import { ApplicationData, getColumns } from './Applications.helpers';
 
 import { useApproveApplicationMutation, useGetApplicationsQuery } from 'api/Application.api';
 import { RefusalBody, useCreateRefusalMutation } from 'api/Refusal.api';
+import { usePermissions } from 'hooks/useAuth';
 import { t } from 'i18next';
 
 type FilterValues = {
@@ -36,6 +37,7 @@ const STATUS_OPTIONS = [
 export const Applications: FC<IProps> = ({ title }) => {
   const navigate = useNavigate();
   const [debouncedSearch, setDebouncedSearch] = useState<string>('');
+  const { hasPermission } = usePermissions();
   const [status, setStatus] = useState<string>('');
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(8);
@@ -130,9 +132,10 @@ export const Applications: FC<IProps> = ({ title }) => {
             approveApplications({ applicationId: String(record.id) });
             break;
         }
-      }
+      },
+      hasPermission
     });
-  }, [approveApplications, navigate, openRejectModal]);
+  }, [approveApplications, hasPermission, navigate, openRejectModal]);
 
   const onAddClick = () => {
     navigate('create');
@@ -176,9 +179,11 @@ export const Applications: FC<IProps> = ({ title }) => {
         statusOptions={STATUS_OPTIONS}
         actionButtons={
           <>
-            <Button type='primary' icon={<PlusOutlined />} onClick={onAddClick}>
-              {t('filterBar.add')}
-            </Button>
+            {hasPermission('add_application') && (
+              <Button type='primary' icon={<PlusOutlined />} onClick={onAddClick}>
+                {t('filterBar.add')}
+              </Button>
+            )}
           </>
         }
       />

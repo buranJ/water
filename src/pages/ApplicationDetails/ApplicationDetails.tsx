@@ -1,8 +1,7 @@
 import { FC, useEffect, useRef, useState } from 'react';
-import { t } from 'i18next';
 import { useNavigate, useParams } from 'react-router';
-import { Alert, Button, Card, Modal, Spin, Tabs, Tag, Typography, message } from 'antd';
 import type { TabsProps } from 'antd';
+import { Alert, Button, Card, message, Modal, Spin, Tabs, Tag, Typography } from 'antd';
 import {
   ArrowDownOutlined,
   DeleteOutlined,
@@ -15,6 +14,7 @@ import {
 } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { RejectApplicationModal } from 'components/Modal';
+
 import {
   useApproveApplicationMutation,
   useDeleteApplicationFileMutation,
@@ -22,6 +22,8 @@ import {
   useUploadApplicationFilesMutation
 } from 'api/Application.api';
 import { RefusalBody, useCreateRefusalMutation, useLazySearchRefusalQuery } from 'api/Refusal.api';
+import { usePermissions } from 'hooks/useAuth';
+import { t } from 'i18next';
 
 type ApplicationFileItem = string | { id: number; file: string; created_at?: string };
 
@@ -41,18 +43,22 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
   const { id } = useParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState('data');
   const navigate = useNavigate();
+  const { hasPermission } = usePermissions();
 
   const { data, isLoading, isError, refetch } = useGetApplicationByIdQuery(id || '');
   const [deleteApplicationFile] = useDeleteApplicationFileMutation();
   const [uploadApplicationFiles] = useUploadApplicationFilesMutation();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [approveApplication, { isSuccess: isApproveSuccess, isError: isApproveError }] = useApproveApplicationMutation();
   const [createRefuse, { isSuccess: isRejectSuccess, isError: isRejectError }] = useCreateRefusalMutation();
   const [triggerRefusalSearch, { data: refusalSearch, isFetching: isRefusalFetching }] = useLazySearchRefusalQuery();
   const [isRefusalInfoOpen, setIsRefusalInfoOpen] = useState(false);
+
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const openRejectModal = () => setIsRejectModalOpen(true);
   const closeRejectModal = () => setIsRejectModalOpen(false);
+
   const handleReject = (values: RefusalBody) => {
     closeRejectModal();
     createRefuse({ ...values, application: String(id || '') });
@@ -83,8 +89,13 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
     <DashboardLayout title={t(title) + id}>
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginBottom: 16 }}>
         <Button icon={<DownloadOutlined />}>{t('applicationDetails.buttons.pdf')}</Button>
-        <Button onClick={() => navigate(`/dashboard/applications/${id}/edit`)}>{t('applicationDetails.buttons.edit')}</Button>
-        <Button onClick={() => navigate(`/dashboard/applications/${id}/change-history`)}>{t('routers.changeHistory')}</Button>
+        {hasPermission('change_application') && (
+          <Button onClick={() => navigate(`/dashboard/applications/${id}/edit`)}>{t('applicationDetails.buttons.edit')}</Button>
+        )}
+
+        {hasPermission('view_historicalapplication') && (
+          <Button onClick={() => navigate(`/dashboard/applications/${id}/change-history`)}>{t('routers.changeHistory')}</Button>
+        )}
         {data?.status === 'pending' && (
           <>
             <Button onClick={openRejectModal}>{t('applications.actions.reject')}</Button>
@@ -94,7 +105,11 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
           </>
         )}
         {data?.status === 'approved' && (
-          <Button type='primary' onClick={() => navigate(`/dashboard/add-tu-forms/${data.ty_id}`)}>
+          <Button
+            disabled={!hasPermission('add_technicalcondition')}
+            type='primary'
+            onClick={() => navigate(`/dashboard/add-tu-forms/${data.ty_id}`)}
+          >
             {t('applications.actions.create')}
           </Button>
         )}
@@ -103,7 +118,7 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
             {t('applications.actions.goToTu')}
           </Button>
         )}
-        {data?.status === 'rejected' && (
+        {hasPermission('delete_application') && data?.status === 'rejected' && (
           <Button
             danger
             onClick={async () => {

@@ -37,9 +37,12 @@ export interface RejectFormData {
   attachments?: File[];
 }
 
-type IGetColumnsFn = (options: { onClick: (record: ApplicationData, action: actionType) => void }) => ColumnsType<ApplicationData>;
+type IGetColumnsFn = (options: {
+  onClick: (record: ApplicationData, action: actionType) => void;
+  hasPermission: (value: string) => boolean;
+}) => ColumnsType<ApplicationData>;
 
-export const getColumns: IGetColumnsFn = ({ onClick }) => {
+export const getColumns: IGetColumnsFn = ({ onClick, hasPermission }) => {
   const renderStatus = (status: StatusCode) => {
     switch (status) {
       case 'approved':
@@ -59,6 +62,7 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
         return (
           <Flex gap={12} justify='center'>
             <Button
+              disabled={!hasPermission('delete_application')}
               size='large'
               type='default'
               onClick={() => {
@@ -67,14 +71,14 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
             >
               {i18next.t('applications.actions.reject')}
             </Button>
-            <Button size='large' type='primary' onClick={() => onClick(record, 'approve')}>
+            <Button disabled={!hasPermission('change_application')} size='large' type='primary' onClick={() => onClick(record, 'approve')}>
               {i18next.t('applications.actions.approve')}
             </Button>
           </Flex>
         );
       case 'approved':
         return (
-          <Button size='large' type='primary' onClick={() => onClick(record, 'create')}>
+          <Button disabled={!hasPermission('add_technicalcondition')} size='large' type='primary' onClick={() => onClick(record, 'create')}>
             {i18next.t('applications.actions.create')}
           </Button>
         );
