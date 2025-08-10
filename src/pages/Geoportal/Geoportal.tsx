@@ -1,11 +1,11 @@
-import { FC, useEffect, useState } from 'react';
+import { type FC, useEffect, useMemo, useState } from 'react';
 import { Button, Flex, message, Spin, Typography } from 'antd';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { Filters, GeoportalFilters } from 'components/GeoportalFilters/GeoportalFilters';
 import { MapObjectCard } from 'components/MapObjectCard/MapObjectCard';
 import { YandexMap } from 'components/YandexMap/YandexMap';
 
-import { MapObject, useGetAllMapObjectsQuery } from 'api/GeoPartal.api';
+import { type MapObject, useGetAllMapObjectsQuery } from 'api/GeoPartal.api';
 import { t } from 'i18next';
 import { applyFilters } from 'utils/mapHelpers';
 
@@ -15,15 +15,14 @@ interface GeoportalProps {
   title: string;
 }
 
+const INITIAL_FILTERS: Filters = {
+  search: '',
+  status: null
+};
+
 export const Geoportal: FC<GeoportalProps> = ({ title }) => {
-  const [filteredObjects, setFilteredObjects] = useState<MapObject[]>([]);
   const [selectedObject, setSelectedObject] = useState<MapObject | null>(null);
-  const [filters, setFilters] = useState<Filters>({
-    search: '',
-    type: null,
-    status: null,
-    dateRange: null
-  });
+  const [filters, setFilters] = useState<Filters>(INITIAL_FILTERS);
 
   const {
     data: apiResponse,
@@ -37,72 +36,108 @@ export const Geoportal: FC<GeoportalProps> = ({ title }) => {
     refetchOnReconnect: false
   });
 
-  const objects = apiResponse?.results || [];
+  const objects = useMemo(() => apiResponse?.results || [], [apiResponse]);
 
-  // Инициализация filteredObjects при первой загрузке данных
-  useEffect(() => {
-    if (!filteredObjects.length && objects.length > 0) {
-      setFilteredObjects(objects);
+  const filteredObjects = useMemo(() => {
+    if (objects.length === 0) {
+      return [];
     }
-  }, [objects, filteredObjects.length]);
-
-  // Применение фильтров при изменении objects или filters
-  useEffect(() => {
-    if (objects.length > 0) {
-      const filtered = applyFilters(objects, filters);
-      setFilteredObjects(filtered);
-    }
+    return applyFilters(objects, filters);
   }, [objects, filters]);
 
-  // Обработка ошибок
   useEffect(() => {
     if (error) {
       message.error(t('geoportal.errorLoad'));
+      console.error('API Error:', error);
     }
   }, [error]);
 
   const handleFilterChange = (filterType: keyof Filters, value: string | null): void => {
-    setFilters((prev) => ({ ...prev, [filterType]: value }));
+    setFilters((prev) => ({
+      ...prev,
+      [filterType]: value
+    }));
+    setSelectedObject(null);
   };
 
   const handleSearchChange = (value: string): void => {
-    setFilters((prev) => ({ ...prev, search: value }));
+    setFilters((prev) => ({
+      ...prev,
+      search: value
+    }));
+    setSelectedObject(null);
   };
 
-  const handleRefresh = (): void => {
-    refetch();
-    message.success(t('geoportal.dataRefreshed'));
+  const handleRefresh = async (): Promise<void> => {
+    try {
+      await refetch().unwrap();
+      message.success(t('geoportal.dataRefreshed'));
+    } catch (refreshError) {
+      message.error('Ошибка при обновлении данных');
+      console.error('Refresh Error:', refreshError);
+    }
   };
 
   const handleResetFilters = (): void => {
-    setFilters({ search: '', type: null, status: null, dateRange: null });
+    setFilters(INITIAL_FILTERS);
+    setSelectedObject(null);
   };
 
-  const hasActiveFilters = Boolean(filters.search || filters.type || filters.status || filters.dateRange);
+  const hasActiveFilters = Boolean(filters.search || filters.status);
+
+  if (isLoading) {
+    return (
+      <DashboardLayout title={t(title)}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '400px'
+          }}
+        >
+          <Spin size='large' />
+          <Text style={{ marginLeft: 16 }}>Загрузка данных карты...</Text>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <DashboardLayout title={t(title)}>
+        <div
+          style={{
+            textAlign: 'center',
+            padding: '40px 20px',
+            background: '#fff',
+            borderRadius: 8,
+            border: '1px solid #f0f0f0'
+          }}
+        >
+          <Text type='danger' style={{ fontSize: 16 }}>
+            Не удалось загрузить данные с сервера
+          </Text>
+          <div style={{ marginTop: 16 }}>
+            <Button type='primary' onClick={handleRefresh}>
+              Попробовать снова
+            </Button>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout title={t(title)}>
-      {isLoading && (
-        <div style={{ textAlign: 'center', marginBottom: 16 }}>
-          <Spin size='large' />
-        </div>
-      )}
-
-      {error && (
-        <div style={{ marginBottom: 16 }}>
-          <Text type='danger'>{t('geoportal.apiError')}</Text>
-          <Button type='link' onClick={handleRefresh} style={{ marginLeft: 8 }}>
-            {t('geoportal.tryAgain')}
-          </Button>
-        </div>
-      )}
-
       <GeoportalFilters
         filters={filters}
         onSearchChange={handleSearchChange}
         onFilterChange={handleFilterChange}
         onRefresh={handleRefresh}
         isLoading={isLoading}
+        totalCount={objects.length}
+        filteredCount={filteredObjects.length}
       />
 
       <Flex gap={16} wrap='wrap'>
@@ -110,17 +145,24 @@ export const Geoportal: FC<GeoportalProps> = ({ title }) => {
           <YandexMap objects={filteredObjects} onSelect={setSelectedObject} />
         </div>
 
-        {selectedObject && <MapObjectCard selectedObject={selectedObject} />}
+        {selectedObject && (
+          <div style={{ minWidth: '300px', maxWidth: '400px' }}>
+            <MapObjectCard selectedObject={selectedObject} />
+          </div>
+        )}
       </Flex>
 
-      <div style={{ marginTop: 16 }}>
-        <Text type='secondary'>{t('geoportal.foundCount', { count: filteredObjects.length, total: objects.length })}</Text>
+      <Flex justify='space-between' align='center' style={{ marginTop: 16 }}>
+        <Text type='secondary'>
+          Показано объектов: <strong>{filteredObjects.length}</strong> из <strong>{objects.length}</strong>
+        </Text>
+
         {hasActiveFilters && (
-          <Button type='link' size='small' onClick={handleResetFilters} style={{ marginLeft: 8 }}>
-            {t('geoportal.resetFilters')}
+          <Button type='link' size='small' onClick={handleResetFilters}>
+            Сбросить все фильтры
           </Button>
         )}
-      </div>
+      </Flex>
     </DashboardLayout>
   );
 };

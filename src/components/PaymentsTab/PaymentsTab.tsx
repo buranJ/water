@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Alert, Button, Card, Flex, Space, Spin, Table, TableColumnsType, Tag, Typography } from 'antd';
 import { FileTextOutlined, PlusOutlined } from '@ant-design/icons';
 import type { IPayment } from 'types/entities/accounting';
@@ -12,9 +12,11 @@ const { Title, Text } = Typography;
 interface IProps {
   invoiceId: string;
   totalAmount: string;
+  autoOpenModal?: boolean;
+  onModalOpen?: () => void;
 }
 
-export const PaymentsTab: FC<IProps> = ({ invoiceId, totalAmount }) => {
+export const PaymentsTab: FC<IProps> = ({ invoiceId, totalAmount, autoOpenModal, onModalOpen }) => {
   const [isAddModalVisible, setIsAddModalVisible] = useState<boolean>(false);
 
   const {
@@ -24,6 +26,12 @@ export const PaymentsTab: FC<IProps> = ({ invoiceId, totalAmount }) => {
   } = useGetPaymentsByInvoiceQuery({
     invoiceId
   });
+  useEffect(() => {
+    if (autoOpenModal) {
+      setIsAddModalVisible(true);
+      onModalOpen?.();
+    }
+  }, [autoOpenModal, onModalOpen]);
 
   const handleAddPayment = () => {
     setIsAddModalVisible(true);
@@ -42,7 +50,7 @@ export const PaymentsTab: FC<IProps> = ({ invoiceId, totalAmount }) => {
       case 'failed':
         return <Tag color='error'>{t('protocolDetail.payment.status.failed')}</Tag>;
       default:
-        return <Tag>{t('protocolDetail.payment.status.received')}</Tag>;
+        return <Tag>{status}</Tag>;
     }
   };
 

@@ -1,4 +1,5 @@
-import { FC, useState } from 'react';
+// src/components/AccountingTab/AccountingTab.tsx
+import { FC, useCallback, useEffect, useState } from 'react';
 import {
   Alert,
   Badge,
@@ -31,6 +32,7 @@ const { Title, Text } = Typography;
 
 interface IProps {
   technicalConditionId: string;
+  onOpenPaymentModal?: () => void;
 }
 
 interface IProtocolTableData {
@@ -40,9 +42,10 @@ interface IProtocolTableData {
   badge?: string;
 }
 
-export const AccountingTab: FC<IProps> = ({ technicalConditionId }) => {
-  const [uploadStatus, setUploadStatus] = useState<'waiting' | 'uploaded'>('waiting');
+export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentModal }) => {
+  const [activeAccountingTab, setActiveAccountingTab] = useState<string>('1');
   const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false);
+  const [shouldOpenPaymentModal, setShouldOpenPaymentModal] = useState<boolean>(false);
 
   const {
     data: protocolData,
@@ -63,9 +66,24 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId }) => {
   const [generateInvoice, { isLoading: isGenerating }] = useGenerateInvoiceMutation();
   const [downloadProtocol, { isLoading: isDownloading }] = useLazyDownloadProtocolQuery();
 
+  const calculateTotalAmount = useCallback(() => {
+    if (protocolData) {
+      return (parseFloat(protocolData.total_water_sum) + parseFloat(protocolData.total_kanal_sum)).toString();
+    }
+    return invoiceData?.total_sum || '0';
+  }, [protocolData, invoiceData?.total_sum]);
+
+  const actualTotalAmount = calculateTotalAmount();
+  useEffect(() => {
+    if (onOpenPaymentModal) {
+      setActiveAccountingTab('2');
+      onOpenPaymentModal();
+    }
+  }, [onOpenPaymentModal]);
+
   const handleUpload = () => {
-    setUploadStatus('uploaded');
-    message.success('Чек успешно загружен');
+    setActiveAccountingTab('2');
+    setShouldOpenPaymentModal(true);
   };
 
   const handleEditClick = () => {
@@ -106,7 +124,6 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId }) => {
       link.download = `protocol-${technicalConditionId}.xlsx`;
       document.body.appendChild(link);
       link.click();
-
       window.URL.revokeObjectURL(url);
       document.body.removeChild(link);
 
@@ -215,7 +232,12 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId }) => {
       label: 'Платежи',
       children:
         invoiceData && !invoiceError ? (
-          <PaymentsTab invoiceId={invoiceData.id.toString()} totalAmount={invoiceData.total_sum} />
+          <PaymentsTab
+            invoiceId={invoiceData.id.toString()}
+            totalAmount={actualTotalAmount}
+            autoOpenModal={shouldOpenPaymentModal}
+            onModalOpen={() => setShouldOpenPaymentModal(false)}
+          />
         ) : (
           <div>Для просмотра платежей необходимо сначала создать счет</div>
         )
@@ -226,7 +248,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId }) => {
     <>
       <Row gutter={24}>
         <Col span={16}>
-          <Tabs items={accountingTabItems} />
+          <Tabs activeKey={activeAccountingTab} items={accountingTabItems} onChange={setActiveAccountingTab} />
         </Col>
 
         <Col span={8}>
@@ -288,25 +310,8 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId }) => {
               Загрузите соответствующий документ чтобы завершить создание ТУ
             </Text>
 
-            {uploadStatus === 'uploaded' && (
-              <Flex
-                align='center'
-                gap={8}
-                style={{
-                  marginBottom: 16,
-                  padding: 8,
-                  backgroundColor: '#f6ffed',
-                  border: '1px solid #b7eb8f',
-                  borderRadius: 4
-                }}
-              >
-                <CheckCircleOutlined style={{ color: '#52c41a' }} />
-                <Text>Чек загружен</Text>
-              </Flex>
-            )}
-
-            <Button type='primary' block icon={<UploadOutlined />} onClick={handleUpload} disabled={uploadStatus === 'uploaded'}>
-              {uploadStatus === 'uploaded' ? 'Загружено' : 'Загрузить'}
+            <Button type='primary' block icon={<UploadOutlined />} onClick={handleUpload}>
+              Загрузить
             </Button>
           </Card>
         </Col>
