@@ -1,14 +1,16 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Button, Table } from 'antd';
+import { Button, message, Table } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import CustomPagination from 'common/ui/Pagination/CustomPagination';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { FilterBar } from 'components/FilterBar';
-import { ApplicationData, getColumns, useRejectModal } from './Applications.helpers';
+import { RejectApplicationModal } from 'components/Modal';
+import { ApplicationData, getColumns } from './Applications.helpers';
 
-import { useGetApplicationsQuery } from 'api/Application.api';
+import { useApproveApplicationMutation, useGetApplicationsQuery } from 'api/Application.api';
+import { RefusalBody, useCreateRefusalMutation } from 'api/Refusal.api';
 import { t } from 'i18next';
 
 type FilterValues = {
@@ -33,14 +35,43 @@ const STATUS_OPTIONS = [
 
 export const Applications: FC<IProps> = ({ title }) => {
   const navigate = useNavigate();
-  const { openRejectModal, RejectModalComponent } = useRejectModal();
-
-  // Фильтры
-  const [search, setSearch] = useState<string>('');
   const [debouncedSearch, setDebouncedSearch] = useState<string>('');
   const [status, setStatus] = useState<string>('');
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(8);
+
+  const { data, isLoading, refetch } = useGetApplicationsQuery(
+    {
+      search: debouncedSearch || undefined,
+      status: (status || undefined) as 'pending' | 'rejected' | 'approved' | 'contracted' | undefined,
+      page,
+      page_size: pageSize
+    },
+    { refetchOnMountOrArgChange: true }
+  );
+  const [approveApplications, { isSuccess: isApproveSuccess, isError: isApproveError }] = useApproveApplicationMutation();
+  const [createRefuse, { isSuccess: isRejectSuccess, isError: isRejectError }] = useCreateRefusalMutation();
+
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [selectedApplication, setSelectedApplication] = useState<string>();
+  const [search, setSearch] = useState<string>('');
+
+  const openRejectModal = useCallback((applicationId: string) => {
+    setSelectedApplication(applicationId);
+    setIsRejectModalOpen(true);
+  }, []);
+
+  const closeRejectModal = () => {
+    setIsRejectModalOpen(false);
+    setSelectedApplication(undefined);
+  };
+
+  const handleReject = (values: RefusalBody) => {
+    console.log({ ...values, applicationId: selectedApplication || '' });
+
+    closeRejectModal();
+    createRefuse({ ...values, application: selectedApplication || '' });
+  };
 
   // Debounce для поиска
   useEffect(() => {
@@ -56,17 +87,6 @@ export const Applications: FC<IProps> = ({ title }) => {
     setStatus(filter.status || '');
     setPage(1); // сбрасываем на первую страницу при фильтрации
   }, []);
-
-  // Получение данных с бэка
-  const { data, isLoading } = useGetApplicationsQuery(
-    {
-      search: debouncedSearch || undefined,
-      status: (status || undefined) as 'pending' | 'rejected' | 'approved' | 'contracted' | undefined,
-      page,
-      page_size: pageSize
-    },
-    { refetchOnMountOrArgChange: true }
-  );
 
   // Преобразование данных к формату таблицы (если нужно)
   const tableData: ApplicationData[] = useMemo(() => {
@@ -92,27 +112,24 @@ export const Applications: FC<IProps> = ({ title }) => {
     return getColumns({
       onClick: (record, action) => {
         switch (action) {
-          case 'create': // переход на создание ТУ
+          case 'create':
             navigate(`/dashboard/add-tu-forms/${record.ty_id}`);
             break;
-          case 'tuDetails': // переход на страницу существующего ТУ
+          case 'tuDetails':
             if (record.ty_id) {
               navigate(`/dashboard/technical-conditions/tu-details/${record.ty_id}`);
             }
             break;
           case 'reject':
-            // обработка отказа будет добавлена позже
+            openRejectModal(String(record.id));
             break;
           case 'approve':
-            // обработка одобрения будет добавлена позже
+            approveApplications({ applicationId: String(record.id) });
             break;
         }
-      },
-      onReject: (record) => {
-        openRejectModal(record);
       }
     });
-  }, [navigate, openRejectModal]);
+  }, [approveApplications, navigate, openRejectModal]);
 
   const onAddClick = () => {
     navigate('create');
@@ -122,6 +139,30 @@ export const Applications: FC<IProps> = ({ title }) => {
     setPage(page);
     if (pageSize) setPageSize(pageSize);
   };
+
+  useEffect(() => {
+    if (isApproveSuccess) {
+      message.success('Заявка одобрена');
+    }
+
+    if (isApproveError) {
+      message.error('Ошибка при одобрении заявки');
+    }
+
+    if (isRejectSuccess) {
+      message.success('Заявка отклонена');
+    }
+
+    if (isRejectError) {
+      message.error('Ошибка при отклонении заявки');
+    }
+  }, [isApproveError, isApproveSuccess, isRejectError, isRejectSuccess]);
+
+  useEffect(() => {
+    if (isApproveSuccess || isRejectSuccess) {
+      refetch();
+    }
+  }, [isApproveSuccess, isRejectSuccess, refetch]);
 
   return (
     <DashboardLayout title={t(title)}>
@@ -139,7 +180,7 @@ export const Applications: FC<IProps> = ({ title }) => {
       />
       <Table pagination={false} columns={columns} dataSource={tableData} bordered scroll={{ x: 'max-content' }} loading={isLoading} />
       <CustomPagination current={page} pageSize={pageSize} total={data?.count || 0} onChange={handlePaginationChange} />
-      <RejectModalComponent />
+      <RejectApplicationModal open={isRejectModalOpen} onCancel={closeRejectModal} onReject={handleReject} />
     </DashboardLayout>
   );
 };

@@ -2,7 +2,7 @@ import { type ReactNode, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Avatar, Button, Flex, Layout, Menu, type MenuProps, Skeleton, theme, Typography } from 'antd';
-import { BellOutlined, CreditCardOutlined, LeftOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
+import { BellOutlined, LeftOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import arrow from 'assets/icons/arrow.svg';
 import logo from 'assets/icons/logo.svg';
 import ApplicationIcon from 'assets/icons/sidebar/applications.svg?react';
@@ -105,11 +105,6 @@ export const DashboardLayout = ({ children, title }: Props) => {
       key: '/dashboard/customers',
       icon: <TeamOutlined />,
       label: t('dashboard.pages.customers')
-    },
-    hasPermission('view_payment') && {
-      key: '/dashboard/bills',
-      icon: <CreditCardOutlined />,
-      label: t('dashboard.pages.bills')
     },
     hasPermission('view_export') && {
       key: '/dashboard/export',

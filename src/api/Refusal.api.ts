@@ -1,5 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { getBaseQuery } from 'common/helpers';
+import { IPaginationMeta } from 'types/common';
 
 interface RefusalCause {
   id: number;
@@ -28,15 +29,11 @@ interface RefusalResponse {
   }[];
 }
 
-interface RefusalBody {
-  comment: string;
-  ty: number;
-  application: number;
-  refusal_files: {
-    title: string;
-    file: string;
-    type: string;
-  }[];
+export interface RefusalBody {
+  comment?: string;
+  ty?: string;
+  application?: string;
+  refusal_files: { title?: string; type?: string; file: File }[];
   causes_ids: number[];
 }
 
@@ -44,6 +41,10 @@ interface RefusalHistoryItem {
   history_user: string;
   history_date: string;
   history_type: string;
+}
+
+interface IRefusalCauseResponse extends IPaginationMeta {
+  results: RefusalCause[];
 }
 
 export const refusalApi = createApi({
@@ -94,7 +95,7 @@ export const refusalApi = createApi({
       })
     }),
 
-    getRefusalCauses: build.query<RefusalCause[], void>({
+    getRefusalCauses: build.query<IRefusalCauseResponse, void>({
       query: () => ({
         url: 'refusal/causes',
         method: 'GET'
@@ -116,11 +117,43 @@ export const refusalApi = createApi({
     }),
 
     createRefusal: build.mutation<RefusalResponse, RefusalBody>({
-      query: (body) => ({
-        url: 'refusal/create',
-        method: 'POST',
-        body
-      })
+      query: (body) => {
+        const formData = new FormData();
+
+        if (body.refusal_files?.length) {
+          formData.append('refusal_files', JSON.stringify(body.refusal_files));
+          body.refusal_files.forEach((item, index) => {
+            if (item.title !== undefined) {
+              formData.append(`refusal_files[${index}][title]`, String(item.title));
+            }
+            if (item.type !== undefined) {
+              formData.append(`refusal_files[${index}][type]`, String(item.type));
+            }
+          });
+        }
+
+        if (body.comment !== undefined) {
+          formData.append('comment', String(body.comment));
+        }
+        if (body.ty !== undefined) {
+          formData.append('ty', String(body.ty));
+        }
+        if (body.application !== undefined) {
+          formData.append('application', String(body.application));
+        }
+
+        if (Array.isArray(body.causes_ids)) {
+          body.causes_ids.forEach((id) => {
+            formData.append('causes_ids', String(id));
+          });
+        }
+
+        return {
+          url: 'refusal/create',
+          method: 'POST',
+          body: formData
+        };
+      }
     })
   })
 });

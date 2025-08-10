@@ -121,6 +121,18 @@ export const applicationsApi = createApi({
         url: `application-files/${id}/delete/`,
         method: 'DELETE'
       })
+    }),
+    approveApplication: build.mutation<void, { applicationId: string }>({
+      query: ({ applicationId }) => ({
+        url: `application/${applicationId}/approve/`,
+        method: 'POST'
+      })
+    }),
+    rejectApplication: build.mutation<void, { applicationId: string }>({
+      query: ({ applicationId }) => ({
+        url: `application/${applicationId}/reject/`,
+        method: 'POST'
+      })
     })
   })
 });
@@ -132,5 +144,7 @@ export const {
   useUpdateApplicationMutation,
   useUploadApplicationFilesMutation,
   useReplaceApplicationFileMutation,
-  useDeleteApplicationFileMutation
+  useDeleteApplicationFileMutation,
+  useApproveApplicationMutation,
+  useRejectApplicationMutation
 } = applicationsApi;
