@@ -1,4 +1,5 @@
 import { type FC, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { type MapObject } from 'api/GeoPartal.api';
 
@@ -85,18 +86,6 @@ const STAGE_OPACITY: Record<ObjectStage, string> = {
   completed: '1.0'
 };
 
-const STATUS_TEXT: Record<ObjectStatus, string> = {
-  active: 'Активный',
-  inactive: 'Неактивный',
-  archived: 'Архивный'
-};
-
-const STAGE_TEXT: Record<ObjectStage, string> = {
-  draft: 'Черновик',
-  approved: 'Утвержден',
-  completed: 'Завершен'
-};
-
 const getIconColor = (obj: MapObject): string => {
   if (obj.status === 'inactive' || obj.status === 'archived') {
     return STATUS_COLORS.inactive;
@@ -129,28 +118,55 @@ const createSvgIcon = (obj: MapObject): string => {
   `;
 };
 
-const createBalloonContent = (obj: MapObject): string => {
-  const statusColor = obj.status === 'active' ? STATUS_COLORS.active : obj.status === 'archived' ? STATUS_COLORS.archived : '#ff4d4f';
-
-  return `
-    <div style="padding: 12px; max-width: 300px;">
-      <strong style="color: #1890ff; font-size: 14px;">📍 ${obj.object_name}</strong><br/>
-      <div style="margin: 8px 0; padding: 8px; background: #f5f5f5; border-radius: 4px;">
-        <strong>Заявка:</strong> ${obj.request_number}<br/>
-        <strong>Адрес:</strong> ${obj.address}<br/>
-        <strong>Статус:</strong> <span style="color: ${statusColor}">${STATUS_TEXT[obj.status]}</span><br/>
-        <strong>Этап:</strong> ${STAGE_TEXT[obj.stage]}<br/>
-        <strong>Координаты:</strong> ${obj.x.toFixed(6)}, ${obj.y.toFixed(6)}
-      </div>
-    </div>
-  `;
-};
-
 export const YandexMap: FC<YandexMapProps> = ({ objects, onSelect }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<YMapInstance | null>(null);
   const scriptLoadedRef = useRef(false);
   const [mapReady, setMapReady] = useState(false);
+  const { t } = useTranslation();
+
+  const getStatusLabel = (status: ObjectStatus): string => {
+    switch (status) {
+      case 'active':
+        return t('tuDetails.status.active');
+      case 'inactive':
+        return t('tuDetails.status.inactive');
+      case 'archived':
+        return t('tuDetails.status.archived');
+      default:
+        return '';
+    }
+  };
+
+  const getStageLabel = (stage: ObjectStage): string => {
+    switch (stage) {
+      case 'draft':
+        return t('tuDetails.stage.draft');
+      case 'approved':
+        return t('tuDetails.stage.approved');
+      case 'completed':
+        return t('tuDetails.stage.done');
+      default:
+        return '';
+    }
+  };
+
+  const createBalloonContent = (obj: MapObject): string => {
+    const statusColor = obj.status === 'active' ? STATUS_COLORS.active : obj.status === 'archived' ? STATUS_COLORS.archived : '#ff4d4f';
+
+    return `
+      <div style="padding: 12px; max-width: 300px;">
+        <strong style="color: #1890ff; font-size: 14px;">📍 ${obj.object_name}</strong><br/>
+        <div style="margin: 8px 0; padding: 8px; background: #f5f5f5; border-radius: 4px;">
+          <strong>${t('yandexMap.labels.request')}:</strong> ${obj.request_number}<br/>
+          <strong>${t('yandexMap.labels.address')}:</strong> ${obj.address}<br/>
+          <strong>${t('yandexMap.labels.status')}:</strong> <span style="color: ${statusColor}">${getStatusLabel(obj.status)}</span><br/>
+          <strong>${t('yandexMap.labels.stage')}:</strong> ${getStageLabel(obj.stage)}<br/>
+          <strong>${t('common.coordinates')}:</strong> ${obj.x.toFixed(6)}, ${obj.y.toFixed(6)}
+        </div>
+      </div>
+    `;
+  };
 
   const renderPlacemarks = (data: MapObject[]): void => {
     const ymaps = window.ymaps;

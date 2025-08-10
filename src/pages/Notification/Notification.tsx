@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Avatar, Button, Flex, List, Typography } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
@@ -11,19 +12,20 @@ interface IProps {
 }
 
 export const Notification: FC<IProps> = ({ title }) => {
+  const { t } = useTranslation();
   const handleDelete = () => {
     console.log('delete');
   };
 
   return (
-    <DashboardLayout title={title}>
+    <DashboardLayout title={t(title)}>
       <div className='notification'>
         <FilterBar
           onFilterChange={(value) => console.log(value)}
           actionButtons={
             <>
-              <Button>Активные</Button>
-              <Button>Новые</Button>
+              <Button>{t('notification.active')}</Button>
+              <Button>{t('notification.new')}</Button>
               <Button danger icon={<DeleteOutlined />} onClick={handleDelete} />
             </>
           }
@@ -53,11 +55,11 @@ export const Notification: FC<IProps> = ({ title }) => {
                     />
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 10 }}>
                       <Flex gap={12} style={{ marginTop: 8 }}>
-                        <Button>Назначить ответственного</Button>
-                        <Button type='primary'>Открыть ТУ</Button>
+                        <Button>{t('notification.assignResponsible')}</Button>
+                        <Button type='primary'>{t('notification.openTu')}</Button>
                       </Flex>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <span style={{ color: '#8C8C8C', fontSize: 12 }}>неделю назад</span>
+                        <span style={{ color: '#8C8C8C', fontSize: 12 }}>{t('notification.time.weekAgo')}</span>
                         <span
                           style={{
                             width: 12,

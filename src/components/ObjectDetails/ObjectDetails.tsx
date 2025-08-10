@@ -1,4 +1,5 @@
 import React, { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Card, Col, DatePicker, Form, Input, message, Row, Select, Space, Tag, Typography } from 'antd';
 import { CloseOutlined, EditOutlined, SaveOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
@@ -21,6 +22,7 @@ interface ApiError {
 }
 
 export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange }) => {
+  const { t } = useTranslation();
   const [isEditMode, setIsEditMode] = useState(false);
   const [form] = Form.useForm();
   const [updateObject, { isLoading: isSaving }] = useUpdateObjectMutation();
@@ -105,7 +107,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
         body: updateData
       }).unwrap();
 
-      message.success('Объект успешно обновлен');
+      message.success(t('objects.messages.updated'));
       setIsEditMode(false);
     } catch (error) {
       const apiError = error as ApiError;
@@ -117,11 +119,11 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
             return `${field}: ${errorMsg}`;
           })
           .join('; ');
-        message.error(`Ошибка: ${messages}`);
+        message.error(`${t('common.errorPrefix')}${messages}`);
       } else if (apiError?.message) {
-        message.error(`Ошибка: ${apiError.message}`);
+        message.error(`${t('common.errorPrefix')}${apiError.message}`);
       } else {
-        message.error('Ошибка при обновлении объекта');
+        message.error(t('objects.messages.updateError'));
       }
       console.error('Update object error:', error);
     }
@@ -186,7 +188,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                     color: '#8e8e93'
                   }}
                 >
-                  Отмена
+                  {t('common.cancel')}
                 </Button>
                 <Button
                   type='primary'
@@ -199,7 +201,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                     borderColor: '#007aff'
                   }}
                 >
-                  Сохранить
+                  {t('common.save')}
                 </Button>
               </Space>
             ) : (
@@ -213,7 +215,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                   borderColor: '#007aff'
                 }}
               >
-                Редактировать
+                {t('common.edit')}
               </Button>
             )}
           </div>
@@ -233,7 +235,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                       display: 'block'
                     }}
                   >
-                    Дата договора
+                    {t('customers.details.contract.contractDate')}
                   </Text>
                   {isEditMode ? (
                     <Form.Item name='contract_date' style={{ marginBottom: 0 }}>
@@ -244,7 +246,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                           backgroundColor: '#f5f5f7',
                           border: 'none'
                         }}
-                        placeholder='Выберите дату'
+                        placeholder={t('paymentsModal.placeholders.date')}
                       />
                     </Form.Item>
                   ) : (
@@ -270,7 +272,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                       display: 'block'
                     }}
                   >
-                    Тип
+                    {t('objectForm.labels.type')}
                   </Text>
                   {isEditMode ? (
                     <Form.Item name='type' style={{ marginBottom: 0 }}>
@@ -281,7 +283,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                           border: 'none',
                           padding: '12px 16px'
                         }}
-                        placeholder='Тип объекта'
+                        placeholder={t('objectForm.labels.type')}
                       />
                     </Form.Item>
                   ) : (
@@ -292,7 +294,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                         fontWeight: 600
                       }}
                     >
-                      {object.type || 'Новостройка'}
+                      {object.type || t('objectForm.placeholders.usageType')}
                     </Text>
                   )}
                 </div>
@@ -307,20 +309,24 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                       display: 'block'
                     }}
                   >
-                    Статус
+                    {t('common.status')}
                   </Text>
                   {isEditMode ? (
-                    <Form.Item name='status' rules={[{ required: true, message: 'Выберите статус' }]} style={{ marginBottom: 0 }}>
+                    <Form.Item
+                      name='status'
+                      rules={[{ required: true, message: t('objectForm.validation.statusRequired') }]}
+                      style={{ marginBottom: 0 }}
+                    >
                       <Select
                         style={{
                           borderRadius: 12
                         }}
-                        placeholder='Выберите статус'
+                        placeholder={t('objectForm.placeholders.status')}
                       >
-                        <Option value='active'>Активен</Option>
-                        <Option value='inactive'>Неактивен</Option>
-                        <Option value='pending'>В ожидании</Option>
-                        <Option value='rejected'>Отклонен</Option>
+                        <Option value='active'>{t('customers.status.active')}</Option>
+                        <Option value='inactive'>{t('customers.status.inactive')}</Option>
+                        <Option value='pending'>{t('applicationDetails.status.pending')}</Option>
+                        <Option value='rejected'>{t('applicationDetails.status.rejected')}</Option>
                       </Select>
                     </Form.Item>
                   ) : (
@@ -335,7 +341,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                           fontWeight: 500
                         }}
                       >
-                        {object.status || 'Активен'}
+                        {object.status || t('customers.status.active')}
                       </Tag>
                     </div>
                   )}
@@ -351,7 +357,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                       display: 'block'
                     }}
                   >
-                    Адрес
+                    {t('applicationDetails.labels.address')}
                   </Text>
                   {isEditMode ? (
                     <Space.Compact style={{ width: '100%' }}>
@@ -363,7 +369,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                             border: 'none',
                             padding: '12px 16px'
                           }}
-                          placeholder='Улица'
+                          placeholder={t('applicationsCreate.form.labels.street')}
                         />
                       </Form.Item>
                       <Form.Item name='address_number' style={{ marginBottom: 0, width: '30%' }}>
@@ -374,7 +380,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                             border: 'none',
                             padding: '12px 16px'
                           }}
-                          placeholder='Дом'
+                          placeholder={t('applicationsCreate.form.labels.house')}
                         />
                       </Form.Item>
                     </Space.Compact>
@@ -405,12 +411,12 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                       display: 'block'
                     }}
                   >
-                    Кадастровый номер
+                    {t('objectForm.labels.cadastralNumber')}
                   </Text>
                   {isEditMode ? (
                     <Form.Item
                       name='kadastr_number'
-                      rules={[{ required: true, message: 'Введите кадастровый номер' }]}
+                      rules={[{ required: true, message: t('objectForm.validation.cadastralRequired') }]}
                       style={{ marginBottom: 0 }}
                     >
                       <Input
@@ -421,7 +427,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                           padding: '12px 16px',
                           fontFamily: 'monospace'
                         }}
-                        placeholder='01:001:1234567'
+                        placeholder={t('objectForm.placeholders.cadastralNumber')}
                       />
                     </Form.Item>
                   ) : (
@@ -448,7 +454,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                       display: 'block'
                     }}
                   >
-                    Вид использования
+                    {t('objectForm.labels.usageType')}
                   </Text>
                   {isEditMode ? (
                     <Form.Item name='usage_type' style={{ marginBottom: 0 }}>
@@ -459,7 +465,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                           border: 'none',
                           padding: '12px 16px'
                         }}
-                        placeholder='Жилой дом'
+                        placeholder={t('objectForm.placeholders.usageType')}
                       />
                     </Form.Item>
                   ) : (
@@ -470,7 +476,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                         fontWeight: 600
                       }}
                     >
-                      {object.usage_type || 'Жилой дом'}
+                      {object.usage_type || t('objectForm.placeholders.usageType')}
                     </Text>
                   )}
                 </div>
@@ -485,7 +491,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                       display: 'block'
                     }}
                   >
-                    Статус заявок и выданных ТУ
+                    {t('customers.details.contract.tuStatus')}
                   </Text>
                   {isEditMode ? (
                     <Form.Item name='tu_status' style={{ marginBottom: 0 }}>
@@ -496,7 +502,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                           border: 'none',
                           padding: '12px 16px'
                         }}
-                        placeholder='ТУ выдано, подключение в процессе'
+                        placeholder={t('customers.details.contract.tuStatus')}
                       />
                     </Form.Item>
                   ) : (
@@ -507,7 +513,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                         fontWeight: 600
                       }}
                     >
-                      {object.tu_status || 'ТУ выдано, подключение в процессе'}
+                      {object.tu_status || t('customers.details.contract.tuStatus')}
                     </Text>
                   )}
                 </div>
@@ -522,7 +528,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                       display: 'block'
                     }}
                   >
-                    Географические координаты
+                    {t('common.coordinates')}
                   </Text>
                   {isEditMode ? (
                     <Space.Compact style={{ width: '100%' }}>
@@ -537,7 +543,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                             padding: '12px 16px',
                             fontFamily: 'monospace'
                           }}
-                          placeholder='Широта'
+                          placeholder={t('common.latitude')}
                         />
                       </Form.Item>
                       <Form.Item name='longitude' style={{ marginBottom: 0, flex: 1 }}>
@@ -551,7 +557,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                             padding: '12px 16px',
                             fontFamily: 'monospace'
                           }}
-                          placeholder='Долгота'
+                          placeholder={t('common.longitude')}
                         />
                       </Form.Item>
                     </Space.Compact>

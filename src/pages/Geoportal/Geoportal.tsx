@@ -73,7 +73,7 @@ export const Geoportal: FC<GeoportalProps> = ({ title }) => {
       await refetch().unwrap();
       message.success(t('geoportal.dataRefreshed'));
     } catch (refreshError) {
-      message.error('Ошибка при обновлении данных');
+      message.error(t('geoportal.apiError'));
       console.error('Refresh Error:', refreshError);
     }
   };
@@ -97,7 +97,7 @@ export const Geoportal: FC<GeoportalProps> = ({ title }) => {
           }}
         >
           <Spin size='large' />
-          <Text style={{ marginLeft: 16 }}>Загрузка данных карты...</Text>
+          <Text style={{ marginLeft: 16 }}>{t('geoportal.loading')}</Text>
         </div>
       </DashboardLayout>
     );
@@ -116,11 +116,11 @@ export const Geoportal: FC<GeoportalProps> = ({ title }) => {
           }}
         >
           <Text type='danger' style={{ fontSize: 16 }}>
-            Не удалось загрузить данные с сервера
+            {t('geoportal.apiError')}
           </Text>
           <div style={{ marginTop: 16 }}>
             <Button type='primary' onClick={handleRefresh}>
-              Попробовать снова
+              {t('geoportal.tryAgain')}
             </Button>
           </div>
         </div>
@@ -153,13 +153,11 @@ export const Geoportal: FC<GeoportalProps> = ({ title }) => {
       </Flex>
 
       <Flex justify='space-between' align='center' style={{ marginTop: 16 }}>
-        <Text type='secondary'>
-          Показано объектов: <strong>{filteredObjects.length}</strong> из <strong>{objects.length}</strong>
-        </Text>
+        <Text type='secondary'>{t('geoportal.foundCount', { count: filteredObjects.length, total: objects.length })}</Text>
 
         {hasActiveFilters && (
           <Button type='link' size='small' onClick={handleResetFilters}>
-            Сбросить все фильтры
+            {t('geoportal.resetFilters')}
           </Button>
         )}
       </Flex>
