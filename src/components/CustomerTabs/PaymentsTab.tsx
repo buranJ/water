@@ -1,5 +1,6 @@
 // src/components/CustomerTabs/PaymentsTab.tsx
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Table, Tag, Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FileTextOutlined } from '@ant-design/icons';
@@ -23,16 +24,17 @@ interface IProps {
 }
 
 export const CustomerPaymentsTab: FC<IProps> = ({ payments }) => {
+  const { t } = useTranslation();
   const getStatusTag = (status: string) => {
     switch (status) {
       case 'completed':
-        return <Tag color='success'>Завершен</Tag>;
+        return <Tag color='success'>{t('protocolDetail.payment.status.received')}</Tag>;
       case 'processing':
-        return <Tag color='processing'>В обработке</Tag>;
+        return <Tag color='processing'>{t('protocolDetail.payment.status.pending')}</Tag>;
       case 'pending':
-        return <Tag color='warning'>В ожидании</Tag>;
+        return <Tag color='warning'>{t('protocolDetail.payment.status.pending')}</Tag>;
       case 'failed':
-        return <Tag color='error'>Отклонен</Tag>;
+        return <Tag color='error'>{t('protocolDetail.payment.status.failed')}</Tag>;
       default:
         return <Tag>{status}</Tag>;
     }
@@ -40,25 +42,25 @@ export const CustomerPaymentsTab: FC<IProps> = ({ payments }) => {
 
   const columns: ColumnsType<ICustomerPayment> = [
     {
-      title: '№',
+      title: t('customers.details.columns.index'),
       key: 'index',
       width: 60,
       render: (_, __, index) => index + 1
     },
     {
-      title: 'Номер платежа',
+      title: t('protocolDetail.payment.columns.paymentNum'),
       dataIndex: 'payment_number',
       key: 'payment_number',
       render: (text: string) => <Text strong>{text}</Text>
     },
     {
-      title: 'Дата платежа',
+      title: t('protocolDetail.payment.columns.date'),
       dataIndex: 'payment_date',
       key: 'payment_date',
       render: (date: string) => new Date(date).toLocaleDateString('ru-RU')
     },
     {
-      title: 'Сумма',
+      title: t('protocolDetail.payment.columns.amount'),
       dataIndex: 'amount',
       key: 'amount',
       render: (amount: string) => (
@@ -68,7 +70,7 @@ export const CustomerPaymentsTab: FC<IProps> = ({ payments }) => {
       )
     },
     {
-      title: 'Источник',
+      title: t('protocolDetail.payment.columns.source'),
       dataIndex: 'source',
       key: 'source',
       render: (source: string) => {
@@ -82,32 +84,32 @@ export const CustomerPaymentsTab: FC<IProps> = ({ payments }) => {
       }
     },
     {
-      title: 'Статус',
+      title: t('protocolDetail.payment.columns.status'),
       dataIndex: 'status',
       key: 'status',
       render: (status: string) => getStatusTag(status)
     },
     {
-      title: 'Счет',
+      title: t('protocolDetail.invoice.title'),
       dataIndex: 'invoice',
       key: 'invoice',
       render: (invoiceId: number) => <Text type='secondary'>#{invoiceId}</Text>
     },
     {
-      title: 'Чек',
+      title: t('paymentsTab.buttons.receipt'),
       dataIndex: 'receipt_file',
       key: 'receipt_file',
       render: (file: string | null) =>
         file ? (
           <Button size='small' icon={<FileTextOutlined />} onClick={() => window.open(file, '_blank')}>
-            Скачать
+            {t('common.download')}
           </Button>
         ) : (
-          <Text type='secondary'>Нет файла</Text>
+          <Text type='secondary'>{t('objectDetail.noData')}</Text>
         )
     },
     {
-      title: 'Дата создания',
+      title: t('customers.details.columns.createdAt'),
       dataIndex: 'created_at',
       key: 'created_at',
       render: (date: string) => new Date(date).toLocaleDateString('ru-RU')
@@ -128,9 +130,13 @@ export const CustomerPaymentsTab: FC<IProps> = ({ payments }) => {
           borderRadius: 8
         }}
       >
-        <Text strong>Общая сумма платежей: {totalAmount.toLocaleString('ru-RU')} KGZ</Text>
+        <Text strong>
+          {t('customers.details.paymentsSummary.totalAmount')}: {totalAmount.toLocaleString('ru-RU')} KGZ
+        </Text>
         <br />
-        <Text type='secondary'>Всего платежей: {payments.length}</Text>
+        <Text type='secondary'>
+          {t('customers.details.paymentsSummary.totalCount')}: {payments.length}
+        </Text>
       </div>
 
       <Table
@@ -138,7 +144,7 @@ export const CustomerPaymentsTab: FC<IProps> = ({ payments }) => {
         dataSource={payments}
         rowKey='id'
         pagination={false}
-        locale={{ emptyText: 'У клиента нет платежей' }}
+        locale={{ emptyText: t('paymentsTab.table.empty') }}
         scroll={{ x: 'max-content' }}
       />
     </div>

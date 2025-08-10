@@ -236,6 +236,19 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     [foldersQuery.data?.custom]
   );
 
+  const getCategoryLabel = (title: string) => {
+    switch (title.toLowerCase()) {
+      case 'архитектура':
+        return t('tuDetails.tabs.architecture');
+      case 'документы':
+        return t('tuDetails.tabs.documents');
+      case 'бухгалтерия':
+        return t('tuDetails.tabs.accounting');
+      default:
+        return title;
+    }
+  };
+
   const dynamicTabs =
     userQuery.data?.user.allowed_categories?.map((category, index) => {
       let content: React.ReactNode = <Text>{t('tuDetails.contentNotImplemented', { title: category.title })}</Text>;
@@ -258,7 +271,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
 
       return {
         key: `dynamic-${index + 2}`,
-        label: category.title,
+        label: getCategoryLabel(category.title),
         children: content
       };
     }) || [];

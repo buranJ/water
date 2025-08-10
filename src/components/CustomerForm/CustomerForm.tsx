@@ -1,5 +1,6 @@
 import { FC } from 'react';
-import { Button, Form, Input, Radio, Select, Typography } from 'antd';
+import { useTranslation } from 'react-i18next';
+import { Button, Form, FormInstance, Input, Radio, Select, Typography } from 'antd';
 import IndividualForm from './IndividualForm/Individual';
 import LegalForm from './LegalForm/LegalForm';
 import './styles.scss';
@@ -17,8 +18,6 @@ export interface CustomerFormData {
   status: 'active' | 'rejected';
 }
 
-import { FormInstance } from 'antd';
-
 interface CustomerFormProps {
   initialValues?: CustomerFormData;
   onSave: (values: CustomerFormData) => void;
@@ -30,6 +29,7 @@ interface CustomerFormProps {
 export const CustomerForm: FC<CustomerFormProps> = ({ initialValues, onSave, onCancel, form: externalForm, submitText }) => {
   const [form] = Form.useForm<CustomerFormData>();
   const usedForm = externalForm || form;
+  const { t } = useTranslation();
 
   const handleFinish = (values: CustomerFormData) => {
     onSave(values);
@@ -38,7 +38,7 @@ export const CustomerForm: FC<CustomerFormProps> = ({ initialValues, onSave, onC
 
   return (
     <div className='customer-form'>
-      <Title level={3}>Добавить заказчика</Title>
+      <Title level={3}>{t('routers.addCustomer')}</Title>
       <Form
         form={usedForm}
         layout='vertical'
@@ -48,10 +48,14 @@ export const CustomerForm: FC<CustomerFormProps> = ({ initialValues, onSave, onC
         initialValues={initialValues || { type: 'individual', status: 'active' }}
         requiredMark={false}
       >
-        <Form.Item name='type' label='Выбор типа' rules={[{ required: true, message: 'Пожалуйста, выберите тип!' }]}>
+        <Form.Item
+          name='type'
+          label={t('customerForm.labels.type')}
+          rules={[{ required: true, message: t('customerForm.validation.pleaseSelectType') }]}
+        >
           <Radio.Group size='large' block>
-            <Radio.Button value='individual'>Физическое лицо</Radio.Button>
-            <Radio.Button value='legal'>Юридическое лицо</Radio.Button>
+            <Radio.Button value='individual'>{t('customerForm.labels.individual')}</Radio.Button>
+            <Radio.Button value='legal'>{t('customerForm.labels.legal')}</Radio.Button>
           </Radio.Group>
         </Form.Item>
 
@@ -59,23 +63,31 @@ export const CustomerForm: FC<CustomerFormProps> = ({ initialValues, onSave, onC
           {({ getFieldValue }) => (getFieldValue('type') === 'individual' ? <IndividualForm /> : <LegalForm />)}
         </Form.Item>
 
-        <Form.Item name='address' label='Адрес регистрации' rules={[{ required: true, message: 'Пожалуйста, введите адрес!' }]}>
-          <Input size='large' placeholder='Введите адрес' />
+        <Form.Item
+          name='address'
+          label={t('customerForm.labels.addressReg')}
+          rules={[{ required: true, message: t('customerForm.validation.pleaseEnterAddress') }]}
+        >
+          <Input size='large' placeholder={t('customerForm.placeholders.address')} />
         </Form.Item>
 
-        <Form.Item name='status' label='Статус' rules={[{ required: true, message: 'Пожалуйста, выберите статус!' }]}>
-          <Select size='large' placeholder='Выберите статус'>
-            <Option value='active'>Активен</Option>
-            <Option value='rejected'>Отклонен</Option>
+        <Form.Item
+          name='status'
+          label={t('customerForm.labels.status')}
+          rules={[{ required: true, message: t('customerForm.validation.pleaseSelectStatus') }]}
+        >
+          <Select size='large' placeholder={t('customerForm.placeholders.selectStatus')}>
+            <Option value='active'>{t('customers.status.active')}</Option>
+            <Option value='rejected'>{t('applications.statusTag.rejected')}</Option>
           </Select>
         </Form.Item>
 
         <Form.Item>
           <Button size='large' type='primary' htmlType='submit' style={{ marginRight: 8 }}>
-            {typeof submitText === 'string' ? submitText : 'Добавить'}
+            {typeof submitText === 'string' ? submitText : t('common.save')}
           </Button>
           <Button size='large' onClick={onCancel}>
-            Назад
+            {t('common.back')}
           </Button>
         </Form.Item>
       </Form>

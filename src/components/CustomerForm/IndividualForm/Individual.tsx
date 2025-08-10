@@ -1,32 +1,42 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Flex, Form, Input } from 'antd';
 
 const Individual: FC = () => {
+  const { t } = useTranslation();
   return (
     <>
-      <Form.Item name='fio' label='ФИО' rules={[{ required: true, message: 'Пожалуйста, введите ИНН!' }]}>
-        <Input size='large' placeholder='ФИО' />
+      <Form.Item
+        name='fio'
+        label={t('customerForm.labels.fio')}
+        rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+      >
+        <Input size='large' placeholder={t('customerForm.placeholders.fullName')} />
       </Form.Item>
 
-      <Form.Item name='inn' label='ИНН' rules={[{ required: true, message: 'Пожалуйста, введите ИНН!' }]}>
-        <Input size='large' placeholder='123456789010' />
+      <Form.Item
+        name='inn'
+        label={t('applicationsCreate.form.labels.inn')}
+        rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+      >
+        <Input size='large' placeholder={t('customerForm.placeholders.inn')} />
       </Form.Item>
 
       <Flex gap={16}>
         <Form.Item
           name='passportData'
-          label='Паспортные данные'
-          rules={[{ required: true, message: 'Пожалуйста, введите паспортные данные!' }]}
+          label={t('customerForm.labels.passportData')}
+          rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
         >
-          <Input size='large' placeholder='14 марта 2025' />
+          <Input size='large' placeholder={t('customerForm.placeholders.passportData')} />
         </Form.Item>
 
         <Form.Item
           name='contactData'
-          label='Контактные данные'
-          rules={[{ required: true, message: 'Пожалуйста, введите контактные данные!' }]}
+          label={t('customerForm.labels.contactData')}
+          rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
         >
-          <Input size='large' placeholder='0999700700' />
+          <Input size='large' placeholder={t('customerForm.placeholders.contactData')} />
         </Form.Item>
       </Flex>
     </>

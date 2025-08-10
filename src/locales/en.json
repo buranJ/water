@@ -44,7 +44,8 @@
     "profile": "Profile",
     "technicalSpecificatio": "Technical Conditions",
     "applicationDetails": "Application No.",
-    "tuNumberPrefix": "TU No."
+    "tuNumberPrefix": "TU No.",
+    "changeHistory": "TU change history"
   },
   "profile": {
     "title": "Settings",
@@ -257,7 +258,10 @@
       "uploadToFinishTu": "Upload the relevant document to complete TU creation"
     },
     "tabs": {
-      "data": "Data"
+      "data": "Data",
+      "architecture": "Architecture",
+      "documents": "Documents",
+      "accounting": "Accounting"
     },
     "notSpecified": "Not specified",
     "loadError": "Loading error",
@@ -353,14 +357,79 @@
     },
     "messages": {
       "created": "Customer created successfully",
-      "createError": "Error creating customer"
+      "createError": "Error creating customer",
+      "updated": "Customer updated successfully",
+      "updateError": "Error updating customer"
     },
     "details": {
+      "tabs": {
+        "data": "Data",
+        "objects": "Objects",
+        "applications": "Applications",
+        "documents": "Documents",
+        "payments": "Payments"
+      },
+      "loadError": "Error loading customer data",
+      "notCreated": "Not created",
+      "details": "Details",
+      "showOnMap": "Show on map",
+      "parameters": "Parameters",
+      "columns": {
+        "index": "No.",
+        "object": "Object",
+        "objectName": "Object name",
+        "address": "Address",
+        "contact": "Contact",
+        "parameters": "Parameters",
+        "status": "Status",
+        "tu": "TU",
+        "tuStatus": "TU status",
+        "objectStatus": "Object status",
+        "createdAt": "Created at",
+        "actions": "Actions"
+      },
+      "empty": {
+        "applications": "The customer has no applications",
+        "objects": "The customer has no objects"
+      },
+      "paymentsSummary": {
+        "totalAmount": "Total payments amount",
+        "totalCount": "Total payments"
+      },
       "contract": {
         "contractDate": "Contract date",
         "tuStatus": "Applications and TU status",
         "cost": "Contract cost"
       }
+    }
+  },
+  "customerForm": {
+    "labels": {
+      "type": "Type selection",
+      "individual": "Individual",
+      "legal": "Legal entity",
+      "addressReg": "Registration address",
+      "status": "Status",
+      "companyName": "Company name",
+      "ogrn": "OGRN",
+      "passportData": "Passport data",
+      "contactData": "Contact data",
+      "fio": "Full name"
+    },
+    "placeholders": {
+      "address": "Enter address",
+      "selectStatus": "Select status",
+      "companyName": "Company name",
+      "ogrn": "789010",
+      "passportData": "AB123456",
+      "contactData": "0999700700",
+      "fullName": "Full name",
+      "inn": "123456789010"
+    },
+    "validation": {
+      "pleaseSelectType": "Please select a type!",
+      "pleaseEnterAddress": "Please enter an address!",
+      "pleaseSelectStatus": "Please select a status!"
     }
   },
   "formulas": {
@@ -581,6 +650,22 @@
       "create": "Create",
       "goToTu": "Go to TU",
       "decline": "Decline"
+    }
+  },
+  "changeHistory": {
+    "status": {
+      "created": "Created",
+      "deleted": "Deleted",
+      "updated": "Updated"
+    },
+    "columns": {
+      "id": "ID",
+      "user": "Employee",
+      "date": "Date",
+      "type": "Type",
+      "field": "Field",
+      "oldValue": "Old value",
+      "newValue": "New value"
     }
   },
   "protocolDetail": {
