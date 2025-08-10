@@ -1,6 +1,11 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { getBaseQuery } from 'common/helpers';
-import { IGetCustomerParams, IGetCustomerResponse } from 'types/requests';
+import {
+  IGetCustomerChangeHistoryParams,
+  IGetCustomerChangeHistoryResponse,
+  IGetCustomerParams,
+  IGetCustomerResponse
+} from 'types/requests';
 
 export interface ICustomer {
   id: number;
@@ -103,6 +108,13 @@ export const customerApi = createApi({
         method: 'POST',
         body
       })
+    }),
+    getCustomerChangeHistory: build.query<IGetCustomerChangeHistoryResponse, IGetCustomerChangeHistoryParams>({
+      query: ({ customer_id, ...params }) => ({
+        url: `customer/${customer_id}/history`,
+        method: 'GET',
+        params
+      })
     })
   })
 });
@@ -116,5 +128,6 @@ export const {
   usePatchCustomerMutation,
   useDeleteCustomerMutation,
   useGetCustomerHistoryQuery,
-  useCreateCustomerMutation
+  useCreateCustomerMutation,
+  useGetCustomerChangeHistoryQuery
 } = customerApi;

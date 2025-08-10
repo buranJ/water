@@ -44,7 +44,8 @@
     "profile": "Профиль",
     "technicalSpecificatio": "Технические условия",
     "applicationDetails": "заявка №",
-    "tuNumberPrefix": "ТУ №"
+    "tuNumberPrefix": "ТУ №",
+    "changeHistory": "История изменений ТУ"
   },
   "profile": {
     "title": "Настройки",
@@ -258,7 +259,10 @@
       "uploadToFinishTu": "Загрузите соответствующий документ, чтобы завершить создание ТУ"
     },
     "tabs": {
-      "data": "Данные"
+      "data": "Данные",
+      "architecture": "Архитектура",
+      "documents": "Документы",
+      "accounting": "Бухгалтерия"
     },
     "notSpecified": "Не указано",
     "loadError": "Ошибка загрузки",
@@ -363,6 +367,32 @@
         "payments": "Платежи"
       },
       "loadError": "Ошибка загрузки данных заказчика",
+      "notCreated": "Не создано",
+      "details": "Детали",
+      "showOnMap": "Показать на карте",
+      "parameters": "Параметры",
+      "columns": {
+        "index": "№",
+        "object": "Объект",
+        "objectName": "Наименование объекта",
+        "address": "Адрес",
+        "contact": "Контакт",
+        "parameters": "Параметры",
+        "status": "Статус",
+        "tu": "ТУ",
+        "tuStatus": "Статус ТУ",
+        "objectStatus": "Статус объекта",
+        "createdAt": "Дата создания",
+        "actions": "Действия"
+      },
+      "empty": {
+        "applications": "У клиента нет заявок",
+        "objects": "У клиента нет объектов"
+      },
+      "paymentsSummary": {
+        "totalAmount": "Общая сумма платежей",
+        "totalCount": "Всего платежей"
+      },
       "contract": {
         "contractDate": "Дата договора",
         "tuStatus": "Статус заявок и выдачи ТУ",
@@ -371,7 +401,38 @@
     },
     "messages": {
       "created": "Заказчик успешно добавлен",
-      "createError": "Ошибка при создании заказчика"
+      "createError": "Ошибка при создании заказчика",
+      "updated": "Заказчик успешно обновлен",
+      "updateError": "Ошибка при обновлении заказчика"
+    }
+  },
+  "customerForm": {
+    "labels": {
+      "type": "Выбор типа",
+      "individual": "Физическое лицо",
+      "legal": "Юридическое лицо",
+      "addressReg": "Адрес регистрации",
+      "status": "Статус",
+      "companyName": "Название компании",
+      "ogrn": "ОГРН",
+      "passportData": "Паспортные данные",
+      "contactData": "Контактные данные",
+      "fio": "ФИО"
+    },
+    "placeholders": {
+      "address": "Введите адрес",
+      "selectStatus": "Выберите статус",
+      "companyName": "Название компании",
+      "ogrn": "789010",
+      "passportData": "AB123456",
+      "contactData": "0999700700",
+      "fullName": "ФИО",
+      "inn": "123456789010"
+    },
+    "validation": {
+      "pleaseSelectType": "Пожалуйста, выберите тип!",
+      "pleaseEnterAddress": "Пожалуйста, введите адрес!",
+      "pleaseSelectStatus": "Пожалуйста, выберите статус!"
     }
   },
   "formulas": {
@@ -592,6 +653,22 @@
       "create": "Оформление",
       "goToTu": "Перейти ТУ",
       "decline": "Отказ"
+    }
+  },
+  "changeHistory": {
+    "status": {
+      "created": "Создано",
+      "deleted": "Удалено",
+      "updated": "Изменено"
+    },
+    "columns": {
+      "id": "ID",
+      "user": "Сотрудник",
+      "date": "Дата",
+      "type": "Тип",
+      "field": "Поле",
+      "oldValue": "Старое значение",
+      "newValue": "Новое значение"
     }
   },
   "protocolDetail": {

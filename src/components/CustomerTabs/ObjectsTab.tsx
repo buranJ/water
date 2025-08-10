@@ -1,6 +1,7 @@
 // src/components/CustomerTabs/ObjectsTab.tsx
 import { FC } from 'react';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { Button, Table, Tag, Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { EyeOutlined } from '@ant-design/icons';
@@ -33,13 +34,14 @@ interface IProps {
 
 export const ObjectsTab: FC<IProps> = ({ objects }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const getStatusTag = (status: string) => {
     switch (status) {
       case 'active':
-        return <Tag color='success'>Активный</Tag>;
+        return <Tag color='success'>{t('customers.status.active')}</Tag>;
       case 'inactive':
-        return <Tag color='default'>Неактивный</Tag>;
+        return <Tag color='default'>{t('customers.status.inactive')}</Tag>;
       default:
         return <Tag>{status}</Tag>;
     }
@@ -47,13 +49,13 @@ export const ObjectsTab: FC<IProps> = ({ objects }) => {
 
   const columns: ColumnsType<ICustomerObject> = [
     {
-      title: '№',
+      title: t('customers.details.columns.index'),
       key: 'index',
       width: 60,
       render: (_, __, index) => index + 1
     },
     {
-      title: 'Название объекта',
+      title: t('customers.details.columns.objectName'),
       dataIndex: 'title',
       key: 'title',
       render: (text: string, record) => (
@@ -61,13 +63,13 @@ export const ObjectsTab: FC<IProps> = ({ objects }) => {
           <Text strong>{text}</Text>
           <br />
           <Text type='secondary' style={{ fontSize: '12px' }}>
-            Кадастр: {record.kadastr_number}
+            {t('objectCard.cadastral')}: {record.kadastr_number}
           </Text>
         </div>
       )
     },
     {
-      title: 'Адрес',
+      title: t('customers.details.columns.address'),
       dataIndex: 'full_address',
       key: 'full_address',
       render: (text: string, record) => (
@@ -81,30 +83,31 @@ export const ObjectsTab: FC<IProps> = ({ objects }) => {
       )
     },
     {
-      title: 'Статус ТУ',
+      title: t('customers.details.columns.tuStatus'),
       dataIndex: 'tu_status',
       key: 'tu_status',
-      render: (status: string | null) => (status ? <Tag color='processing'>{status}</Tag> : <Text type='secondary'>Не указан</Text>)
+      render: (status: string | null) =>
+        status ? <Tag color='processing'>{status}</Tag> : <Text type='secondary'>{t('tuDetails.notSpecified')}</Text>
     },
     {
-      title: 'Статус объекта',
+      title: t('customers.details.columns.objectStatus'),
       dataIndex: 'status',
       key: 'status',
       render: (status: string) => getStatusTag(status)
     },
     {
-      title: 'Дата создания',
+      title: t('customers.details.columns.createdAt'),
       dataIndex: 'created_at',
       key: 'created_at',
       render: (date: string) => new Date(date).toLocaleDateString('ru-RU')
     },
     {
-      title: 'Действия',
+      title: t('customers.details.columns.actions'),
       key: 'actions',
       width: 100,
       render: (_, record) => (
         <Button size='small' icon={<EyeOutlined />} onClick={() => navigate(`/dashboard/objects/${record.id}`)}>
-          Детали
+          {t('customers.details.details')}
         </Button>
       )
     }
@@ -116,7 +119,7 @@ export const ObjectsTab: FC<IProps> = ({ objects }) => {
       dataSource={objects}
       rowKey='id'
       pagination={false}
-      locale={{ emptyText: 'У клиента нет объектов' }}
+      locale={{ emptyText: t('customers.details.empty.objects') }}
       scroll={{ x: 'max-content' }}
     />
   );

@@ -1,11 +1,4 @@
-import { IStageEnum, IStatus6b3Enum, ITyTypeEnum } from 'types/common';
-
-/**
- * * + - Created
- * * ~ - Updated
- * * - - Deleted
- */
-export type IHistoryType = '+' | '~' | '-';
+import { IHistoryType, IStageEnum, IStatus6b3Enum, ITyTypeEnum } from 'types/common';
 
 export interface ITechnicalCondition {
   id: number;

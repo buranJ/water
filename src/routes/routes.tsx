@@ -28,6 +28,7 @@ const EditApplication = lazy(() => import('pages/EditApplication'));
 const Profile = lazy(() => import('pages/Profile'));
 const ChangeHistory = lazy(() => import('pages/ChangeHistory'));
 const ChangeApplicationHistory = lazy(() => import('pages/ChangeApplicationHistory'));
+const ChangeCustomerHistory = lazy(() => import('pages/ChangeCustomerHistory'));
 
 export const routerConfig: RouteObject[] = [
   {
@@ -86,6 +87,10 @@ export const routerConfig: RouteObject[] = [
   {
     path: '/dashboard/customers/:customerId/edit',
     element: <EditCustomer title='routers.editRequister' />
+  },
+  {
+    path: '/dashboard/customers/:customerId/change-history',
+    element: <ChangeCustomerHistory title='История изменений заказчика' />
   },
   {
     path: '/dashboard/add-customer',

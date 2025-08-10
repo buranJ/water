@@ -1,39 +1,49 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Form, Input } from 'antd';
 
 const LegalForm: FC = () => {
+  const { t } = useTranslation();
   return (
     <>
       <Form.Item
         name='companyName'
-        label='Название компании'
-        rules={[{ required: true, message: 'Пожалуйста, введите название компании!' }]}
+        label={t('customerForm.labels.companyName')}
+        rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
       >
-        <Input size='large' placeholder='Название компании' />
+        <Input size='large' placeholder={t('customerForm.placeholders.companyName')} />
       </Form.Item>
 
-      <Form.Item name='inn' label='ИНН' rules={[{ required: true, message: 'Пожалуйста, введите ИНН!' }]}>
-        <Input size='large' placeholder='123456789010' />
+      <Form.Item
+        name='inn'
+        label={t('applicationsCreate.form.labels.inn')}
+        rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+      >
+        <Input size='large' placeholder={t('customerForm.placeholders.inn')} />
       </Form.Item>
 
-      <Form.Item name='ogrn' label='ОГРН' rules={[{ required: true, message: 'Пожалуйста, введите ОГРН!' }]}>
-        <Input size='large' placeholder='789010' />
+      <Form.Item
+        name='ogrn'
+        label={t('customerForm.labels.ogrn')}
+        rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+      >
+        <Input size='large' placeholder={t('customerForm.placeholders.ogrn')} />
       </Form.Item>
 
       <Form.Item
         name='passportData'
-        label='Паспортные данные'
-        rules={[{ required: true, message: 'Пожалуйста, введите паспортные данные!' }]}
+        label={t('customerForm.labels.passportData')}
+        rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
       >
-        <Input size='large' placeholder='AB123456' />
+        <Input size='large' placeholder={t('customerForm.placeholders.passportData')} />
       </Form.Item>
 
       <Form.Item
         name='contactData'
-        label='Контактные данные'
-        rules={[{ required: true, message: 'Пожалуйста, введите контактные данные!' }]}
+        label={t('customerForm.labels.contactData')}
+        rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
       >
-        <Input size='large' placeholder='0999700700' />
+        <Input size='large' placeholder={t('customerForm.placeholders.contactData')} />
       </Form.Item>
     </>
   );

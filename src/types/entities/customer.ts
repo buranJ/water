@@ -1,3 +1,5 @@
+import { IHistoryType } from 'types/common';
+
 export interface ICustomer {
   id: number;
   inn: string;
@@ -18,4 +20,10 @@ export interface ICustomerParams {
   status?: 'active' | 'rejected';
   page: number;
   page_size: number;
+}
+
+export interface ICustomerChangeHistory {
+  history_user?: string;
+  history_date: string;
+  history_type: IHistoryType;
 }

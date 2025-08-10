@@ -107,7 +107,7 @@ export const CustomerDetails: FC<{ title?: string }> = ({ title }) => {
               {data.category === '1' ? t('customers.category.physicalFull') : t('customers.category.legalFull')}
             </Typography.Text>
             <div style={{ marginBottom: 8 }}>
-              <b>ИНН:</b>
+              <b>{t('applicationsCreate.form.labels.inn')}:</b>
               <div>{data.inn}</div>
             </div>
             <div style={{ marginBottom: 8 }}>
@@ -139,21 +139,21 @@ export const CustomerDetails: FC<{ title?: string }> = ({ title }) => {
 
       case 'objects':
         return (
-          <Card title={`Объекты клиента (${data.customer_objects?.length || 0})`}>
+          <Card title={`${t('customers.details.tabs.objects')} (${data.customer_objects?.length || 0})`}>
             <ObjectsTab objects={data.customer_objects || []} />
           </Card>
         );
 
       case 'applications':
         return (
-          <Card title={`Заявки клиента (${data.customer_applications?.length || 0})`}>
+          <Card title={`${t('customers.details.tabs.applications')} (${data.customer_applications?.length || 0})`}>
             <ApplicationsTab applications={data.customer_applications || []} />
           </Card>
         );
 
       case 'payments':
         return (
-          <Card title={`Платежи клиента (${data.customer_payments?.length || 0})`}>
+          <Card title={`${t('customers.details.tabs.payments')} (${data.customer_payments?.length || 0})`}>
             <CustomerPaymentsTab payments={data.customer_payments || []} />
           </Card>
         );

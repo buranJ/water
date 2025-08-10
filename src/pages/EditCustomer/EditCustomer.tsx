@@ -1,5 +1,6 @@
 import { FC, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { Form, message } from 'antd';
 import { CustomerForm, CustomerFormData } from 'components/CustomerForm/CustomerForm';
 import { DashboardLayout } from 'components/DashboardLayout';
@@ -12,6 +13,7 @@ interface IProps {
 
 export const EditCustomer: FC<IProps> = ({ title }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { customerId } = useParams<{ customerId: string }>();
   const { data } = useGetCustomerByIdQuery(customerId || '');
   const [updateCustomer] = useUpdateCustomerMutation();
@@ -56,16 +58,16 @@ export const EditCustomer: FC<IProps> = ({ title }) => {
           status: value.status
         }
       }).unwrap();
-      message.success('Заказчик успешно обновлен');
+      message.success(t('customers.messages.updated'));
       navigate('/dashboard/customers');
     } catch (error: any) {
       if (error?.data && typeof error.data === 'object') {
         const messages = Object.entries(error.data)
           .map(([field, msg]) => `${field}: ${Array.isArray(msg) ? msg.join(', ') : msg}`)
           .join('; ');
-        message.error(`Ошибка: ${messages}`);
+        message.error(`${t('common.errorPrefix')}${messages}`);
       } else {
-        message.error('Ошибка при обновлении заказчика');
+        message.error(t('customers.messages.updateError'));
       }
       console.error('Ошибка при обновлении заказчика:', error);
     }
@@ -77,7 +79,7 @@ export const EditCustomer: FC<IProps> = ({ title }) => {
 
   return (
     <DashboardLayout title={title}>
-      <CustomerForm onCancel={onCancel} onSave={onSave} initialValues={initialValues} form={form} submitText='Сохранить' />
+      <CustomerForm onCancel={onCancel} onSave={onSave} initialValues={initialValues} form={form} />
     </DashboardLayout>
   );
 };

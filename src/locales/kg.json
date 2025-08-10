@@ -44,7 +44,8 @@
     "profile": "Профиль",
     "technicalSpecificatio": "Техникалык шарттар",
     "applicationDetails": "Арыз №",
-    "tuNumberPrefix": "ТУ №"
+    "tuNumberPrefix": "ТУ №",
+    "changeHistory": "ТУ өзгөрүүлөр тарыхы"
   },
   "profile": {
     "title": "Жөндөөлөр",
@@ -255,6 +256,12 @@
     "contentNotImplemented": "\"{{title}}\" үчүн контент али ишке ашырыла элек",
     "hint": {
       "uploadToFinishTu": "ТУ түзүүнү аяктоо үчүн тиешелүү документти жүктөңүз"
+    },
+    "tabs": {
+      "data": "Маалымат",
+      "architecture": "Архитектура",
+      "documents": "Документтер",
+      "accounting": "Бухгалтерия"
     },
     "notSpecified": "Көрсөтүлгөн эмес",
     "loadError": "Жүктөө катасы",
@@ -547,6 +554,22 @@
       }
     }
   },
+  "changeHistory": {
+    "status": {
+      "created": "Түзүлдү",
+      "deleted": "Өчүрүлдү",
+      "updated": "Өзгөртүлдү"
+    },
+    "columns": {
+      "id": "ID",
+      "user": "Кызматкер",
+      "date": "Күнү",
+      "type": "Тиби",
+      "field": "Талаа",
+      "oldValue": "Эски маани",
+      "newValue": "Жаңы маани"
+    }
+  },
   "objects": {
     "searchPlaceholder": "Объекттерди табуу",
     "notFound": "Объекттер табылган жок",
@@ -569,11 +592,74 @@
       "inactive": "Иштебейт"
     },
     "details": {
+      "tabs": {
+        "data": "Маалымат",
+        "objects": "Объекттер",
+        "applications": "Арыздар",
+        "documents": "Документтер",
+        "payments": "Төлөмдөр"
+      },
+      "loadError": "Кардар боюнча маалыматты жүктөө мүмкүн болгон жок",
+      "notCreated": "Түзүлгөн эмес",
+      "details": "Толугураак",
+      "showOnMap": "Картада көрсөтүү",
+      "parameters": "Параметрлер",
+      "columns": {
+        "index": "№",
+        "object": "Объект",
+        "objectName": "Объекттин аталышы",
+        "address": "Дарек",
+        "contact": "Байланыш",
+        "parameters": "Параметрлер",
+        "status": "Статус",
+        "tu": "ТУ",
+        "tuStatus": "ТУ статусу",
+        "objectStatus": "Объект статусу",
+        "createdAt": "Түзүлгөн күнү",
+        "actions": "Аракеттер"
+      },
+      "empty": {
+        "applications": "Кардарда арыздар жок",
+        "objects": "Кардарда объекттер жок"
+      },
+      "paymentsSummary": {
+        "totalAmount": "Төлөмдөрдүн жалпы суммасы",
+        "totalCount": "Төлөмдөрдүн саны"
+      },
       "contract": {
         "contractDate": "Келишим датасы",
         "tuStatus": "Арыздар жана ТУ статусу",
         "cost": "Келишим баасы"
       }
+    }
+  },
+  "customerForm": {
+    "labels": {
+      "type": "Түрүн тандоо",
+      "individual": "Физикалык жак",
+      "legal": "Юридикалык жак",
+      "addressReg": "Катталган дарек",
+      "status": "Статус",
+      "companyName": "Компаниянын аталышы",
+      "ogrn": "ОГРН",
+      "passportData": "Паспорттук маалымат",
+      "contactData": "Байланыш маалыматтары",
+      "fio": "Аты-жөнү"
+    },
+    "placeholders": {
+      "address": "Даректи киргизиңиз",
+      "selectStatus": "Статусту тандаңыз",
+      "companyName": "Компаниянын аталышы",
+      "ogrn": "789010",
+      "passportData": "AB123456",
+      "contactData": "0999700700",
+      "fullName": "Аты-жөнү",
+      "inn": "123456789010"
+    },
+    "validation": {
+      "pleaseSelectType": "Сураныч, түрүн тандаңыз!",
+      "pleaseEnterAddress": "Сураныч, даректи киргизиңиз!",
+      "pleaseSelectStatus": "Сураныч, статусту тандаңыз!"
     }
   },
   "addTuForms": {
