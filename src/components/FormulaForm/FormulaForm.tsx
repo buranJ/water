@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Form, Input, InputNumber, Modal } from 'antd';
 
 export interface FormulaFormData {
@@ -15,6 +16,7 @@ interface FormulaFormProps {
 
 export const FormulaForm: FC<FormulaFormProps> = ({ visible, loading = false, onSubmit, onCancel }) => {
   const [form] = Form.useForm<FormulaFormData>();
+  const { t } = useTranslation();
 
   const handleSubmit = async (): Promise<void> => {
     try {
@@ -33,7 +35,7 @@ export const FormulaForm: FC<FormulaFormProps> = ({ visible, loading = false, on
 
   return (
     <Modal
-      title='Добавление формулы'
+      title={t('formulas.form.modals.addTitle')}
       open={visible}
       onCancel={handleCancel}
       footer={null}
@@ -53,16 +55,16 @@ export const FormulaForm: FC<FormulaFormProps> = ({ visible, loading = false, on
       <Form form={form} layout='vertical' onFinish={handleSubmit} size='large' style={{ marginTop: 24 }}>
         <Form.Item
           name='title'
-          label={<span style={{ fontSize: 16, fontWeight: 500, color: '#1d1d1f' }}>Название *</span>}
+          label={t('formulas.form.labels.title')}
           rules={[
-            { required: true, message: 'Введите название формулы' },
-            { min: 2, message: 'Название должно содержать минимум 2 символа' },
-            { max: 100, message: 'Название не должно превышать 100 символов' }
+            { required: true, message: t('formulas.form.validation.titleRequired') },
+            { min: 2, message: t('formulas.form.validation.titleMin') },
+            { max: 100, message: t('formulas.form.validation.titleMax') }
           ]}
           style={{ marginBottom: 24 }}
         >
           <Input
-            placeholder='Заполните'
+            placeholder={t('formulas.form.placeholders.fill')}
             style={{
               height: 48,
               borderRadius: 12,
@@ -75,16 +77,16 @@ export const FormulaForm: FC<FormulaFormProps> = ({ visible, loading = false, on
 
         <Form.Item
           name='koefficent'
-          label={<span style={{ fontSize: 16, fontWeight: 500, color: '#1d1d1f' }}>Коэффициент *</span>}
+          label={t('formulas.form.labels.coefficient')}
           rules={[
-            { required: true, message: 'Введите коэффициент' },
-            { type: 'number', min: 0, message: 'Коэффициент не может быть отрицательным' },
-            { type: 'number', max: 999999, message: 'Коэффициент слишком большой' }
+            { required: true, message: t('formulas.form.validation.coefRequired') },
+            { type: 'number', min: 0, message: t('formulas.form.validation.coefNonNegative') },
+            { type: 'number', max: 999999, message: t('formulas.form.validation.coefTooLarge') }
           ]}
           style={{ marginBottom: 32 }}
         >
           <InputNumber
-            placeholder='Заполните'
+            placeholder={t('formulas.form.placeholders.fill')}
             step={0.1}
             precision={2}
             style={{
@@ -113,7 +115,7 @@ export const FormulaForm: FC<FormulaFormProps> = ({ visible, loading = false, on
               minWidth: 100
             }}
           >
-            Назад
+            {t('common.back')}
           </Button>
 
           <Button
@@ -131,7 +133,7 @@ export const FormulaForm: FC<FormulaFormProps> = ({ visible, loading = false, on
               minWidth: 120
             }}
           >
-            Добавить
+            {t('formulas.add')}
           </Button>
         </div>
       </Form>

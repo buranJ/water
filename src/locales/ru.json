@@ -444,6 +444,30 @@
     "notFound": "Формулы не найдены",
     "changeSearch": "Попробуйте изменить параметры поиска",
     "startCreate": "Начните с создания первой формулы",
+    "coefficient": "Коэффициент",
+    "deleteTitle": "Удаление формулы",
+    "deleteConfirm": "Вы уверены, что хотите удалить формулу \"{{title}}\"?",
+    "form": {
+      "modals": {
+        "addTitle": "Добавление формулы",
+        "editTitle": "Редактирование формулы"
+      },
+      "labels": {
+        "title": "Название *",
+        "coefficient": "Коэффициент *"
+      },
+      "placeholders": {
+        "fill": "Заполните"
+      },
+      "validation": {
+        "titleRequired": "Введите название формулы",
+        "titleMin": "Название должно содержать минимум 2 символа",
+        "titleMax": "Название не должно превышать 100 символов",
+        "coefRequired": "Введите коэффициент",
+        "coefNonNegative": "Коэффициент не может быть отрицательным",
+        "coefTooLarge": "Коэффициент слишком большой"
+      }
+    },
     "messages": {
       "created": "Формула успешно создана",
       "updated": "Формула успешно обновлена",
@@ -516,7 +540,15 @@
       "uploadDate": "Дата загрузки",
       "actions": "Действия"
     },
-    "noDocs": "Нет загруженных документов"
+    "noDocs": "Нет загруженных документов",
+    "messages": {
+      "approveSuccess": "Заявка одобрена",
+      "approveError": "Ошибка при одобрении заявки",
+      "rejectSuccess": "Заявка отклонена",
+      "rejectError": "Ошибка при отклонении заявки",
+      "fileDeleted": "Файл удален",
+      "fileDeleteError": "Не удалось удалить файл"
+    }
   },
   "architecture": {
     "titles": {
@@ -679,7 +711,8 @@
     "buttons": {
       "downloadProtocol": "Скачать протокол",
       "closeInvoice": "Закрыть счёт",
-      "generateInvoice": "Сгенерировать счет на оплату"
+      "generateInvoice": "Сгенерировать счет на оплату",
+      "downloadInvoice": "Скачать счет"
     },
     "paid": "Оплачено:",
     "invoice": {
@@ -892,6 +925,28 @@
     "totalWithoutVat": "Всего (без НДС)",
     "extraText": "Дополнительный текст или контент протокола..."
   },
+  "protocolEdit": {
+    "title": "Редактирование протокола",
+    "sections": {
+      "main": "Основные данные",
+      "cost": "Стоимость",
+      "total": "Итоговая сумма"
+    },
+    "fields": {
+      "load": "Нагрузка",
+      "coefficient": "Коэффициент",
+      "waterPrice": "Стоимость водопровода",
+      "kanalPrice": "Стоимость канализации",
+      "totalWater": "Общая сумма водопровода",
+      "totalKanal": "Общая сумма канализации"
+    },
+    "placeholders": {
+      "enterLoad": "Введите нагрузку",
+      "enterCoeff": "Введите коэффициент",
+      "enterCost": "Введите стоимость",
+      "enterTotal": "Введите общую сумму"
+    }
+  },
   "notification": {
     "active": "Активные",
     "new": "Новые",
@@ -916,6 +971,20 @@
       "loadErrorTitle": "Ошибка загрузки",
       "loadErrorDesc": "Не удалось загрузить данные платежей",
       "invoiceFullyPaid": "Счёт полностью оплачен"
+    }
+  },
+  "accounting": {
+    "errors": {
+      "loadTitle": "Ошибка загрузки",
+      "loadDesc": "Не удалось загрузить данные бухгалтерии"
+    },
+    "messages": {
+      "generateInvoiceSuccess": "Счет успешно сгенерирован",
+      "invoiceFileUnavailable": "Файл счета недоступен для скачивания",
+      "protocolDownloaded": "Протокол успешно скачан",
+      "needCreateInvoiceFirst": "Для просмотра платежей необходимо сначала создать счет",
+      "paidTag": "(Оплачено)",
+      "protocolUpdated": "Протокол успешно обновлен"
     }
   }
 }

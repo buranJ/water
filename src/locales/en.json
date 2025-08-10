@@ -441,6 +441,30 @@
     "notFound": "No formulas found",
     "changeSearch": "Try adjusting your search parameters",
     "startCreate": "Start by creating your first formula",
+    "coefficient": "Coefficient",
+    "deleteTitle": "Delete formula",
+    "deleteConfirm": "Are you sure you want to delete the formula \"{{title}}\"?",
+    "form": {
+      "modals": {
+        "addTitle": "Add formula",
+        "editTitle": "Edit formula"
+      },
+      "labels": {
+        "title": "Title *",
+        "coefficient": "Coefficient *"
+      },
+      "placeholders": {
+        "fill": "Fill in"
+      },
+      "validation": {
+        "titleRequired": "Enter the formula title",
+        "titleMin": "Title must be at least 2 characters",
+        "titleMax": "Title must not exceed 100 characters",
+        "coefRequired": "Enter the coefficient",
+        "coefNonNegative": "Coefficient cannot be negative",
+        "coefTooLarge": "Coefficient is too large"
+      }
+    },
     "messages": {
       "created": "Formula created successfully",
       "updated": "Formula updated successfully",
@@ -513,7 +537,15 @@
       "uploadDate": "Upload date",
       "actions": "Actions"
     },
-    "noDocs": "No uploaded documents"
+    "noDocs": "No uploaded documents",
+    "messages": {
+      "approveSuccess": "Application approved",
+      "approveError": "Error approving application",
+      "rejectSuccess": "Application rejected",
+      "rejectError": "Error rejecting application",
+      "fileDeleted": "File deleted",
+      "fileDeleteError": "Failed to delete file"
+    }
   },
   "architecture": {
     "titles": {
@@ -676,7 +708,8 @@
     "buttons": {
       "downloadProtocol": "Download protocol",
       "closeInvoice": "Close invoice",
-      "generateInvoice": "Generate invoice"
+      "generateInvoice": "Generate invoice",
+      "downloadInvoice": "Download invoice"
     },
     "paid": "Paid:",
     "invoice": {
@@ -889,6 +922,28 @@
     "totalWithoutVat": "Total (excl. VAT)",
     "extraText": "Additional protocol text or content..."
   },
+  "protocolEdit": {
+    "title": "Edit protocol",
+    "sections": {
+      "main": "Main data",
+      "cost": "Cost",
+      "total": "Total amount"
+    },
+    "fields": {
+      "load": "Load",
+      "coefficient": "Coefficient",
+      "waterPrice": "Water supply cost",
+      "kanalPrice": "Sewer cost",
+      "totalWater": "Total water supply amount",
+      "totalKanal": "Total sewer amount"
+    },
+    "placeholders": {
+      "enterLoad": "Enter load",
+      "enterCoeff": "Enter coefficient",
+      "enterCost": "Enter cost",
+      "enterTotal": "Enter total amount"
+    }
+  },
   "notification": {
     "active": "Active",
     "new": "New",
@@ -913,6 +968,20 @@
       "loadErrorTitle": "Load error",
       "loadErrorDesc": "Failed to load payments data",
       "invoiceFullyPaid": "Invoice fully paid"
+    }
+  },
+  "accounting": {
+    "errors": {
+      "loadTitle": "Load error",
+      "loadDesc": "Failed to load accounting data"
+    },
+    "messages": {
+      "generateInvoiceSuccess": "Invoice generated successfully",
+      "invoiceFileUnavailable": "Invoice file is not available for download",
+      "protocolDownloaded": "Protocol downloaded successfully",
+      "needCreateInvoiceFirst": "To view payments, you must first create an invoice",
+      "paidTag": "(Paid)",
+      "protocolUpdated": "Protocol updated successfully"
     }
   }
 }

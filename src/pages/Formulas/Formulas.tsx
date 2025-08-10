@@ -70,7 +70,7 @@ export const Formulas: FC<FormulasProps> = ({ title }) => {
             return `${field}: ${errorMsg}`;
           })
           .join('; ');
-        message.error(`Ошибка: ${messages}`);
+        message.error(`${t('common.errorPrefix')}${messages}`);
       } else {
         message.error(t('formulas.messages.createError'));
       }
@@ -114,7 +114,7 @@ export const Formulas: FC<FormulasProps> = ({ title }) => {
             return `${field}: ${errorMsg}`;
           })
           .join('; ');
-        message.error(`Ошибка: ${messages}`);
+        message.error(`${t('common.errorPrefix')}${messages}`);
       } else {
         message.error(t('formulas.messages.updateError'));
       }
@@ -146,7 +146,7 @@ export const Formulas: FC<FormulasProps> = ({ title }) => {
             return `${field}: ${errorMsg}`;
           })
           .join('; ');
-        message.error(`Ошибка: ${messages}`);
+        message.error(`${t('common.errorPrefix')}${messages}`);
       } else {
         message.error(t('formulas.messages.deleteError'));
       }
