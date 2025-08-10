@@ -1,4 +1,4 @@
-import { FC, useRef, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Alert, Button, Card, message, Modal, Spin, Tabs, Tag, Typography } from 'antd';
 import {
@@ -12,8 +12,15 @@ import {
   UploadOutlined
 } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
+import { RejectApplicationModal } from 'components/Modal';
 
-import { useDeleteApplicationFileMutation, useGetApplicationByIdQuery, useUploadApplicationFilesMutation } from 'api/Application.api';
+import {
+  useApproveApplicationMutation,
+  useDeleteApplicationFileMutation,
+  useGetApplicationByIdQuery,
+  useUploadApplicationFilesMutation
+} from 'api/Application.api';
+import { RefusalBody, useCreateRefusalMutation } from 'api/Refusal.api';
 import { t } from 'i18next';
 
 type ApplicationFileItem = string | { id: number; file: string; created_at?: string };
@@ -32,6 +39,36 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
   const [deleteApplicationFile] = useDeleteApplicationFileMutation();
   const [uploadApplicationFiles] = useUploadApplicationFilesMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [approveApplication, { isSuccess: isApproveSuccess, isError: isApproveError }] = useApproveApplicationMutation();
+  const [createRefuse, { isSuccess: isRejectSuccess, isError: isRejectError }] = useCreateRefusalMutation();
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const openRejectModal = () => setIsRejectModalOpen(true);
+  const closeRejectModal = () => setIsRejectModalOpen(false);
+  const handleReject = (values: RefusalBody) => {
+    closeRejectModal();
+    createRefuse({ ...values, application: String(id || '') });
+  };
+
+  useEffect(() => {
+    if (isApproveSuccess) {
+      message.success('Заявка одобрена');
+    }
+    if (isApproveError) {
+      message.error('Ошибка при одобрении заявки');
+    }
+    if (isRejectSuccess) {
+      message.success('Заявка отклонена');
+    }
+    if (isRejectError) {
+      message.error('Ошибка при отклонении заявки');
+    }
+  }, [isApproveError, isApproveSuccess, isRejectError, isRejectSuccess]);
+
+  useEffect(() => {
+    if (isApproveSuccess || isRejectSuccess) {
+      refetch();
+    }
+  }, [isApproveSuccess, isRejectSuccess, refetch]);
 
   return (
     <DashboardLayout title={t(title) + id}>
@@ -39,8 +76,25 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
         <Button icon={<DownloadOutlined />}>{t('applicationDetails.buttons.pdf')}</Button>
         <Button onClick={() => navigate(`/dashboard/applications/${id}/edit`)}>{t('applicationDetails.buttons.edit')}</Button>
         <Button onClick={() => navigate(`/dashboard/applications/${id}/change-history`)}>История изменений</Button>
-        <Button type='primary'>{t('applicationDetails.buttons.createTu')}</Button>
-        <Button danger>{t('applicationDetails.buttons.rejectTu')}</Button>
+        {data?.status === 'pending' && (
+          <>
+            <Button onClick={openRejectModal}>{t('applications.actions.reject')}</Button>
+            <Button type='primary' onClick={() => approveApplication({ applicationId: String(id) })}>
+              {t('applications.actions.approve')}
+            </Button>
+          </>
+        )}
+        {data?.status === 'approved' && (
+          <Button type='primary' onClick={() => navigate(`/dashboard/add-tu-forms/${data.ty_id}`)}>
+            {t('applications.actions.create')}
+          </Button>
+        )}
+        {data?.status === 'contracted' && data?.ty_id && (
+          <Button type='primary' onClick={() => navigate(`/dashboard/technical-conditions/tu-details/${data.ty_id}`)}>
+            {t('applications.actions.goToTu')}
+          </Button>
+        )}
+        {data?.status === 'rejected' && <Button danger>{t('applications.actions.decline')}</Button>}
       </div>
       <Tabs items={tabItems} activeKey={activeTab} onChange={setActiveTab} style={{ marginBottom: 24 }} />
       {isLoading ? (
@@ -203,6 +257,7 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
           )}
         </>
       ) : null}
+      <RejectApplicationModal open={isRejectModalOpen} onCancel={closeRejectModal} onReject={handleReject} />
     </DashboardLayout>
   );
 };
