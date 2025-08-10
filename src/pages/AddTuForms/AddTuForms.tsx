@@ -14,6 +14,21 @@ import { t } from 'i18next';
 const { Option } = Select;
 const { Title } = Typography;
 
+type FormValues = Omit<ITyItem, 'type_ty' | 'customer' | 'application'> & {
+  type_ty: number;
+  customer: string;
+  application: number;
+};
+
+const getTypeTyId = (tt: unknown): number | undefined => {
+  if (typeof tt === 'number') return tt;
+  if (tt && typeof tt === 'object' && 'id' in (tt as Record<string, unknown>)) {
+    const id = (tt as { id?: number }).id;
+    return typeof id === 'number' ? id : undefined;
+  }
+  return undefined;
+};
+
 const AddTuForms: FC<{ title: string }> = ({ title }) => {
   const navigate = useNavigate();
   const { tyId } = useParams();
@@ -22,14 +37,14 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
   const [updateTy, { isLoading, isSuccess }] = useUpdateTyMutation();
   const tuQuery = useGetTyByIdQuery({ tyId: tyId || '' });
   const [getObject] = useLazyGetAllObjectsQuery();
-  const [form] = Form.useForm<ITyItem>();
+  const [form] = Form.useForm<FormValues>();
 
   const formatDate = useCallback((date: Dayjs | undefined) => date?.format('YYYY-MM-DD') || '', []);
 
   const parseDate = useCallback((dateString: string | undefined) => (dateString ? dayjs(dateString) : null), []);
 
   const onFinish = useCallback(
-    async (values: ITyItem) => {
+    async (values: FormValues) => {
       try {
         if (!tuQuery.data) {
           message.error(t('addTuForms.messages.loadTuError'));
@@ -37,12 +52,14 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         }
 
         const payload = {
-          ...tuQuery,
           ...values,
-          customer: tuQuery.data?.customer.id,
+          customer: tuQuery.data.customer.id,
+          application: tuQuery.data.application!.id,
+          entity: tuQuery.data.entity,
           request_date: values.request_date,
           payment_deadline: values.payment_deadline,
-          entity: tuQuery.data?.entity
+          // Select возвращает id типа, поэтому отправляем число, а не объект
+          type_ty: values.type_ty
         };
         updateTy({ id: tyId as string, body: payload });
       } catch (e) {
@@ -63,12 +80,15 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
   useEffect(() => {
     if (tuQuery.data) {
+      console.log(tuQuery?.data);
       form.setFieldsValue({
         ...tuQuery.data,
         customer: tuQuery.data.customer.full_name,
         application: tuQuery.data.application?.id,
         request_date: tuQuery.data.request_date,
-        payment_deadline: tuQuery.data.payment_deadline
+        payment_deadline: tuQuery.data.payment_deadline,
+        // Для Select поле ожидает id. Бэк может вернуть либо объект, либо число.
+        type_ty: getTypeTyId(tuQuery.data.type_ty)
       });
     }
   }, [form, getObject, tuQuery]);
@@ -195,7 +215,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           <Col span={12}>
             <Form.Item
               label={t('addTuForms.form.labels.techConditionType')}
-              name='tech_conditionType'
+              name='type_ty'
               rules={[{ required: true, message: t('addTuForms.form.validation.selectType') }]}
             >
               <Select size='large' placeholder={t('addTuForms.form.placeholders.techConditionType')}>

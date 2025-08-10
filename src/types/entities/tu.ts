@@ -99,6 +99,10 @@ export interface IGetTyById {
   author: number;
   formula: number;
   responsible?: number;
+  type_ty: {
+    id: number;
+    title: string;
+  } | null;
 }
 
 export interface ITyItem {
@@ -143,6 +147,10 @@ export interface ITyItem {
   responsible: number;
   application: number;
   payment_deadline: Date;
+  type_ty: {
+    id: number;
+    title: string;
+  };
 }
 
 export interface ITyBody {
