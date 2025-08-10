@@ -37,3 +37,4 @@ export type {
   IUpdateTechnicalConditionParams,
   IUpdateTechnicalConditionResponse
 } from './technicalCondition.requests';
+export type { IGetObjectChangeHistoryParams, IGetObjectChangeHistoryResponse } from './object.requests';
