@@ -11,6 +11,7 @@ import './styles.scss';
 import { useCreateApplicationMutation, useUploadApplicationFilesMutation } from 'api/Application.api';
 import { useCreateCustomerMutation, useLazyGetCustomerQuery } from 'api/Customer.api';
 import { useCreateObjectMutation, useLazyGetAllObjectsQuery } from 'api/Object.api';
+import { useCreateTyFromApplicationMutation } from 'api/Ty.api';
 import { t } from 'i18next';
 
 interface IProps {
@@ -23,6 +24,7 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
   const [uploadApplicationFiles] = useUploadApplicationFilesMutation();
   const [createCustomer, { isLoading: isCreatingCustomer }] = useCreateCustomerMutation();
   const [createObject, { isLoading: isCreatingObject }] = useCreateObjectMutation();
+  const [createTy] = useCreateTyFromApplicationMutation();
   const [triggerGetCustomers] = useLazyGetCustomerQuery();
   const [triggerGetObjects] = useLazyGetAllObjectsQuery();
   const [form] = Form.useForm<IApplication>();
@@ -88,6 +90,10 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
         status: 'pending',
         entity: objectId
       }).unwrap();
+
+      if (application.id) {
+        await createTy({ application_id: application.id });
+      }
 
       // 4. Загрузка файлов, если есть
       if (attachedFiles.length > 0) {
