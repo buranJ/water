@@ -58,7 +58,19 @@
     "confirmTitle": "Logout Confirmation",
     "confirmLogout": "Are you sure you want to log out?",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "error": {
+      "title": "Profile load error",
+      "description": "Failed to load user data"
+    },
+    "userInfo": {
+      "title": "User information:",
+      "id": "User ID:",
+      "email": "Email:",
+      "phone": "Phone:",
+      "provider": "Provider:"
+    },
+    "user": "User"
   },
   "filterBar": {
     "search": "Search",
@@ -128,7 +140,15 @@
     "uploadFile": "Upload file",
     "bytes": "bytes",
     "selectedFiles": "Selected files: {{count}}",
-    "errorPrefix": "Error: "
+    "errorPrefix": "Error: ",
+    "remaining": "Remaining",
+    "coordinates": "Coordinates",
+    "area": "Area",
+    "save": "Save",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "latitude": "Latitude",
+    "longitude": "Longitude"
   },
   "geoportal": {
     "errorLoad": "Failed to load data",
@@ -136,7 +156,8 @@
     "apiError": "Failed to load data from the API. Please try again later.",
     "tryAgain": "Try again",
     "foundCount": "Found objects: {{count}} of {{total}}",
-    "resetFilters": "Reset filters"
+    "resetFilters": "Reset filters",
+    "loading": "Loading map data..."
   },
   "objectDetail": {
     "title": "Object details",
@@ -332,6 +353,13 @@
     "messages": {
       "created": "Customer created successfully",
       "createError": "Error creating customer"
+    },
+    "details": {
+      "contract": {
+        "contractDate": "Contract date",
+        "tuStatus": "Applications and TU status",
+        "cost": "Contract cost"
+      }
     }
   },
   "formulas": {
@@ -360,7 +388,9 @@
     "messages": {
       "created": "Object created successfully",
       "createError": "Error creating object",
-      "loadError": "Error loading objects"
+      "loadError": "Error loading objects",
+      "updated": "Object updated successfully",
+      "updateError": "Error updating object"
     }
   },
   "tuRejectModal": {
@@ -772,6 +802,15 @@
     "tuSewer": "TU sewer",
     "totalWithoutVat": "Total (excl. VAT)",
     "extraText": "Additional protocol text or content..."
+  },
+  "notification": {
+    "active": "Active",
+    "new": "New",
+    "assignResponsible": "Assign responsible",
+    "openTu": "Open TU",
+    "time": {
+      "weekAgo": "a week ago"
+    }
   },
   "paymentsTab": {
     "buttons": {

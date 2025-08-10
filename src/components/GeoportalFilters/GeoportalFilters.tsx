@@ -1,10 +1,7 @@
 import React, { type FC } from 'react';
-import type { MenuProps } from 'antd';
-import { Badge, Button, Flex, Input, Space, Tooltip } from 'antd';
-import { Dropdown } from 'antd';
+import { useTranslation } from 'react-i18next';
+import { Badge, Button, Dropdown, Flex, Input, type MenuProps, Space, Tooltip } from 'antd';
 import { ClearOutlined, DownOutlined, FilterOutlined, PlusOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
-
-// import { t } from 'i18next';
 
 export interface Filters {
   search: string;
@@ -20,28 +17,6 @@ interface GeoportalFiltersProps {
   totalCount?: number;
   filteredCount?: number;
 }
-
-const statusItems: MenuProps['items'] = [
-  { label: 'Все статусы', key: 'all' },
-  { label: '✅ Активный', key: 'active' },
-  { label: '❌ Неактивный', key: 'inactive' },
-  { label: '📦 Архивный', key: 'archived' }
-];
-
-const getFilterLabel = (items: MenuProps['items'], key: string | null): string => {
-  if (!key) {
-    const firstItem = items?.[0];
-    return firstItem && typeof firstItem === 'object' && 'label' in firstItem ? (firstItem.label as string) : 'Выберите';
-  }
-
-  const item = items?.find(
-    (item): item is { label: React.ReactNode; key: string } =>
-      typeof item === 'object' && item !== null && 'key' in item && item.key === key && 'label' in item
-  );
-
-  return item ? (item.label as string) : 'Не найдено';
-};
-
 export const GeoportalFilters: FC<GeoportalFiltersProps> = ({
   filters,
   onSearchChange,
@@ -51,6 +26,28 @@ export const GeoportalFilters: FC<GeoportalFiltersProps> = ({
   totalCount = 0,
   filteredCount = 0
 }) => {
+  const { t } = useTranslation();
+
+  const getFilterLabel = (items: MenuProps['items'], key: string | null): string => {
+    if (!key) {
+      const firstItem = items?.[0];
+      return firstItem && typeof firstItem === 'object' && 'label' in firstItem ? (firstItem.label as string) : '';
+    }
+
+    const item = items?.find(
+      (item): item is { label: React.ReactNode; key: string } =>
+        typeof item === 'object' && item !== null && 'key' in item && item.key === key && 'label' in item
+    );
+
+    return item ? (item.label as string) : '';
+  };
+
+  const statusItems: MenuProps['items'] = [
+    { label: t('geoportalFilters.status.all'), key: 'all' },
+    { label: `✅ ${t('geoportalFilters.status.active')}`, key: 'active' },
+    { label: `❌ ${t('geoportalFilters.status.inactive')}`, key: 'inactive' },
+    { label: `📦 ${t('tuDetails.status.archived')}`, key: 'archived' }
+  ];
   const handleStatusFilter: MenuProps['onClick'] = (e) => {
     const status = e.key === 'all' ? null : e.key;
     onFilterChange('status', status);
@@ -76,7 +73,7 @@ export const GeoportalFilters: FC<GeoportalFiltersProps> = ({
     <Flex gap={12} style={{ marginBottom: 16 }} wrap='wrap' align='center'>
       <Input
         prefix={<SearchOutlined />}
-        placeholder='Поиск по названию, адресу или номеру заявки'
+        placeholder={t('geoportalFilters.searchPlaceholder')}
         value={filters.search}
         onChange={handleSearchChange}
         style={{ minWidth: 300, maxWidth: 400 }}
@@ -106,32 +103,29 @@ export const GeoportalFilters: FC<GeoportalFiltersProps> = ({
       </Badge>
 
       <Button type='primary' icon={<PlusOutlined />} disabled={isLoading}>
-        Добавить объект
+        {t('objects.add')}
       </Button>
 
-      <Tooltip title='Обновить данные'>
+      <Tooltip title={t('common.refresh')}>
         <Button icon={<ReloadOutlined />} onClick={onRefresh} loading={isLoading} />
       </Tooltip>
 
       {hasActiveFilters && (
-        <Tooltip title={`Активно фильтров: ${activeFiltersCount}`}>
+        <Tooltip title={`${t('geoportal.resetFilters')} (${activeFiltersCount})`}>
           <Button type='text' icon={<ClearOutlined />} onClick={handleResetFilters} disabled={isLoading} danger>
-            Сбросить ({activeFiltersCount})
+            {t('geoportal.resetFilters')} ({activeFiltersCount})
           </Button>
         </Tooltip>
       )}
 
       {(totalCount > 0 || filteredCount > 0) && (
         <div style={{ marginLeft: 'auto', fontSize: '12px', color: '#666' }}>
-          {hasActiveFilters ? (
-            <span>
-              Показано: <strong>{filteredCount}</strong> из <strong>{totalCount}</strong>
-            </span>
-          ) : (
-            <span>
-              Всего объектов: <strong>{totalCount}</strong>
-            </span>
-          )}
+          <span>
+            {t('geoportal.foundCount', {
+              count: hasActiveFilters ? filteredCount : totalCount,
+              total: totalCount
+            })}
+          </span>
         </div>
       )}
     </Flex>
