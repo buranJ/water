@@ -33,3 +33,15 @@ export interface ICreateApplicationResponse extends IApplication {
   created_at: string;
   updated_at: string;
 }
+
+export interface IApplicationHistory {
+  history_id: string;
+  history_date: string;
+  history_user: string;
+  history_type: string;
+  history_type_display: string;
+  history_change_reason?: string;
+  changes?: { field: string; new: string; old: string }[];
+  files_as_of: string[];
+  files_added: string[];
+}

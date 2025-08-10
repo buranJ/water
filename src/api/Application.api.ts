@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { getBaseQuery } from 'common/helpers';
 import type { IApplicationResponse, IApplicationsListResponse, ICreateApplicationResponse } from 'types/entities';
-import type { IApplication, IGetApplicationsParams } from 'types/requests';
+import type { IApplication, IGetApplicationHistoryParams, IGetApplicationHistoryResponse, IGetApplicationsParams } from 'types/requests';
 
 export const applicationsApi = createApi({
   reducerPath: 'applicationsApi',
@@ -74,6 +74,13 @@ export const applicationsApi = createApi({
         url: `application/${applicationId}/reject/`,
         method: 'POST'
       })
+    }),
+    getApplicationHistory: build.query<IGetApplicationHistoryResponse, IGetApplicationHistoryParams>({
+      query: ({ application_id, page, page_size }) => ({
+        url: `application/${application_id}/history/`,
+        method: 'GET',
+        params: { page, page_size }
+      })
     })
   })
 });
@@ -87,5 +94,6 @@ export const {
   useReplaceApplicationFileMutation,
   useDeleteApplicationFileMutation,
   useApproveApplicationMutation,
-  useRejectApplicationMutation
+  useRejectApplicationMutation,
+  useGetApplicationHistoryQuery
 } = applicationsApi;

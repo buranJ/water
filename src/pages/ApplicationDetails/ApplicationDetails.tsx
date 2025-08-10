@@ -37,6 +37,7 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginBottom: 16 }}>
         <Button icon={<DownloadOutlined />}>{t('applicationDetails.buttons.pdf')}</Button>
         <Button onClick={() => navigate(`/dashboard/applications/${id}/edit`)}>{t('applicationDetails.buttons.edit')}</Button>
+        <Button onClick={() => navigate(`/dashboard/applications/${id}/change-history`)}>История изменений</Button>
         <Button type='primary'>{t('applicationDetails.buttons.createTu')}</Button>
         <Button danger>{t('applicationDetails.buttons.rejectTu')}</Button>
       </div>

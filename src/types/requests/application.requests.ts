@@ -1,3 +1,6 @@
+import { IPaginationMeta } from 'types/common';
+import { IApplicationHistory } from 'types/entities';
+
 export interface IApplication {
   status: 'pending' | 'rejected' | 'approved' | 'contracted';
   INN: string;
@@ -24,3 +27,13 @@ export interface IGetApplicationsParams {
   page?: number;
   page_size?: number;
 }
+
+export interface IGetApplicationHistoryParams {
+  application_id: string;
+  page?: number;
+  page_size?: number;
+}
+
+export type IGetApplicationHistoryResponse = IPaginationMeta & {
+  results: IApplicationHistory[];
+};
