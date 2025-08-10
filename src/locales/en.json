@@ -611,7 +611,9 @@
         "yPlaceholder": "321"
       },
       "validation": {
-        "required": "Required field"
+        "required": "Required field",
+        "number": "Must be a number",
+        "innLength": "INN must be 14 characters long"
       }
     },
     "buttons": {

@@ -22,6 +22,7 @@ import {
 export const tyApi = createApi({
   reducerPath: 'tyApi',
   baseQuery: getBaseQuery(),
+  tagTypes: ['Ty'],
   endpoints: (build) => ({
     getAllTy: build.query<IGetAllTechnicalConditionResponse, IGetAllTechnicalConditionParams>({
       query: (params) => ({
@@ -43,7 +44,8 @@ export const tyApi = createApi({
       query: ({ tyId }) => ({
         url: `/ty/${tyId}/`,
         method: 'GET'
-      })
+      }),
+      providesTags: (_result, _error, { tyId }) => [{ type: 'Ty', id: tyId }]
     }),
 
     updateTy: build.mutation<IUpdateTechnicalConditionResponse, IUpdateTechnicalConditionParams>({
@@ -51,7 +53,8 @@ export const tyApi = createApi({
         url: `/ty/${id}/`,
         method: 'PUT',
         body
-      })
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: 'Ty', id }]
     }),
 
     patchTy: build.mutation<IPatchTechnicalConditionResponse, IPatchTechnicalConditionParams>({

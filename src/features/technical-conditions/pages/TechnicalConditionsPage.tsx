@@ -26,7 +26,8 @@ export const TechnicalConditionsPage = () => {
 
   const [filters, setFilters] = useState<IGetAllTechnicalConditionParams>({
     page: 1,
-    page_size: 8
+    page_size: 8,
+    ordering: 'created_at'
   });
 
   const { data: tuData, isLoading } = useGetAllTyQuery(filters, {

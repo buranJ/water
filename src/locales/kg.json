@@ -459,7 +459,9 @@
         "yPlaceholder": "321"
       },
       "validation": {
-        "required": "Милдеттүү талаа"
+        "required": "Милдеттүү талаа",
+        "number": "Маалыматты киргизиңиз",
+        "innLength": "ИНН 14 сан болышы керек"
       }
     },
     "buttons": {
