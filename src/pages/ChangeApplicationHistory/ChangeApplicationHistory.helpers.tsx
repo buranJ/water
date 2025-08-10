@@ -1,7 +1,7 @@
 import { Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
-import { IHistoryType } from 'types/entities';
+import { IHistoryType } from 'types/common';
 import { IApplicationHistory } from 'types/entities/application';
 
 type IGetColumnsFn = () => ColumnsType<IApplicationHistory>;

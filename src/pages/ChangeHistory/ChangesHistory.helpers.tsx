@@ -1,7 +1,8 @@
 import { Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
-import { IHistory, IHistoryType } from 'types/entities';
+import { IHistoryType } from 'types/common';
+import { IHistory } from 'types/entities';
 
 import i18next from 'i18next';
 
