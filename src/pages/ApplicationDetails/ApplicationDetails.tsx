@@ -1,6 +1,6 @@
-import { FC, useState } from 'react';
+import { FC, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { Alert, Button, Card, Spin, Tabs, Tag, Typography } from 'antd';
+import { Alert, Button, Card, message, Modal, Spin, Tabs, Tag, Typography } from 'antd';
 import {
   ArrowDownOutlined,
   DeleteOutlined,
@@ -31,6 +31,7 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
   const { data, isLoading, isError, refetch } = useGetApplicationByIdQuery(id || '');
   const [deleteApplicationFile] = useDeleteApplicationFileMutation();
   const [uploadApplicationFiles] = useUploadApplicationFilesMutation();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   return (
     <DashboardLayout title={t(title) + id}>
@@ -97,11 +98,12 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
               <Typography.Title level={5} style={{ marginBottom: 16 }}>
                 {t('applicationDetails.documentsTitle')}
               </Typography.Title>
-              <label style={{ display: 'inline-block', marginBottom: 16 }}>
-                <Button type='primary' icon={<UploadOutlined />}>
+              <div style={{ marginBottom: 16 }}>
+                <Button type='primary' icon={<UploadOutlined />} onClick={() => fileInputRef.current?.click()}>
                   {t('applicationDetails.buttons.addFile')}
                 </Button>
                 <input
+                  ref={fileInputRef}
                   type='file'
                   style={{ display: 'none' }}
                   onChange={async (e) => {
@@ -118,7 +120,7 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
                     e.target.value = '';
                   }}
                 />
-              </label>
+              </div>
               {data.application_files && data.application_files.length > 0 ? (
                 <table style={{ width: '100%' }}>
                   <thead>
@@ -158,8 +160,23 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
                                   <DeleteOutlined />
                                 </span>
                               }
-                              onClick={async () => {
-                                await deleteApplicationFile({ id: file.id });
+                              onClick={() => {
+                                Modal.confirm({
+                                  title: 'Удалить файл?',
+                                  content: 'Это действие необратимо. Вы уверены, что хотите удалить файл?',
+                                  okText: 'Удалить',
+                                  cancelText: 'Отмена',
+                                  okButtonProps: { danger: true },
+                                  onOk: async () => {
+                                    try {
+                                      await deleteApplicationFile({ id: file.id }).unwrap();
+                                      message.success('Файл удален');
+                                      refetch();
+                                    } catch {
+                                      message.error('Не удалось удалить файл');
+                                    }
+                                  }
+                                });
                               }}
                             />
                           )}
