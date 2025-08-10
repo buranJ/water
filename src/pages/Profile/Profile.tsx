@@ -242,9 +242,6 @@ export const Profile: FC<IProps> = ({ title }) => {
                       <Typography.Title level={3} style={{ margin: 0, color: 'white' }}>
                         {getFullName()}
                       </Typography.Title>
-                      <Typography.Text style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                        {user?.is_confirm ? '✓ Подтвержденный аккаунт' : '⚠ Аккаунт не подтвержден'}
-                      </Typography.Text>
                     </div>
                   </div>
                 </Card>
