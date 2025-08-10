@@ -157,7 +157,7 @@ export const DashboardLayout = ({ children, title }: Props) => {
           <Flex justify='space-between' align='center' gap={16}>
             <Flex align='center' gap={8}>
               {window.location.pathname.split('/').length > 3 && <LeftOutlined onClick={() => navigate(-1)} />}
-              <h2 style={{ margin: 0 }}>{title || i18next.t('dashboard.panel')}</h2>
+              <h2 style={{ margin: 0 }}>{title ? (title.includes('.') ? i18next.t(title) : title) : i18next.t('dashboard.panel')}</h2>
             </Flex>
             <div>
               <Button icon={<BellOutlined />} />

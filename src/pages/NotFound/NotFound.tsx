@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router';
 import { Button, Result } from 'antd';
 import { DashboardLayout } from 'components/DashboardLayout';
 
+import { t } from 'i18next';
+
 export const NotFound: FC = () => {
   const redirectTo = useNavigate();
 
@@ -11,10 +13,10 @@ export const NotFound: FC = () => {
       <Result
         status='404'
         title='404'
-        subTitle='Такой страницы не существует'
+        subTitle={t('notFound.subtitle')}
         extra={
           <Button onClick={() => redirectTo('/dashboard/geo')} type='primary'>
-            На главную
+            {t('notFound.backHome')}
           </Button>
         }
       />

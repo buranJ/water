@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { message } from 'antd';
 import { CustomerForm } from 'components';
 import { CustomerFormData } from 'components/CustomerForm/CustomerForm';
@@ -7,12 +8,19 @@ import { DashboardLayout } from 'components/DashboardLayout';
 
 import { useCreateCustomerMutation } from 'api/Customer.api';
 
+type ErrorWithData = { data: Record<string, string | string[]> };
+
+function isErrorWithData(e: unknown): e is ErrorWithData {
+  return typeof e === 'object' && e !== null && 'data' in e && typeof (e as { data?: unknown }).data === 'object';
+}
+
 interface IProps {
   title: string;
 }
 
 export const AddCustomer: FC<IProps> = ({ title }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [createCustomer] = useCreateCustomerMutation();
 
   const onSave = async (value: CustomerFormData & { fio?: string; companyName?: string }) => {
@@ -27,18 +35,18 @@ export const AddCustomer: FC<IProps> = ({ title }) => {
         contact: value.contactData,
         status: value.status
       }).unwrap();
-      message.success('Заказчик успешно добавлен');
+      message.success(t('customers.messages.created'));
       navigate('/dashboard/customers');
-    } catch (error: any) {
-      if (error?.data && typeof error.data === 'object') {
-        const messages = Object.entries(error.data)
+    } catch (err: unknown) {
+      if (isErrorWithData(err)) {
+        const messages = Object.entries(err.data)
           .map(([field, msg]) => `${field}: ${Array.isArray(msg) ? msg.join(', ') : msg}`)
           .join('; ');
-        message.error(`Ошибка: ${messages}`);
+        message.error(`${t('common.errorPrefix')}${messages}`);
       } else {
-        message.error('Ошибка при создании заказчика');
+        message.error(t('customers.messages.createError'));
       }
-      console.error('Ошибка при создании заказчика:', error);
+      console.error('Ошибка при создании заказчика:', err);
     }
   };
 

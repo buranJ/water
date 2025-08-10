@@ -18,6 +18,7 @@ import { Architecture } from './Tabs';
 import { useGetUserInfoQuery } from 'api/Auth.api';
 import { useGetFoldersQuery } from 'api/FileFolder.api';
 import { useGetTyByIdQuery } from 'api/Ty.api';
+import { t } from 'i18next';
 
 const { Title, Text } = Typography;
 
@@ -61,56 +62,56 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const statusRender = (status: IStatus6b3Enum) => {
     switch (status) {
       case 'active':
-        return <Text type='warning'>Утверждено</Text>;
+        return <Text type='warning'>{t('tuDetails.status.active')}</Text>;
       case 'inactive':
-        return <Text type='success'>Утверждено</Text>;
+        return <Text type='success'>{t('tuDetails.status.inactive')}</Text>;
       case 'archived':
-        return <Text type='danger'>В Архиве</Text>;
+        return <Text type='danger'>{t('tuDetails.status.archived')}</Text>;
     }
   };
 
   const stageRender = (stage: IStageEnum) => {
     switch (stage) {
       case 'draft':
-        return <Text type='secondary'>Черновик</Text>;
+        return <Text type='secondary'>{t('tuDetails.stage.draft')}</Text>;
       case 'review':
-        return <Text type='warning'>На рассмотрении</Text>;
+        return <Text type='warning'>{t('tuDetails.stage.review')}</Text>;
       case 'approved':
-        return <Text type='success'>Утверждено</Text>;
+        return <Text type='success'>{t('tuDetails.stage.approved')}</Text>;
       case 'done':
-        return <Text type='success'>Завершено</Text>;
+        return <Text type='success'>{t('tuDetails.stage.done')}</Text>;
       default:
-        return <Text type='secondary'>Неизвестно</Text>;
+        return <Text type='secondary'>{t('tuDetails.stage.unknown')}</Text>;
     }
   };
 
   const renderDataContent = () => (
     <>
       <Card style={{ marginBottom: 24 }}>
-        <Title level={4}>Наименование объекта</Title>
-        <Text>{objectData?.object_name || 'Не указано'}</Text>
+        <Title level={4}>{t('tuDetails.titles.objectName')}</Title>
+        <Text>{objectData?.object_name || t('tuDetails.notSpecified')}</Text>
       </Card>
 
       <Card style={{ marginBottom: 24 }}>
-        <Title level={4}>Информация о заявке</Title>
-        <Text strong>Номер заявки:</Text> <Text>{objectData?.request_number || '—'}</Text>
+        <Title level={4}>{t('tuDetails.titles.applicationInfo')}</Title>
+        <Text strong>{t('tuDetails.labels.requestNumber')}</Text> <Text>{objectData?.request_number || '—'}</Text>
         <br />
-        <Text strong>Дата заявки:</Text> <Text>{(objectData?.request_date as string) || '—'}</Text>
+        <Text strong>{t('tuDetails.labels.requestDate')}</Text> <Text>{(objectData?.request_date as string) || '—'}</Text>
         <br />
-        <Text strong>Источник запроса:</Text> <Text>{objectData?.request_source || '—'}</Text>
+        <Text strong>{t('tuDetails.labels.requestSource')}</Text> <Text>{objectData?.request_source || '—'}</Text>
         <br />
-        <Text strong>ИНН:</Text> <Text>{objectData?.eni || '—'}</Text>
+        <Text strong>{t('tuDetails.labels.inn')}</Text> <Text>{objectData?.eni || '—'}</Text>
         <br />
         {objectData?.status && (
           <Space>
-            <Text strong>Статус:</Text>
+            <Text strong>{t('common.status')}</Text>
             <Text>{statusRender(objectData?.status) || '—'}</Text>
           </Space>
         )}
         <br />
         {objectData?.stage && (
           <Space>
-            <Text strong>Этап:</Text>
+            <Text strong>{t('tuDetails.labels.stage')}</Text>
             <Text>{stageRender(objectData?.stage) || '—'}</Text>
           </Space>
         )}
@@ -118,57 +119,70 @@ export const TuDetails: FC<IProps> = ({ title }) => {
 
       {/* Новый блок: Дополнительные характеристики */}
       <Card style={{ marginBottom: 24 }}>
-        <Title level={4}>Дополнительные характеристики</Title>
-        <Text strong>Объект подключения:</Text> <Text>{objectData?.connection_target || '—'}</Text>
+        <Title level={4}>{t('tuDetails.titles.additionalCharacteristics')}</Title>
+        <Text strong>{t('tuDetails.labels.connectionTarget')}</Text> <Text>{objectData?.connection_target || '—'}</Text>
         <br />
-        <Text strong>Проход по улице:</Text> <Text>{objectData?.street_pass || '—'}</Text>
+        <Text strong>{t('tuDetails.labels.streetPass')}</Text> <Text>{objectData?.street_pass || '—'}</Text>
         <br />
-        <Text strong>Коллектор:</Text> <Text>{objectData?.collector || '—'}</Text>
+        <Text strong>{t('tuDetails.labels.collector')}</Text> <Text>{objectData?.collector || '—'}</Text>
         <br />
-        <Text strong>Пожаротушение:</Text> <Text>{objectData?.fire_fighting || '—'}</Text>
+        <Text strong>{t('tuDetails.labels.fireFighting')}</Text> <Text>{objectData?.fire_fighting || '—'}</Text>
         <br />
-        <Text strong>Пожарный ввод 1:</Text> <Text>{objectData?.fire_input_1 || '—'}</Text>
+        <Text strong>{t('tuDetails.labels.fireInput1')}</Text> <Text>{objectData?.fire_input_1 || '—'}</Text>
         <br />
-        <Text strong>Пожарный ввод 2:</Text> <Text>{objectData?.fire_input_2 || '—'}</Text>
+        <Text strong>{t('tuDetails.labels.fireInput2')}</Text> <Text>{objectData?.fire_input_2 || '—'}</Text>
         <br />
-        <Text strong>Примечания:</Text> <Text>{objectData?.notes || '—'}</Text>
+        <Text strong>{t('tuDetails.labels.notes')}</Text> <Text>{objectData?.notes || '—'}</Text>
       </Card>
 
       {/* Новый блок: Оплата */}
       <Card style={{ marginBottom: 24 }}>
-        <Title level={4}>Оплата</Title>
-        <Text strong>Номер счёта:</Text> <Text>{objectData?.payment_invoice_number || '—'}</Text>
+        <Title level={4}>{t('tuDetails.titles.payment')}</Title>
+        <Text strong>{t('tuDetails.labels.paymentInvoiceNumber')}</Text> <Text>{objectData?.payment_invoice_number || '—'}</Text>
         <br />
-        <Text strong>Сумма за бумажную работу:</Text> <Text>{objectData?.payment_paper || '—'} сом</Text>
+        <Text strong>{t('tuDetails.labels.paymentPaper')}</Text>{' '}
+        <Text>
+          {objectData?.payment_paper || '—'} {t('tuDetails.currency')}
+        </Text>
         <br />
-        <Text strong>Сумма за подключение:</Text> <Text>{objectData?.payment_connection || '—'} сом</Text>
+        <Text strong>{t('tuDetails.labels.paymentConnection')}</Text>{' '}
+        <Text>
+          {objectData?.payment_connection || '—'} {t('tuDetails.currency')}
+        </Text>
         <br />
-        <Text strong>Итого к оплате:</Text> <Text>{objectData?.payment_amount || '—'} сом</Text>
+        <Text strong>{t('tuDetails.labels.paymentAmount')}</Text>{' '}
+        <Text>
+          {objectData?.payment_amount || '—'} {t('tuDetails.currency')}
+        </Text>
         <br />
-        <Text strong>Крайний срок оплаты:</Text> <Text>{(objectData?.payment_deadline as string) || '—'}</Text>
+        <Text strong>{t('tuDetails.labels.paymentDeadline')}</Text> <Text>{(objectData?.payment_deadline as string) || '—'}</Text>
       </Card>
 
       <Card style={{ marginBottom: 24 }}>
-        <Title level={4}>Заказчик</Title>
+        <Title level={4}>{t('tuDetails.titles.customer')}</Title>
         <Text>{objectData?.customer.full_name}</Text>
         <Title level={4} style={{ marginTop: 16 }}>
-          Место нахождения объекта
+          {t('tuDetails.titles.objectLocation')}
         </Title>
         <Text>{objectData?.address}</Text>
         <Title level={4} style={{ marginTop: 16 }}>
-          Требуемое количество водопроводной воды
+          {t('tuDetails.titles.waterRequired')}
         </Title>
-        <Text>{objectData?.water_required} м³/сут</Text>
+        <Text>
+          {objectData?.water_required} {t('tuDetails.units.m3PerDay')}
+        </Text>
         <Title level={4} style={{ marginTop: 16 }}>
-          Требуемый свободный напор
+          {t('tuDetails.titles.pressureRequired')}
         </Title>
-        <Text>{objectData?.pressure_required} м.вод.ст</Text>
+        <Text>
+          {objectData?.pressure_required} {t('tuDetails.units.mWaterCol')}
+        </Text>
       </Card>
 
       <div style={{ marginBottom: 24 }}>
         <Row justify='space-between' align='middle'>
-          <Title level={4}>Запрос на создание геопортала</Title>
-          <Button type='primary'>Запросить</Button>
+          <Title level={4}>{t('tuDetails.titles.geoportalRequest')}</Title>
+          <Button type='primary'>{t('tuDetails.actions.request')}</Button>
         </Row>
         <div
           style={{
@@ -180,19 +194,19 @@ export const TuDetails: FC<IProps> = ({ title }) => {
             marginTop: 16
           }}
         >
-          <Title level={5}>Сохраненный запрос на геопортал</Title>
-          <Text type='secondary'>Автоматически загружено</Text>
+          <Title level={5}>{t('tuDetails.titles.savedGeoportalRequest')}</Title>
+          <Text type='secondary'>{t('tuDetails.autoLoaded')}</Text>
         </div>
       </div>
 
       <Card style={{ marginBottom: 24 }}>
-        <Title level={4}>Водопровод</Title>
-        <Text>{objectData?.water_pipe || 'Не указано'}</Text>
+        <Title level={4}>{t('tuDetails.titles.waterSupply')}</Title>
+        <Text>{objectData?.water_pipe || t('tuDetails.notSpecified')}</Text>
       </Card>
 
       <Card>
-        <Title level={4}>Канализация</Title>
-        <Text>{objectData?.sewer || 'Не указано'}</Text>
+        <Title level={4}>{t('tuDetails.titles.sewer')}</Title>
+        <Text>{objectData?.sewer || t('tuDetails.notSpecified')}</Text>
       </Card>
     </>
   );
@@ -224,7 +238,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
 
   const dynamicTabs =
     userQuery.data?.user.allowed_categories?.map((category, index) => {
-      let content: React.ReactNode = <Text>Контент для "{category.title}" пока не реализован</Text>;
+      let content: React.ReactNode = <Text>{t('tuDetails.contentNotImplemented', { title: category.title })}</Text>;
 
       switch (category.title.toLowerCase()) {
         case 'архитектура':
@@ -252,7 +266,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const tabItems: TabsProps['items'] = [
     {
       key: '1',
-      label: 'Данные',
+      label: t('tuDetails.tabs.data'),
       children: objectData ? renderDataContent() : null
     },
     ...dynamicTabs
@@ -260,7 +274,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
 
   if (isLoading) {
     return (
-      <DashboardLayout title={`${title} ${id}`}>
+      <DashboardLayout title={`${t(title)} ${id}`}>
         <Flex justify='center' align='center' style={{ minHeight: 200 }}>
           <Spin size='large' />
         </Flex>
@@ -270,8 +284,8 @@ export const TuDetails: FC<IProps> = ({ title }) => {
 
   if (isError || !objectData) {
     return (
-      <DashboardLayout title={`${title} ${id}`}>
-        <Alert message='Ошибка загрузки' description='Не удалось загрузить данные технических условий' type='error' showIcon />
+      <DashboardLayout title={`${t(title)} ${id}`}>
+        <Alert message={t('tuDetails.loadError')} description={t('tuDetails.loadErrorDescription')} type='error' showIcon />
       </DashboardLayout>
     );
   }
@@ -288,15 +302,15 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const percent = totalRequiredFolders > 0 ? (filledRequiredFolders / totalRequiredFolders) * 100 : 0;
 
   return (
-    <DashboardLayout title={`${title} ${id}`}>
+    <DashboardLayout title={`${t(title)} ${id}`}>
       {activeTab === '1' && (
         <Flex justify='end' align='center' gap={24} style={{ marginBottom: 16 }}>
-          <Link to='/dashboard/technical-conditions/history-of-loads'>История увеличения нагрузок</Link>
-          <Link to='/change'>Изменить данные ТУ</Link>
-          <Button icon={<DownloadOutlined />}>Скачать ТУ</Button>
-          <Button icon={<PlusOutlined />}>Добавить нагрузку</Button>
+          <Link to='/dashboard/technical-conditions/history-of-loads'>{t('routers.historyOfLoads')}</Link>
+          <Link to='/change'>{t('tuDetails.actions.changeTuData')}</Link>
+          <Button icon={<DownloadOutlined />}>{t('tuDetails.actions.downloadTu')}</Button>
+          <Button icon={<PlusOutlined />}>{t('historyOfLoads.addLoad')}</Button>
           <Button danger onClick={handleRejectClick}>
-            Отказать ТУ
+            {t('tuDetails.actions.rejectTu')}
           </Button>
         </Flex>
       )}
@@ -308,10 +322,10 @@ export const TuDetails: FC<IProps> = ({ title }) => {
         {activeTab === '1' && (
           <Col span={8}>
             <Card style={{ marginBottom: 16 }}>
-              <Title level={4}>Другие документы</Title>
+              <Title level={4}>{t('tuDetails.titles.otherDocuments')}</Title>
               <Progress percent={percent} status={percent < 100 ? 'exception' : 'success'} />
 
-              <Text type='secondary'>Загрузите соответствующий документ, чтобы завершить создание ТУ</Text>
+              <Text type='secondary'>{t('tuDetails.hint.uploadToFinishTu')}</Text>
               {commonFolders.length > 0 && (
                 <List
                   style={{ margin: '16px 0' }}
@@ -337,15 +351,15 @@ export const TuDetails: FC<IProps> = ({ title }) => {
 
               <div style={{ marginTop: 16, width: '100%', textAlign: 'center' }}>
                 <Button type='primary' block>
-                  Загрузить
+                  {t('common.upload')}
                 </Button>
               </div>
             </Card>
 
             <Card>
-              <Title level={4}>Акт подтверждения</Title>
+              <Title level={4}>{t('tuDetails.titles.confirmationAct')}</Title>
               <Row justify='space-between' align='middle'>
-                <Text>В ожидании</Text>
+                <Text>{t('common.pending')}</Text>
                 <ClockCircleTwoTone twoToneColor='#327BE8' />
               </Row>
             </Card>

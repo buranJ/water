@@ -1,4 +1,5 @@
 import { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Card, Col, List, Row, Space, Table, Tabs, Tag, Typography, Upload, UploadFile, UploadProps } from 'antd';
 import { ClockCircleTwoTone, CloseCircleTwoTone, DownloadOutlined, EditOutlined, FileOutlined, UploadOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
@@ -20,6 +21,7 @@ interface IPaymentRecord {
 }
 
 export const ProtocolDetail: FC<IProps> = ({ title }) => {
+  const { t } = useTranslation();
   const [uploadFileList, setUploadFileList] = useState<UploadFile[]>([]);
 
   const handleUploadChange: UploadProps['onChange'] = (info) => {
@@ -40,36 +42,37 @@ export const ProtocolDetail: FC<IProps> = ({ title }) => {
       date: '03-03-2025',
       amount: '1500 KGZ',
       source: '1C',
-      status: 'Поступили'
+      status: t('protocolDetail.payment.status.received')
     }
   ]);
 
   const paymentColumns = [
     {
-      title: '№ платежа',
+      title: t('protocolDetail.payment.columns.paymentNum'),
       dataIndex: 'paymentNum',
       key: 'paymentNum'
     },
     {
-      title: 'Дата',
+      title: t('protocolDetail.payment.columns.date'),
       dataIndex: 'date',
       key: 'date'
     },
     {
-      title: 'Сумма',
+      title: t('protocolDetail.payment.columns.amount'),
       dataIndex: 'amount',
       key: 'amount'
     },
     {
-      title: 'Источник',
+      title: t('protocolDetail.payment.columns.source'),
       dataIndex: 'source',
       key: 'source'
     },
     {
-      title: 'Статус',
+      title: t('protocolDetail.payment.columns.status'),
       dataIndex: 'status',
       key: 'status',
-      render: (text: string) => (text === 'Поступили' ? <Tag color='green'>Поступили</Tag> : text)
+      render: (text: string) =>
+        text === t('protocolDetail.payment.status.received') ? <Tag color='green'>{t('protocolDetail.payment.status.received')}</Tag> : text
     }
   ];
 
@@ -78,14 +81,14 @@ export const ProtocolDetail: FC<IProps> = ({ title }) => {
       <Row gutter={24}>
         <Col span={16}>
           <Tabs defaultActiveKey='1'>
-            <TabPane tab='Протокол' key='1' disabled={isProtocolDisabled}>
+            <TabPane tab={t('protocolDetail.tabs.protocol')} key='1' disabled={isProtocolDisabled}>
               <Row justify='end' style={{ marginBottom: 16 }}>
                 <Col>
                   <Space>
                     <Button type='primary' icon={<EditOutlined />}>
-                      Изменить
+                      {t('applicationDetails.buttons.edit')}
                     </Button>
-                    <Button icon={<DownloadOutlined />}>Скачать протокол</Button>
+                    <Button icon={<DownloadOutlined />}>{t('protocolDetail.buttons.downloadProtocol')}</Button>
                   </Space>
                 </Col>
               </Row>
@@ -93,12 +96,12 @@ export const ProtocolDetail: FC<IProps> = ({ title }) => {
                 <Row>
                   <Col span={12}>
                     <Title level={4} style={{ marginBottom: 16 }}>
-                      МП "Бишкектеплосеть"
+                      {t('protocolDoc.companyName')}
                     </Title>
                   </Col>
                   <Col span={12} style={{ textAlign: 'right' }}>
                     <Button size='small' danger>
-                      На вынос
+                      {t('protocolDoc.takeaway')}
                     </Button>
                   </Col>
                 </Row>
@@ -106,7 +109,7 @@ export const ProtocolDetail: FC<IProps> = ({ title }) => {
                 <div style={{ marginBottom: 8 }}>
                   <Row>
                     <Col span={12}>
-                      <Text>Ст‑ть подключ. ВиК сом(без НДС)</Text>
+                      <Text>{t('protocolDoc.vikCostLabel')}</Text>
                     </Col>
                     <Col span={12} style={{ textAlign: 'right' }}>
                       <Space>
@@ -119,7 +122,7 @@ export const ProtocolDetail: FC<IProps> = ({ title }) => {
                 <div style={{ marginBottom: 8 }}>
                   <Row>
                     <Col span={12}>
-                      <Text>ТУ водопровод</Text>
+                      <Text>{t('protocolDoc.tuWater')}</Text>
                     </Col>
                     <Col span={12} style={{ textAlign: 'right' }}>
                       <Text>496KGZ</Text>
@@ -130,7 +133,7 @@ export const ProtocolDetail: FC<IProps> = ({ title }) => {
                 <div style={{ marginBottom: 8 }}>
                   <Row>
                     <Col span={12}>
-                      <Text>ТУ канализация</Text>
+                      <Text>{t('protocolDoc.tuSewer')}</Text>
                     </Col>
                     <Col span={12} style={{ textAlign: 'right' }}>
                       <Text>496KGZ</Text>
@@ -142,7 +145,7 @@ export const ProtocolDetail: FC<IProps> = ({ title }) => {
                   <Row>
                     <Col span={12}>
                       <Title level={4} style={{ margin: 0 }}>
-                        Всего (без НДС)
+                        {t('protocolDoc.totalWithoutVat')}
                       </Title>
                     </Col>
                     <Col span={12} style={{ textAlign: 'right' }}>
@@ -154,20 +157,20 @@ export const ProtocolDetail: FC<IProps> = ({ title }) => {
                 </div>
               </Card>
 
-              <div>Дополнительный текст или контент протокола...</div>
+              <div>{t('protocolDoc.extraText')}</div>
             </TabPane>
 
-            <TabPane tab='Платежи' key='2' disabled={isPaymentsDisabled}>
+            <TabPane tab={t('protocolDetail.tabs.payments')} key='2' disabled={isPaymentsDisabled}>
               <Table columns={paymentColumns} dataSource={paymentData} pagination={false} />
 
               <Row justify='space-between' style={{ marginTop: 24 }}>
                 <Col>
                   <Text>
-                    Оплачено: <b>11000 KGZ</b> / <b>11000 KGZ</b>
+                    {t('protocolDetail.paid')} <b>11000 KGZ</b> / <b>11000 KGZ</b>
                   </Text>
                 </Col>
                 <Col>
-                  <Button danger>Закрыть счёт</Button>
+                  <Button danger>{t('protocolDetail.buttons.closeInvoice')}</Button>
                 </Col>
               </Row>
             </TabPane>
@@ -176,18 +179,18 @@ export const ProtocolDetail: FC<IProps> = ({ title }) => {
 
         <Col span={8}>
           <Card style={{ marginBottom: 16 }}>
-            <Title level={4}>Счет на оплату</Title>
+            <Title level={4}>{t('protocolDetail.invoice.title')}</Title>
             <Row justify={'space-between'}>
-              <Text>В ожидании</Text>
+              <Text>{t('common.pending')}</Text>
               <ClockCircleTwoTone twoToneColor='#327BE8' />
             </Row>
             <Button style={{ marginTop: 16 }} block>
-              Сгенерировать счет на оплату
+              {t('protocolDetail.buttons.generateInvoice')}
             </Button>
           </Card>
 
           <Card style={{ marginBottom: 16 }}>
-            <Title level={4}>Загрузить чек об оплате</Title>
+            <Title level={4}>{t('protocolDetail.invoice.uploadReceipt')}</Title>
             <div
               style={{
                 backgroundColor: '#327BE8',
@@ -196,7 +199,7 @@ export const ProtocolDetail: FC<IProps> = ({ title }) => {
                 margin: '16px 0'
               }}
             />
-            <Text type='secondary'>Загрузите соответствующий документ, чтобы завершить создание ТУ</Text>
+            <Text type='secondary'>{t('tuDetails.hint.uploadToFinishTu')}</Text>
             {uploadFileList.length > 0 && (
               <List
                 style={{ margin: '16px 0' }}
@@ -221,7 +224,7 @@ export const ProtocolDetail: FC<IProps> = ({ title }) => {
             <div style={{ marginTop: 16, width: '100%', textAlign: 'center' }}>
               <Upload multiple showUploadList={false} fileList={uploadFileList} beforeUpload={() => false} onChange={handleUploadChange}>
                 <Button type='primary' block icon={<UploadOutlined />}>
-                  Загрузить
+                  {t('common.upload')}
                 </Button>
               </Upload>
             </div>

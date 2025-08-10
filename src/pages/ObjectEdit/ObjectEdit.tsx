@@ -1,5 +1,6 @@
 import React, { FC, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { Button, Card, Col, DatePicker, Form, Input, message, Row, Select, Space, Spin, Typography } from 'antd';
 import { ArrowLeftOutlined, EditOutlined, SaveOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
@@ -24,6 +25,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const objectId = Number(id);
+  const { t } = useTranslation();
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [form] = Form.useForm();
@@ -86,7 +88,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
         body: updateData
       }).unwrap();
 
-      message.success('Объект успешно обновлен');
+      message.success(t('objectEdit.messages.updated'));
       setIsEditMode(false);
     } catch (error) {
       const apiError = error as ApiError;
@@ -102,7 +104,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
       } else if (apiError?.message) {
         message.error(`Ошибка: ${apiError.message}`);
       } else {
-        message.error('Ошибка при обновлении объекта');
+        message.error(t('objectEdit.messages.updateError'));
       }
       console.error('Update object error:', error);
     }
@@ -169,7 +171,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
     return (
       <DashboardLayout title={title}>
         <div style={{ textAlign: 'center', padding: '50px 0' }}>
-          <Text type='danger'>Ошибка загрузки объекта</Text>
+          <Text type='danger'>{t('objectDetail.loadError')}</Text>
         </div>
       </DashboardLayout>
     );
@@ -190,7 +192,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
               color: '#8e8e93'
             }}
           >
-            Назад к объектам
+            {t('objectEdit.buttons.backToObjects')}
           </Button>
 
           <Space>
@@ -205,7 +207,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
                     color: '#8e8e93'
                   }}
                 >
-                  Отмена
+                  {t('objectEdit.buttons.cancel')}
                 </Button>
                 <Button
                   type='primary'
@@ -218,7 +220,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
                     borderColor: '#007aff'
                   }}
                 >
-                  Сохранить
+                  {t('objectEdit.buttons.save')}
                 </Button>
               </>
             ) : (
@@ -232,7 +234,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
                   borderColor: '#007aff'
                 }}
               >
-                Редактировать
+                {t('objectEdit.buttons.edit')}
               </Button>
             )}
           </Space>
@@ -252,7 +254,11 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
               {/* Заголовок объекта */}
               <div>
                 {isEditMode ? (
-                  <Form.Item name='title' rules={[{ required: true, message: 'Введите название объекта' }]} style={{ marginBottom: 0 }}>
+                  <Form.Item
+                    name='title'
+                    rules={[{ required: true, message: t('objectEdit.validation.enterTitle') }]}
+                    style={{ marginBottom: 0 }}
+                  >
                     <Input
                       style={{
                         fontSize: 24,
@@ -294,7 +300,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
                           display: 'block'
                         }}
                       >
-                        Дата договора
+                        {t('objectEdit.labels.contractDate')}
                       </Text>
                       {isEditMode ? (
                         <Form.Item name='contract_date' style={{ marginBottom: 0 }}>
@@ -305,7 +311,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
                               backgroundColor: '#f5f5f7',
                               border: 'none'
                             }}
-                            placeholder='Выберите дату'
+                            placeholder={t('objectEdit.placeholders.pickDate')}
                           />
                         </Form.Item>
                       ) : (
@@ -332,7 +338,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
                           display: 'block'
                         }}
                       >
-                        Тип
+                        {t('objectEdit.labels.type')}
                       </Text>
                       {isEditMode ? (
                         <Form.Item name='type' style={{ marginBottom: 0 }}>
@@ -343,7 +349,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
                               border: 'none',
                               padding: '12px 16px'
                             }}
-                            placeholder='Тип объекта'
+                            placeholder={t('objectEdit.placeholders.objectType')}
                           />
                         </Form.Item>
                       ) : (
@@ -370,20 +376,24 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
                           display: 'block'
                         }}
                       >
-                        Статус
+                        {t('objectEdit.labels.status')}
                       </Text>
                       {isEditMode ? (
-                        <Form.Item name='status' rules={[{ required: true, message: 'Выберите статус' }]} style={{ marginBottom: 0 }}>
+                        <Form.Item
+                          name='status'
+                          rules={[{ required: true, message: t('objectEdit.validation.selectStatus') }]}
+                          style={{ marginBottom: 0 }}
+                        >
                           <Select
                             style={{
                               borderRadius: 12
                             }}
-                            placeholder='Выберите статус'
+                            placeholder={t('objectEdit.placeholders.selectStatus')}
                           >
-                            <Option value='active'>Активен</Option>
-                            <Option value='inactive'>Неактивен</Option>
-                            <Option value='pending'>В ожидании</Option>
-                            <Option value='rejected'>Отклонен</Option>
+                            <Option value='active'>{t('objectEdit.statusOptions.active')}</Option>
+                            <Option value='inactive'>{t('objectEdit.statusOptions.inactive')}</Option>
+                            <Option value='pending'>{t('objectEdit.statusOptions.pending')}</Option>
+                            <Option value='rejected'>{t('objectEdit.statusOptions.rejected')}</Option>
                           </Select>
                         </Form.Item>
                       ) : (
@@ -398,7 +408,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
                             fontWeight: 500
                           }}
                         >
-                          {object.status || 'Активен'}
+                          {object.status || t('objectEdit.statusOptions.active')}
                         </div>
                       )}
                     </div>
@@ -414,7 +424,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
                           display: 'block'
                         }}
                       >
-                        Адрес
+                        {t('objectEdit.labels.address')}
                       </Text>
                       {isEditMode ? (
                         <Space.Compact style={{ width: '100%' }}>
@@ -426,7 +436,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
                                 border: 'none',
                                 padding: '12px 16px'
                               }}
-                              placeholder='Улица'
+                              placeholder={t('objectEdit.placeholders.street')}
                             />
                           </Form.Item>
                           <Form.Item name='address_number' style={{ marginBottom: 0, width: '30%' }}>
@@ -437,7 +447,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
                                 border: 'none',
                                 padding: '12px 16px'
                               }}
-                              placeholder='Дом'
+                              placeholder={t('objectEdit.placeholders.house')}
                             />
                           </Form.Item>
                         </Space.Compact>
@@ -470,12 +480,12 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
                           display: 'block'
                         }}
                       >
-                        Кадастровый номер
+                        {t('objectEdit.labels.cadastralNumber')}
                       </Text>
                       {isEditMode ? (
                         <Form.Item
                           name='kadastr_number'
-                          rules={[{ required: true, message: 'Введите кадастровый номер' }]}
+                          rules={[{ required: true, message: t('objectEdit.validation.enterCadastralNumber') }]}
                           style={{ marginBottom: 0 }}
                         >
                           <Input
@@ -486,7 +496,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
                               padding: '12px 16px',
                               fontFamily: 'monospace'
                             }}
-                            placeholder='01:001:1234567'
+                            placeholder={t('objectEdit.placeholders.cadastralNumber')}
                           />
                         </Form.Item>
                       ) : (
@@ -514,7 +524,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
                           display: 'block'
                         }}
                       >
-                        Вид использования
+                        {t('objectEdit.labels.usageType')}
                       </Text>
                       {isEditMode ? (
                         <Form.Item name='usage_type' style={{ marginBottom: 0 }}>
@@ -525,7 +535,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
                               border: 'none',
                               padding: '12px 16px'
                             }}
-                            placeholder='Жилой дом'
+                            placeholder={t('objectEdit.placeholders.usageType')}
                           />
                         </Form.Item>
                       ) : (
@@ -552,7 +562,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
                           display: 'block'
                         }}
                       >
-                        Статус заявок и выданных ТУ
+                        {t('objectEdit.labels.tuStatus')}
                       </Text>
                       {isEditMode ? (
                         <Form.Item name='tu_status' style={{ marginBottom: 0 }}>
@@ -563,7 +573,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
                               border: 'none',
                               padding: '12px 16px'
                             }}
-                            placeholder='ТУ выдано, подключение в процессе'
+                            placeholder={t('objectEdit.placeholders.tuStatus')}
                           />
                         </Form.Item>
                       ) : (
@@ -590,7 +600,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
                           display: 'block'
                         }}
                       >
-                        Географические координаты
+                        {t('objectEdit.labels.coordinates')}
                       </Text>
                       {isEditMode ? (
                         <Space.Compact style={{ width: '100%' }}>
@@ -605,7 +615,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
                                 padding: '12px 16px',
                                 fontFamily: 'monospace'
                               }}
-                              placeholder='Широта'
+                              placeholder={t('objectEdit.placeholders.latitude')}
                             />
                           </Form.Item>
                           <Form.Item name='longitude' style={{ marginBottom: 0, flex: 1 }}>
@@ -619,7 +629,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
                                 padding: '12px 16px',
                                 fontFamily: 'monospace'
                               }}
-                              placeholder='Долгота'
+                              placeholder={t('objectEdit.placeholders.longitude')}
                             />
                           </Form.Item>
                         </Space.Compact>

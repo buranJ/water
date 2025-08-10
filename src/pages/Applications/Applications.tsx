@@ -24,11 +24,11 @@ interface IProps {
 }
 
 const STATUS_OPTIONS = [
-  { value: '', label: 'Все' },
-  { value: 'pending', label: 'В ожидании' },
-  { value: 'rejected', label: 'Отказано' },
-  { value: 'approved', label: 'Одобрено' },
-  { value: 'contracted', label: 'ТУ заключён' }
+  { value: '', label: t('applications.tabs.all') },
+  { value: 'pending', label: t('applications.statusTag.pending') },
+  { value: 'rejected', label: t('applications.statusTag.rejected') },
+  { value: 'approved', label: t('applications.statusTag.approved') },
+  { value: 'contracted', label: t('applications.statusTag.contracted') }
 ];
 
 export const Applications: FC<IProps> = ({ title }) => {
@@ -132,7 +132,7 @@ export const Applications: FC<IProps> = ({ title }) => {
         actionButtons={
           <>
             <Button type='primary' icon={<PlusOutlined />} onClick={onAddClick}>
-              Добавить
+              {t('filterBar.add')}
             </Button>
           </>
         }

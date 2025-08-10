@@ -47,7 +47,7 @@ export const Geoportal: FC<GeoportalProps> = ({ title }) => {
 
   useEffect(() => {
     if (error) {
-      message.error('Ошибка загрузки данных');
+      message.error(t('geoportal.errorLoad'));
       console.error('API Error:', error);
     }
   }, [error]);
@@ -71,7 +71,7 @@ export const Geoportal: FC<GeoportalProps> = ({ title }) => {
   const handleRefresh = async (): Promise<void> => {
     try {
       await refetch().unwrap();
-      message.success('Данные обновлены');
+      message.success(t('geoportal.dataRefreshed'));
     } catch (refreshError) {
       message.error('Ошибка при обновлении данных');
       console.error('Refresh Error:', refreshError);

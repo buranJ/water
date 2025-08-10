@@ -1,4 +1,5 @@
 import { FC, useCallback, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Form, Upload } from 'antd';
 import { UploadChangeParam, UploadFile, UploadProps } from 'antd/es/upload';
 import { CloseOutlined, CloudDownloadOutlined } from '@ant-design/icons';
@@ -16,6 +17,7 @@ interface IProps {
 }
 
 export const UploadFilesModal: FC<IProps> = ({ isOpen, currentFiles, onClose, onFilesSelected }) => {
+  const { t } = useTranslation();
   const [fileList, setFileList] = useState<UploadFile[]>(currentFiles);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const uploadRef = useRef<any>(null);
@@ -52,33 +54,36 @@ export const UploadFilesModal: FC<IProps> = ({ isOpen, currentFiles, onClose, on
     }
   };
 
-  const formatFileSize = useCallback((size?: number): string => {
-    if (!size) return '';
-    if (size < 1024) return `${size} байт`;
-    if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
-    return `${(size / (1024 * 1024)).toFixed(1)} MB`;
-  }, []);
+  const formatFileSize = useCallback(
+    (size?: number): string => {
+      if (!size) return '';
+      if (size < 1024) return `${size} ${t('common.bytes')}`;
+      if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+      return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+    },
+    [t]
+  );
 
   return (
     <Modal
       open={isOpen}
-      title='Прикрепить файл'
+      title={t('applicationsCreate.uploadModal.title')}
       onCancel={handleClose}
       footer={[
         <div className={clsx('modal-footer', { 'has-files': fileList.length !== 0 })} key='footer'>
           {fileList.length !== 0 && (
             <Button onClick={triggerUpload} icon={<CloudDownloadOutlined />}>
-              Загрузить файл
+              {t('common.uploadFile')}
             </Button>
           )}
 
           <div className='modal-footer-buttons'>
             <Button color='default' variant='filled' key='back' onClick={handleClose}>
-              Назад
+              {t('common.back')}
             </Button>
 
             <Button key='submit' type='primary' onClick={handleOk} disabled={fileList.length === 0}>
-              Загрузить
+              {t('common.upload')}
             </Button>
           </div>
         </div>
@@ -89,7 +94,7 @@ export const UploadFilesModal: FC<IProps> = ({ isOpen, currentFiles, onClose, on
       <Form.Item
         name='entity'
         getValueFromEvent={(e: UploadChangeParam<UploadFile>) => e && e.fileList}
-        rules={[{ required: true, message: 'Пожалуйста, прикрепите файл' }]}
+        rules={[{ required: true, message: t('applicationsCreate.uploadModal.validation.attachFile') }]}
       >
         <Upload
           listType='picture'
@@ -126,8 +131,8 @@ export const UploadFilesModal: FC<IProps> = ({ isOpen, currentFiles, onClose, on
               <p className='ant-upload-drag-icon'>
                 <UploadIcon style={{ fontSize: 40, color: '#999' }} />
               </p>
-              <p>Перетащите файлы сюда для загрузки</p>
-              <Button icon={<CloudDownloadOutlined />}>Загрузить файл</Button>
+              <p>{t('applicationsCreate.uploadModal.dropHint')}</p>
+              <Button icon={<CloudDownloadOutlined />}>{t('common.uploadFile')}</Button>
             </div>
           )}
         </Upload>

@@ -3,6 +3,8 @@ import { Button, Col, Input, Row, Space, Table, Tag, Tooltip } from 'antd';
 import { DeleteOutlined, DownloadOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 
+import { t } from 'i18next';
+
 interface IProps {
   title: string;
 }
@@ -13,7 +15,7 @@ interface LoadRecord {
   collaborator: string;
   load: string;
   regDate: string;
-  status: 'Утверждено' | 'Отклонено';
+  status: 'approved' | 'rejected';
 }
 
 export const HistoryOfLoads: FC<IProps> = ({ title }) => {
@@ -24,7 +26,7 @@ export const HistoryOfLoads: FC<IProps> = ({ title }) => {
       collaborator: 'Атай Аманов',
       load: '16.5000 м³/сут',
       regDate: '03-04-2025',
-      status: 'Отклонено'
+      status: 'rejected'
     },
     {
       key: '2',
@@ -32,7 +34,7 @@ export const HistoryOfLoads: FC<IProps> = ({ title }) => {
       collaborator: 'Атай Аманов',
       load: '16.5000 м³/сут',
       regDate: '03-04-2025',
-      status: 'Утверждено'
+      status: 'approved'
     },
     {
       key: '3',
@@ -40,7 +42,7 @@ export const HistoryOfLoads: FC<IProps> = ({ title }) => {
       collaborator: 'Атай Аманов',
       load: '16.5000 м³/сут',
       regDate: '03-04-2025',
-      status: 'Утверждено'
+      status: 'approved'
     }
   ]);
 
@@ -52,34 +54,34 @@ export const HistoryOfLoads: FC<IProps> = ({ title }) => {
 
   const columns = [
     {
-      title: '№ ТУ',
+      title: t('historyOfLoads.columns.tu'),
       dataIndex: 'tuNumber',
       sorter: true, // для примера
       render: (text: string) => text
     },
     {
-      title: 'Сотрудник',
+      title: t('historyOfLoads.columns.collaborator'),
       dataIndex: 'collaborator'
     },
     {
-      title: 'Добавленная нагрузка',
+      title: t('historyOfLoads.columns.loadAdded'),
       dataIndex: 'load'
     },
     {
-      title: 'Дата регистрации',
+      title: t('historyOfLoads.columns.regDate'),
       dataIndex: 'regDate'
     },
     {
-      title: 'Статус',
+      title: t('historyOfLoads.columns.status'),
       dataIndex: 'status',
       render: (text: string) => {
-        return text === 'Утверждено' ? (
+        return text === 'approved' ? (
           <Tag color='green' style={{ width: '50%', textAlign: 'center' }}>
-            Утверждено
+            {t('filterBar.approved')}
           </Tag>
         ) : (
           <Tag color='red' style={{ width: '50%', textAlign: 'center' }}>
-            Отклонено
+            {t('filterBar.rejected')}
           </Tag>
         );
       }
@@ -109,23 +111,23 @@ export const HistoryOfLoads: FC<IProps> = ({ title }) => {
       <Row justify='space-between' style={{ marginBottom: 16 }}>
         <Col>
           <Button type='primary' icon={<PlusOutlined />} onClick={handleAddLoad}>
-            Добавить нагрузку
+            {t('historyOfLoads.addLoad')}
           </Button>
         </Col>
         <Col>
           <Space>
             <Button icon={<DownloadOutlined />} onClick={handleDownloadPDF}>
-              Скачать PDF
+              {t('common.downloadPdf')}
             </Button>
           </Space>
         </Col>
       </Row>
       <Row justify='space-between' style={{ marginBottom: 16 }}>
         <Col span={12}>
-          <Input placeholder='Search' prefix={<SearchOutlined />} style={{ marginBottom: 16 }} onChange={handleSearch} />
+          <Input placeholder={t('filterBar.search')} prefix={<SearchOutlined />} style={{ marginBottom: 16 }} onChange={handleSearch} />
         </Col>
         <Col>
-          <Tooltip title='Удалить'>
+          <Tooltip title={t('common.delete')}>
             <Button danger icon={<DeleteOutlined />} onClick={handleDelete} />
           </Tooltip>
         </Col>

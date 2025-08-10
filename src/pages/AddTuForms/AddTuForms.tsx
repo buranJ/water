@@ -9,6 +9,7 @@ import './style.scss';
 import { useGetAllFormulasQuery } from 'api/Formula.api';
 import { useLazyGetAllObjectsQuery } from 'api/Object.api';
 import { useGetTyByIdQuery, useGetTypesTyQuery, useUpdateTyMutation } from 'api/Ty.api';
+import { t } from 'i18next';
 
 const { Option } = Select;
 const { Title } = Typography;
@@ -31,7 +32,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
     async (values: ITyItem) => {
       try {
         if (!tuQuery.data) {
-          message.error('Не удалось получить данные ТУ.');
+          message.error(t('addTuForms.messages.loadTuError'));
           return;
         }
 
@@ -46,7 +47,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         updateTy({ id: tyId as string, body: payload });
       } catch (e) {
         console.error(e);
-        message.error('Произошла ошибка при создании ТУ.');
+        message.error(t('addTuForms.messages.createTuError'));
       }
     },
     [tuQuery, tyId, updateTy]
@@ -54,7 +55,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
   useEffect(() => {
     if (isSuccess) {
-      message.success('Техническое условие успешно создано!');
+      message.success(t('addTuForms.messages.createTuSuccess'));
       form.resetFields();
       navigate(`/dashboard/technical-conditions/tu-details/${tyId}`);
     }
@@ -74,25 +75,25 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
   const stageOptions = useMemo(
     () => [
-      { value: 'draft', label: 'Черновик' },
-      { value: 'review', label: 'На рассмотрении' },
-      { value: 'approved', label: 'Одобрено' },
-      { value: 'done', label: 'Завершено' }
+      { value: 'draft', label: t('addTuForms.form.options.stages.draft') },
+      { value: 'review', label: t('addTuForms.form.options.stages.review') },
+      { value: 'approved', label: t('addTuForms.form.options.stages.approved') },
+      { value: 'done', label: t('addTuForms.form.options.stages.done') }
     ],
     []
   );
   const statusOptions = [
     {
       value: 'active',
-      label: 'Активен'
+      label: t('addTuForms.form.options.status.active')
     },
     {
       value: 'inactive',
-      label: 'Неактивен'
+      label: t('addTuForms.form.options.status.inactive')
     },
     {
       value: 'archived',
-      label: 'Архивирован'
+      label: t('addTuForms.form.options.status.archived')
     }
   ];
 
@@ -108,42 +109,54 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
     <DashboardLayout title={title}>
       <Form form={form} requiredMark={false} name='add-tu-form' layout='vertical' onFinish={onFinish} className='add-tu-forms'>
         <Title level={4} style={{ borderBottom: '1px solid #D9D9D9', paddingBottom: '4px' }}>
-          Основная информация
+          {t('addTuForms.titles.main')}
         </Title>
 
-        <Form.Item label='Источник запроса' name='request_source' rules={[{ required: true, message: 'Укажите источник' }]}>
-          <Input size='large' placeholder='Название объекта' />
+        <Form.Item
+          label={t('addTuForms.form.labels.requestSource')}
+          name='request_source'
+          rules={[{ required: true, message: t('addTuForms.form.validation.specifySource') }]}
+        >
+          <Input size='large' placeholder={t('addTuForms.form.placeholders.requestSource')} />
         </Form.Item>
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label='Номер запроса' name='request_number' rules={[{ required: true, message: 'Укажите номер запроса' }]}>
-              <Input size='large' placeholder='12345' />
+            <Form.Item
+              label={t('addTuForms.form.labels.requestNumber')}
+              name='request_number'
+              rules={[{ required: true, message: t('addTuForms.form.validation.specifyRequestNumber') }]}
+            >
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.requestNumber')} />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
-              label='Дата запроса'
+              label={t('addTuForms.form.labels.requestDate')}
               name='request_date'
-              rules={[{ required: true, message: 'Укажите дату запроса' }]}
+              rules={[{ required: true, message: t('addTuForms.form.validation.specifyRequestDate') }]}
               normalize={(value: Dayjs) => formatDate(value)}
               getValueProps={(value: string) => ({ value: parseDate(value) })}
             >
-              <DatePicker format='YYYY-MM-DD' size='large' placeholder='01:00|12:34567' />
+              <DatePicker format='YYYY-MM-DD' size='large' placeholder={t('addTuForms.form.placeholders.requestDate')} />
             </Form.Item>
           </Col>
         </Row>
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label='Заказчик' name='customer' rules={[{ required: true, message: 'Укажите заказчика' }]}>
+            <Form.Item
+              label={t('addTuForms.form.labels.customer')}
+              name='customer'
+              rules={[{ required: true, message: t('addTuForms.form.validation.specifyCustomer') }]}
+            >
               <Input
                 disabled
                 size='large'
-                placeholder='ФИО или организация'
+                placeholder={t('addTuForms.form.placeholders.customer')}
                 addonAfter={
                   <Button type='link' style={{ padding: 0, height: 'auto' }} onClick={onCustomerEdit}>
-                    <span style={{ fontSize: 14 }}>Изменить</span>
+                    <span style={{ fontSize: 14 }}>{t('addTuForms.form.buttons.change')}</span>
                   </Button>
                 }
               />
@@ -151,33 +164,41 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Col>
           <Col span={12}>
             <Form.Item
-              label='Наименование объекта'
+              label={t('addTuForms.form.labels.objectName')}
               name='object_name'
-              rules={[{ required: true, message: 'Укажите наименование объекта' }]}
+              rules={[{ required: true, message: t('addTuForms.form.validation.specifyObjectName') }]}
             >
-              <Input size='large' placeholder='Жилой дом' />
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.objectName')} />
             </Form.Item>
           </Col>
         </Row>
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label='Место нахождения объекта' name='address' rules={[{ required: true, message: 'Укажите адрес' }]}>
+            <Form.Item
+              label={t('addTuForms.form.labels.address')}
+              name='address'
+              rules={[{ required: true, message: t('addTuForms.form.validation.specifyAddress') }]}
+            >
               <Input
                 disabled
                 size='large'
-                placeholder='Адрес объекта'
+                placeholder={t('addTuForms.form.placeholders.address')}
                 addonAfter={
                   <Button type='link' style={{ padding: 0, height: 'auto' }} onClick={onAddressEdit}>
-                    <span style={{ fontSize: 14 }}>Изменить</span>
+                    <span style={{ fontSize: 14 }}>{t('addTuForms.form.buttons.change')}</span>
                   </Button>
                 }
               />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label='Тип технического условия' name='tech_conditionType' rules={[{ required: true, message: 'Выберите тип' }]}>
-              <Select size='large' placeholder='Тип ТУ'>
+            <Form.Item
+              label={t('addTuForms.form.labels.techConditionType')}
+              name='tech_conditionType'
+              rules={[{ required: true, message: t('addTuForms.form.validation.selectType') }]}
+            >
+              <Select size='large' placeholder={t('addTuForms.form.placeholders.techConditionType')}>
                 {typesTyQuery.data?.map((type) => (
                   <Option key={type.id} value={type.id}>
                     {type.title}
@@ -188,42 +209,46 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Col>
         </Row>
 
-        <Form.Item label='ЕНИ' name='eni' rules={[{ required: false }]}>
-          <Input size='large' placeholder='1234' />
+        <Form.Item label={t('addTuForms.form.labels.eni')} name='eni' rules={[{ required: false }]}>
+          <Input size='large' placeholder={t('addTuForms.form.placeholders.eni')} />
         </Form.Item>
 
         {/* =========================
             ТЕХНИЧЕСКИЕ ПАРАМЕТРЫ
         ========================= */}
         <Title level={4} style={{ borderBottom: '1px solid #D9D9D9', paddingBottom: '4px', marginTop: '24px' }}>
-          Технические параметры
+          {t('addTuForms.titles.techParams')}
         </Title>
 
-        <Form.Item label='Количество стоков' name='sewage_amount' rules={[{ required: true, message: 'Укажите кол-во' }]}>
-          <Input size='large' placeholder='Например: 2' />
+        <Form.Item
+          label={t('addTuForms.form.labels.sewageAmount')}
+          name='sewage_amount'
+          rules={[{ required: true, message: t('addTuForms.form.validation.required') }]}
+        >
+          <Input size='large' placeholder={t('addTuForms.form.placeholders.sewageAmount')} />
         </Form.Item>
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label='Требуемое количество воды' name='water_required' rules={[{ required: false }]}>
-              <Input size='large' placeholder='123' />
+            <Form.Item label={t('addTuForms.form.labels.waterRequired')} name='water_required' rules={[{ required: false }]}>
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.waterRequired')} />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label='Требуемый свободный напор' name='pressure_required' rules={[{ required: false }]}>
-              <Input size='large' placeholder='01:00|12:34567' />
+            <Form.Item label={t('addTuForms.form.labels.pressureRequired')} name='pressure_required' rules={[{ required: false }]}>
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.pressureRequired')} />
             </Form.Item>
           </Col>
         </Row>
 
-        <Form.Item label='Пожаротушение (внутреннее/наружное)' name='fire_fighting' rules={[{ required: false }]}>
-          <Input size='large' placeholder='Жилой дом' />
+        <Form.Item label={t('addTuForms.form.labels.fireFighting')} name='fire_fighting' rules={[{ required: false }]}>
+          <Input size='large' placeholder={t('addTuForms.form.placeholders.fireFighting')} />
         </Form.Item>
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label='Стадия' name='stage' rules={[{ required: false }]}>
-              <Select size='large' placeholder='Активен / Неактивен'>
+            <Form.Item label={t('addTuForms.form.labels.stage')} name='stage' rules={[{ required: false }]}>
+              <Select size='large' placeholder={t('addTuForms.form.placeholders.stage')}>
                 {stageOptions.map((option) => (
                   <Option key={option.value} value={option.value}>
                     {option.label}
@@ -233,8 +258,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label='Формулы' name='formula' rules={[{ required: false }]}>
-              <Select size='large' placeholder='Формулы'>
+            <Form.Item label={t('addTuForms.form.labels.formula')} name='formula' rules={[{ required: false }]}>
+              <Select size='large' placeholder={t('addTuForms.form.placeholders.formula')}>
                 {formulasQuery.data?.results.map((formula) => (
                   <Option key={formula.id} value={formula.id}>
                     {formula.title}
@@ -249,80 +274,80 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             ПОДКЛЮЧЕНИЕ
         ========================= */}
         <Title level={4} style={{ borderBottom: '1px solid #D9D9D9', paddingBottom: '4px', marginTop: '24px' }}>
-          Подключение
+          {t('addTuForms.titles.connection')}
         </Title>
 
-        <Form.Item label='К чему подключается объект' name='connection_target' rules={[{ required: false }]}>
-          <Input size='large' placeholder='Название объекта' />
+        <Form.Item label={t('addTuForms.form.labels.connectionTarget')} name='connection_target' rules={[{ required: false }]}>
+          <Input size='large' placeholder={t('addTuForms.form.placeholders.connectionTarget')} />
         </Form.Item>
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label='Проходящий по ул.' name='street_pass' rules={[{ required: false }]}>
-              <Input size='large' placeholder='Проходящий по ул.' />
+            <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass' rules={[{ required: false }]}>
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.streetPass')} />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label='Коллектор' name='collector' rules={[{ required: false }]}>
-              <Input size='large' placeholder='01:00|12:34567' />
+            <Form.Item label={t('addTuForms.form.labels.collector')} name='collector' rules={[{ required: false }]}>
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.collector')} />
             </Form.Item>
           </Col>
         </Row>
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label='Водопровод' name='water_pipe' rules={[{ required: false }]}>
-              <Input size='large' placeholder='Проходящий по ул.' />
+            <Form.Item label={t('addTuForms.form.labels.waterPipe')} name='water_pipe' rules={[{ required: false }]}>
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.waterPipe')} />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label='Канализация' name='sewer' rules={[{ required: false }]}>
-              <Input size='large' placeholder='01:00|12:34567' />
+            <Form.Item label={t('addTuForms.form.labels.sewer')} name='sewer' rules={[{ required: false }]}>
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.sewer')} />
             </Form.Item>
           </Col>
         </Row>
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label='Пожарные' name='fire_input_1' rules={[{ required: false }]}>
-              <Input size='large' placeholder='ввод 1' />
+            <Form.Item label={t('addTuForms.form.labels.fireInput1')} name='fire_input_1' rules={[{ required: false }]}>
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.fireInput1')} />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label='Ввод 2' name='fire_input_2' rules={[{ required: false }]}>
-              <Input size='large' placeholder='ввод 2' />
+            <Form.Item label={t('addTuForms.form.labels.fireInput2')} name='fire_input_2' rules={[{ required: false }]}>
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.fireInput2')} />
             </Form.Item>
           </Col>
         </Row>
 
-        <Form.Item label='Примечания и комментарии' name='notes' rules={[{ required: false }]}>
-          <Input.TextArea placeholder='Комментарий' rows={3} />
+        <Form.Item label={t('addTuForms.form.labels.notes')} name='notes' rules={[{ required: false }]}>
+          <Input.TextArea placeholder={t('addTuForms.form.placeholders.notes')} rows={3} />
         </Form.Item>
 
         {/* =========================
             ФИНАНСЫ
         ========================= */}
         <Title level={4} style={{ borderBottom: '1px solid #D9D9D9', paddingBottom: '4px', marginTop: '24px' }}>
-          Финансы
+          {t('addTuForms.titles.finance')}
         </Title>
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label='Оплата за ТУ (за бумагу)' name='payment_paper' rules={[{ required: false }]}>
-              <Input size='large' placeholder='Название объекта' />
+            <Form.Item label={t('addTuForms.form.labels.paymentPaper')} name='payment_paper' rules={[{ required: false }]}>
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.paymentPaper')} />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label='Оплата за подключение' name='payment_connection' rules={[{ required: false }]}>
-              <Input size='large' placeholder='Название объекта' />
+            <Form.Item label={t('addTuForms.form.labels.paymentConnection')} name='payment_connection' rules={[{ required: false }]}>
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.paymentConnection')} />
             </Form.Item>
           </Col>
         </Row>
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label='СтатусОплаты' name='status' rules={[{ required: true }]}>
-              <Select size='large' placeholder='Оплачено / Не оплачено'>
+            <Form.Item label={t('addTuForms.form.labels.status')} name='status' rules={[{ required: true }]}>
+              <Select size='large' placeholder={t('addTuForms.form.placeholders.status')}>
                 {statusOptions.map((option) => (
                   <Option key={option.value} value={option.value}>
                     {option.label}
@@ -332,8 +357,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label='Сумма оплаты' name='payment_amount' rules={[{ required: false }]}>
-              <Input size='large' placeholder='01:00|12:34567' />
+            <Form.Item label={t('addTuForms.form.labels.paymentAmount')} name='payment_amount' rules={[{ required: false }]}>
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.paymentAmount')} />
             </Form.Item>
           </Col>
         </Row>
@@ -341,18 +366,18 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
-              label='Срок оплаты ТУ'
+              label={t('addTuForms.form.labels.paymentDeadline')}
               name='payment_deadline'
               rules={[{ required: false }]}
               normalize={(value: Dayjs) => formatDate(value)}
               getValueProps={(value: string) => ({ value: parseDate(value) })}
             >
-              <DatePicker size='large' placeholder='02-02-2025' format='YYYY-MM-DD' />
+              <DatePicker size='large' placeholder={t('addTuForms.form.placeholders.paymentDeadline')} format='YYYY-MM-DD' />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label='№ счета на оплату' name='payment_invoice_number' rules={[{ required: false }]}>
-              <Input size='large' placeholder='1234567890' />
+            <Form.Item label={t('addTuForms.form.labels.paymentInvoiceNumber')} name='payment_invoice_number' rules={[{ required: false }]}>
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.invoiceNumber')} />
             </Form.Item>
           </Col>
         </Row>
@@ -361,7 +386,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           <Col>
             <Form.Item style={{ marginTop: '24px' }}>
               <Button loading={isLoading} type='primary' htmlType='submit' size='large'>
-                Готово
+                {t('addTuForms.form.buttons.submit')}
               </Button>
             </Form.Item>
           </Col>

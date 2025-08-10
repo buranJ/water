@@ -1,4 +1,5 @@
 import { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Form, Input, List, Modal, Space, Upload, UploadFile, UploadProps } from 'antd';
 import type { UploadChangeParam } from 'antd/es/upload';
 import { CloseCircleTwoTone, FileOutlined, UploadOutlined } from '@ant-design/icons';
@@ -9,6 +10,7 @@ interface MyModalProps {
 }
 
 export const MyModal: FC<MyModalProps> = ({ visible, onClose }) => {
+  const { t } = useTranslation();
   const [form] = Form.useForm();
   const [uploadFileList, setUploadFileList] = useState<UploadFile<File>[]>([]);
 
@@ -40,19 +42,19 @@ export const MyModal: FC<MyModalProps> = ({ visible, onClose }) => {
   };
 
   return (
-    <Modal open={visible} title='Отказ ТУ' onCancel={handleCancel} footer={null}>
+    <Modal open={visible} title={t('tuRejectModal.title')} onCancel={handleCancel} footer={null}>
       <Form form={form} layout='vertical'>
-        <Form.Item name='reason' label='Причина' initialValue='Отсутствие необходимых документов'>
+        <Form.Item name='reason' label={t('tuRejectModal.labels.reason')} initialValue={t('tuRejectModal.defaultReason')}>
           <Input />
         </Form.Item>
 
-        <Form.Item name='comment' label='Комментарий'>
-          <Input.TextArea rows={4} placeholder='Напишите подробнее причину...' />
+        <Form.Item name='comment' label={t('tuRejectModal.labels.comment')}>
+          <Input.TextArea rows={4} placeholder={t('tuRejectModal.placeholders.comment')} />
         </Form.Item>
 
         <Upload multiple showUploadList={false} fileList={uploadFileList} beforeUpload={() => false} onChange={handleUploadChange}>
           <Button icon={<UploadOutlined />} style={{ marginBottom: 16 }}>
-            Загрузить файл
+            {t('tuRejectModal.buttons.upload')}
           </Button>
         </Upload>
 
@@ -79,10 +81,10 @@ export const MyModal: FC<MyModalProps> = ({ visible, onClose }) => {
 
         <div style={{ textAlign: 'right' }}>
           <Button style={{ marginRight: 8 }} onClick={handleCancel}>
-            Назад
+            {t('tuRejectModal.buttons.back')}
           </Button>
           <Button type='primary' danger onClick={handleSubmit}>
-            Отказать
+            {t('tuRejectModal.buttons.reject')}
           </Button>
         </div>
       </Form>

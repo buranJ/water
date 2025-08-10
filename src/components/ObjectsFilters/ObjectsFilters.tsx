@@ -4,6 +4,8 @@ import { Dropdown } from 'antd';
 import { DownOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { ObjectFilters } from 'types/entities/objects';
 
+import { t } from 'i18next';
+
 interface ObjectsFiltersProps {
   filters: ObjectFilters;
   onSearchChange: (value: string) => void;
@@ -17,18 +19,18 @@ interface MenuItem {
 }
 
 const statusItems: MenuItem[] = [
-  { label: 'По статусу', key: 'all' },
-  { label: 'Активен', key: 'active' },
-  { label: 'Неактивен', key: 'inactive' }
+  { label: t('geoportalFilters.dropdown.status'), key: 'all' },
+  { label: t('geoportalFilters.status.active'), key: 'active' },
+  { label: t('geoportalFilters.status.inactive'), key: 'inactive' }
 ];
 
 const dateItems: MenuItem[] = [
   {
-    label: 'Сначала новые',
+    label: t('filterBar.newOnesfirst'),
     key: 'created_at'
   },
   {
-    label: 'Сначала старые',
+    label: t('filterBar.newOldFirst'),
     key: '-created_at'
   }
 ];
@@ -58,7 +60,7 @@ export const ObjectsFilters: FC<ObjectsFiltersProps> = ({ filters, onSearchChang
     <Flex gap={12} style={{ marginBottom: 24 }}>
       <Input
         prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
-        placeholder='Найти объекты'
+        placeholder={t('objects.searchPlaceholder')}
         value={filters.search}
         onChange={handleSearchChange}
         style={{
@@ -111,7 +113,7 @@ export const ObjectsFilters: FC<ObjectsFiltersProps> = ({ filters, onSearchChang
           borderColor: '#007aff'
         }}
       >
-        Добавить
+        {t('filterBar.add')}
       </Button>
     </Flex>
   );

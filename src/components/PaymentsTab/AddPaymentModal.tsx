@@ -5,6 +5,7 @@ import { UploadOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
 import { useCreatePaymentMutation } from 'api/Accounting.api';
+import { t } from 'i18next';
 const { Option } = Select;
 
 interface IProps {
@@ -53,11 +54,11 @@ export const AddPaymentModal: FC<IProps> = ({ visible, onClose, invoiceId }) => 
       }
 
       await createPayment(formData).unwrap();
-      message.success('Платеж успешно добавлен');
+      message.success(t('paymentsModal.messages.success'));
       handleCancel();
     } catch (error) {
       console.error('Ошибка:', error);
-      message.error('Ошибка при добавлении платежа');
+      message.error(t('paymentsModal.messages.error'));
     }
   };
 
@@ -87,13 +88,13 @@ export const AddPaymentModal: FC<IProps> = ({ visible, onClose, invoiceId }) => 
     const isDoc = file.type.includes('document') || file.type.includes('spreadsheet');
 
     if (!isImage && !isPDF && !isDoc) {
-      message.error('Можно загружать только изображения, PDF или документы');
+      message.error(t('paymentsModal.messages.fileTypeError'));
       return Upload.LIST_IGNORE;
     }
 
     const isLt10M = file.size / 1024 / 1024 < 10;
     if (!isLt10M) {
-      message.error('Файл должен быть меньше 10MB');
+      message.error(t('paymentsModal.messages.fileSizeError'));
       return Upload.LIST_IGNORE;
     }
 
@@ -101,18 +102,26 @@ export const AddPaymentModal: FC<IProps> = ({ visible, onClose, invoiceId }) => 
   };
 
   return (
-    <Modal title='Добавить платеж' open={visible} onCancel={handleCancel} width={600} footer={null}>
+    <Modal title={t('paymentsModal.title')} open={visible} onCancel={handleCancel} width={600} footer={null}>
       <Form form={form} layout='vertical' onFinish={handleSubmit} style={{ marginTop: 16 }}>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item name='payment_number' label='Номер платежа' rules={[{ required: true, message: 'Поле обязательно для заполнения' }]}>
-              <Input placeholder='Введите номер платежа' />
+            <Form.Item
+              name='payment_number'
+              label={t('paymentsModal.labels.paymentNumber')}
+              rules={[{ required: true, message: t('paymentsModal.validation.required') }]}
+            >
+              <Input placeholder={t('paymentsModal.placeholders.paymentNumber')} />
             </Form.Item>
           </Col>
 
           <Col span={12}>
-            <Form.Item name='payment_date' label='Дата платежа' rules={[{ required: true, message: 'Поле обязательно для заполнения' }]}>
-              <DatePicker style={{ width: '100%' }} format='DD.MM.YYYY' placeholder='Выберите дату' />
+            <Form.Item
+              name='payment_date'
+              label={t('paymentsModal.labels.paymentDate')}
+              rules={[{ required: true, message: t('paymentsModal.validation.required') }]}
+            >
+              <DatePicker style={{ width: '100%' }} format='DD.MM.YYYY' placeholder={t('paymentsModal.placeholders.date')} />
             </Form.Item>
           </Col>
         </Row>
@@ -121,30 +130,44 @@ export const AddPaymentModal: FC<IProps> = ({ visible, onClose, invoiceId }) => 
           <Col span={12}>
             <Form.Item
               name='amount'
-              label='Сумма платежа'
+              label={t('paymentsModal.labels.amount')}
               rules={[
-                { required: true, message: 'Поле обязательно для заполнения' },
-                { type: 'number', min: 0.01, message: 'Сумма должна быть больше 0' }
+                { required: true, message: t('paymentsModal.validation.required') },
+                { type: 'number', min: 0.01, message: t('paymentsModal.validation.amountPositive') }
               ]}
             >
-              <InputNumber style={{ width: '100%' }} placeholder='Введите сумму' step={0.01} min={0} addonAfter='KGZ' />
+              <InputNumber
+                style={{ width: '100%' }}
+                placeholder={t('paymentsModal.placeholders.amount')}
+                step={0.01}
+                min={0}
+                addonAfter={t('tuDetails.currency')}
+              />
             </Form.Item>
           </Col>
 
           <Col span={12}>
-            <Form.Item name='source' label='Источник платежа' rules={[{ required: true, message: 'Поле обязательно для заполнения' }]}>
-              <Input placeholder='Например: 1С' />
+            <Form.Item
+              name='source'
+              label={t('paymentsModal.labels.source')}
+              rules={[{ required: true, message: t('paymentsModal.validation.required') }]}
+            >
+              <Input placeholder={t('paymentsModal.placeholders.source')} />
             </Form.Item>
           </Col>
         </Row>
 
-        <Form.Item name='status' label='Статус платежа' rules={[{ required: true, message: 'Поле обязательно для заполнения' }]}>
-          <Select placeholder='Выберите статус'>
-            <Option value='received'>Поступили</Option>
+        <Form.Item
+          name='status'
+          label={t('paymentsModal.labels.status')}
+          rules={[{ required: true, message: t('paymentsModal.validation.required') }]}
+        >
+          <Select placeholder={t('paymentsModal.placeholders.status')}>
+            <Option value='received'>{t('protocolDetail.payment.status.received')}</Option>
           </Select>
         </Form.Item>
 
-        <Form.Item label='Файл чека (необязательно)'>
+        <Form.Item label={t('paymentsModal.labels.optionalReceiptFile')}>
           <Upload
             fileList={fileList}
             beforeUpload={beforeUpload}
@@ -152,16 +175,22 @@ export const AddPaymentModal: FC<IProps> = ({ visible, onClose, invoiceId }) => 
             maxCount={1}
             accept='image/*,.pdf,.doc,.docx,.xls,.xlsx'
           >
-            <Button icon={<UploadOutlined />}>{fileList.length > 0 ? 'Заменить файл' : 'Загрузить чек'}</Button>
+            <Button icon={<UploadOutlined />}>
+              {fileList.length > 0 ? t('paymentsModal.buttons.replaceFile') : t('paymentsModal.buttons.uploadReceipt')}
+            </Button>
           </Upload>
-          {fileList.length > 0 && <div style={{ marginTop: 8, color: '#52c41a' }}>Выбран файл: {fileList[0].name}</div>}
+          {fileList.length > 0 && (
+            <div style={{ marginTop: 8, color: '#52c41a' }}>
+              {t('paymentsModal.messages.fileSelectedPrefix')} {fileList[0].name}
+            </div>
+          )}
         </Form.Item>
 
         <Form.Item style={{ marginTop: 24 }}>
           <Space style={{ width: '100%', justifyContent: 'flex-end' }}>
-            <Button onClick={handleCancel}>Отмена</Button>
+            <Button onClick={handleCancel}>{t('paymentsModal.buttons.cancel')}</Button>
             <Button type='primary' htmlType='submit' loading={isLoading}>
-              Добавить платеж
+              {t('paymentsModal.buttons.submit')}
             </Button>
           </Space>
         </Form.Item>

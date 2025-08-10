@@ -2,6 +2,8 @@ import { FC } from 'react';
 import { Button, Col, Form, Input, Row, Select } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 
+import { t } from 'i18next';
+
 const { Option } = Select;
 
 export interface ObjectFormData {
@@ -73,7 +75,7 @@ export const ObjectForm: FC<ObjectFormProps> = ({ onSubmit, onCancel, initialVal
               color: '#1d1d1f'
             }}
           >
-            Добавить объект
+            {t('objects.add')}
           </h2>
           <Button
             type='text'
@@ -114,14 +116,14 @@ export const ObjectForm: FC<ObjectFormProps> = ({ onSubmit, onCancel, initialVal
                   color: '#1d1d1f'
                 }}
               >
-                Название объекта
+                {t('objectForm.labels.title')}
               </span>
             }
             name='title'
-            rules={[{ required: true, message: 'Введите название объекта' }]}
+            rules={[{ required: true, message: t('objectForm.validation.titleRequired') }]}
           >
             <Input
-              placeholder='Название объект'
+              placeholder={t('objectForm.placeholders.title')}
               style={{
                 borderRadius: 12,
                 border: 'none',
@@ -142,14 +144,14 @@ export const ObjectForm: FC<ObjectFormProps> = ({ onSubmit, onCancel, initialVal
                   color: '#1d1d1f'
                 }}
               >
-                Адрес
+                {t('objectForm.labels.addressStreet')}
               </span>
             }
             name='address_street'
-            rules={[{ required: true, message: 'Введите адрес' }]}
+            rules={[{ required: true, message: t('objectForm.validation.addressRequired') }]}
           >
             <Input
-              placeholder='Адрес'
+              placeholder={t('objectForm.placeholders.addressStreet')}
               style={{
                 borderRadius: 12,
                 border: 'none',
@@ -170,13 +172,13 @@ export const ObjectForm: FC<ObjectFormProps> = ({ onSubmit, onCancel, initialVal
                   color: '#1d1d1f'
                 }}
               >
-                Номер дома
+                {t('objectForm.labels.addressNumber')}
               </span>
             }
             name='address_number'
           >
             <Input
-              placeholder='Номер дома'
+              placeholder={t('objectForm.placeholders.addressNumber')}
               style={{
                 borderRadius: 12,
                 border: 'none',
@@ -199,14 +201,14 @@ export const ObjectForm: FC<ObjectFormProps> = ({ onSubmit, onCancel, initialVal
                       color: '#1d1d1f'
                     }}
                   >
-                    Кадастровый номер
+                    {t('objectForm.labels.cadastralNumber')}
                   </span>
                 }
                 name='kadastr_number'
-                rules={[{ required: true, message: 'Введите кадастровый номер' }]}
+                rules={[{ required: true, message: t('objectForm.validation.cadastralRequired') }]}
               >
                 <Input
-                  placeholder='01:001:1234567'
+                  placeholder={t('objectForm.placeholders.cadastralNumber')}
                   style={{
                     borderRadius: 12,
                     border: 'none',
@@ -229,13 +231,13 @@ export const ObjectForm: FC<ObjectFormProps> = ({ onSubmit, onCancel, initialVal
                       color: '#1d1d1f'
                     }}
                   >
-                    Тип объекта
+                    {t('objectForm.labels.type')}
                   </span>
                 }
                 name='type'
               >
                 <Input
-                  placeholder='Жилой дом'
+                  placeholder={t('objectForm.placeholders.type')}
                   style={{
                     borderRadius: 12,
                     border: 'none',
@@ -258,13 +260,13 @@ export const ObjectForm: FC<ObjectFormProps> = ({ onSubmit, onCancel, initialVal
                   color: '#1d1d1f'
                 }}
               >
-                Вид использования
+                {t('objectForm.labels.usageType')}
               </span>
             }
             name='usage_type'
           >
             <Input
-              placeholder='Жилой дом'
+              placeholder={t('objectForm.placeholders.usageType')}
               style={{
                 borderRadius: 12,
                 border: 'none',
@@ -285,22 +287,22 @@ export const ObjectForm: FC<ObjectFormProps> = ({ onSubmit, onCancel, initialVal
                   color: '#1d1d1f'
                 }}
               >
-                Статус
+                {t('objectForm.labels.status')}
               </span>
             }
             name='status'
-            rules={[{ required: true, message: 'Выберите статус' }]}
+            rules={[{ required: true, message: t('objectForm.validation.statusRequired') }]}
           >
             <Select
-              placeholder='Выберите статус'
+              placeholder={t('objectForm.placeholders.status')}
               style={{
                 borderRadius: 12
               }}
             >
-              <Option value='active'>Активен</Option>
-              <Option value='inactive'>Неактивен</Option>
-              <Option value='pending'>В ожидании</Option>
-              <Option value='rejected'>Отклонен</Option>
+              <Option value='active'>{t('customers.status.active')}</Option>
+              <Option value='inactive'>{t('customers.status.inactive')}</Option>
+              <Option value='pending'>{t('applications.statusTag.pending')}</Option>
+              <Option value='rejected'>{t('applications.statusTag.rejected')}</Option>
             </Select>
           </Form.Item>
 
@@ -329,7 +331,7 @@ export const ObjectForm: FC<ObjectFormProps> = ({ onSubmit, onCancel, initialVal
                 color: '#8e8e93'
               }}
             >
-              Назад
+              {t('objectForm.buttons.cancel')}
             </Button>
 
             <Button
@@ -344,7 +346,7 @@ export const ObjectForm: FC<ObjectFormProps> = ({ onSubmit, onCancel, initialVal
                 height: 'auto'
               }}
             >
-              Добавить
+              {t('objectForm.buttons.add')}
             </Button>
           </div>
         </Form>
