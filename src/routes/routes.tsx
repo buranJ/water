@@ -26,6 +26,7 @@ const ApplicationsCreate = lazy(() => import('pages/ApplicationsCreate'));
 const ApplicationDetails = lazy(() => import('pages/ApplicationDetails'));
 const EditApplication = lazy(() => import('pages/EditApplication'));
 const Profile = lazy(() => import('pages/Profile'));
+const ChangeHistory = lazy(() => import('pages/ChangeHistory'));
 
 export const routerConfig: RouteObject[] = [
   {
@@ -124,6 +125,10 @@ export const routerConfig: RouteObject[] = [
   {
     path: '/dashboard/Profile',
     element: <Profile title='routers.profile' />
+  },
+  {
+    path: '/dashboard/ty/:tyId/change-history',
+    element: <ChangeHistory title='История изменений ТУ' />
   },
   {
     path: '*',

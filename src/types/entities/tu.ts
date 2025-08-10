@@ -1,5 +1,12 @@
 import { IStageEnum, IStatus6b3Enum, ITyTypeEnum } from 'types/common';
 
+/**
+ * * + - Created
+ * * ~ - Updated
+ * * - - Deleted
+ */
+export type IHistoryType = '+' | '~' | '-';
+
 export interface ITechnicalCondition {
   id: number;
   status_display: IStatus6b3Enum;
@@ -206,4 +213,14 @@ export interface ITyListQueryParams {
 export interface ITypesTY {
   id: number;
   title: string;
+}
+
+export interface IHistory {
+  history_id: string;
+  history_date: string;
+  history_user: string;
+  history_type: IHistoryType;
+  history_type_display: string;
+  history_change_reason?: string;
+  changes?: { field: string; new: string; old: string }[];
 }

@@ -9,6 +9,8 @@ import {
   IGetAllTechnicalConditionResponse,
   IGetTechnicalConditionByIdParams,
   IGetTechnicalConditionByIdResponse,
+  IGetTyHistoryParams,
+  IGetTyHistoryResponse,
   IITypesTYParams,
   IPatchTechnicalConditionParams,
   IPatchTechnicalConditionResponse,
@@ -71,6 +73,13 @@ export const tyApi = createApi({
         url: '/ty/typesTY/',
         method: 'GET'
       })
+    }),
+    getHistoryTy: build.query<IGetTyHistoryResponse, IGetTyHistoryParams>({
+      query: ({ tyId, ...params }) => ({
+        url: `/ty/${tyId}/history/`,
+        method: 'GET',
+        params
+      })
     })
   })
 });
@@ -82,5 +91,6 @@ export const {
   useUpdateTyMutation,
   usePatchTyMutation,
   useDeleteTyMutation,
-  useGetTypesTyQuery
+  useGetTypesTyQuery,
+  useGetHistoryTyQuery
 } = tyApi;

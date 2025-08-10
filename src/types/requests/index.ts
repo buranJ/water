@@ -17,6 +17,8 @@ export type {
   IGetAllTechnicalConditionResponse,
   IGetTechnicalConditionByIdParams,
   IGetTechnicalConditionByIdResponse,
+  IGetTyHistoryParams,
+  IGetTyHistoryResponse,
   IITypesTYParams,
   IPatchTechnicalConditionParams,
   IPatchTechnicalConditionResponse,

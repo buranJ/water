@@ -248,7 +248,7 @@
     "currency": "сом",
     "actions": {
       "request": "Запросить",
-      "changeTuData": "Изменить данные ТУ",
+      "changeTuData": "История изменений данных ТУ",
       "downloadTu": "Скачать ТУ",
       "rejectTu": "Отказать ТУ"
     },

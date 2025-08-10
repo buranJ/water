@@ -11,4 +11,4 @@ export type {
   ObjectItem,
   ObjectListResponse
 } from './objects';
-export type { IGetTyById, ITechnicalCondition, ITyBody, ITyItem, ITyListQueryParams, ITypesTY } from './tu';
+export type { IGetTyById, IHistory, IHistoryType, ITechnicalCondition, ITyBody, ITyItem, ITyListQueryParams, ITypesTY } from './tu';
