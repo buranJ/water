@@ -40,8 +40,8 @@ export const Architecture: FC<IProps> = ({ documentsRequire, documentsCustom, ca
     console.log('Скачать PDF');
   };
 
-  const handleDownloadClick = ({ folder_id }: { folder_id: string }) => {
-    navigate(`/dashboard/folder-detail/${folder_id}/${id}`);
+  const handleDownloadClick = ({ folder_id, folderName }: { folder_id: string; folderName: string }) => {
+    navigate(`/dashboard/folder-detail/${folder_id}/${id}`, { state: { folderName: folderName } });
   };
 
   const handleCreateDocument = () => {
@@ -132,7 +132,7 @@ export const Architecture: FC<IProps> = ({ documentsRequire, documentsCustom, ca
                   {doc.title}
                 </Title>
                 <Button
-                  onClick={() => handleDownloadClick({ folder_id: doc.id })}
+                  onClick={() => handleDownloadClick({ folder_id: doc.id, folderName: doc.title })}
                   color='default'
                   variant='outlined'
                   style={{ width: '100%', borderRadius: 6 }}
@@ -201,7 +201,7 @@ export const Architecture: FC<IProps> = ({ documentsRequire, documentsCustom, ca
                     {doc.title}
                   </Title>
                   <Button
-                    onClick={() => handleDownloadClick({ folder_id: doc.id })}
+                    onClick={() => handleDownloadClick({ folder_id: doc.id, folderName: doc.title })}
                     color='default'
                     variant='outlined'
                     style={{ width: '100%', borderRadius: 6 }}

@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router';
+import { useLocation, useParams } from 'react-router';
 import { Button, Col, Dropdown, Input, List, message, Row, Space, Tabs, Typography, Upload, UploadFile, UploadProps } from 'antd';
 import { UploadChangeParam } from 'antd/es/upload';
 import Dragger from 'antd/es/upload/Dragger';
@@ -28,7 +28,9 @@ interface IProps {
 const { TabPane } = Tabs;
 const { Text } = Typography;
 
-export const FolderDetail: FC<IProps> = ({ title }) => {
+export const FolderDetail: FC<IProps> = () => {
+  const params = useLocation();
+
   const { folderId, tyId } = useParams<{ folderId: string; tyId: string }>();
   const filesQuery = useGetFilefolderFilesQuery({ folder_id: folderId || '', ty_id: tyId || '' });
   const [uploadFiles, { isSuccess, isLoading, isError }] = useUploadFileMutation();
@@ -127,7 +129,7 @@ export const FolderDetail: FC<IProps> = ({ title }) => {
   }, [isError, isSuccess]);
 
   return (
-    <DashboardLayout title={title}>
+    <DashboardLayout title={params.state.folderName}>
       <Row justify='space-between' style={{ marginBottom: 16 }}>
         <Col>
           <Space>
