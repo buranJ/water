@@ -1,5 +1,5 @@
 import { IPaginationMeta } from 'types/common';
-import { IGetTyById, ITechnicalCondition, ITyBody, ITyItem, ITyListQueryParams, ITypesTY } from 'types/entities';
+import { IGetTyById, IHistory, ITechnicalCondition, ITyBody, ITyItem, ITyListQueryParams, ITypesTY } from 'types/entities';
 
 export type IGetAllTechnicalConditionResponse = IPaginationMeta & {
   results: ITechnicalCondition[];
@@ -34,3 +34,8 @@ export type IGetTyByIdParams = { applicationId: string };
 
 export type ITypesTYResponse = ITypesTY[];
 export type IITypesTYParams = void;
+
+export type IGetTyHistoryResponse = IPaginationMeta & {
+  results: IHistory[];
+};
+export type IGetTyHistoryParams = { tyId: string; page?: number; page_size?: number };

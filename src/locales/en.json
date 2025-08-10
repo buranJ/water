@@ -247,7 +247,7 @@
     "currency": "KGS",
     "actions": {
       "request": "Request",
-      "changeTuData": "Change TU data",
+      "changeTuData": "History of changes to technical data",
       "downloadTu": "Download TU",
       "rejectTu": "Reject TU"
     },
