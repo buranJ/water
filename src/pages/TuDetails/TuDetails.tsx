@@ -306,7 +306,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
       {activeTab === '1' && (
         <Flex justify='end' align='center' gap={24} style={{ marginBottom: 16 }}>
           <Link to='/dashboard/technical-conditions/history-of-loads'>{t('routers.historyOfLoads')}</Link>
-          <Link to='/change'>{t('tuDetails.actions.changeTuData')}</Link>
+          <Link to={`/dashboard/ty/${id}/change-history`}>{t('tuDetails.actions.changeTuData')}</Link>
           <Button icon={<DownloadOutlined />}>{t('tuDetails.actions.downloadTu')}</Button>
           <Button icon={<PlusOutlined />}>{t('historyOfLoads.addLoad')}</Button>
           <Button danger onClick={handleRejectClick}>
