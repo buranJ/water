@@ -80,7 +80,6 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
   useEffect(() => {
     if (tuQuery.data) {
-      console.log(tuQuery?.data);
       form.setFieldsValue({
         ...tuQuery.data,
         customer: tuQuery.data.customer.full_name,
