@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { message } from 'antd';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { ObjectForm, ObjectFormData } from 'components/ObjectForm/ObjectForm';
@@ -15,9 +16,11 @@ interface ApiError {
   message?: string;
 }
 
-export const AddObject: FC<AddObjectProps> = ({ title = 'Добавить объект' }) => {
+export const AddObject: FC<AddObjectProps> = ({ title: titleProp }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [createObject, { isLoading }] = useCreateObjectMutation();
+  const pageTitle = titleProp ?? t('objects.add');
 
   const handleSubmit = async (formData: ObjectFormData): Promise<void> => {
     try {
@@ -32,7 +35,7 @@ export const AddObject: FC<AddObjectProps> = ({ title = 'Добавить объ
       };
 
       await createObject(objectData).unwrap();
-      message.success('Объект успешно создан');
+      message.success(t('objects.messages.created'));
       navigate('/dashboard/objects');
     } catch (error) {
       // Обработка ошибок API с правильной типизацией
@@ -45,11 +48,11 @@ export const AddObject: FC<AddObjectProps> = ({ title = 'Добавить объ
             return `${field}: ${errorMsg}`;
           })
           .join('; ');
-        message.error(`Ошибка: ${messages}`);
+        message.error(`${t('common.errorPrefix')}${messages}`);
       } else if (apiError?.message) {
-        message.error(`Ошибка: ${apiError.message}`);
+        message.error(`${t('common.errorPrefix')}${apiError.message}`);
       } else {
-        message.error('Ошибка при создании объекта');
+        message.error(t('objects.messages.createError'));
       }
       console.error('Create object error:', error);
     }
@@ -60,7 +63,7 @@ export const AddObject: FC<AddObjectProps> = ({ title = 'Добавить объ
   };
 
   return (
-    <DashboardLayout title={title}>
+    <DashboardLayout title={pageTitle}>
       <ObjectForm onSubmit={handleSubmit} onCancel={handleCancel} loading={isLoading} />
     </DashboardLayout>
   );

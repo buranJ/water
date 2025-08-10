@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { Button, Card, Col, Dropdown, Input, message, Row, Space, Typography } from 'antd';
 import { DownloadOutlined, DownOutlined, SearchOutlined } from '@ant-design/icons';
 import { IFileFolderFolder } from 'types/entities';
@@ -21,6 +22,7 @@ interface IProps {
 export const Architecture: FC<IProps> = ({ documentsRequire, documentsCustom, categoryId }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [createFolder, { isLoading, isSuccess, isError }] = useCreateFilefolderMutation();
   const [searchText, setSearchText] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -50,10 +52,10 @@ export const Architecture: FC<IProps> = ({ documentsRequire, documentsCustom, ca
     if (isSuccess) {
       setIsModalVisible(false);
       setFolderTitle('');
-      message.success('Документ успешно создан');
+      message.success(t('architecture.messages.created'));
     }
     if (isError) {
-      message.error('Ошибка при создании документа');
+      message.error(t('architecture.messages.createError'));
     }
   }, [isError, isSuccess]);
 
@@ -62,17 +64,23 @@ export const Architecture: FC<IProps> = ({ documentsRequire, documentsCustom, ca
       <Row justify='space-between' style={{ marginBottom: 16 }}>
         <Col>
           <Space>
-            <Input placeholder='Найти' prefix={<SearchOutlined />} style={{ width: 240 }} value={searchText} onChange={handleSearch} />
+            <Input
+              placeholder={t('filterBar.search')}
+              prefix={<SearchOutlined />}
+              style={{ width: 240 }}
+              value={searchText}
+              onChange={handleSearch}
+            />
             <Dropdown
               menu={{
                 items: [
                   {
                     key: 'alphabet',
-                    label: 'По алфавиту'
+                    label: t('filterBar.filter.alphabet')
                   },
                   {
                     key: 'date',
-                    label: 'По дате'
+                    label: t('filterBar.filter.date')
                   }
                 ],
                 onClick: (info) => {
@@ -82,20 +90,20 @@ export const Architecture: FC<IProps> = ({ documentsRequire, documentsCustom, ca
               trigger={['click']}
             >
               <Button>
-                По алфавиту <DownOutlined />
+                {t('filterBar.filter.alphabet')} <DownOutlined />
               </Button>
             </Dropdown>
           </Space>
         </Col>
         <Col>
           <Button icon={<DownloadOutlined />} onClick={handleDownloadPDF}>
-            PDF
+            {t('applicationDetails.buttons.pdf')}
           </Button>
         </Col>
       </Row>
 
       <div style={{ marginTop: 24 }}>
-        <Title level={4}>Документы для загрузки</Title>
+        <Title level={4}>{t('architecture.titles.documentsToUpload')}</Title>
         <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
           {documentsRequire.map((doc) => (
             <Col key={doc.id}>
@@ -129,7 +137,7 @@ export const Architecture: FC<IProps> = ({ documentsRequire, documentsCustom, ca
                   variant='outlined'
                   style={{ width: '100%', borderRadius: 6 }}
                 >
-                  Загрузить
+                  {t('common.upload')}
                 </Button>
               </Card>
             </Col>
@@ -137,7 +145,7 @@ export const Architecture: FC<IProps> = ({ documentsRequire, documentsCustom, ca
         </Row>
 
         <div style={{ marginTop: 48 }}>
-          <Title level={4}>Дополнительные документы</Title>
+          <Title level={4}>{t('architecture.titles.additionalDocuments')}</Title>
           <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
             <Card
               style={{
@@ -163,7 +171,7 @@ export const Architecture: FC<IProps> = ({ documentsRequire, documentsCustom, ca
               </div>
               <Title level={5} style={{ marginBottom: 8, fontSize: 12, color: '#737379' }}></Title>
               <Button onClick={() => setIsModalVisible(true)} style={{ width: '100%', borderRadius: 6 }}>
-                Создать документ
+                {t('architecture.buttons.createDocument')}
               </Button>
             </Card>
             {documentsCustom.map((doc) => (
@@ -198,7 +206,7 @@ export const Architecture: FC<IProps> = ({ documentsRequire, documentsCustom, ca
                     variant='outlined'
                     style={{ width: '100%', borderRadius: 6 }}
                   >
-                    Загрузить
+                    {t('common.upload')}
                   </Button>
                 </Card>
               </Col>
@@ -206,24 +214,24 @@ export const Architecture: FC<IProps> = ({ documentsRequire, documentsCustom, ca
           </Row>
         </div>
         <Modal
-          title='Создать документ'
+          title={t('architecture.titles.createDocument')}
           open={isModalVisible}
           onCancel={() => setIsModalVisible(false)}
           footer={
             <Row justify='end' gutter={16}>
               <Col>
-                <Button onClick={() => setIsModalVisible(false)}>Назад</Button>
+                <Button onClick={() => setIsModalVisible(false)}>{t('tuRejectModal.buttons.back')}</Button>
               </Col>
               <Col>
                 <Button loading={isLoading} type='primary' onClick={() => handleCreateDocument()}>
-                  Создать
+                  {t('architecture.buttons.create')}
                 </Button>
               </Col>
             </Row>
           }
           width={600}
         >
-          <Input placeholder='Название документа' onChange={(e) => setFolderTitle(e.target.value)} />
+          <Input placeholder={t('architecture.inputs.documentName')} onChange={(e) => setFolderTitle(e.target.value)} />
         </Modal>
       </div>
     </>

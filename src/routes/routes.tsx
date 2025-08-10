@@ -55,7 +55,7 @@ export const routerConfig: RouteObject[] = [
   },
   {
     path: '/dashboard/technical-conditions/tu-details/:id',
-    element: <TuDetails title='ТУ №' />
+    element: <TuDetails title='routers.tuNumberPrefix' />
   },
   {
     path: '/dashboard/technical-conditions/history-of-loads',

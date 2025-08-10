@@ -1,11 +1,10 @@
 import React, { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Card, Col, Dropdown, Input, Row, Space, Typography } from 'antd';
 import { DownloadOutlined, DownOutlined, SearchOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 import fileImg from 'assets/images/Architecture/file.png';
 import moreFileImg from 'assets/images/Architecture/more-file.png';
-
-import { t } from 'i18next';
 
 const { Title } = Typography;
 
@@ -15,6 +14,7 @@ interface IProps {
 
 export const Architecture: FC<IProps> = ({ title }) => {
   const [searchText, setSearchText] = useState('');
+  const { t } = useTranslation();
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
@@ -54,17 +54,23 @@ export const Architecture: FC<IProps> = ({ title }) => {
       <Row justify='space-between' style={{ marginBottom: 16 }}>
         <Col>
           <Space>
-            <Input placeholder='Найти' prefix={<SearchOutlined />} style={{ width: 240 }} value={searchText} onChange={handleSearch} />
+            <Input
+              placeholder={t('filterBar.search')}
+              prefix={<SearchOutlined />}
+              style={{ width: 240 }}
+              value={searchText}
+              onChange={handleSearch}
+            />
             <Dropdown
               menu={{
                 items: [
                   {
                     key: 'alphabet',
-                    label: 'По алфавиту'
+                    label: t('filterBar.filter.alphabet')
                   },
                   {
                     key: 'date',
-                    label: 'По дате'
+                    label: t('filterBar.filter.date')
                   }
                 ],
                 onClick: (info) => {
@@ -74,20 +80,20 @@ export const Architecture: FC<IProps> = ({ title }) => {
               trigger={['click']}
             >
               <Button>
-                По алфавиту <DownOutlined />
+                {t('filterBar.filter.alphabet')} <DownOutlined />
               </Button>
             </Dropdown>
           </Space>
         </Col>
         <Col>
           <Button icon={<DownloadOutlined />} onClick={handleDownloadPDF}>
-            PDF
+            {t('applicationDetails.buttons.pdf')}
           </Button>
         </Col>
       </Row>
 
       <div style={{ marginTop: 24 }}>
-        <Title level={4}>Документы для загрузки</Title>
+        <Title level={4}>{t('architecture.titles.documentsToUpload')}</Title>
         <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
           {docData.map((doc) => (
             <Col key={doc.key}>
@@ -128,7 +134,7 @@ export const Architecture: FC<IProps> = ({ title }) => {
         </Row>
 
         <div style={{ marginTop: 48 }}>
-          <Title level={4}>Дополнительные документы</Title>
+          <Title level={4}>{t('architecture.titles.additionalDocuments')}</Title>
           <Row style={{ marginTop: 16 }}>
             <Col>
               <Card
@@ -152,7 +158,7 @@ export const Architecture: FC<IProps> = ({ title }) => {
                 >
                   <img src={moreFileImg} alt='' style={{ width: '100%', height: '100%' }} />
                 </div>
-                <Button style={{ width: '100%', borderRadius: 6 }}>Создать документ</Button>
+                <Button style={{ width: '100%', borderRadius: 6 }}>{t('architecture.buttons.createDocument')}</Button>
               </Card>
             </Col>
           </Row>

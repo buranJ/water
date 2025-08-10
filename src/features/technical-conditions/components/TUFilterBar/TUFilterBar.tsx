@@ -4,6 +4,8 @@ import { DownloadOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icon
 import { IStageEnum, IStatus6b3Enum } from 'types/common';
 import './styles.scss';
 
+import { t } from 'i18next';
+
 const { Option } = Select;
 
 interface TUFilterValues {
@@ -35,28 +37,28 @@ export const TUFilterBar = ({ onFilterChange, onAddClick, onDownloadClick }: Pro
     <div className='tu-filter-bar'>
       <Form form={form} layout='inline' onValuesChange={handleValuesChange} style={{ flexWrap: 'wrap', rowGap: 12 }}>
         <Form.Item name='search'>
-          <Input prefix={<SearchOutlined />} placeholder='Search' allowClear />
+          <Input prefix={<SearchOutlined />} placeholder={t('filterBar.search')} allowClear />
         </Form.Item>
 
         <Form.Item name='ordering'>
-          <Select variant='filled' placeholder='По алфавиту' allowClear style={{ width: 140 }}>
-            <Option value='object_name'>А-Я</Option>
-            <Option value='-object_name'>Я-А</Option>
+          <Select variant='filled' placeholder={t('filterBar.filter.alphabet')} allowClear style={{ width: 140 }}>
+            <Option value='object_name'>{t('filterBar.alphabetAsc')}</Option>
+            <Option value='-object_name'>{t('filterBar.alphabetDesc')}</Option>
           </Select>
         </Form.Item>
 
         <Form.Item name='status'>
-          <Select variant='filled' placeholder='По статусу' allowClear style={{ width: 140 }}>
-            <Option value='active'>Утверждено</Option>
-            <Option value='inactive'>Отклонено</Option>
-            <Option value='archived'>В архиве</Option>
+          <Select variant='filled' placeholder={t('filterBar.filter.status')} allowClear style={{ width: 140 }}>
+            <Option value='active'>{t('filterBar.approved')}</Option>
+            <Option value='inactive'>{t('filterBar.rejected')}</Option>
+            <Option value='archived'>{t('filterBar.archived')}</Option>
           </Select>
         </Form.Item>
 
         <Form.Item name='date'>
-          <Select variant='filled' placeholder='По дате' allowClear style={{ width: 140 }}>
-            <Option value='created_at'>Сначала новые</Option>
-            <Option value='-created_at'>Сначала старые</Option>
+          <Select variant='filled' placeholder={t('filterBar.byDate')} allowClear style={{ width: 140 }}>
+            <Option value='created_at'>{t('filterBar.newOnesfirst')}</Option>
+            <Option value='-created_at'>{t('filterBar.newOldFirst')}</Option>
           </Select>
         </Form.Item>
       </Form>
@@ -70,7 +72,7 @@ export const TUFilterBar = ({ onFilterChange, onAddClick, onDownloadClick }: Pro
             onAddClick();
           }}
         >
-          Добавить
+          {t('filterBar.add')}
         </Button>
         <Button icon={<DownloadOutlined />} onClick={onDownloadClick}>
           PDF

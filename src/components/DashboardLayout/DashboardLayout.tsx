@@ -1,8 +1,8 @@
-import { ReactNode, useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { Button, Flex, Layout, Menu, MenuProps, theme, Typography } from 'antd';
-import { BellOutlined, CreditCardOutlined, LeftOutlined, TeamOutlined } from '@ant-design/icons';
+import { Avatar, Button, Flex, Layout, Menu, type MenuProps, Skeleton, theme, Typography } from 'antd';
+import { BellOutlined, LeftOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import arrow from 'assets/icons/arrow.svg';
 import logo from 'assets/icons/logo.svg';
 import ApplicationIcon from 'assets/icons/sidebar/applications.svg?react';
@@ -11,11 +11,10 @@ import ComputingIcon from 'assets/icons/sidebar/computing.svg?react';
 import ExportIcon from 'assets/icons/sidebar/export.svg?react';
 import GeoportalIcon from 'assets/icons/sidebar/geoportal.svg?react';
 import TuIcon from 'assets/icons/sidebar/tu.svg?react';
-import avatar from 'assets/images/avatar.png';
 import './styles.scss';
 
-import { useGetUserPermissionsQuery } from 'api/Auth.api';
 import clsx from 'clsx';
+import { usePermissions, useUserInfo } from 'hooks/useAuth';
 import i18next from 'i18next';
 
 const { Header, Sider, Content } = Layout;
@@ -35,10 +34,39 @@ export const DashboardLayout = ({ children, title }: Props) => {
     token: { colorBgContainer }
   } = theme.useToken();
 
-  const { data: permissionsData } = useGetUserPermissionsQuery();
-  const userPermissions = permissionsData?.permissions || [];
+  const { hasPermission } = usePermissions();
+  const { data: userResponse, isLoading: isUserLoading } = useUserInfo();
 
-  const hasPermission = (codename: string) => userPermissions.some((p) => p.codename === codename);
+  const user = userResponse?.user;
+
+  const getFullName = (): string => {
+    if (!user) return 'Пользователь';
+
+    const { first_name, last_name, email } = user;
+
+    if (first_name && last_name) {
+      return `${first_name} ${last_name}`;
+    }
+
+    if (first_name) return first_name;
+    if (last_name) return last_name;
+
+    // Если имени нет, показываем часть email до @
+    return email.split('@')[0] || 'Пользователь';
+  };
+
+  const getAvatarUrl = (): string | undefined => {
+    if (!user?.avatar) return undefined;
+
+    if (user.avatar.startsWith('/media/')) {
+      const apiKey = import.meta.env.VITE_API_KEY || 'https://bsv.sino0on.ru/api/v1/';
+      const baseUrl = apiKey.replace('/api/v1/', '');
+      return `${baseUrl}${user.avatar}`;
+    }
+
+    // Если avatar не пустой и не начинается с /media/, возвращаем как есть
+    return user.avatar.trim() || undefined;
+  };
 
   const siderStyle: React.CSSProperties = {
     overflow: 'auto',
@@ -78,11 +106,6 @@ export const DashboardLayout = ({ children, title }: Props) => {
       icon: <TeamOutlined />,
       label: t('dashboard.pages.customers')
     },
-    hasPermission('view_payment') && {
-      key: '/dashboard/bills',
-      icon: <CreditCardOutlined />,
-      label: t('dashboard.pages.bills')
-    },
     hasPermission('view_export') && {
       key: '/dashboard/export',
       icon: <ExportIcon />,
@@ -93,7 +116,7 @@ export const DashboardLayout = ({ children, title }: Props) => {
       icon: <ComputingIcon />,
       label: t('dashboard.pages.formulas')
     }
-  ] as MenuProps['items'];
+  ].filter(Boolean) as MenuProps['items'];
 
   return (
     <Layout className='dashboard' style={{ minHeight: '100vh' }}>
@@ -104,11 +127,17 @@ export const DashboardLayout = ({ children, title }: Props) => {
             wrap='nowrap'
             align='center'
             gap={8}
-            style={{ color: '#fff', textAlign: 'center', padding: 16, fontWeight: 600 }}
+            style={{
+              color: '#fff',
+              textAlign: 'center',
+              padding: 16,
+              fontWeight: 600
+            }}
           >
             <img src={logo} alt='Logo' />
             <Typography.Text className={clsx('dashboard__logo-text', { hidden: collapsed })}>{t('login.title')}</Typography.Text>
           </Flex>
+
           <Menu
             theme='dark'
             mode='inline'
@@ -117,6 +146,7 @@ export const DashboardLayout = ({ children, title }: Props) => {
             items={items}
             onClick={({ key }) => navigate(key)}
           />
+
           <Flex
             onClick={() => navigate('/dashboard/profile')}
             align='center'
@@ -128,44 +158,82 @@ export const DashboardLayout = ({ children, title }: Props) => {
               margin: 16,
               cursor: 'pointer',
               color: '#fff',
-              overflow: 'hidden'
+              overflow: 'hidden',
+              transition: 'all 0.3s'
             }}
           >
-            <img
-              src={avatar}
-              alt='avatar'
+            <Avatar
+              size={32}
+              src={getAvatarUrl()}
+              icon={<UserOutlined />}
               style={{
-                width: 32,
-                height: 32,
-                borderRadius: '50%',
-                objectFit: 'cover'
+                border: '2px solid rgba(255, 255, 255, 0.2)'
               }}
             />
+
             {!collapsed && (
-              <div>
-                <Typography.Text style={{ color: '#fff' }}>Кайрат Буранов</Typography.Text>
-                <br />
-                <Typography.Text style={{ color: '#d6e4ff', fontSize: 12 }}>ID 4433954</Typography.Text>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                {isUserLoading ? (
+                  <div>
+                    <Skeleton.Input active size='small' style={{ width: '80px', height: '14px', marginBottom: '4px' }} />
+                    <Skeleton.Input active size='small' style={{ width: '60px', height: '12px' }} />
+                  </div>
+                ) : (
+                  <>
+                    <Typography.Text
+                      style={{
+                        color: '#fff',
+                        display: 'block',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      }}
+                      title={getFullName()}
+                    >
+                      {getFullName()}
+                    </Typography.Text>
+                    <Typography.Text
+                      style={{
+                        color: '#d6e4ff',
+                        fontSize: 12,
+                        display: 'block'
+                      }}
+                    >
+                      ID {user?.id || '---'}
+                    </Typography.Text>
+                  </>
+                )}
               </div>
             )}
-            <img src={arrow} alt='#' />
+
+            <img src={arrow} alt='arrow' style={{ opacity: 0.7 }} />
           </Flex>
         </Flex>
       </Sider>
+
       <Layout>
         <Header style={{ background: colorBgContainer, paddingLeft: 24 }}>
           <Flex justify='space-between' align='center' gap={16}>
             <Flex align='center' gap={8}>
               {window.location.pathname.split('/').length > 3 && <LeftOutlined onClick={() => navigate(-1)} />}
-              <h2 style={{ margin: 0 }}>{title || i18next.t('dashboard.panel')}</h2>
+              <h2 style={{ margin: 0 }}>{title ? (title.includes('.') ? i18next.t(title) : title) : i18next.t('dashboard.panel')}</h2>
             </Flex>
             <div>
               <Button icon={<BellOutlined />} />
             </div>
           </Flex>
         </Header>
+
         <Content style={{ margin: '24px 16px 0' }}>
-          <div style={{ padding: 24, background: colorBgContainer, minHeight: '80vh' }}>{children}</div>
+          <div
+            style={{
+              padding: 24,
+              background: colorBgContainer,
+              minHeight: '80vh'
+            }}
+          >
+            {children}
+          </div>
         </Content>
       </Layout>
     </Layout>

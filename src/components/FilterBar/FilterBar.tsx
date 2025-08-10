@@ -3,6 +3,8 @@ import { Input, Select, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import './styles.scss';
 
+import { t } from 'i18next';
+
 const { Option } = Select;
 
 export interface FilterValues {
@@ -54,7 +56,7 @@ export const FilterBar = ({
       <Space style={{ flexWrap: 'wrap', rowGap: 12 }}>
         <Input
           prefix={<SearchOutlined />}
-          placeholder='Найти'
+          placeholder={t('filterBar.search')}
           allowClear
           value={values.search}
           onChange={(e) => handleChange('search', e.target.value)}
@@ -64,21 +66,21 @@ export const FilterBar = ({
         {showAlphabet && !alphabetOptions && (
           <Select
             variant='filled'
-            placeholder='По алфавиту'
+            placeholder={t('filterBar.filter.alphabet')}
             allowClear
             style={{ width: 140 }}
             value={values.alphabet}
             onChange={(v) => handleChange('alphabet', v)}
           >
-            <Option value='asc'>А-Я</Option>
-            <Option value='desc'>Я-А</Option>
+            <Option value='asc'>{t('filterBar.alphabetAsc')}</Option>
+            <Option value='desc'>{t('filterBar.alphabetDesc')}</Option>
           </Select>
         )}
 
         {showAlphabet && alphabetOptions && (
           <Select
             variant='filled'
-            placeholder='По алфавиту'
+            placeholder={t('filterBar.filter.alphabet')}
             allowClear
             style={{ width: 140 }}
             value={values.alphabet}
@@ -95,7 +97,7 @@ export const FilterBar = ({
         {showCategory && categoryOptions && (
           <Select
             variant='filled'
-            placeholder='Категория'
+            placeholder={t('filterBar.filter.category')}
             allowClear
             style={{ width: 140 }}
             value={values.category}
@@ -112,7 +114,7 @@ export const FilterBar = ({
         {showStatusSelect && statusOptions && (
           <Select
             variant='filled'
-            placeholder='Статус'
+            placeholder={t('filterBar.filter.status')}
             allowClear
             style={{ width: 140 }}
             value={values.status}
@@ -129,42 +131,42 @@ export const FilterBar = ({
         {showType && (
           <Select
             variant='filled'
-            placeholder='По типу'
+            placeholder={t('filterBar.filter.type')}
             allowClear
             style={{ width: 140 }}
             value={values.type}
             onChange={(v) => handleChange('type', v)}
           >
-            <Option value='residential'>Жилой</Option>
-            <Option value='commercial'>Коммерческий</Option>
+            <Option value='residential'>{t('filterBar.residential')}</Option>
+            <Option value='commercial'>{t('filterBar.commercial')}</Option>
           </Select>
         )}
 
         {showStatus && (
           <Select
             variant='filled'
-            placeholder='По статусу'
+            placeholder={t('filterBar.filter.status')}
             allowClear
             style={{ width: 140 }}
             value={values.status}
             onChange={(v) => handleChange('status', v)}
           >
-            <Option value='approved'>Утверждено</Option>
-            <Option value='rejected'>Отклонено</Option>
+            <Option value='approved'>{t('filterBar.approved')}</Option>
+            <Option value='rejected'>{t('filterBar.rejected')}</Option>
           </Select>
         )}
 
         {showDate && (
           <Select
             variant='filled'
-            placeholder='По дате'
+            placeholder={t('filterBar.byDate')}
             allowClear
             style={{ width: 140 }}
             value={values.date}
             onChange={(v) => handleChange('date', v)}
           >
-            <Option value='created_at'>Сначала новые</Option>
-            <Option value='-created_at'>Сначала старые</Option>
+            <Option value='created_at'>{t('filterBar.newOnesfirst')}</Option>
+            <Option value='-created_at'>{t('filterBar.newOldFirst')}</Option>
           </Select>
         )}
       </Space>

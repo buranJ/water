@@ -14,13 +14,16 @@ import {
 import { DashboardLayout } from 'components/DashboardLayout';
 
 import { useDeleteApplicationFileMutation, useGetApplicationByIdQuery, useUploadApplicationFilesMutation } from 'api/Application.api';
+import { t } from 'i18next';
+
+type ApplicationFileItem = string | { id: number; file: string; created_at?: string };
 
 const tabItems = [
-  { key: 'data', label: 'Данные' },
-  { key: 'documents', label: 'Документы' }
+  { key: 'data', label: t('applicationDetails.tabs.data') },
+  { key: 'documents', label: t('applicationDetails.tabs.documents') }
 ];
 
-export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'Заявка №' }) => {
+export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.ApplicationDetails' }) => {
   const { id } = useParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState('data');
   const navigate = useNavigate();
@@ -30,58 +33,58 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'Заявк
   const [uploadApplicationFiles] = useUploadApplicationFilesMutation();
 
   return (
-    <DashboardLayout title={title + id}>
+    <DashboardLayout title={t(title) + id}>
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginBottom: 16 }}>
-        <Button icon={<DownloadOutlined />}>PDF</Button>
-        <Button onClick={() => navigate(`/dashboard/applications/${id}/edit`)}>Редактировать</Button>
-        <Button type='primary'>Оформление ТУ</Button>
-        <Button danger>Отказать ТУ</Button>
+        <Button icon={<DownloadOutlined />}>{t('applicationDetails.buttons.pdf')}</Button>
+        <Button onClick={() => navigate(`/dashboard/applications/${id}/edit`)}>{t('applicationDetails.buttons.edit')}</Button>
+        <Button type='primary'>{t('applicationDetails.buttons.createTu')}</Button>
+        <Button danger>{t('applicationDetails.buttons.rejectTu')}</Button>
       </div>
       <Tabs items={tabItems} activeKey={activeTab} onChange={setActiveTab} style={{ marginBottom: 24 }} />
       {isLoading ? (
         <Spin />
       ) : isError ? (
-        <Alert type='error' message='Ошибка загрузки данных заявки' />
+        <Alert type='error' message={t('applicationDetails.loadError')} />
       ) : data ? (
         <>
           {activeTab === 'data' && (
             <>
               <Card style={{ marginBottom: 24 }}>
-                <Typography.Title level={4}>Наименование объекта</Typography.Title>
+                <Typography.Title level={4}>{t('applicationDetails.labels.objectName')}</Typography.Title>
                 <Typography.Text>{data.object}</Typography.Text>
               </Card>
               <Card>
                 <div style={{ marginBottom: 8 }}>
-                  <b>Дата регистрации</b>
+                  <b>{t('applicationDetails.labels.registrationDate')}</b>
                   <div>{data.created_at ? new Date(data.created_at).toLocaleDateString() : ''}</div>
                 </div>
                 <div style={{ marginBottom: 8 }}>
-                  <b>Заказчик</b>
+                  <b>{t('applicationDetails.labels.customer')}</b>
                   <div>{data.customer}</div>
                 </div>
                 <div style={{ marginBottom: 8 }}>
-                  <b>Адрес</b>
+                  <b>{t('applicationDetails.labels.address')}</b>
                   <div>{data.address}</div>
                 </div>
                 <div style={{ marginBottom: 8 }}>
-                  <b>Количество водопроводной воды</b>
+                  <b>{t('applicationDetails.labels.waterRequired')}</b>
                   <div>{data.waterRequired}</div>
                 </div>
                 <div style={{ marginBottom: 8 }}>
-                  <b>Количество стоков</b>
+                  <b>{t('applicationDetails.labels.wastewater')}</b>
                   <div>{data.firefightingExpenses}</div>
                 </div>
                 <div style={{ marginBottom: 8 }}>
-                  <b>Статус</b>
+                  <b>{t('applicationDetails.labels.status')}</b>
                   <div>
                     <Tag color={data.status === 'approved' ? 'success' : data.status === 'rejected' ? 'error' : 'processing'}>
                       {data.status === 'approved'
-                        ? 'Одобрено'
+                        ? t('applicationDetails.status.approved')
                         : data.status === 'rejected'
-                          ? 'Отказано'
+                          ? t('applicationDetails.status.rejected')
                           : data.status === 'pending'
-                            ? 'В ожидании'
-                            : 'ТУ заключён'}
+                            ? t('applicationDetails.status.pending')
+                            : t('applicationDetails.status.tuConcluded')}
                     </Tag>
                   </div>
                 </div>
@@ -91,11 +94,11 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'Заявк
           {activeTab === 'documents' && (
             <div style={{ background: '#fff', borderRadius: 12, padding: 24, display: 'flex', flexDirection: 'column' }}>
               <Typography.Title level={5} style={{ marginBottom: 16 }}>
-                Документы
+                {t('applicationDetails.documentsTitle')}
               </Typography.Title>
               <label style={{ display: 'inline-block', marginBottom: 16 }}>
                 <Button type='primary' icon={<UploadOutlined />}>
-                  Добавить файл
+                  {t('applicationDetails.buttons.addFile')}
                 </Button>
                 <input
                   type='file'
@@ -119,17 +122,18 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'Заявк
                 <table style={{ width: '100%' }}>
                   <thead>
                     <tr>
-                      <th style={{ textAlign: 'left' }}>Название</th>
-                      <th style={{ textAlign: 'left' }}>Дата загрузки</th>
-                      <th style={{ textAlign: 'left' }}>Действия</th>
+                      <th style={{ textAlign: 'left' }}>{t('applicationDetails.table.name')}</th>
+                      <th style={{ textAlign: 'left' }}>{t('applicationDetails.table.uploadDate')}</th>
+                      <th style={{ textAlign: 'left' }}>{t('applicationDetails.table.actions')}</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {data.application_files.map((file: any) => (
-                      <tr key={file.id}>
+                    {(data.application_files as ApplicationFileItem[]).map((file) => (
+                      <tr key={typeof file === 'string' ? file : `id-${file.id}`}>
                         <td>
                           {(() => {
-                            const name = file.file.split('/').pop() || '';
+                            const fileUrl = typeof file === 'string' ? file : file.file;
+                            const name = fileUrl.split('/').pop() || '';
                             const ext = name.split('.').pop()?.toLowerCase();
                             if (ext === 'pdf') return <FilePdfOutlined style={{ color: '#d4380d', fontSize: 18, marginRight: 8 }} />;
                             if (['doc', 'docx'].includes(ext || ''))
@@ -138,24 +142,26 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'Заявк
                               return <FileImageOutlined style={{ color: '#52c41a', fontSize: 18, marginRight: 8 }} />;
                             return <FileOutlined style={{ fontSize: 18, marginRight: 8 }} />;
                           })()}
-                          <a href={file.file} target='_blank' rel='noopener noreferrer'>
-                            {file.file.split('/').pop()}
+                          <a href={typeof file === 'string' ? file : file.file} target='_blank' rel='noopener noreferrer'>
+                            {(typeof file === 'string' ? file : file.file).split('/').pop()}
                           </a>
                         </td>
-                        <td>{file.created_at ? new Date(file.created_at).toLocaleDateString() : ''}</td>
+                        <td>{typeof file !== 'string' && file.created_at ? new Date(file.created_at).toLocaleDateString() : ''}</td>
                         <td>
-                          <Button
-                            type='text'
-                            danger
-                            icon={
-                              <span style={{ fontWeight: 'bold', fontSize: 18 }}>
-                                <DeleteOutlined />
-                              </span>
-                            }
-                            onClick={async () => {
-                              await deleteApplicationFile({ id: file.id });
-                            }}
-                          />
+                          {typeof file !== 'string' && (
+                            <Button
+                              type='text'
+                              danger
+                              icon={
+                                <span style={{ fontWeight: 'bold', fontSize: 18 }}>
+                                  <DeleteOutlined />
+                                </span>
+                              }
+                              onClick={async () => {
+                                await deleteApplicationFile({ id: file.id });
+                              }}
+                            />
+                          )}
                           <Button
                             type='text'
                             icon={
@@ -163,7 +169,7 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'Заявк
                                 <ArrowDownOutlined />
                               </span>
                             }
-                            href={file.file}
+                            href={typeof file === 'string' ? file : file.file}
                             target='_blank'
                             rel='noopener noreferrer'
                           />
@@ -173,7 +179,7 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'Заявк
                   </tbody>
                 </table>
               ) : (
-                <Typography.Text type='secondary'>Нет загруженных документов</Typography.Text>
+                <Typography.Text type='secondary'>{t('applicationDetails.noDocs')}</Typography.Text>
               )}
             </div>
           )}

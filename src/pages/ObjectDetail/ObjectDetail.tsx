@@ -6,12 +6,13 @@ import { DashboardLayout } from 'components/DashboardLayout';
 import { ObjectDetails } from 'components/ObjectDetails/ObjectDetails';
 
 import { useDeleteObjectMutation, useGetObjectByIdQuery, useUpdateObjectTitleMutation } from 'api/Object.api';
+import { t } from 'i18next';
 
 interface ObjectDetailProps {
   title?: string;
 }
 
-export const ObjectDetail: FC<ObjectDetailProps> = ({ title = 'Детали объекта' }) => {
+export const ObjectDetail: FC<ObjectDetailProps> = ({ title = t('objectDetail.title') }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -43,13 +44,13 @@ export const ObjectDetail: FC<ObjectDetailProps> = ({ title = 'Детали об
           id: object.id,
           title: newTitle.trim()
         }).unwrap();
-        message.success('Название обновлено');
+        message.success(t('objectDetail.titleUpdated'));
       } catch (error) {
         console.error('Update title error:', error);
         const errorMessage =
           error && typeof error === 'object' && 'data' in error && error.data && typeof error.data === 'object' && 'message' in error.data
             ? String(error.data.message)
-            : 'Ошибка при обновлении названия';
+            : t('objectDetail.errorUpdateTitle');
         message.error(errorMessage);
       }
     },
@@ -60,23 +61,23 @@ export const ObjectDetail: FC<ObjectDetailProps> = ({ title = 'Детали об
     if (!object) return;
 
     Modal.confirm({
-      title: 'Подтверждение удаления',
+      title: t('objectDetail.confirmDeleteTitle'),
       icon: <ExclamationCircleOutlined />,
-      content: `Вы уверены, что хотите удалить объект "${object.title}"? Это действие нельзя отменить.`,
-      okText: 'Удалить',
-      cancelText: 'Отмена',
+      content: t('objectDetail.confirmDeleteContent', { title: object.title }),
+      okText: t('objectDetail.delete'),
+      cancelText: t('objectDetail.cancel'),
       okType: 'danger',
       onOk: async () => {
         try {
           await deleteObject(object.id).unwrap();
-          message.success('Объект удален');
+          message.success(t('objectDetail.deleted'));
           navigate('/dashboard/objects', { replace: true });
         } catch (error) {
           console.error('Delete object error:', error);
           const errorMessage =
             error && typeof error === 'object' && 'data' in error && error.data && typeof error.data === 'object' && 'message' in error.data
               ? String(error.data.message)
-              : 'Ошибка при удалении объекта';
+              : t('objectDetail.errorDelete');
           message.error(errorMessage);
         }
       }
@@ -96,11 +97,11 @@ export const ObjectDetail: FC<ObjectDetailProps> = ({ title = 'Детали об
     return (
       <DashboardLayout title={title}>
         <Alert
-          message='Неверный ID'
-          description='Указан некорректный идентификатор объекта'
+          message={t('objectDetail.invalidId')}
+          description={t('objectDetail.invalidIdDescription')}
           type='error'
           showIcon
-          action={<Button onClick={handleBack}>Вернуться к списку</Button>}
+          action={<Button onClick={handleBack}>{t('objectDetail.backToList')}</Button>}
         />
       </DashboardLayout>
     );
@@ -113,18 +114,14 @@ export const ObjectDetail: FC<ObjectDetailProps> = ({ title = 'Детали об
     return (
       <DashboardLayout title={title}>
         <Alert
-          message={isNotFound ? 'Объект не найден' : 'Ошибка загрузки'}
-          description={
-            isNotFound
-              ? 'Объект с указанным ID не существует или был удален'
-              : 'Не удалось загрузить информацию об объекте. Проверьте подключение к интернету.'
-          }
+          message={isNotFound ? t('objectDetail.notFound') : t('objectDetail.loadError')}
+          description={isNotFound ? t('objectDetail.notFoundDescription') : t('objectDetail.loadErrorDescription')}
           type={isNotFound ? 'warning' : 'error'}
           showIcon
           action={
             <Space>
-              {!isNotFound && <Button onClick={handleRetry}>Повторить</Button>}
-              <Button onClick={handleBack}>Вернуться к списку</Button>
+              {!isNotFound && <Button onClick={handleRetry}>{t('objectDetail.retry')}</Button>}
+              <Button onClick={handleBack}>{t('objectDetail.backToList')}</Button>
             </Space>
           }
         />
@@ -153,7 +150,7 @@ export const ObjectDetail: FC<ObjectDetailProps> = ({ title = 'Детали об
             backgroundColor: '#f5f5f7'
           }}
         >
-          Назад к списку
+          {t('objectDetail.backToList')}
         </Button>
 
         <Space>
@@ -167,7 +164,7 @@ export const ObjectDetail: FC<ObjectDetailProps> = ({ title = 'Детали об
               borderRadius: 12
             }}
           >
-            Удалить
+            {t('objectDetail.delete')}
           </Button>
         </Space>
       </div>
@@ -186,11 +183,11 @@ export const ObjectDetail: FC<ObjectDetailProps> = ({ title = 'Детали об
         <ObjectDetails object={object} onTitleChange={handleTitleChange} />
       ) : (
         <Alert
-          message='Нет данных'
-          description='Данные об объекте отсутствуют'
+          message={t('objectDetail.noData')}
+          description={t('objectDetail.noDataDescription')}
           type='info'
           showIcon
-          action={<Button onClick={handleRetry}>Обновить</Button>}
+          action={<Button onClick={handleRetry}>{t('objectDetail.refresh')}</Button>}
         />
       )}
     </DashboardLayout>

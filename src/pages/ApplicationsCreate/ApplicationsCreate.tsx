@@ -10,6 +10,7 @@ import './styles.scss';
 import { IApplication, useCreateApplicationMutation, useUploadApplicationFilesMutation } from 'api/Application.api';
 import { useCreateCustomerMutation, useLazyGetCustomerQuery } from 'api/Customer.api';
 import { useCreateObjectMutation, useLazyGetAllObjectsQuery } from 'api/Object.api';
+import { t } from 'i18next';
 
 interface IProps {
   title: string;
@@ -75,7 +76,7 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
 
       // 3. Создание заявки
       if (!customerId || !objectId) {
-        message.error('Ошибка: не удалось определить заказчика или объект');
+        message.error(t('applicationsCreate.messages.customerOrObjectError'));
         return;
       }
       const application = await createApplication({
@@ -89,7 +90,11 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
 
       // 4. Загрузка файлов, если есть
       if (attachedFiles.length > 0) {
-        const files = attachedFiles.map((f) => (f as any).originFileObj).filter((f: File | undefined): f is File => !!f);
+        const files = attachedFiles.reduce<File[]>((acc, f) => {
+          const raw = f.originFileObj as unknown;
+          if (raw instanceof File) acc.push(raw);
+          return acc;
+        }, []);
         if (files.length > 0) {
           await uploadApplicationFiles({ application: application.id, files });
         }
@@ -102,16 +107,19 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
   useEffect(() => {
     if (isSuccess && data?.id) {
       form.resetFields();
-      message.success('Заявка успешно создана');
+      message.success(t('applicationsCreate.messages.created'));
       navigate(`/dashboard/applications/${data.id}`);
     }
     if (isError) {
-      message.error('Ошибка при создании заявки');
+      message.error(t('applicationsCreate.messages.createError'));
     }
   }, [data?.id, form, isError, isSuccess, navigate]);
 
   const buttonText = useMemo(
-    () => (attachedFiles.length > 0 ? `${attachedFiles.length} файлы прикреплены` : 'Прикрепить файл'),
+    () =>
+      attachedFiles.length > 0
+        ? t('applicationsCreate.buttons.attachedCount', { count: attachedFiles.length })
+        : t('applicationsCreate.buttons.attach'),
     [attachedFiles.length]
   );
 
@@ -119,24 +127,44 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
     <DashboardLayout title={title}>
       <div className='applications-create'>
         <Form form={form} layout='vertical' variant='filled' requiredMark={false} onFinish={handleFinish}>
-          <Form.Item name='INN' label='ИНН' rules={[{ required: true, message: 'Обязательное поле' }]}>
-            <Input size='large' placeholder='Введите ИНН' />
+          <Form.Item
+            name='INN'
+            label={t('applicationsCreate.form.labels.inn')}
+            rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+          >
+            <Input size='large' placeholder={t('applicationsCreate.form.placeholders.enterInn')} />
           </Form.Item>
-          <Form.Item name='customer' label='Заказчик' rules={[{ required: true, message: 'Обязательное поле' }]}>
-            <Input size='large' placeholder='Имя и фамилия' />
+          <Form.Item
+            name='customer'
+            label={t('applicationsCreate.form.labels.customer')}
+            rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+          >
+            <Input size='large' placeholder={t('applicationsCreate.form.placeholders.fullName')} />
           </Form.Item>
-          <Form.Item name='object' label='Объект' rules={[{ required: true, message: 'Обязательное поле' }]}>
-            <Input size='large' placeholder='Название компании' />
+          <Form.Item
+            name='object'
+            label={t('applicationsCreate.form.labels.object')}
+            rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+          >
+            <Input size='large' placeholder={t('applicationsCreate.form.placeholders.companyName')} />
           </Form.Item>
           <Flex gap={16}>
             <Col span={18}>
-              <Form.Item name='address' label='Улица' rules={[{ required: true, message: 'Обязательное поле' }]}>
-                <Input size='large' placeholder='Адрес' />
+              <Form.Item
+                name='address'
+                label={t('applicationsCreate.form.labels.street')}
+                rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+              >
+                <Input size='large' placeholder={t('applicationsCreate.form.placeholders.address')} />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item name='contact' label='Дом' rules={[{ required: true, message: 'Обязательное поле' }]}>
-                <Input size='large' placeholder='№' />
+              <Form.Item
+                name='contact'
+                label={t('applicationsCreate.form.labels.house')}
+                rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+              >
+                <Input size='large' placeholder={t('applicationsCreate.form.placeholders.houseNumberShort')} />
               </Form.Item>
             </Col>
           </Flex>
@@ -144,37 +172,53 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
             <Col span={12}>
               <Form.Item
                 name='quantity'
-                label='Требуемое количество воды'
-                rules={[{ required: true, message: 'Обязательное поле' }, { max: 5 }]}
+                label={t('applicationsCreate.form.labels.waterAmountRequired')}
+                rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }, { max: 5 }]}
               >
                 <Input size='large' placeholder='16,93' type='number' maxLength={5} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item name='pressure' label='Требуемый напор' rules={[{ required: true, message: 'Обязательное поле' }, { max: 5 }]}>
+              <Form.Item
+                name='pressure'
+                label={t('applicationsCreate.form.labels.pressureRequired')}
+                rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }, { max: 5 }]}
+              >
                 <Input size='large' placeholder='16,93' type='number' maxLength={5} />
               </Form.Item>
             </Col>
           </Flex>
-          <Form.Item label='Назначение воды' name='waterRequired' rules={[{ required: true, message: 'Обязательное поле' }]}>
-            <Input size='large' placeholder='Предназначение воды' />
+          <Form.Item
+            label={t('applicationsCreate.form.labels.waterPurpose')}
+            name='waterRequired'
+            rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+          >
+            <Input size='large' placeholder={t('applicationsCreate.form.placeholders.waterPurpose')} />
           </Form.Item>
           <Form.Item
-            label='Расходы воды на внутр. пожаротушение'
+            label={t('applicationsCreate.form.labels.firefightingExpenses')}
             name='firefightingExpenses'
-            rules={[{ required: true, message: 'Обязательное поле' }]}
+            rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
           >
-            <Input size='large' placeholder='Адрес' />
+            <Input size='large' placeholder={t('applicationsCreate.form.placeholders.enterValue')} />
           </Form.Item>
           <Flex gap={16}>
             <Col span={12}>
-              <Form.Item name='x' label='Координата X' rules={[{ required: true, message: 'Обязательное поле' }]}>
-                <Input variant='filled' size='large' placeholder='123' type='number' />
+              <Form.Item
+                name='x'
+                label={t('applicationsCreate.form.labels.coordX')}
+                rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+              >
+                <Input variant='filled' size='large' placeholder={t('applicationsCreate.form.placeholders.xPlaceholder')} type='number' />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item name='y' label='Координата Y' rules={[{ required: true, message: 'Обязательное поле' }]}>
-                <Input variant='filled' size='large' placeholder='321' type='number' />
+              <Form.Item
+                name='y'
+                label={t('applicationsCreate.form.labels.coordY')}
+                rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+              >
+                <Input variant='filled' size='large' placeholder={t('applicationsCreate.form.placeholders.yPlaceholder')} type='number' />
               </Form.Item>
             </Col>
           </Flex>
@@ -183,14 +227,14 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
               {buttonText}
             </Button>
             <Row>
-              <Button>Назад</Button>
+              <Button>{t('common.back')}</Button>
               <Button
                 loading={isLoading || isCreatingCustomer || isCreatingObject}
                 type='primary'
                 htmlType='submit'
                 style={{ marginLeft: '8px' }}
               >
-                Отправить
+                {t('applicationsCreate.buttons.submit')}
               </Button>
             </Row>
           </Flex>

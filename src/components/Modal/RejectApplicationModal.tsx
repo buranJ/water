@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { Button, Input, Modal, Select, Space, Typography, Upload } from 'antd';
+import React, { useMemo, useState } from 'react';
+import { Button, Form, Input, Modal, Select, Space, Typography, Upload } from 'antd';
 import type { UploadFile } from 'antd/es/upload/interface';
 import { CloseOutlined, UploadOutlined } from '@ant-design/icons';
+
+import { RefusalBody, useGetRefusalCausesQuery } from 'api/Refusal.api';
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -9,48 +11,33 @@ const { Text } = Typography;
 interface RejectApplicationModalProps {
   open: boolean;
   onCancel: () => void;
-  onReject: (data: RejectFormData) => void;
+  onReject: (data: RefusalBody) => void;
 }
-
-export interface RejectFormData {
-  reason: string;
-  comment: string;
-  attachments?: File[];
-}
-
-const rejectReasons = [
-  { value: 'architecture', label: 'Отказ от архитектуры' },
-  { value: 'documents', label: 'Неполный пакет документов' },
-  { value: 'technical', label: 'Технические нарушения' },
-  { value: 'sanitary', label: 'Нарушение санитарных норм' },
-  { value: 'other', label: 'Другое' }
-];
 
 export const RejectApplicationModal: React.FC<RejectApplicationModalProps> = ({ open, onCancel, onReject }) => {
-  const [reason, setReason] = useState<string>('');
-  const [comment, setComment] = useState<string>('');
+  const [form] = Form.useForm<RefusalBody>();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const refuseQuery = useGetRefusalCausesQuery();
 
-  const handleSubmit = () => {
-    if (!reason.trim()) return;
-
+  const handleFinish = (values: RefusalBody) => {
     const adaptedFiles = fileList.map((f) => f.originFileObj).filter(Boolean) as File[];
-
     onReject({
-      reason,
-      comment,
-      attachments: adaptedFiles
+      causes_ids: values.causes_ids,
+      comment: values.comment || '',
+      refusal_files: [
+        ...adaptedFiles.map((f) => ({
+          file: f
+        }))
+      ]
     });
 
-    // Сброс формы
-    setReason('');
-    setComment('');
+    // Сброс
+    form.resetFields();
     setFileList([]);
   };
 
   const handleCancel = () => {
-    setReason('');
-    setComment('');
+    form.resetFields();
     setFileList([]);
     onCancel();
   };
@@ -83,6 +70,7 @@ export const RejectApplicationModal: React.FC<RejectApplicationModalProps> = ({ 
         style={{
           width: 32,
           height: 32,
+          minWidth: 32,
           backgroundColor: '#ff4d4f',
           color: 'white',
           display: 'flex',
@@ -93,7 +81,7 @@ export const RejectApplicationModal: React.FC<RejectApplicationModalProps> = ({ 
           borderRadius: 4
         }}
       >
-        PDF
+        {file.originFileObj && file.originFileObj.name.split('.').pop()}
       </div>
       <div style={{ flex: 1 }}>
         <div style={{ fontSize: '14px', color: '#000' }}>{file.name}</div>
@@ -121,6 +109,15 @@ export const RejectApplicationModal: React.FC<RejectApplicationModalProps> = ({ 
     accept: '.pdf,.doc,.docx'
   };
 
+  const refusals = useMemo(
+    () =>
+      refuseQuery.data?.results.map((r) => ({
+        value: r.id.toString(),
+        label: r.title
+      })) || [],
+    [refuseQuery.data]
+  );
+
   return (
     <Modal
       title='Отклонение заявки'
@@ -132,59 +129,51 @@ export const RejectApplicationModal: React.FC<RejectApplicationModalProps> = ({ 
           <Button size='large' onClick={handleCancel}>
             Назад
           </Button>
-          <Button size='large' type='primary' danger onClick={handleSubmit} disabled={!reason.trim()}>
+          <Button size='large' type='primary' danger htmlType='submit' form='rejectForm'>
             Отказать
           </Button>
         </Space>
       }
       destroyOnHidden
     >
-      <Space direction='vertical' size='large' style={{ width: '100%' }}>
-        <div>
-          <Text strong style={{ marginBottom: 8, display: 'block' }}>
-            Причина
-          </Text>
-          <Select
+      <Form id='rejectForm' form={form} layout='vertical' onFinish={handleFinish}>
+        <Form.Item
+          label='Причина'
+          name='causes_ids'
+          rules={[
+            {
+              required: true,
+              message: 'Пожалуйста, укажите хотя бы одну причину.'
+            }
+          ]}
+        >
+          <Select mode='multiple' size='large' placeholder='Выберите причину(ы)' style={{ width: '100%' }} options={refusals} />
+        </Form.Item>
+
+        <Form.Item label='Комментарий' name='comment'>
+          <TextArea placeholder='Напишите подробнее причину...' rows={4} style={{ resize: 'none' }} />
+        </Form.Item>
+      </Form>
+
+      <div style={{ marginBottom: 16 }}>
+        <Text strong style={{ marginBottom: 8, display: 'block' }}>
+          Загрузить письмо
+        </Text>
+        <Upload {...uploadProps} fileList={fileList}>
+          <Button
             size='large'
-            placeholder='Отказ от архитектуры'
-            style={{ width: '100%' }}
-            value={reason}
-            onChange={setReason}
-            options={rejectReasons}
-          />
-        </div>
-
-        <div>
-          <Text strong style={{ marginBottom: 8, display: 'block' }}>
-            Комментарий
-          </Text>
-          <TextArea
-            placeholder='Напишите подробнее причину...'
-            rows={4}
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            style={{ resize: 'none' }}
-          />
-        </div>
-
-        <div>
-          <Upload {...uploadProps} fileList={fileList}>
-            <Button
-              size='large'
-              icon={<UploadOutlined />}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8
-              }}
-            >
-              Загрузить письмо
-            </Button>
-          </Upload>
-
-          <div style={{ marginTop: 12 }}>{fileList.map((file) => renderFileItem(file))}</div>
-        </div>
-      </Space>
+            icon={<UploadOutlined />}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8
+            }}
+          >
+            Загрузить письмо
+          </Button>
+        </Upload>
+        <div style={{ marginTop: 12 }}>{fileList.map((file) => renderFileItem(file))}</div>
+      </div>
     </Modal>
   );
 };

@@ -25,7 +25,7 @@ export const Objects: FC<ObjectsProps> = ({ title }) => {
   const [filters, setFilters] = useState<ObjectFilters>({
     search: '',
     status: null,
-    date: null
+    date: 'created_at'
   });
   const [showAddForm, setShowAddForm] = useState(false);
   const [page, setPage] = useState<number>(1);
@@ -37,7 +37,7 @@ export const Objects: FC<ObjectsProps> = ({ title }) => {
     page_size: pageSize,
     search: filters.search || undefined,
     status: (filters.status as 'active' | 'inactive') || undefined,
-    ordering: '-created_at' // Сортировка по дате создания (новые сначала)
+    ordering: filters.date || '' // Сортировка по дате создания (новые сначала)
   };
 
   const { data: objectsResponse, isLoading, error } = useGetAllObjectsQuery(queryParams);
@@ -100,7 +100,7 @@ export const Objects: FC<ObjectsProps> = ({ title }) => {
       };
 
       await createObject(objectData).unwrap();
-      message.success('Объект успешно создан');
+      message.success(t('objects.messages.created'));
       setShowAddForm(false);
     } catch (error) {
       const apiError = error as ApiError;
@@ -112,11 +112,11 @@ export const Objects: FC<ObjectsProps> = ({ title }) => {
             return `${field}: ${errorMsg}`;
           })
           .join('; ');
-        message.error(`Ошибка: ${messages}`);
+        message.error(`${t('common.errorPrefix')}${messages}`);
       } else if (apiError?.message) {
-        message.error(`Ошибка: ${apiError.message}`);
+        message.error(`${t('common.errorPrefix')}${apiError.message}`);
       } else {
-        message.error('Ошибка при создании объекта');
+        message.error(t('objects.messages.createError'));
       }
       console.error('Create object error:', error);
     }
@@ -132,9 +132,9 @@ export const Objects: FC<ObjectsProps> = ({ title }) => {
         id,
         title: newTitle
       }).unwrap();
-      message.success('Название обновлено');
+      message.success(t('objectDetail.titleUpdated'));
     } catch (error) {
-      message.error('Ошибка при обновлении названия');
+      message.error(t('objectDetail.errorUpdateTitle'));
       console.error('Update title error:', error);
     }
   };
@@ -144,7 +144,7 @@ export const Objects: FC<ObjectsProps> = ({ title }) => {
   };
 
   if (error) {
-    message.error('Ошибка загрузки объектов');
+    message.error(t('objects.messages.loadError'));
   }
 
   const handlePaginationChange = (newPage: number, newPageSize?: number) => {
@@ -168,7 +168,7 @@ export const Objects: FC<ObjectsProps> = ({ title }) => {
           ))}
         </Row>
       ) : (
-        <Empty description='Объекты не найдены' style={{ marginTop: '50px' }} />
+        <Empty description={t('objects.notFound')} style={{ marginTop: '50px' }} />
       )}
       <CustomPagination current={page} pageSize={pageSize} total={objectsResponse?.count || 0} onChange={handlePaginationChange} />
       {showAddForm && <ObjectForm onSubmit={handleCreateObject} onCancel={handleCancelCreate} loading={isCreating} />}

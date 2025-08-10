@@ -2,76 +2,192 @@ import { FC, useState } from 'react';
 import { useParams } from 'react-router';
 import { Alert, Button, Card, Spin, Tabs, Tag, Typography } from 'antd';
 import { DeleteOutlined, DownloadOutlined, EditOutlined } from '@ant-design/icons';
+import { ApplicationsTab } from 'components/CustomerTabs/ApplicationsTab';
+import { ObjectsTab } from 'components/CustomerTabs/ObjectsTab';
+import { CustomerPaymentsTab } from 'components/CustomerTabs/PaymentsTab';
 import { DashboardLayout } from 'components/DashboardLayout';
 
 import { useGetCustomerByIdQuery } from 'api/Customer.api';
+import { t } from 'i18next';
+
+interface ICustomerFullResponse {
+  id: number;
+  inn: string;
+  full_name: string;
+  category: string;
+  created_at: string;
+  updated_at: string;
+  pasport: string | null;
+  address: string;
+  contact: string;
+  status: string;
+  customer_objects: Array<{
+    id: number;
+    full_address: string;
+    title: string;
+    contract_date: string | null;
+    type: string | null;
+    status: string;
+    address_street: string;
+    address_number: string;
+    kadastr_number: string;
+    usage_type: string | null;
+    tu_status: string | null;
+    latitude: number | null;
+    longitude: number | null;
+    created_at: string;
+    updated_at: string;
+    customer: number;
+    creater: number;
+  }>;
+  customer_applications: Array<{
+    id: number;
+    entity: number;
+    customer: number;
+    author: number;
+    status: string;
+    INN: string;
+    object: string;
+    address: string;
+    contact: string;
+    quantity: string;
+    pressure: string;
+    waterRequired: string;
+    firefightingExpenses: string;
+    x: number;
+    y: number;
+    created_at: string;
+    updated_at: string;
+    application_files: unknown[];
+    ty_id: number | null;
+  }>;
+  customer_payments: Array<{
+    id: number;
+    payment_number: string;
+    payment_date: string;
+    amount: string;
+    source: string;
+    status: string;
+    receipt_file: string | null;
+    created_at: string;
+    invoice: number;
+  }>;
+}
 
 const tabItems = [
-  { key: 'data', label: 'Данные' },
-  { key: 'objects', label: 'Объекты' },
-  { key: 'applications', label: 'Заявки' },
-  { key: 'documents', label: 'Документы' },
-  { key: 'payments', label: 'Платежи' }
+  { key: 'data', label: t('customers.details.tabs.data') },
+  { key: 'objects', label: t('customers.details.tabs.objects') },
+  { key: 'applications', label: t('customers.details.tabs.applications') },
+  { key: 'documents', label: t('customers.details.tabs.documents') },
+  { key: 'payments', label: t('customers.details.tabs.payments') }
 ];
 
 export const CustomerDetails: FC<{ title?: string }> = ({ title }) => {
   const { customerId } = useParams<{ customerId: string }>();
   const [activeTab, setActiveTab] = useState('data');
 
-  const { data, isLoading, isError } = useGetCustomerByIdQuery(customerId || '');
+  // Используем существующий хук, но типизируем как расширенный ответ
+  const { data, isLoading, isError } = useGetCustomerByIdQuery(customerId || '') as {
+    data: ICustomerFullResponse | undefined;
+    isLoading: boolean;
+    isError: boolean;
+  };
+
+  const renderTabContent = () => {
+    if (!data) return null;
+
+    switch (activeTab) {
+      case 'data':
+        return (
+          <Card>
+            <Typography.Title level={5} style={{ marginBottom: 8 }}>
+              {data.full_name}
+            </Typography.Title>
+            <Typography.Text type='secondary' style={{ display: 'block', marginBottom: 16 }}>
+              {data.category === '1' ? t('customers.category.physicalFull') : t('customers.category.legalFull')}
+            </Typography.Text>
+            <div style={{ marginBottom: 8 }}>
+              <b>ИНН:</b>
+              <div>{data.inn}</div>
+            </div>
+            <div style={{ marginBottom: 8 }}>
+              <b>{t('customers.columns.registrationDate')}</b>
+              <div>{data.created_at ? new Date(data.created_at).toLocaleDateString() : ''}</div>
+            </div>
+            <div style={{ marginBottom: 8 }}>
+              <b>{t('customers.columns.passportData')}</b>
+              <div>{data.pasport || '-'}</div>
+            </div>
+            <div style={{ marginBottom: 8 }}>
+              <b>{t('customers.columns.address')}</b>
+              <div>{data.address}</div>
+            </div>
+            <div style={{ marginBottom: 8 }}>
+              <b>{t('customers.columns.contacts')}</b>
+              <div>{data.contact}</div>
+            </div>
+            <div style={{ marginBottom: 8 }}>
+              <b>{t('customers.columns.status')}</b>
+              <div>
+                <Tag color={data.status === 'active' ? 'success' : undefined}>
+                  {data.status === 'active' ? t('customers.status.active') : t('customers.status.inactive')}
+                </Tag>
+              </div>
+            </div>
+          </Card>
+        );
+
+      case 'objects':
+        return (
+          <Card title={`Объекты клиента (${data.customer_objects?.length || 0})`}>
+            <ObjectsTab objects={data.customer_objects || []} />
+          </Card>
+        );
+
+      case 'applications':
+        return (
+          <Card title={`Заявки клиента (${data.customer_applications?.length || 0})`}>
+            <ApplicationsTab applications={data.customer_applications || []} />
+          </Card>
+        );
+
+      case 'payments':
+        return (
+          <Card title={`Платежи клиента (${data.customer_payments?.length || 0})`}>
+            <CustomerPaymentsTab payments={data.customer_payments || []} />
+          </Card>
+        );
+
+      case 'documents':
+        return (
+          <Card>
+            <Typography.Text type='secondary'>{t('common.inDevelopment')}</Typography.Text>
+          </Card>
+        );
+
+      default:
+        return null;
+    }
+  };
 
   return (
-    <DashboardLayout title={data?.full_name || title || 'Заказчик'}>
+    <DashboardLayout title={data?.full_name || title || 'dashboard.pages.customers'}>
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginBottom: 16 }}>
         <Button icon={<DownloadOutlined />}>PDF</Button>
         <Button icon={<EditOutlined />} />
         <Button danger icon={<DeleteOutlined />} />
       </div>
+
       <Tabs items={tabItems} activeKey={activeTab} onChange={setActiveTab} style={{ marginBottom: 24 }} />
+
       {isLoading ? (
-        <Spin />
+        <div style={{ textAlign: 'center', padding: '50px 0' }}>
+          <Spin size='large' />
+        </div>
       ) : isError ? (
-        <Alert type='error' message='Ошибка загрузки данных заказчика' />
+        <Alert type='error' message={t('customers.details.loadError')} />
       ) : data ? (
-        <>
-          {activeTab === 'data' && (
-            <Card>
-              <Typography.Title level={5} style={{ marginBottom: 8 }}>
-                {data.full_name}
-              </Typography.Title>
-              <Typography.Text type='secondary' style={{ display: 'block', marginBottom: 16 }}>
-                {data.category === '1' ? 'Физическое лицо' : 'Юридическое лицо'}
-              </Typography.Text>
-              <div style={{ marginBottom: 8 }}>
-                <b>Дата регистрации</b>
-                <div>{data.created_at ? new Date(data.created_at).toLocaleDateString() : ''}</div>
-              </div>
-              <div style={{ marginBottom: 8 }}>
-                <b>Паспортные данные</b>
-                <div>{data.pasport || '-'}</div>
-              </div>
-              <div style={{ marginBottom: 8 }}>
-                <b>Адрес</b>
-                <div>{data.address}</div>
-              </div>
-              <div style={{ marginBottom: 8 }}>
-                <b>Контакты</b>
-                <div>{data.contact}</div>
-              </div>
-              <div style={{ marginBottom: 8 }}>
-                <b>Статус</b>
-                <div>
-                  <Tag color={data.status === 'active' ? 'success' : undefined}>{data.status === 'active' ? 'Одобрено' : 'Неактивен'}</Tag>
-                </div>
-              </div>
-            </Card>
-          )}
-          {activeTab !== 'data' && (
-            <Card>
-              <Typography.Text type='secondary'>В разработке</Typography.Text>
-            </Card>
-          )}
-        </>
+        renderTabContent()
       ) : null}
     </DashboardLayout>
   );
