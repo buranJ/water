@@ -25,10 +25,14 @@ const statusItems: MenuItem[] = [
 ];
 
 const dateItems: MenuItem[] = [
-  { label: t('geoportalFilters.dropdown.date'), key: 'all' },
-  { label: t('geoportalFilters.date.month'), key: 'month' },
-  { label: t('geoportalFilters.date.quarter'), key: 'quarter' },
-  { label: t('geoportalFilters.date.year'), key: 'year' }
+  {
+    label: 'Сначала новые',
+    key: 'created_at'
+  },
+  {
+    label: 'Сначала старые',
+    key: '-created_at'
+  }
 ];
 
 export const ObjectsFilters: FC<ObjectsFiltersProps> = ({ filters, onSearchChange, onFilterChange, onAddNew }) => {

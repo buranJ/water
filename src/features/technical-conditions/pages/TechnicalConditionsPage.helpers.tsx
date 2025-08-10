@@ -57,7 +57,7 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
     { title: 'Сумма оплаты за ТУ и разреш', dataIndex: 'payment_amount', key: 'payment_amount', width: 145 },
     { title: 'Оплачено', dataIndex: 'paid_amount', key: 'paid_amount', width: 145 },
     { title: 'Дата оплаты', dataIndex: 'payment_date', key: 'payment_date', width: 145 },
-    { title: 'Остаток', dataIndex: 'remaining_amount', key: 'remaining_amount', width: 145 },
+    { title: 'Остаток', dataIndex: 'remaining_amount', key: 'remaining_amount', width: 145, render: (text) => (text < 0 ? 0 : text) },
     {
       title: 'Статус',
       dataIndex: 'status',
