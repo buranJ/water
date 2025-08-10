@@ -582,7 +582,9 @@
         "yPlaceholder": "321"
       },
       "validation": {
-        "required": "Обязательное поле"
+        "required": "Обязательное поле",
+        "number": "Введите число",
+        "innLength": "ИНН должен состоять из 14 цифр"
       }
     },
     "buttons": {

@@ -137,9 +137,13 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
           <Form.Item
             name='INN'
             label={t('applicationsCreate.form.labels.inn')}
-            rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+            rules={[
+              { required: true, message: t('applicationsCreate.form.validation.required') },
+              { max: 14, message: t('applicationsCreate.form.validation.innLength') },
+              { min: 14, message: t('applicationsCreate.form.validation.innLength') }
+            ]}
           >
-            <Input size='large' placeholder={t('applicationsCreate.form.placeholders.enterInn')} />
+            <Input size='large' placeholder={t('applicationsCreate.form.placeholders.enterInn')} maxLength={14} />
           </Form.Item>
           <Form.Item
             name='customer'
