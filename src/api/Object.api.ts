@@ -3,6 +3,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { getBaseQuery } from 'common/helpers';
 import { IGetObjectParams, ObjectHistoryResponse, ObjectItem, ObjectUpdateBody } from 'types/entities/objects';
+import { IGetObjectChangeHistoryParams, IGetObjectChangeHistoryResponse } from 'types/requests';
 
 export interface IGetObjectsParams {
   customer?: number;
@@ -70,6 +71,14 @@ export const objectApi = createApi({
       })
     }),
 
+    getObjectChangeHistory: build.query<IGetObjectChangeHistoryResponse, IGetObjectChangeHistoryParams>({
+      query: ({ object_id, ...params }) => ({
+        url: `object/${object_id}/history/`,
+        method: 'GET',
+        params
+      })
+    }),
+
     // POST object/create
     createObject: build.mutation<ObjectItem, Partial<ObjectUpdateBody>>({
       query: (body) => ({
@@ -100,6 +109,7 @@ export const {
   usePatchObjectMutation,
   useDeleteObjectMutation,
   useGetObjectHistoryQuery,
+  useGetObjectChangeHistoryQuery,
   useCreateObjectMutation,
   useUpdateObjectTitleMutation
 } = objectApi;
