@@ -80,6 +80,12 @@ export const tyApi = createApi({
         method: 'GET',
         params
       })
+    }),
+    createTyFromApplication: build.mutation<void, { application_id: number }>({
+      query: ({ application_id }) => ({
+        url: `/ty/from-application/${application_id}/`,
+        method: 'POST'
+      })
     })
   })
 });
@@ -92,5 +98,6 @@ export const {
   usePatchTyMutation,
   useDeleteTyMutation,
   useGetTypesTyQuery,
-  useGetHistoryTyQuery
+  useGetHistoryTyQuery,
+  useCreateTyFromApplicationMutation
 } = tyApi;

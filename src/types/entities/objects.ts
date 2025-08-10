@@ -1,3 +1,5 @@
+import { IHistoryType } from 'types/common';
+
 export interface ObjectItem {
   id: number;
   title: string;
@@ -65,6 +67,16 @@ export interface ObjectHistoryItem {
 }
 
 export type ObjectHistoryResponse = ObjectHistoryItem[];
+
+export interface IObjectChangeHistory {
+  history_id?: string;
+  history_user?: string;
+  history_date: string;
+  history_type: IHistoryType;
+  history_type_display?: string;
+  history_change_reason?: string;
+  changes?: { field: string; new: string; old: string }[];
+}
 
 export interface IGetObjectParams {
   category?: '0' | '1';

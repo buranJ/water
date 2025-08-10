@@ -10,6 +10,7 @@ export type {
   ObjectHistoryItem,
   ObjectHistoryResponse,
   ObjectItem,
-  ObjectListResponse
+  ObjectListResponse,
+  IObjectChangeHistory
 } from './objects';
 export type { IGetTyById, IHistory, ITechnicalCondition, ITyBody, ITyItem, ITyListQueryParams, ITypesTY } from './tu';

@@ -34,7 +34,13 @@ export const applicationsApi = createApi({
         body
       })
     }),
-    uploadApplicationFiles: build.mutation<any, { application: number; files: File[] }>({
+    initAddApplicationFile: build.mutation<void, { applicationId: number | string }>({
+      query: ({ applicationId }) => ({
+        url: `application/${applicationId}/files/`,
+        method: 'POST'
+      })
+    }),
+    uploadApplicationFiles: build.mutation<unknown, { application: number; files: File[] }>({
       query: ({ application, files }) => {
         const formData = new FormData();
         formData.append('application', String(application));
@@ -46,12 +52,12 @@ export const applicationsApi = createApi({
         };
       }
     }),
-    replaceApplicationFile: build.mutation<any, { id: number; file: File }>({
+    replaceApplicationFile: build.mutation<unknown, { id: number; file: File }>({
       query: ({ id, file }) => {
         const formData = new FormData();
         formData.append('file', file);
         return {
-          url: `application-files/${id}/replace/`,
+          url: `application/application-files/${id}/replace/`,
           method: 'PUT',
           body: formData
         };
@@ -59,7 +65,7 @@ export const applicationsApi = createApi({
     }),
     deleteApplicationFile: build.mutation<void, { id: number }>({
       query: ({ id }) => ({
-        url: `application-files/${id}/delete/`,
+        url: `application/application-files/${id}/delete/`,
         method: 'DELETE'
       })
     }),
@@ -90,6 +96,7 @@ export const {
   useGetApplicationsQuery,
   useGetApplicationByIdQuery,
   useUpdateApplicationMutation,
+  useInitAddApplicationFileMutation,
   useUploadApplicationFilesMutation,
   useReplaceApplicationFileMutation,
   useDeleteApplicationFileMutation,
