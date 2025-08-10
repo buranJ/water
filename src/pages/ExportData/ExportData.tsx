@@ -1,18 +1,40 @@
 import { FC } from 'react';
+import { useNavigate } from 'react-router';
 import { Button, Checkbox, Col, DatePicker, Form, Row, Select, Typography } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 
+import type { ReportType } from 'api/Reports.api';
+import { useLazyGetReportsQuery } from 'api/Reports.api';
 import { t } from 'i18next';
 
 const { Title } = Typography;
-const { Option } = Select;
+
+const REPORT_TYPE_OPTIONS: { value: ReportType; label: string }[] = [
+  { value: 'issued', label: 'Выданные ТУ' },
+  { value: 'canceled', label: 'Аннулированные ТУ' },
+  { value: 'not_issued', label: 'Не выданные ТУ' },
+  { value: 'requests', label: 'Заявки' },
+  { value: 'land_agreements', label: 'Согласованные участки' },
+  { value: 'unpaid_tu', label: 'Неоплаченные ТУ' },
+  { value: 'objects', label: 'Объекты' },
+  { value: 'payments', label: 'Оплаты' },
+  { value: 'debts', label: 'Задолженности' },
+  { value: 'reconciliation', label: 'Акт сверки' }
+];
 
 const ExportData: FC<{ title: string }> = ({ title }) => {
   const [form] = Form.useForm();
+  const navigate = useNavigate();
+  const [getReports, { isFetching }] = useLazyGetReportsQuery();
 
-  const onFinish = (values: FormData) => {
-    console.log(t('exportData.formSubmitted'), values);
+  const onFinish = async (values: { dataType: ReportType }) => {
+    try {
+      const res = await getReports({ report_type: values.dataType }).unwrap();
+      navigate('/dashboard/export-data/history', { state: { reports: res } });
+    } catch {
+      // noop
+    }
   };
 
   return (
@@ -28,31 +50,35 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
           name='dataType'
           rules={[{ required: true, message: t('exportData.validation.selectSection') }]}
         >
-          <Select placeholder={t('exportData.placeholders.selectSection')} size='large'>
-            <Option value='orders'>{t('exportData.options.orders')}</Option>
-            <Option value='clients'>{t('exportData.options.clients')}</Option>
-            <Option value='requests'>{t('exportData.options.requests')}</Option>
-          </Select>
+          <Select placeholder={t('exportData.placeholders.selectSection')} size='large' options={REPORT_TYPE_OPTIONS} />
         </Form.Item>
 
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item label={t('exportData.fields.statuses')} name='statuses' rules={[{ required: false }]}>
-              <Select placeholder={t('common.all')} size='large'>
-                <Option value='all'>{t('common.all')}</Option>
-                <Option value='new'>{t('exportData.status.new')}</Option>
-                <Option value='progress'>{t('exportData.status.inProgress')}</Option>
-                <Option value='done'>{t('exportData.status.completed')}</Option>
-              </Select>
+              <Select
+                placeholder={t('common.all')}
+                size='large'
+                options={[
+                  { value: 'all', label: t('common.all') },
+                  { value: 'new', label: t('exportData.status.new') },
+                  { value: 'progress', label: t('exportData.status.inProgress') },
+                  { value: 'done', label: t('exportData.status.completed') }
+                ]}
+              />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item label={t('exportData.fields.responsible')} name='responsible' rules={[{ required: false }]}>
-              <Select placeholder={t('exportData.placeholders.responsible')} size='large'>
-                <Option value='departmentA'>{t('exportData.responsible.departmentA')}</Option>
-                <Option value='departmentB'>{t('exportData.responsible.departmentB')}</Option>
-                <Option value='ivanov'>{t('exportData.responsible.ivanov')}</Option>
-              </Select>
+              <Select
+                placeholder={t('exportData.placeholders.responsible')}
+                size='large'
+                options={[
+                  { value: 'departmentA', label: t('exportData.responsible.departmentA') },
+                  { value: 'departmentB', label: t('exportData.responsible.departmentB') },
+                  { value: 'ivanov', label: t('exportData.responsible.ivanov') }
+                ]}
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -99,7 +125,7 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
             <Button type='default'>{t('exportData.exportHistory')}</Button>
           </Col>
           <Col>
-            <Button type='primary' htmlType='submit' icon={<DownloadOutlined />}>
+            <Button type='primary' htmlType='submit' icon={<DownloadOutlined />} loading={isFetching}>
               {t('common.export')}
             </Button>
           </Col>

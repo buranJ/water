@@ -1,9 +1,12 @@
 import { FC } from 'react';
+import { useLocation } from 'react-router';
 import type { MenuProps } from 'antd';
 import { Button, Dropdown, Flex, Input, message, Space, Table } from 'antd';
 import { DeleteOutlined, DownOutlined, RetweetOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons';
+import dayjs from 'dayjs';
 import { DashboardLayout } from 'components/DashboardLayout';
 
+import type { ReportsResponse } from 'api/Reports.api';
 import { t } from 'i18next';
 
 const menuItems: MenuProps['items'] = [
@@ -22,81 +25,70 @@ const menuProps = {
 };
 
 const tableColumns = [
-  { title: t('exportDataHistory.columns.date'), dataIndex: 'date', key: 'date' },
-  { title: t('exportDataHistory.columns.employee'), dataIndex: 'employee', key: 'employee' },
-  { title: t('exportDataHistory.columns.dataType'), dataIndex: 'dataType', key: 'dataType' },
-  { title: t('exportDataHistory.columns.format'), dataIndex: 'format', key: 'format' },
   {
-    title: t('exportDataHistory.columns.actions'),
+    title: 'Дата',
+    dataIndex: 'created_at',
+    key: 'created_at',
+    render: (text: string) => (text ? dayjs(text).format('DD.MM.YYYY HH:mm') : '-')
+  },
+  { title: 'Тип', dataIndex: 'report_type_display', key: 'report_type_display' },
+  { title: 'Название', dataIndex: 'title', key: 'title', render: (text: string) => text || '-' },
+  {
+    title: 'Файл',
+    dataIndex: 'pdf_file',
+    key: 'pdf_file',
+    render: (url: string | undefined) =>
+      url ? (
+        <a href={url} target='_blank' rel='noopener noreferrer'>
+          PDF
+        </a>
+      ) : (
+        '-'
+      )
+  },
+  {
+    title: 'Действия',
     key: 'actions',
-    render: (_: number, record: { key: number; date: string; employee: string; dataType: string; format: string }) => (
+    render: (_: unknown, record: { key: number }) => (
       <Space>
         <Button
           icon={<RetweetOutlined />}
           shape='circle'
-          onClick={() => message.info(t('exportDataHistory.reexport', { id: record.key }))}
+          onClick={() => {
+            // Временно логируем действие
+            // eslint-disable-next-line no-console
+            console.log('re-export', record);
+          }}
         />
         <Button
           icon={<DeleteOutlined />}
           shape='circle'
           danger
-          onClick={() => message.error(t('exportDataHistory.deletedItem', { id: record.key }))}
+          onClick={() => {
+            // Временно логируем действие
+            // eslint-disable-next-line no-console
+            console.log('delete', record);
+          }}
         />
       </Space>
     )
   }
 ];
 
-const tableData = [
-  {
-    key: 1,
-    date: '04-04-2025',
-    employee: 'Атай Аманов',
-    dataType: t('exportDataHistory.dataTypes.tu'),
-    format: t('exportData.formats.excel')
-  },
-  {
-    key: 2,
-    date: '04-04-2025',
-    employee: 'Атай Аманов',
-    dataType: t('exportDataHistory.dataTypes.requests'),
-    format: t('exportData.formats.csv')
-  },
-  {
-    key: 3,
-    date: '04-04-2025',
-    employee: 'Атай Аманов',
-    dataType: t('exportDataHistory.dataTypes.invoice'),
-    format: t('exportData.formats.pdf')
-  },
-  {
-    key: 4,
-    date: '04-04-2025',
-    employee: 'Атай Аманов',
-    dataType: t('exportDataHistory.dataTypes.tu'),
-    format: t('exportData.formats.excel')
-  },
-  {
-    key: 5,
-    date: '04-04-2025',
-    employee: 'Атай Аманов',
-    dataType: t('exportDataHistory.dataTypes.requests'),
-    format: t('exportData.formats.csv')
-  },
-  {
-    key: 6,
-    date: '04-04-2025',
-    employee: 'Атай Аманов',
-    dataType: t('exportDataHistory.dataTypes.invoice'),
-    format: t('exportData.formats.pdf')
-  }
-];
+/* rows будут получены из state при навигации со страницы экспорта */
 
 interface ExportDataHistoryProps {
   title: string;
 }
 
 const ExportDataHistory: FC<ExportDataHistoryProps> = ({ title }) => {
+  const location = useLocation() as { state?: { reports?: ReportsResponse } };
+  const rows =
+    location.state?.reports?.results?.map((r) => ({
+      key: r.id,
+      ...r
+    })) || [];
+
   return (
     <DashboardLayout title={title}>
       <Flex gap={12}>
@@ -120,7 +112,7 @@ const ExportDataHistory: FC<ExportDataHistoryProps> = ({ title }) => {
       </Flex>
 
       <div style={{ marginTop: 24 }}>
-        <Table columns={tableColumns} dataSource={tableData} pagination={false} />
+        <Table columns={tableColumns} dataSource={rows} pagination={false} />
       </div>
     </DashboardLayout>
   );
