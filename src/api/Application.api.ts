@@ -1,66 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { getBaseQuery } from 'common/helpers';
-
-export interface IApplication {
-  status: 'pending' | 'rejected' | 'approved' | 'contracted';
-  INN: string;
-  customer: number;
-  object: string;
-  address: string;
-  contact: string;
-  quantity: string;
-  pressure: string;
-  waterRequired: string;
-  firefightingExpenses: string;
-  x: number;
-  y: number;
-  attachments: string[];
-  entity: number;
-}
-
-interface ICreateApplicationResponse extends IApplication {
-  id: number;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface IGetApplicationsParams {
-  status?: 'pending' | 'rejected' | 'approved' | 'contracted';
-  search?: string;
-  customer?: number;
-  entity?: number;
-  ordering?: string;
-  page?: number;
-  page_size?: number;
-}
-
-export interface IApplicationResponse {
-  id: number;
-  status: 'pending' | 'rejected' | 'approved' | 'contracted';
-  INN: string;
-  customer: number;
-  object: string;
-  address: string;
-  contact: string;
-  quantity: string;
-  pressure: string;
-  waterRequired: string;
-  firefightingExpenses: string;
-  x: number;
-  y: number;
-  application_files: string[];
-  entity: number;
-  created_at: string;
-  updated_at: string;
-  ty_id?: string;
-}
-
-export interface IApplicationsListResponse {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: IApplicationResponse[];
-}
+import type { IApplicationResponse, IApplicationsListResponse, ICreateApplicationResponse } from 'types/entities';
+import type { IApplication, IGetApplicationsParams } from 'types/requests';
 
 export const applicationsApi = createApi({
   reducerPath: 'applicationsApi',

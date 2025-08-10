@@ -1,4 +1,5 @@
 export type { IAccountingProtocol, IGetAccountingProtocolParams } from './accounting';
+export type { IApplicationResponse, IApplicationsListResponse, ICreateApplicationResponse } from './application';
 export type { ICustomer, ICustomerParams } from './customer';
 export type { ICategory, IFileFolderFolder, IFileItem } from './fileFolder';
 export type { FormulaItem, FormulaListResponse, FormulaUpdateBody, IGetFormulasParams } from './formula';

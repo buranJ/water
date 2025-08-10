@@ -4,10 +4,11 @@ import { Button, Col, Flex, Form, Input, message, Row, UploadFile } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { ICustomer, ObjectItem } from 'types/entities';
+import { IApplication } from 'types/requests';
 import { UploadFilesModal } from './UploadFilesModal/UploadFilesModal';
 import './styles.scss';
 
-import { IApplication, useCreateApplicationMutation, useUploadApplicationFilesMutation } from 'api/Application.api';
+import { useCreateApplicationMutation, useUploadApplicationFilesMutation } from 'api/Application.api';
 import { useCreateCustomerMutation, useLazyGetCustomerQuery } from 'api/Customer.api';
 import { useCreateObjectMutation, useLazyGetAllObjectsQuery } from 'api/Object.api';
 import { t } from 'i18next';

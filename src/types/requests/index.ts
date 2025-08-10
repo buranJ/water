@@ -1,3 +1,4 @@
+export type { IApplication, IGetApplicationsParams } from './application.requests';
 export type { IGetCustomerParams, IGetCustomerResponse } from './customer.requests';
 export type {
   ICreateFolderParams,
