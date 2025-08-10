@@ -1,4 +1,5 @@
 import { FC, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Col, Form, Input, InputNumber, message, Modal, Row, Space, Typography } from 'antd';
 import type { IAccountingProtocol } from 'types/entities/accounting';
 
@@ -25,6 +26,7 @@ interface IFormValues {
 export const EditProtocolModal: FC<IProps> = ({ visible, onClose, protocolData, onSuccess }) => {
   const [form] = Form.useForm<IFormValues>();
   const [updateProtocol, { isLoading }] = useUpdateProtocolMutation();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (visible && protocolData) {
@@ -51,7 +53,7 @@ export const EditProtocolModal: FC<IProps> = ({ visible, onClose, protocolData, 
         }
       }).unwrap();
 
-      message.success('Протокол успешно обновлен');
+      message.success(t('accounting.messages.protocolUpdated'));
       onSuccess?.();
       onClose();
     } catch (error) {
@@ -65,81 +67,89 @@ export const EditProtocolModal: FC<IProps> = ({ visible, onClose, protocolData, 
   };
 
   return (
-    <Modal title='Редактирование протокола' open={visible} onCancel={handleCancel} width={600} footer={null}>
+    <Modal title={t('protocolEdit.title')} open={visible} onCancel={handleCancel} width={600} footer={null}>
       <Form form={form} layout='vertical' onFinish={handleSubmit} style={{ marginTop: 16 }}>
-        <Title level={5}>Основные данные</Title>
+        <Title level={5}>{t('protocolEdit.sections.main')}</Title>
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item name='load' label='Нагрузка' rules={[{ required: true, message: 'Поле обязательно для заполнения' }]}>
-              <Input placeholder='Введите нагрузку' />
+            <Form.Item
+              name='load'
+              label={t('protocolEdit.fields.load')}
+              rules={[{ required: true, message: t('paymentsModal.validation.required') }]}
+            >
+              <Input placeholder={t('protocolEdit.placeholders.enterLoad')} />
             </Form.Item>
           </Col>
 
           <Col span={12}>
-            <Form.Item name='coefficient' label='Коэффициент' rules={[{ required: true, message: 'Поле обязательно для заполнения' }]}>
-              <InputNumber style={{ width: '100%' }} placeholder='Введите коэффициент' step={0.01} min={0} />
+            <Form.Item
+              name='coefficient'
+              label={t('protocolEdit.fields.coefficient')}
+              rules={[{ required: true, message: t('paymentsModal.validation.required') }]}
+            >
+              <InputNumber style={{ width: '100%' }} placeholder={t('protocolEdit.placeholders.enterCoeff')} step={0.01} min={0} />
             </Form.Item>
           </Col>
         </Row>
 
         <Title level={5} style={{ marginTop: 16 }}>
-          Стоимость
+          {t('protocolEdit.sections.cost')}
         </Title>
 
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
               name='water_price'
-              label='Стоимость водопровода'
-              rules={[{ required: true, message: 'Поле обязательно для заполнения' }]}
+              label={t('protocolEdit.fields.waterPrice')}
+              rules={[{ required: true, message: t('paymentsModal.validation.required') }]}
             >
-              <Input placeholder='Введите стоимость' />
+              <Input placeholder={t('protocolEdit.placeholders.enterCost')} />
             </Form.Item>
           </Col>
 
           <Col span={12}>
             <Form.Item
               name='kanal_price'
-              label='Стоимость канализации'
-              rules={[{ required: true, message: 'Поле обязательно для заполнения' }]}
+              label={t('protocolEdit.fields.kanalPrice')}
+              rules={[{ required: true, message: t('paymentsModal.validation.required') }]}
             >
-              <Input placeholder='Введите стоимость' />
+              <Input placeholder={t('protocolEdit.placeholders.enterCost')} />
             </Form.Item>
           </Col>
         </Row>
 
         <Title level={5} style={{ marginTop: 16 }}>
-          Итоговая сумма
+          {t('protocolEdit.sections.total')}
         </Title>
 
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
               name='total_water_sum'
-              label='Общая сумма водопровода'
-              rules={[{ required: true, message: 'Поле обязательно для заполнения' }]}
+              label={t('protocolEdit.fields.totalWater')}
+              rules={[{ required: true, message: t('paymentsModal.validation.required') }]}
             >
-              <Input placeholder='Введите общую сумму' />
+              <Input placeholder={t('protocolEdit.placeholders.enterTotal')} />
             </Form.Item>
           </Col>
 
           <Col span={12}>
             <Form.Item
               name='total_kanal_sum'
-              label='Общая сумма канализации'
-              rules={[{ required: true, message: 'Поле обязательно для заполнения' }]}
+              label={t('protocolEdit.fields.totalKanal')}
+              rules={[{ required: true, message: t('paymentsModal.validation.required') }]}
             >
-              <Input placeholder='Введите общую сумму' />
+              <Input placeholder={t('protocolEdit.placeholders.enterTotal')} />
             </Form.Item>
           </Col>
         </Row>
 
         <Form.Item style={{ marginTop: 24 }}>
           <Space style={{ width: '100%', justifyContent: 'flex-end' }}>
-            <Button onClick={handleCancel}>Отмена</Button>
+            <Button onClick={handleCancel}>{t('common.cancel')}</Button>
             <Button type='primary' htmlType='submit' loading={isLoading}>
-              Сохранить
+              {t('common.save')}
             </Button>
           </Space>
         </Form.Item>

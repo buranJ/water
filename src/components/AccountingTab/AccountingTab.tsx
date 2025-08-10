@@ -1,5 +1,6 @@
 // src/components/AccountingTab/AccountingTab.tsx
 import { FC, useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Alert,
   Badge,
@@ -46,6 +47,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
   const [activeAccountingTab, setActiveAccountingTab] = useState<string>('1');
   const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false);
   const [shouldOpenPaymentModal, setShouldOpenPaymentModal] = useState<boolean>(false);
+  const { t } = useTranslation();
 
   const {
     data: protocolData,
@@ -74,6 +76,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
   }, [protocolData, invoiceData?.total_sum]);
 
   const actualTotalAmount = calculateTotalAmount();
+  const currency = t('tuDetails.currency');
   useEffect(() => {
     if (onOpenPaymentModal) {
       setActiveAccountingTab('2');
@@ -100,7 +103,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
 
     try {
       await generateInvoice({ protocolId: protocolData.id.toString() }).unwrap();
-      message.success('Счет успешно сгенерирован');
+      message.success(t('accounting.messages.generateInvoiceSuccess'));
       refetchInvoice();
     } catch (error) {
       console.log(error);
@@ -111,7 +114,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
     if (invoiceData?.pdf_file) {
       window.open(invoiceData.pdf_file, '_blank');
     } else {
-      message.info('Файл счета недоступен для скачивания');
+      message.info(t('accounting.messages.invoiceFileUnavailable'));
     }
   };
 
@@ -127,7 +130,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
       window.URL.revokeObjectURL(url);
       document.body.removeChild(link);
 
-      message.success('Протокол успешно скачан');
+      message.success(t('accounting.messages.protocolDownloaded'));
     } catch (error) {
       console.log(error);
     }
@@ -142,35 +145,35 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
   }
 
   if (protocolError || !protocolData) {
-    return <Alert message='Ошибка загрузки' description='Не удалось загрузить данные бухгалтерии' type='error' showIcon />;
+    return <Alert message={t('accounting.errors.loadTitle')} description={t('accounting.errors.loadDesc')} type='error' showIcon />;
   }
 
   const protocolTableData: IProtocolTableData[] = [
     {
       key: '1',
-      item: 'МП "Бишкектеплосеть"',
+      item: t('protocolDoc.companyName'),
       price: ''
     },
     {
       key: '2',
-      item: 'Ст-ть подключ. ВиК сом(без НДС)',
-      price: '10080KGZ'
+      item: t('protocolDoc.vikCostLabel'),
+      price: `10080${currency}`
     },
     {
       key: '3',
-      item: 'ТУ водопровод',
-      price: `${protocolData.water_price}KGZ`
+      item: t('protocolDoc.tuWater'),
+      price: `${protocolData.water_price}${currency}`
     },
     {
       key: '4',
-      item: 'ТУ канализация',
-      price: `${protocolData.kanal_price}KGZ`
+      item: t('protocolDoc.tuSewer'),
+      price: `${protocolData.kanal_price}${currency}`
     },
     {
       key: '5',
-      item: 'Всего (без НДС)',
-      price: `${protocolData.total_water_sum}KGZ`,
-      badge: 'На вынос'
+      item: t('protocolDoc.totalWithoutVat'),
+      price: `${protocolData.total_water_sum}${currency}`,
+      badge: t('protocolDoc.takeaway')
     }
   ];
 
@@ -198,19 +201,20 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
   const accountingTabItems: TabsProps['items'] = [
     {
       key: '1',
-      label: 'Протокол',
+      label: t('protocolDetail.tabs.protocol'),
       children: (
         <Card>
           <Flex justify='space-between' align='center' style={{ marginBottom: 16 }}>
             <Title level={4} style={{ margin: 0 }}>
-              ТУ №{technicalConditionId}-472
+              {t('routers.tuNumberPrefix')}
+              {technicalConditionId}-472
             </Title>
             <Space>
               <Button icon={<EditOutlined />} type='primary' onClick={handleEditClick}>
-                Изменить
+                {t('common.edit')}
               </Button>
               <Button icon={<DownloadOutlined />} type='default' onClick={handleDownloadProtocol} loading={isDownloading}>
-                Скачать протокол
+                {t('protocolDetail.buttons.downloadProtocol')}
               </Button>
             </Space>
           </Flex>
@@ -229,7 +233,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
     },
     {
       key: '2',
-      label: 'Платежи',
+      label: t('protocolDetail.tabs.payments'),
       children:
         invoiceData && !invoiceError ? (
           <PaymentsTab
@@ -239,7 +243,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
             onModalOpen={() => setShouldOpenPaymentModal(false)}
           />
         ) : (
-          <div>Для просмотра платежей необходимо сначала создать счет</div>
+          <div>{t('accounting.messages.needCreateInvoiceFirst')}</div>
         )
     }
   ];
@@ -253,7 +257,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
 
         <Col span={8}>
           <Card style={{ marginBottom: 16 }}>
-            <Title level={4}>Счет на оплату</Title>
+            <Title level={4}>{t('protocolDetail.invoice.title')}</Title>
 
             {invoiceLoading && (
               <Flex justify='center' style={{ margin: '16px 0' }}>
@@ -266,13 +270,15 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
                 {invoiceData && !invoiceError ? (
                   <>
                     <CheckCircleOutlined style={{ color: '#52c41a' }} />
-                    <Text>Счет #{invoiceData.invoice_number}</Text>
-                    {invoiceData.is_paid && <Text type='success'>(Оплачено)</Text>}
+                    <Text>
+                      {t('protocolDetail.invoice.title')} #{invoiceData.invoice_number}
+                    </Text>
+                    {invoiceData.is_paid && <Text type='success'>{t('accounting.messages.paidTag')}</Text>}
                   </>
                 ) : (
                   <>
                     <ClockCircleOutlined style={{ color: '#1890ff' }} />
-                    <Text>В ожидании</Text>
+                    <Text>{t('common.pending')}</Text>
                   </>
                 )}
               </Flex>
@@ -287,17 +293,17 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
                 disabled={!invoiceData.pdf_file}
                 style={{ marginBottom: 16 }}
               >
-                Скачать счет
+                {t('protocolDetail.buttons.downloadInvoice')}
               </Button>
             ) : (
               <Button type='primary' block onClick={handleGenerateInvoice} loading={isGenerating} style={{ marginBottom: 16 }}>
-                Сгенерировать счет на оплату
+                {t('protocolDetail.buttons.generateInvoice')}
               </Button>
             )}
           </Card>
 
           <Card>
-            <Title level={4}>Загрузить чек об оплате</Title>
+            <Title level={4}>{t('protocolDetail.invoice.uploadReceipt')}</Title>
             <div
               style={{
                 backgroundColor: '#327BE8',
@@ -307,11 +313,11 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
               }}
             />
             <Text type='secondary' style={{ display: 'block', marginBottom: 16 }}>
-              Загрузите соответствующий документ чтобы завершить создание ТУ
+              {t('tuDetails.hint.uploadToFinishTu')}
             </Text>
 
             <Button type='primary' block icon={<UploadOutlined />} onClick={handleUpload}>
-              Загрузить
+              {t('common.upload')}
             </Button>
           </Card>
         </Col>

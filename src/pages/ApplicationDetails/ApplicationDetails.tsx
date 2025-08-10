@@ -60,16 +60,16 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
 
   useEffect(() => {
     if (isApproveSuccess) {
-      message.success('Заявка одобрена');
+      message.success(t('applicationDetails.messages.approveSuccess'));
     }
     if (isApproveError) {
-      message.error('Ошибка при одобрении заявки');
+      message.error(t('applicationDetails.messages.approveError'));
     }
     if (isRejectSuccess) {
-      message.success('Заявка отклонена');
+      message.success(t('applicationDetails.messages.rejectSuccess'));
     }
     if (isRejectError) {
-      message.error('Ошибка при отклонении заявки');
+      message.error(t('applicationDetails.messages.rejectError'));
     }
   }, [isApproveError, isApproveSuccess, isRejectError, isRejectSuccess]);
 
@@ -84,7 +84,7 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginBottom: 16 }}>
         <Button icon={<DownloadOutlined />}>{t('applicationDetails.buttons.pdf')}</Button>
         <Button onClick={() => navigate(`/dashboard/applications/${id}/edit`)}>{t('applicationDetails.buttons.edit')}</Button>
-        <Button onClick={() => navigate(`/dashboard/applications/${id}/change-history`)}>История изменений</Button>
+        <Button onClick={() => navigate(`/dashboard/applications/${id}/change-history`)}>{t('routers.changeHistory')}</Button>
         {data?.status === 'pending' && (
           <>
             <Button onClick={openRejectModal}>{t('applications.actions.reject')}</Button>
@@ -241,18 +241,18 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
                               }
                               onClick={() => {
                                 Modal.confirm({
-                                  title: 'Удалить файл?',
-                                  content: 'Это действие необратимо. Вы уверены, что хотите удалить файл?',
-                                  okText: 'Удалить',
-                                  cancelText: 'Отмена',
+                                  title: t('architectureDetails.titles.delete'),
+                                  content: t('architectureDetails.confirmDelete'),
+                                  okText: t('architectureDetails.buttons.delete'),
+                                  cancelText: t('architectureDetails.buttons.cancel'),
                                   okButtonProps: { danger: true },
                                   onOk: async () => {
                                     try {
                                       await deleteApplicationFile({ id: file.id }).unwrap();
-                                      message.success('Файл удален');
+                                      message.success(t('applicationDetails.messages.fileDeleted'));
                                       refetch();
                                     } catch {
-                                      message.error('Не удалось удалить файл');
+                                      message.error(t('applicationDetails.messages.fileDeleteError'));
                                     }
                                   }
                                 });

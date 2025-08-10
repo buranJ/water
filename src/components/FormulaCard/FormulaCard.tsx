@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Card, Modal, Typography } from 'antd';
 import { DeleteOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { FormulaItem } from 'types/entities';
@@ -14,6 +15,7 @@ interface FormulaCardProps {
 }
 
 export const FormulaCard: FC<FormulaCardProps> = ({ formula, onEdit, onDelete, onCardClick, isDeleting = false }) => {
+  const { t } = useTranslation();
   const handleEdit = (): void => {
     if (onEdit) {
       onEdit(formula);
@@ -28,11 +30,11 @@ export const FormulaCard: FC<FormulaCardProps> = ({ formula, onEdit, onDelete, o
 
   const handleDelete = (): void => {
     Modal.confirm({
-      title: 'Удаление формулы',
+      title: t('formulas.deleteTitle'),
       icon: <ExclamationCircleOutlined />,
-      content: `Вы уверены, что хотите удалить формулу "${formula.title}"?`,
-      okText: 'Удалить',
-      cancelText: 'Отмена',
+      content: t('formulas.deleteConfirm', { title: formula.title }),
+      okText: t('common.delete'),
+      cancelText: t('common.cancel'),
       okType: 'danger',
       onOk: async () => {
         if (onDelete) {
@@ -133,7 +135,7 @@ export const FormulaCard: FC<FormulaCardProps> = ({ formula, onEdit, onDelete, o
       {/* Коэффициент */}
       <div style={{ marginBottom: 16, textAlign: 'center' }}>
         <div style={{ marginBottom: 8 }}>
-          <Text style={{ fontSize: 14, color: '#8e8e93', fontWeight: 500 }}>Коэффициент</Text>
+          <Text style={{ fontSize: 14, color: '#8e8e93', fontWeight: 500 }}>{t('formulas.coefficient')}</Text>
         </div>
         <div style={{ marginBottom: 8 }}>
           <Text

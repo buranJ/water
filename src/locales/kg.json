@@ -385,7 +385,15 @@
       "uploadDate": "Жүктөлгөн күнү",
       "actions": "Аракеттер"
     },
-    "noDocs": "Жүктөлгөн документтер жок"
+    "noDocs": "Жүктөлгөн документтер жок",
+    "messages": {
+      "approveSuccess": "Арыз бекитилди",
+      "approveError": "Арызды бекитүүдө ката кетти",
+      "rejectSuccess": "Арыз четке кагылды",
+      "rejectError": "Арызды четке кагууда ката кетти",
+      "fileDeleted": "Файл өчүрүлдү",
+      "fileDeleteError": "Файлды өчүрүү мүмкүн болгон жок"
+    }
   },
   "architecture": {
     "titles": {
@@ -451,7 +459,9 @@
         "yPlaceholder": "321"
       },
       "validation": {
-        "required": "Милдеттүү талаа"
+        "required": "Милдеттүү талаа",
+        "number": "Маалыматты киргизиңиз",
+        "innLength": "ИНН 14 сан болышы керек"
       }
     },
     "buttons": {
@@ -532,7 +542,8 @@
     "buttons": {
       "downloadProtocol": "Протоколду жүктөө",
       "closeInvoice": "Эсепти жабуу",
-      "generateInvoice": "Төлөм эсебин түзүү"
+      "generateInvoice": "Төлөм эсебин түзүү",
+      "downloadInvoice": "Эсепти жүктөп алуу"
     },
     "paid": "Төлөндү:",
     "invoice": {
@@ -568,6 +579,49 @@
       "field": "Талаа",
       "oldValue": "Эски маани",
       "newValue": "Жаңы маани"
+    }
+  },
+  "formulas": {
+    "add": "Формула кошуу",
+    "searchPlaceholder": "Аталышы боюнча издөө...",
+    "foundCount": "Табылган формулалар: {{count}}",
+    "loading": "Формулалар жүктөлүүдө...",
+    "nothingFound": "Сурамыңыз боюнча эч нерсе табылган жок",
+    "notFound": "Формулалар табылган жок",
+    "changeSearch": "Издөө параметрлерин өзгөртүп көрүңүз",
+    "startCreate": "Биринчи формуланы түзүүдөн баштаңыз",
+    "coefficient": "Коэффициент",
+    "deleteTitle": "Формуланы өчүрүү",
+    "deleteConfirm": "«{{title}}» формуланы өчүргүңүз келеби?",
+    "form": {
+      "modals": {
+        "addTitle": "Формуланы кошуу",
+        "editTitle": "Формуланы түзөтүү"
+      },
+      "labels": {
+        "title": "Аталышы *",
+        "coefficient": "Коэффициент *"
+      },
+      "placeholders": {
+        "fill": "Толтуруңуз"
+      },
+      "validation": {
+        "titleRequired": "Формуланын аталышын киргизиңиз",
+        "titleMin": "Аталыш кеминде 2 белги болушу керек",
+        "titleMax": "Аталыш 100 белгиден ашпоого тийиш",
+        "coefRequired": "Коэффициентти киргизиңиз",
+        "coefNonNegative": "Коэффициент терс болушу мүмкүн эмес",
+        "coefTooLarge": "Коэффициент өтө чоң"
+      }
+    },
+    "messages": {
+      "created": "Формула ийгиликтүү түзүлдү",
+      "updated": "Формула ийгиликтүү жаңыртылды",
+      "deleted": "Формула ийгиликтүү өчүрүлдү",
+      "createError": "Формуланы түзүүдө ката",
+      "updateError": "Формуланы жаңыртууда ката",
+      "deleteError": "Формуланы өчүрүүдө ката",
+      "loadError": "Формулаларды жүктөөдө ката"
     }
   },
   "objects": {
@@ -818,6 +872,28 @@
     "totalWithoutVat": "Жалпы (КНСсиз)",
     "extraText": "Протоколдун кошумча тексти же контент..."
   },
+  "protocolEdit": {
+    "title": "Протоколду түзөтүү",
+    "sections": {
+      "main": "Негизги маалымат",
+      "cost": "Баасы",
+      "total": "Жалпы сумма"
+    },
+    "fields": {
+      "load": "Жүк (нагрузка)",
+      "coefficient": "Коэффициент",
+      "waterPrice": "Суу түтүгүнүн баасы",
+      "kanalPrice": "Канализациянын баасы",
+      "totalWater": "Суу түтүгү боюнча жалпы сумма",
+      "totalKanal": "Канализация боюнча жалпы сумма"
+    },
+    "placeholders": {
+      "enterLoad": "Жүктү киргизиңиз",
+      "enterCoeff": "Коэффициентти киргизиңиз",
+      "enterCost": "Бааны киргизиңиз",
+      "enterTotal": "Жалпы сумманы киргизиңиз"
+    }
+  },
   "paymentsModal": {
     "title": "Төлөм кошуу",
     "labels": {
@@ -877,6 +953,20 @@
       "loadErrorTitle": "Жүктөө катасы",
       "loadErrorDesc": "Төлөмдөр боюнча маалыматты жүктөө мүмкүн болгон жок",
       "invoiceFullyPaid": "Эсеп толугу менен төлөнгөн"
+    }
+  },
+  "accounting": {
+    "errors": {
+      "loadTitle": "Жүктөө катасы",
+      "loadDesc": "Бухгалтерия маалыматын жүктөө мүмкүн болгон жок"
+    },
+    "messages": {
+      "generateInvoiceSuccess": "Эсеп ийгиликтүү түзүлдү",
+      "invoiceFileUnavailable": "Эсеп файлын жүктөп алуу мүмкүн эмес",
+      "protocolDownloaded": "Протокол ийгиликтүү жүктөлдү",
+      "needCreateInvoiceFirst": "Төлөмдөрдү көрүү үчүн адегенде эсеп түзүү керек",
+      "paidTag": "(Төлөндү)",
+      "protocolUpdated": "Протокол ийгиликтүү жаңыртылды"
     }
   }
 }
