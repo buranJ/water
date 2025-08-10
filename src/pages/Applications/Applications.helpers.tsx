@@ -116,7 +116,7 @@ export const getColumns: IGetColumnsFn = ({ onClick, onReject }) => {
         );
       case 'contracted':
         return (
-          <Button size='large' type='primary' onClick={() => {}}>
+          <Button size='large' type='primary' onClick={() => onClick(record, 'tuDetails')}>
             Перейти ТУ
           </Button>
         );

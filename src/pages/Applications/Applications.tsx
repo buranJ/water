@@ -80,7 +80,7 @@ export const Applications: FC<IProps> = ({ title }) => {
       objectName: item.object,
       waterAmount: item.waterRequired,
       wastewaterAmount: item.firefightingExpenses,
-      status: item.status as 'approved' | 'rejected' | 'pending',
+      status: item.status as 'approved' | 'rejected' | 'pending' | 'contracted',
       rejectReason: undefined,
       comment: undefined,
       hasTu: item.status === 'contracted',
@@ -92,12 +92,19 @@ export const Applications: FC<IProps> = ({ title }) => {
     return getColumns({
       onClick: (record, action) => {
         switch (action) {
-          case 'create':
+          case 'create': // переход на создание ТУ
             navigate(`/dashboard/add-tu-forms/${record.ty_id}`);
             break;
+          case 'tuDetails': // переход на страницу существующего ТУ
+            if (record.ty_id) {
+              navigate(`/dashboard/technical-conditions/tu-details/${record.ty_id}`);
+            }
+            break;
           case 'reject':
+            // обработка отказа будет добавлена позже
             break;
           case 'approve':
+            // обработка одобрения будет добавлена позже
             break;
         }
       },
