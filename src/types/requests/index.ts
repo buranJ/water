@@ -4,7 +4,12 @@ export type {
   IGetApplicationHistoryResponse,
   IGetApplicationsParams
 } from './application.requests';
-export type { IGetCustomerParams, IGetCustomerResponse } from './customer.requests';
+export type {
+  IGetCustomerChangeHistoryParams,
+  IGetCustomerChangeHistoryResponse,
+  IGetCustomerParams,
+  IGetCustomerResponse
+} from './customer.requests';
 export type {
   ICreateFolderParams,
   ICreateFolderResponse,

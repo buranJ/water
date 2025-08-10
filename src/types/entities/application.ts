@@ -1,3 +1,4 @@
+import { IHistoryType } from 'types/common';
 import type { IApplication } from 'types/requests';
 
 export interface IApplicationResponse {
@@ -38,7 +39,7 @@ export interface IApplicationHistory {
   history_id: string;
   history_date: string;
   history_user: string;
-  history_type: string;
+  history_type: IHistoryType;
   history_type_display: string;
   history_change_reason?: string;
   changes?: { field: string; new: string; old: string }[];

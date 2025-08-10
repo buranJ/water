@@ -19,3 +19,11 @@ export type ITyTypeEnum = 'connection' | 'relocation' | 'load_increase';
  *  * `relocation` - Вынос сетей
  *  * `load_increase` - Увеличение нагрузок
  */
+
+export type IHistoryType = '+' | '~' | '-';
+
+/**
+ * * + - Created
+ * * ~ - Updated
+ * * - - Deleted
+ */
