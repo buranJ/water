@@ -30,6 +30,7 @@ const ChangeHistory = lazy(() => import('pages/ChangeHistory'));
 const ChangeApplicationHistory = lazy(() => import('pages/ChangeApplicationHistory'));
 const ChangeCustomerHistory = lazy(() => import('pages/ChangeCustomerHistory'));
 const ChangeObjectHistory = lazy(() => import('pages/ChangeObjectHistory'));
+const Notifications = lazy(() => import('pages/Notification'));
 
 export const routerConfig: RouteObject[] = [
   {
@@ -144,6 +145,10 @@ export const routerConfig: RouteObject[] = [
   {
     path: '/dashboard/applications/:id/change-history',
     element: <ChangeApplicationHistory title='routers.changeHistory' />
+  },
+  {
+    path: '/dashboard/notifications',
+    element: <Notifications title='routers.notifications' />
   },
   {
     path: '*',

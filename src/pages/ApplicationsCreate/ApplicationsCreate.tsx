@@ -45,9 +45,8 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
         const customerResponse = await createCustomer({
           inn: values.INN,
           full_name: values.customer,
-          pasport: 'passport',
+          pasport: '',
           address: values.address,
-          contact: values.contact,
           status: 'active'
         }).unwrap();
         customerId = customerResponse.id;

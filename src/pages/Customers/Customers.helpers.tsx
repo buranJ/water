@@ -28,8 +28,8 @@ export const getColumns: IGetColumnsFn = ({ onClick, hasPermission }) => {
   return [
     {
       title: t('customers.columns.number'),
-      dataIndex: 'number',
-      key: 'number',
+      dataIndex: 'key',
+      key: 'key',
       align: 'center',
       render: (number: string, record: CustomerRecord) => (
         <span style={{ color: '#1677ff', cursor: 'pointer', textDecoration: 'underline' }} onClick={() => onClick(record, 'details')}>

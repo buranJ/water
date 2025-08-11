@@ -43,9 +43,12 @@ export const TechnicalConditionsPage = () => {
   }, [tuData]);
 
   const handleFilterChange = (values: TUFilterValues) => {
+    const { date, ordering: filterOrdering } = values;
+    const ordering = [date, filterOrdering].filter(Boolean).join(', ');
     setFilters((prev) => ({
       ...prev,
       ...values,
+      ordering,
       page: 1
     }));
   };
