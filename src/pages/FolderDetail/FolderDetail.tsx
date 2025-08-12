@@ -54,10 +54,10 @@ export const FolderDetail: FC<IProps> = () => {
         onClick: (record, action) => {
           switch (action) {
             case 'download':
-              console.log('Скачать файл:', record.file);
+              window.open(record.file);
               break;
             case 'delete':
-              console.log('Удалить файл:', record.file);
+              message.info('В разработке');
               break;
           }
         }

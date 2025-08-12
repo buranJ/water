@@ -68,7 +68,6 @@ const ExportDataHistory: FC<ExportDataHistoryProps> = ({ title }) => {
                 icon={<RetweetOutlined />}
                 shape='circle'
                 onClick={() => {
-                  // eslint-disable-next-line no-console
                   console.log('re-export', record);
                 }}
               />
@@ -79,7 +78,6 @@ const ExportDataHistory: FC<ExportDataHistoryProps> = ({ title }) => {
                 shape='circle'
                 danger
                 onClick={() => {
-                  // eslint-disable-next-line no-console
                   console.log('delete', record);
                 }}
               />

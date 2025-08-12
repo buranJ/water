@@ -91,7 +91,7 @@ export const getColumns: IGetColumnsFn = ({ onClick, hasPermission }) => {
       case 'rejected':
       default:
         return (
-          <Button size='large' danger type='default' onClick={() => {}}>
+          <Button size='large' danger type='default'>
             {i18next.t('applications.actions.decline')}
           </Button>
         );
