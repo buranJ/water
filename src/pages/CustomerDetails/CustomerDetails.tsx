@@ -78,7 +78,6 @@ const tabItems = [
   { key: 'data', label: t('customers.details.tabs.data') },
   { key: 'objects', label: t('customers.details.tabs.objects') },
   { key: 'applications', label: t('customers.details.tabs.applications') },
-  { key: 'documents', label: t('customers.details.tabs.documents') },
   { key: 'payments', label: t('customers.details.tabs.payments') }
 ];
 
