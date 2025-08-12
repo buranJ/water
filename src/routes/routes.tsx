@@ -67,7 +67,7 @@ export const routerConfig: RouteObject[] = [
     element: <TuDetails title='routers.tuNumberPrefix' />
   },
   {
-    path: '/dashboard/technical-conditions/history-of-loads',
+    path: '/dashboard/technical-conditions/history-of-loads/:id',
     element: <HistoryOfLoads title='routers.historyOfLoads' />
   },
   {

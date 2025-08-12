@@ -5,12 +5,22 @@ export type { ICategory, IFileFolderFolder, IFileItem } from './fileFolder';
 export type { FormulaItem, FormulaListResponse, FormulaUpdateBody, IGetFormulasParams } from './formula';
 export type {
   IGetObjectParams,
+  IObjectChangeHistory,
   ObjectBody,
   ObjectFilters,
   ObjectHistoryItem,
   ObjectHistoryResponse,
   ObjectItem,
-  ObjectListResponse,
-  IObjectChangeHistory
+  ObjectListResponse
 } from './objects';
-export type { IGetTyById, IHistory, ITechnicalCondition, ITyBody, ITyItem, ITyListQueryParams, ITypesTY } from './tu';
+export type {
+  IAddLoadParams,
+  IGetTyById,
+  IHistory,
+  ILoadIncreases,
+  ITechnicalCondition,
+  ITyBody,
+  ITyItem,
+  ITyListQueryParams,
+  ITypesTY
+} from './tu';

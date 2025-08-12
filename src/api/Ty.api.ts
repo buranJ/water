@@ -1,12 +1,15 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { getBaseQuery } from 'common/helpers';
 import {
+  IAddLoadParams,
   ICreateTechnicalConditionParams,
   ICreateTechnicalConditionRequest,
   IDeleteTechnicalConditionParams,
   IDeleteTechnicalConditionResponse,
   IGetAllTechnicalConditionParams,
   IGetAllTechnicalConditionResponse,
+  IGetLoadIncreasesParams,
+  IGetLoadIncreasesResponse,
   IGetTechnicalConditionByIdParams,
   IGetTechnicalConditionByIdResponse,
   IGetTyHistoryParams,
@@ -22,7 +25,7 @@ import {
 export const tyApi = createApi({
   reducerPath: 'tyApi',
   baseQuery: getBaseQuery(),
-  tagTypes: ['Ty'],
+  tagTypes: ['Ty', 'TyLoads'],
   endpoints: (build) => ({
     getAllTy: build.query<IGetAllTechnicalConditionResponse, IGetAllTechnicalConditionParams>({
       query: (params) => ({
@@ -89,6 +92,33 @@ export const tyApi = createApi({
         url: `/ty/from-application/${application_id}/`,
         method: 'POST'
       })
+    }),
+    addLoad: build.mutation<void, IAddLoadParams>({
+      query: ({ ty_id, water_required, pressure_required, sewage_amount, comment, files }) => {
+        const formData = new FormData();
+        formData.append('water_required', water_required);
+        formData.append('pressure_required', pressure_required);
+        formData.append('sewage_amount', sewage_amount);
+        if (comment) formData.append('comment', comment);
+        if (files && files.length) {
+          files.forEach((file) => formData.append('files', file));
+        }
+        return {
+          url: `/ty/${ty_id}/add-load/`,
+          method: 'PATCH',
+          body: formData,
+          formData: true
+        };
+      },
+      invalidatesTags: (_result, _error, { ty_id }) => [{ type: 'Ty', id: ty_id }]
+    }),
+
+    getLoadIncreases: build.query<IGetLoadIncreasesResponse, IGetLoadIncreasesParams>({
+      query: ({ tyId }) => ({
+        url: `/ty/${tyId}/load-increases/`,
+        method: 'GET'
+      }),
+      providesTags: (_result, _error, { tyId }) => [{ type: 'TyLoads', id: tyId }]
     })
   })
 });
@@ -102,5 +132,7 @@ export const {
   useDeleteTyMutation,
   useGetTypesTyQuery,
   useGetHistoryTyQuery,
-  useCreateTyFromApplicationMutation
+  useCreateTyFromApplicationMutation,
+  useAddLoadMutation,
+  useGetLoadIncreasesQuery
 } = tyApi;

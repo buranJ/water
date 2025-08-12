@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router';
 import { Button, Form, Input, Select, Space } from 'antd';
 import { DownloadOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { IStageEnum, IStatus6b3Enum } from 'types/common';
@@ -24,14 +23,12 @@ interface Props {
 
 export const TUFilterBar = ({ onFilterChange, onAddClick, onDownloadClick }: Props) => {
   const [form] = Form.useForm();
-  const navigate = useNavigate();
 
   const handleValuesChange = (_: unknown, allValues: TUFilterValues) => {
     onFilterChange(allValues);
   };
   const handleAddClick = () => {
     onAddClick();
-    navigate('/dashboard/add-tu-forms');
   };
   return (
     <div className='tu-filter-bar'>

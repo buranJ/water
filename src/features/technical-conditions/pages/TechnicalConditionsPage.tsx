@@ -54,7 +54,7 @@ export const TechnicalConditionsPage = () => {
   };
 
   const handleAddClick = () => {
-    console.log('Открыть модалку добавления');
+    navigate('/dashboard/applications/create');
   };
 
   const handleDownloadClick = () => {

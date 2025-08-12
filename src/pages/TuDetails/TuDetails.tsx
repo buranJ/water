@@ -12,6 +12,7 @@ import {
 import { AccountingTab } from 'components/AccountingTab/AccountingTab';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { IStageEnum, IStatus6b3Enum } from 'types/common';
+import AddLoadModal from './AddLoadModal';
 import { MyModal } from './MyModal';
 import { Architecture } from './Tabs';
 
@@ -28,8 +29,8 @@ interface IProps {
 }
 
 export const TuDetails: FC<IProps> = ({ title }) => {
-  const userQuery = useGetUserInfoQuery();
   const { id } = useParams<{ id: string }>();
+  const userQuery = useGetUserInfoQuery();
   const foldersQuery = useGetFoldersQuery({ ty_id: id || '' });
   const { hasPermission } = usePermissions();
 
@@ -48,6 +49,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
 
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>('1');
+  const [isAddLoadVisible, setIsAddLoadVisible] = useState<boolean>(false);
 
   const handleRejectClick = (): void => {
     setIsModalVisible(true);
@@ -181,26 +183,6 @@ export const TuDetails: FC<IProps> = ({ title }) => {
         </Text>
       </Card>
 
-      <div style={{ marginBottom: 24 }}>
-        <Row justify='space-between' align='middle'>
-          <Title level={4}>{t('tuDetails.titles.geoportalRequest')}</Title>
-          <Button type='primary'>{t('tuDetails.actions.request')}</Button>
-        </Row>
-        <div
-          style={{
-            textAlign: 'center',
-            backgroundColor: '#F2F3FE',
-            border: '1px solid #D9D9D9',
-            padding: 24,
-            borderRadius: 8,
-            marginTop: 16
-          }}
-        >
-          <Title level={5}>{t('tuDetails.titles.savedGeoportalRequest')}</Title>
-          <Text type='secondary'>{t('tuDetails.autoLoaded')}</Text>
-        </div>
-      </div>
-
       <Card style={{ marginBottom: 24 }}>
         <Title level={4}>{t('tuDetails.titles.waterSupply')}</Title>
         <Text>{objectData?.water_pipe || t('tuDetails.notSpecified')}</Text>
@@ -287,6 +269,10 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     ...dynamicTabs
   ];
 
+  const handleAddLoad = () => {
+    setIsAddLoadVisible(true);
+  };
+
   if (isLoading) {
     return (
       <DashboardLayout title={`${t(title)} ${id}`}>
@@ -321,12 +307,18 @@ export const TuDetails: FC<IProps> = ({ title }) => {
       {activeTab === '1' && (
         <Flex justify='end' align='center' gap={24} style={{ marginBottom: 16 }}>
           {hasPermission('change_technicalcondition') && <Link to={'/dashboard/add-tu-forms/' + id}>{t('routers.editTy')}</Link>}
-          {hasPermission('view_actty') && <Link to='/dashboard/technical-conditions/history-of-loads'>{t('routers.historyOfLoads')}</Link>}
+          {hasPermission('view_actty') && (
+            <Link to={`/dashboard/technical-conditions/history-of-loads/${id}`}>{t('routers.historyOfLoads')}</Link>
+          )}
           {hasPermission('view_historicaltechnicalcondition') && (
             <Link to={`/dashboard/ty/${id}/change-history`}>{t('tuDetails.actions.changeTuData')}</Link>
           )}
           {hasPermission('view_technicalcondition') && <Button icon={<DownloadOutlined />}>{t('tuDetails.actions.downloadTu')}</Button>}
-          {hasPermission('add_actty') && <Button icon={<PlusOutlined />}>{t('historyOfLoads.addLoad')}</Button>}
+          {hasPermission('add_actty') && (
+            <Button onClick={handleAddLoad} icon={<PlusOutlined />}>
+              {t('historyOfLoads.addLoad')}
+            </Button>
+          )}
           {hasPermission('delete_technicalcondition') && (
             <Button danger onClick={handleRejectClick}>
               {t('tuDetails.actions.rejectTu')}
@@ -368,14 +360,6 @@ export const TuDetails: FC<IProps> = ({ title }) => {
                   }}
                 />
               )}
-
-              <div style={{ marginTop: 16, width: '100%', textAlign: 'center' }}>
-                {hasPermission('add_filefolderfile') && (
-                  <Button type='primary' block>
-                    {t('common.upload')}
-                  </Button>
-                )}
-              </div>
             </Card>
 
             <Card>
@@ -390,6 +374,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
       </Row>
 
       <MyModal onClose={handleModalCancel} visible={isModalVisible} />
+      <AddLoadModal visible={isAddLoadVisible} onClose={() => setIsAddLoadVisible(false)} tyId={id || ''} />
     </DashboardLayout>
   );
 };

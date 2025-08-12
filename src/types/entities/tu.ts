@@ -217,3 +217,39 @@ export interface IHistory {
   history_change_reason?: string;
   changes?: { field: string; new: string; old: string }[];
 }
+
+export interface IAddLoadParams {
+  water_required: string;
+  pressure_required: string;
+  sewage_amount: string;
+  comment?: string;
+  files?: File[];
+}
+
+export interface ILoadIncreases {
+  id: string;
+  technical_condition_id: string;
+  changes: {
+    sewage_amount: {
+      new: string;
+      old: string;
+    };
+    water_required: {
+      new: string;
+      old: string;
+    };
+    pressure_required: {
+      new: string;
+      old: string;
+    };
+  };
+  comment?: string;
+  created_by?: number;
+  created_by_name: string;
+  created_at?: string;
+  files?: {
+    id: string;
+    title: string;
+    file: File;
+  };
+}

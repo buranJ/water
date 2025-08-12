@@ -1,8 +1,7 @@
-import React, { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { Button, Card, Col, Dropdown, Input, message, Row, Space, Typography } from 'antd';
-import { DownloadOutlined, DownOutlined, SearchOutlined } from '@ant-design/icons';
+import { Button, Card, Col, Input, message, Row, Typography } from 'antd';
 import { IFileFolderFolder } from 'types/entities';
 import customFileImg from 'assets/images/Architecture/customFile.png';
 import fileImg from 'assets/images/Architecture/file.png';
@@ -24,21 +23,8 @@ export const Architecture: FC<IProps> = ({ documentsRequire, documentsCustom, ca
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [createFolder, { isLoading, isSuccess, isError }] = useCreateFilefolderMutation();
-  const [searchText, setSearchText] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [folderTitle, setFolderTitle] = useState('');
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(e.target.value);
-  };
-
-  const handleSortChange = (value: string) => {
-    console.log('Сортировка:', value);
-  };
-
-  const handleDownloadPDF = () => {
-    console.log('Скачать PDF');
-  };
 
   const handleDownloadClick = ({ folder_id, folderName }: { folder_id: string; folderName: string }) => {
     navigate(`/dashboard/folder-detail/${folder_id}/${id}`, { state: { folderName: folderName } });
@@ -57,51 +43,10 @@ export const Architecture: FC<IProps> = ({ documentsRequire, documentsCustom, ca
     if (isError) {
       message.error(t('architecture.messages.createError'));
     }
-  }, [isError, isSuccess]);
+  }, [isError, isSuccess, t]);
 
   return (
     <>
-      <Row justify='space-between' style={{ marginBottom: 16 }}>
-        <Col>
-          <Space>
-            <Input
-              placeholder={t('filterBar.search')}
-              prefix={<SearchOutlined />}
-              style={{ width: 240 }}
-              value={searchText}
-              onChange={handleSearch}
-            />
-            <Dropdown
-              menu={{
-                items: [
-                  {
-                    key: 'alphabet',
-                    label: t('filterBar.filter.alphabet')
-                  },
-                  {
-                    key: 'date',
-                    label: t('filterBar.filter.date')
-                  }
-                ],
-                onClick: (info) => {
-                  handleSortChange(info.key);
-                }
-              }}
-              trigger={['click']}
-            >
-              <Button>
-                {t('filterBar.filter.alphabet')} <DownOutlined />
-              </Button>
-            </Dropdown>
-          </Space>
-        </Col>
-        <Col>
-          <Button icon={<DownloadOutlined />} onClick={handleDownloadPDF}>
-            {t('applicationDetails.buttons.pdf')}
-          </Button>
-        </Col>
-      </Row>
-
       <div style={{ marginTop: 24 }}>
         <Title level={4}>{t('architecture.titles.documentsToUpload')}</Title>
         <Row gutter={[16, 16]} style={{ marginTop: 16 }}>

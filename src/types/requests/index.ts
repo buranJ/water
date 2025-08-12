@@ -19,13 +19,17 @@ export type {
   IGetFileListParams,
   IUploadFileParams
 } from './fileFolder.requests';
+export type { IGetObjectChangeHistoryParams, IGetObjectChangeHistoryResponse } from './object.requests';
 export type {
+  IAddLoadParams,
   ICreateTechnicalConditionParams,
   ICreateTechnicalConditionRequest,
   IDeleteTechnicalConditionParams,
   IDeleteTechnicalConditionResponse,
   IGetAllTechnicalConditionParams,
   IGetAllTechnicalConditionResponse,
+  IGetLoadIncreasesParams,
+  IGetLoadIncreasesResponse,
   IGetTechnicalConditionByIdParams,
   IGetTechnicalConditionByIdResponse,
   IGetTyHistoryParams,
@@ -37,4 +41,3 @@ export type {
   IUpdateTechnicalConditionParams,
   IUpdateTechnicalConditionResponse
 } from './technicalCondition.requests';
-export type { IGetObjectChangeHistoryParams, IGetObjectChangeHistoryResponse } from './object.requests';

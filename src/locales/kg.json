@@ -150,7 +150,8 @@
     "edit": "Түзөтүү",
     "cancel": "Жокко чыгаруу",
     "latitude": "Кеңдик",
-    "longitude": "Узундук"
+    "longitude": "Узундук",
+    "comment": "Комментарий"
   },
   "geoportal": {
     "errorLoad": "Маалыматтарды жүктөөдө ката",
@@ -191,6 +192,9 @@
       "loadAdded": "Кошулган жүк",
       "regDate": "Каттоо күнү",
       "status": "Статус"
+    },
+    "hint": {
+      "ty": "ТУ"
     }
   },
   "tuDetails": {

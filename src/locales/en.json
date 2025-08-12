@@ -150,7 +150,8 @@
     "edit": "Edit",
     "cancel": "Cancel",
     "latitude": "Latitude",
-    "longitude": "Longitude"
+    "longitude": "Longitude",
+    "comment": "Comment"
   },
   "geoportal": {
     "errorLoad": "Failed to load data",
@@ -191,6 +192,9 @@
       "loadAdded": "Added load",
       "regDate": "Registration date",
       "status": "Status"
+    },
+    "hint": {
+      "ty": "TC"
     }
   },
   "tuDetails": {
