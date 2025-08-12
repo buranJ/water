@@ -15,6 +15,74 @@ interface IProps {
   title: string;
 }
 
+// Компоненты флагов для замены эмодзи
+const RussianFlag: FC = () => (
+  <div
+    style={{
+      width: '20px',
+      height: '15px',
+      display: 'inline-block',
+      background: 'linear-gradient(to bottom, white 33%, #0052cc 33%, #0052cc 66%, #cc0000 66%)',
+      border: '1px solid #ddd',
+      borderRadius: '2px'
+    }}
+  />
+);
+
+const KyrgyzFlag: FC = () => (
+  <div
+    style={{
+      width: '20px',
+      height: '15px',
+      display: 'inline-block',
+      background: '#cc0000',
+      border: '1px solid #ddd',
+      borderRadius: '2px',
+      position: 'relative'
+    }}
+  >
+    <div
+      style={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '8px',
+        height: '8px',
+        border: '1px solid #ffcc00',
+        borderRadius: '50%',
+        backgroundColor: 'transparent'
+      }}
+    />
+  </div>
+);
+
+const AmericanFlag: FC = () => (
+  <div
+    style={{
+      width: '20px',
+      height: '15px',
+      display: 'inline-block',
+      background:
+        'linear-gradient(to bottom, #cc0000 7%, white 7%, white 14%, #cc0000 14%, #cc0000 21%, white 21%, white 28%, #cc0000 28%)',
+      border: '1px solid #ddd',
+      borderRadius: '2px',
+      position: 'relative'
+    }}
+  >
+    <div
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '8px',
+        height: '8px',
+        backgroundColor: '#002868'
+      }}
+    />
+  </div>
+);
+
 export const Profile: FC<IProps> = ({ title }) => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -40,7 +108,7 @@ export const Profile: FC<IProps> = ({ title }) => {
     {
       label: (
         <Space align='center'>
-          <span style={{ fontSize: '20px' }}>🇷🇺</span>
+          <RussianFlag />
           <div>
             <div style={{ fontWeight: 500 }}>{t('profile.ru')}</div>
             <div style={{ fontSize: '12px', color: '#666' }}>Russian</div>
@@ -52,7 +120,7 @@ export const Profile: FC<IProps> = ({ title }) => {
     {
       label: (
         <Space align='center'>
-          <span style={{ fontSize: '20px' }}>🇰🇬</span>
+          <KyrgyzFlag />
           <div>
             <div style={{ fontWeight: 500 }}>{t('profile.kg')}</div>
             <div style={{ fontSize: '12px', color: '#666' }}>Kyrgyz</div>
@@ -64,7 +132,7 @@ export const Profile: FC<IProps> = ({ title }) => {
     {
       label: (
         <Space align='center'>
-          <span style={{ fontSize: '20px' }}>🇺🇸</span>
+          <AmericanFlag />
           <div>
             <div style={{ fontWeight: 500 }}>{t('profile.en')}</div>
             <div style={{ fontSize: '12px', color: '#666' }}>English</div>
