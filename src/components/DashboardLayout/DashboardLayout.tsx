@@ -119,123 +119,134 @@ export const DashboardLayout = ({ children, title }: Props) => {
   ].filter(Boolean) as MenuProps['items'];
 
   return (
-    <Layout className='dashboard' style={{ minHeight: '100vh' }}>
-      <Sider style={siderStyle} collapsible collapsed={collapsed} onCollapse={(collapsed) => setCollapsed(collapsed)} width={230}>
-        <Flex vertical style={{ height: '100%' }}>
-          <Flex
-            className='dashboard__logo'
-            wrap='nowrap'
-            align='center'
-            gap={8}
-            style={{
-              color: '#fff',
-              textAlign: 'center',
-              padding: 16,
-              fontWeight: 600
-            }}
-          >
-            <img src={logo} alt='Logo' />
-            <Typography.Text className={clsx('dashboard__logo-text', { hidden: collapsed })}>{t('login.title')}</Typography.Text>
-          </Flex>
-
-          <Menu
-            theme='dark'
-            mode='inline'
-            style={{ flex: 1 }}
-            selectedKeys={[location.pathname]}
-            items={items}
-            onClick={({ key }) => navigate(key)}
-          />
-
-          <Flex
-            onClick={() => navigate('/dashboard/profile')}
-            align='center'
-            gap={8}
-            style={{
-              backgroundColor: '#3787FF',
-              borderRadius: 12,
-              padding: 8,
-              margin: 16,
-              cursor: 'pointer',
-              color: '#fff',
-              overflow: 'hidden',
-              transition: 'all 0.3s'
-            }}
-          >
-            <Avatar
-              size={32}
-              src={getAvatarUrl()}
-              icon={<UserOutlined />}
+    <>
+      <style>
+        {`
+          .dashboard-avatar .ant-avatar {
+            display: contents !important;
+          }
+        `}
+      </style>
+      <Layout className='dashboard' style={{ minHeight: '100vh' }}>
+        <Sider style={siderStyle} collapsible collapsed={collapsed} onCollapse={(collapsed) => setCollapsed(collapsed)} width={230}>
+          <Flex vertical style={{ height: '100%' }}>
+            <Flex
+              className='dashboard__logo'
+              wrap='nowrap'
+              align='center'
+              gap={8}
               style={{
-                border: '2px solid rgba(255, 255, 255, 0.2)'
+                color: '#fff',
+                textAlign: 'center',
+                padding: 16,
+                fontWeight: 600
               }}
+            >
+              <img src={logo} alt='Logo' />
+              <Typography.Text className={clsx('dashboard__logo-text', { hidden: collapsed })}>{t('login.title')}</Typography.Text>
+            </Flex>
+
+            <Menu
+              theme='dark'
+              mode='inline'
+              style={{ flex: 1 }}
+              selectedKeys={[location.pathname]}
+              items={items}
+              onClick={({ key }) => navigate(key)}
             />
 
-            {!collapsed && (
-              <div style={{ flex: 1, minWidth: 0 }}>
-                {isUserLoading ? (
-                  <div>
-                    <Skeleton.Input active size='small' style={{ width: '80px', height: '14px', marginBottom: '4px' }} />
-                    <Skeleton.Input active size='small' style={{ width: '60px', height: '12px' }} />
-                  </div>
-                ) : (
-                  <>
-                    <Typography.Text
-                      style={{
-                        color: '#fff',
-                        display: 'block',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis'
-                      }}
-                      title={getFullName()}
-                    >
-                      {getFullName()}
-                    </Typography.Text>
-                    <Typography.Text
-                      style={{
-                        color: '#d6e4ff',
-                        fontSize: 12,
-                        display: 'block'
-                      }}
-                    >
-                      ID {user?.id || '---'}
-                    </Typography.Text>
-                  </>
-                )}
+            <Flex
+              onClick={() => navigate('/dashboard/profile')}
+              align='center'
+              gap={8}
+              style={{
+                backgroundColor: '#3787FF',
+                borderRadius: 12,
+                padding: 8,
+                margin: 16,
+                cursor: 'pointer',
+                color: '#fff',
+                overflow: 'hidden',
+                transition: 'all 0.3s'
+              }}
+            >
+              <div className='dashboard-avatar'>
+                <Avatar
+                  size={32}
+                  src={getAvatarUrl()}
+                  icon={<UserOutlined />}
+                  style={{
+                    border: '2px solid rgba(255, 255, 255, 0.2)'
+                  }}
+                />
               </div>
-            )}
 
-            <img src={arrow} alt='arrow' style={{ opacity: 0.7 }} />
-          </Flex>
-        </Flex>
-      </Sider>
+              {!collapsed && (
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  {isUserLoading ? (
+                    <div>
+                      <Skeleton.Input active size='small' style={{ width: '80px', height: '14px', marginBottom: '4px' }} />
+                      <Skeleton.Input active size='small' style={{ width: '60px', height: '12px' }} />
+                    </div>
+                  ) : (
+                    <>
+                      <Typography.Text
+                        style={{
+                          color: '#fff',
+                          display: 'block',
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis'
+                        }}
+                        title={getFullName()}
+                      >
+                        {getFullName()}
+                      </Typography.Text>
+                      <Typography.Text
+                        style={{
+                          color: '#d6e4ff',
+                          fontSize: 12,
+                          display: 'block'
+                        }}
+                      >
+                        ID {user?.id || '---'}
+                      </Typography.Text>
+                    </>
+                  )}
+                </div>
+              )}
 
-      <Layout>
-        <Header style={{ background: colorBgContainer, paddingLeft: 24 }}>
-          <Flex justify='space-between' align='center' gap={16}>
-            <Flex align='center' gap={8}>
-              {window.location.pathname.split('/').length > 3 && <LeftOutlined onClick={() => navigate(-1)} />}
-              <h2 style={{ margin: 0 }}>{title ? (title.includes('.') ? i18next.t(title) : title) : i18next.t('dashboard.panel')}</h2>
+              <img src={arrow} alt='arrow' style={{ opacity: 0.7 }} />
             </Flex>
-            <div>
-              <Button icon={<BellOutlined />} />
-            </div>
           </Flex>
-        </Header>
+        </Sider>
 
-        <Content style={{ margin: '24px 16px 0' }}>
-          <div
-            style={{
-              padding: 24,
-              background: colorBgContainer,
-              minHeight: '80vh'
-            }}
-          >
-            {children}
-          </div>
-        </Content>
+        <Layout>
+          <Header style={{ background: colorBgContainer, paddingLeft: 24 }}>
+            <Flex justify='space-between' align='center' gap={16}>
+              <Flex align='center' gap={8}>
+                {window.location.pathname.split('/').length > 3 && <LeftOutlined onClick={() => navigate(-1)} />}
+                <h2 style={{ margin: 0 }}>{title ? (title.includes('.') ? i18next.t(title) : title) : i18next.t('dashboard.panel')}</h2>
+              </Flex>
+              <div>
+                <Button icon={<BellOutlined />} />
+              </div>
+            </Flex>
+          </Header>
+
+          <Content style={{ margin: '24px 16px 0' }}>
+            <div
+              style={{
+                padding: 24,
+                background: colorBgContainer,
+                minHeight: '80vh'
+              }}
+            >
+              {children}
+            </div>
+          </Content>
+        </Layout>
       </Layout>
-    </Layout>
+    </>
   );
 };
