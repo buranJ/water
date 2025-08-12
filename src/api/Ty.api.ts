@@ -59,7 +59,7 @@ export const tyApi = createApi({
         method: 'PUT',
         body
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Ty', id }]
+      invalidatesTags: (_result, _error, { id }) => [{ type: 'Ty', id }]
     }),
 
     patchTy: build.mutation<IPatchTechnicalConditionResponse, IPatchTechnicalConditionParams>({
