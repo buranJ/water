@@ -86,6 +86,25 @@ const STAGE_OPACITY: Record<ObjectStage, string> = {
   completed: '1.0'
 };
 
+// Дополнительная валидация координат на уровне компонента карты
+const isValidMapCoordinates = (x: number, y: number): boolean => {
+  // Базовая проверка
+  if (typeof x !== 'number' || typeof y !== 'number' || Number.isNaN(x) || Number.isNaN(y)) {
+    return false;
+  }
+
+  // Проверка на нулевые координаты
+  if (x === 0 && y === 0) {
+    return false;
+  }
+
+  // Проверка на разумные географические границы для Кыргызстана
+  const isLatitudeValid = x >= 39.0 && x <= 43.5;
+  const isLongitudeValid = y >= 69.0 && y <= 81.0;
+
+  return isLatitudeValid && isLongitudeValid;
+};
+
 const getIconColor = (obj: MapObject): string => {
   if (obj.status === 'inactive' || obj.status === 'archived') {
     return STATUS_COLORS.inactive;
@@ -176,13 +195,31 @@ export const YandexMap: FC<YandexMapProps> = ({ objects, onSelect }) => {
       return;
     }
 
-    console.info('Отрисовка меток для объектов:', data.length);
+    // Дополнительная фильтрация на уровне карты
+    const validData = data.filter((obj) => {
+      const isValid = isValidMapCoordinates(obj.x, obj.y);
+      if (!isValid) {
+        console.warn(`Пропуск объекта ${obj.id} при отрисовке - невалидные координаты:`, {
+          x: obj.x,
+          y: obj.y
+        });
+      }
+      return isValid;
+    });
+
+    if (validData.length === 0) {
+      console.warn('Нет объектов с валидными координатами для отрисовки');
+      mapInstance.setCenter(BISHKEK_CENTER, DEFAULT_ZOOM);
+      return;
+    }
+
+    console.info(`Отрисовка меток для объектов: ${validData.length} из ${data.length}`);
 
     mapInstance.geoObjects.removeAll();
 
     const collection = new ymaps.GeoObjectCollection();
 
-    data.forEach((obj, index) => {
+    validData.forEach((obj, index) => {
       console.info(`Метка ${index + 1}:`, {
         id: obj.id,
         name: obj.object_name,
@@ -217,18 +254,32 @@ export const YandexMap: FC<YandexMapProps> = ({ objects, onSelect }) => {
 
     mapInstance.geoObjects.add(collection);
 
+    // Более безопасная установка границ
     try {
       const bounds = collection.getBounds();
-      if (bounds && bounds.length === 2) {
-        console.info('Установка границ карты:', bounds);
-        mapInstance.setBounds(bounds, {
-          checkZoomRange: true,
-          zoomMargin: [20, 20, 20, 20]
-        });
+      if (bounds && bounds.length === 2 && Array.isArray(bounds[0]) && Array.isArray(bounds[1])) {
+        // Проверяем, что границы не слишком широкие
+        const latDiff = Math.abs(bounds[1][0] - bounds[0][0]);
+        const lonDiff = Math.abs(bounds[1][1] - bounds[0][1]);
+
+        // Если разница координат слишком большая, не используем автоматические границы
+        if (latDiff > 5 || lonDiff > 5) {
+          console.warn('Границы карты слишком широкие, используем центр Бишкека');
+          mapInstance.setCenter(BISHKEK_CENTER, DEFAULT_ZOOM);
+        } else {
+          console.info('Установка границ карты:', bounds);
+          mapInstance.setBounds(bounds, {
+            checkZoomRange: true,
+            zoomMargin: [20, 20, 20, 20]
+          });
+        }
       } else {
-        const firstObj = data[0];
+        // Если границы не определены, центрируем на первом объекте или Бишкеке
+        const firstObj = validData[0];
         if (firstObj) {
           mapInstance.setCenter([firstObj.x, firstObj.y], 12);
+        } else {
+          mapInstance.setCenter(BISHKEK_CENTER, DEFAULT_ZOOM);
         }
       }
     } catch (error) {

@@ -1,7 +1,7 @@
 import React, { type FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Badge, Button, Dropdown, Flex, Input, type MenuProps, Space, Tooltip } from 'antd';
-import { ClearOutlined, DownOutlined, FilterOutlined, PlusOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
+import { ClearOutlined, DownOutlined, FilterOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 
 export interface Filters {
   search: string;
@@ -17,6 +17,7 @@ interface GeoportalFiltersProps {
   totalCount?: number;
   filteredCount?: number;
 }
+
 export const GeoportalFilters: FC<GeoportalFiltersProps> = ({
   filters,
   onSearchChange,
@@ -48,6 +49,7 @@ export const GeoportalFilters: FC<GeoportalFiltersProps> = ({
     { label: `❌ ${t('geoportalFilters.status.inactive')}`, key: 'inactive' },
     { label: `📦 ${t('tuDetails.status.archived')}`, key: 'archived' }
   ];
+
   const handleStatusFilter: MenuProps['onClick'] = (e) => {
     const status = e.key === 'all' ? null : e.key;
     onFilterChange('status', status);
@@ -101,10 +103,6 @@ export const GeoportalFilters: FC<GeoportalFiltersProps> = ({
           </Button>
         </Dropdown>
       </Badge>
-
-      <Button type='primary' icon={<PlusOutlined />} disabled={isLoading}>
-        {t('objects.add')}
-      </Button>
 
       <Tooltip title={t('common.refresh')}>
         <Button icon={<ReloadOutlined />} onClick={onRefresh} loading={isLoading} />
