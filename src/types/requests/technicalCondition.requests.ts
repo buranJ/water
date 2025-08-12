@@ -49,3 +49,6 @@ export interface IAddLoadParams {
 
 export type IGetLoadIncreasesResponse = ILoadIncreases[];
 export type IGetLoadIncreasesParams = { tyId: string };
+
+export type IDownloadTyPdfParams = { tyId: string };
+export type IDownloadTyPdfResponse = { blob: Blob; filename: string | null };

@@ -1,11 +1,13 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { getBaseQuery } from 'common/helpers';
-import {
+import type {
   IAddLoadParams,
   ICreateTechnicalConditionParams,
   ICreateTechnicalConditionRequest,
   IDeleteTechnicalConditionParams,
   IDeleteTechnicalConditionResponse,
+  IDownloadTyPdfParams,
+  IDownloadTyPdfResponse,
   IGetAllTechnicalConditionParams,
   IGetAllTechnicalConditionResponse,
   IGetLoadIncreasesParams,
@@ -119,6 +121,25 @@ export const tyApi = createApi({
         method: 'GET'
       }),
       providesTags: (_result, _error, { tyId }) => [{ type: 'TyLoads', id: tyId }]
+    }),
+    downloadTyPdf: build.query<IDownloadTyPdfResponse, IDownloadTyPdfParams>({
+      query: ({ tyId }) => ({
+        url: `/ty/${tyId}/protocol-pdf/`,
+        method: 'GET',
+        headers: {
+          Accept: '*/*'
+        },
+        responseHandler: async (response) => {
+          const blob = await response.blob();
+          const disposition = response.headers.get('content-disposition');
+          let filename: string | null = null;
+          if (disposition) {
+            const match = /filename="?([^"]+)"?/.exec(disposition as string);
+            filename = match ? match[1] : null;
+          }
+          return { blob, filename };
+        }
+      })
     })
   })
 });
@@ -134,5 +155,6 @@ export const {
   useGetHistoryTyQuery,
   useCreateTyFromApplicationMutation,
   useAddLoadMutation,
-  useGetLoadIncreasesQuery
+  useGetLoadIncreasesQuery,
+  useLazyDownloadTyPdfQuery
 } = tyApi;

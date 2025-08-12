@@ -10,7 +10,9 @@ export const getBaseQuery = (): BaseQueryFn<string | FetchArgs, unknown, FetchBa
       if (token) {
         headers.set('Authorization', `Bearer ${token}`);
       }
-      headers.set('Accept', 'application/json');
+      if (!headers.has('Accept')) {
+        headers.set('Accept', 'application/json');
+      }
       return headers;
     }
   });

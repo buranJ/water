@@ -18,7 +18,7 @@ import { Architecture } from './Tabs';
 
 import { useGetUserInfoQuery } from 'api/Auth.api';
 import { useGetFoldersQuery } from 'api/FileFolder.api';
-import { useGetTyByIdQuery } from 'api/Ty.api';
+import { useGetTyByIdQuery, useLazyDownloadTyPdfQuery } from 'api/Ty.api';
 import { usePermissions } from 'hooks/useAuth';
 import { t } from 'i18next';
 
@@ -50,6 +50,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>('1');
   const [isAddLoadVisible, setIsAddLoadVisible] = useState<boolean>(false);
+  const [triggerDownload, { isFetching: isDownloading }] = useLazyDownloadTyPdfQuery();
 
   const handleRejectClick = (): void => {
     setIsModalVisible(true);
@@ -273,6 +274,23 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     setIsAddLoadVisible(true);
   };
 
+  const handleDownloadTu = async () => {
+    if (!id) return;
+    try {
+      const { blob, filename } = await triggerDownload({ tyId: id }).unwrap();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename || `technical_condition_${id}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Failed to download TU PDF', error);
+    }
+  };
+
   if (isLoading) {
     return (
       <DashboardLayout title={`${t(title)} ${id}`}>
@@ -313,7 +331,11 @@ export const TuDetails: FC<IProps> = ({ title }) => {
           {hasPermission('view_historicaltechnicalcondition') && (
             <Link to={`/dashboard/ty/${id}/change-history`}>{t('tuDetails.actions.changeTuData')}</Link>
           )}
-          {hasPermission('view_technicalcondition') && <Button icon={<DownloadOutlined />}>{t('tuDetails.actions.downloadTu')}</Button>}
+          {hasPermission('view_technicalcondition') && (
+            <Button icon={<DownloadOutlined />} onClick={handleDownloadTu} loading={isDownloading} disabled={!id}>
+              {t('tuDetails.actions.downloadTu')}
+            </Button>
+          )}
           {hasPermission('add_actty') && (
             <Button onClick={handleAddLoad} icon={<PlusOutlined />}>
               {t('historyOfLoads.addLoad')}

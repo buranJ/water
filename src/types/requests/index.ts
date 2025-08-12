@@ -26,6 +26,8 @@ export type {
   ICreateTechnicalConditionRequest,
   IDeleteTechnicalConditionParams,
   IDeleteTechnicalConditionResponse,
+  IDownloadTyPdfParams,
+  IDownloadTyPdfResponse,
   IGetAllTechnicalConditionParams,
   IGetAllTechnicalConditionResponse,
   IGetLoadIncreasesParams,
