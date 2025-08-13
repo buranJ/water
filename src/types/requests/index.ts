@@ -20,6 +20,7 @@ export type {
   IUploadFileParams
 } from './fileFolder.requests';
 export type { IGetObjectChangeHistoryParams, IGetObjectChangeHistoryResponse } from './object.requests';
+export type { IExportReportsParams, IExportReportsResponse } from './reports.requests';
 export type {
   IAddLoadParams,
   ICreateTechnicalConditionParams,

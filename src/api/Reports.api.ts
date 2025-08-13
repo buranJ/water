@@ -1,5 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { getBaseQuery } from 'common/helpers';
+import type { IExportReportsParams, IExportReportsResponse } from 'types/requests';
 
 export type ReportType =
   | 'issued' // Выданные ТУ
@@ -47,8 +48,30 @@ export const reportsApi = createApi({
         method: 'GET',
         params
       })
+    }),
+
+    exportReports: build.mutation<IExportReportsResponse, IExportReportsParams>({
+      query: (body) => ({
+        url: 'reports/export/',
+        method: 'POST',
+        body,
+        headers: {
+          // Server returns binary (PDF/XLSX). Accept any to allow both.
+          Accept: 'application/pdf, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/octet-stream, */*'
+        },
+        responseHandler: async (response) => {
+          const blob = await response.blob();
+          const disposition = response.headers.get('content-disposition');
+          let filename: string | null = null;
+          if (disposition) {
+            const match = /filename="?([^"]+)"?/.exec(disposition);
+            filename = match ? decodeURIComponent(match[1]) : null;
+          }
+          return { blob, filename };
+        }
+      })
     })
   })
 });
 
-export const { useGetReportsQuery, useLazyGetReportsQuery } = reportsApi;
+export const { useGetReportsQuery, useLazyGetReportsQuery, useExportReportsMutation } = reportsApi;

@@ -1,41 +1,65 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import { useNavigate } from 'react-router';
-import { Button, Checkbox, Col, DatePicker, Form, Row, Select, Typography } from 'antd';
+import { Button, Checkbox, Col, Divider, Form, Input, message, Row, Select, Space, Typography } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
+import type { ExportEntity } from 'types/entities/reports.entities';
+import {
+  EXPORT_ENTITY_OPTIONS,
+  EXPORT_FORMAT_OPTIONS,
+  FILTER_CONFIG,
+  FormValues,
+  handleDownload,
+  isIncludePendingVisible,
+  prepareFilters,
+  prepareIds
+} from './ExportData.config';
+import { FiltersGrid } from './ExportData.helpers';
 
-import type { ReportType } from 'api/Reports.api';
-import { useLazyGetReportsQuery } from 'api/Reports.api';
+import { useExportReportsMutation } from 'api/Reports.api';
 import { usePermissions } from 'hooks/useAuth';
 import { t } from 'i18next';
 
 const { Title } = Typography;
 
-const REPORT_TYPE_OPTIONS: { value: ReportType; label: string }[] = [
-  { value: 'issued', label: 'Выданные ТУ' },
-  { value: 'canceled', label: 'Аннулированные ТУ' },
-  { value: 'not_issued', label: 'Не выданные ТУ' },
-  { value: 'requests', label: 'Заявки' },
-  { value: 'land_agreements', label: 'Согласованные участки' },
-  { value: 'unpaid_tu', label: 'Неоплаченные ТУ' },
-  { value: 'objects', label: 'Объекты' },
-  { value: 'payments', label: 'Оплаты' },
-  { value: 'debts', label: 'Задолженности' },
-  { value: 'reconciliation', label: 'Акт сверки' }
-];
-
 const ExportData: FC<{ title: string }> = ({ title }) => {
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<FormValues>();
   const navigate = useNavigate();
-  const [getReports, { isFetching }] = useLazyGetReportsQuery();
+  const [exportReports, { isLoading }] = useExportReportsMutation();
   const { hasPermission } = usePermissions();
 
-  const onFinish = async (values: { dataType: ReportType }) => {
+  const selectedEntity = Form.useWatch('entity', form) as ExportEntity | undefined;
+
+  const fieldsForEntity = useMemo(() => {
+    if (!selectedEntity) return [];
+    return FILTER_CONFIG[selectedEntity];
+  }, [selectedEntity]);
+
+  const onFinish = async (values: FormValues) => {
+    const preparedFilters = prepareFilters(values.filters);
+    const preparedIds = prepareIds(values.ids);
+
+    if (!preparedFilters && (!preparedIds || preparedIds.length === 0)) {
+      message.error('Нужно указать либо фильтры, либо список ID (или оба).');
+      return;
+    }
+
     try {
-      const res = await getReports({ report_type: values.dataType }).unwrap();
-      navigate('/dashboard/export-data/history', { state: { reports: res } });
+      const res = await exportReports({
+        export: values.export!,
+        entity: values.entity!,
+        filters: preparedFilters as unknown as import('types/entities/reports.entities').ExportFilters,
+        ids: preparedIds,
+        include: values.include,
+        fields: values.fields && values.fields.length ? values.fields : undefined,
+        filename: values.filename?.trim() || undefined,
+        include_pending: values.include_pending
+      }).unwrap();
+
+      handleDownload(res.blob, res.filename, values.entity!, values.export!, values.filename);
+      message.success('Файл сформирован и скачан');
     } catch {
-      // noop
+      message.error('Не удалось сформировать файл экспорта');
     }
   };
 
@@ -49,100 +73,118 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
 
   return (
     <DashboardLayout title={title}>
-      <Form form={form} layout='vertical' onFinish={onFinish} style={{ background: '#fff', borderRadius: 8 }}>
+      <Form
+        form={form}
+        layout='vertical'
+        onFinish={onFinish}
+        style={{ background: '#fff', borderRadius: 8, padding: 16 }}
+        initialValues={{
+          export: 'xlsx',
+          include: { customer: false, entity: false, protocol: false, invoices: false, payments: false },
+          include_pending: false
+        }}
+      >
         <Title level={4} style={{ marginBottom: 24 }}>
-          {t('exportData.title')}
+          {t('exportData.title') || 'Экспорт данных (PDF/XLSX)'}
         </Title>
 
-        {/* ПАРАМЕТРЫ ВЫБОРКИ */}
-        <Form.Item
-          label={t('exportData.fields.dataType')}
-          name='dataType'
-          rules={[{ required: true, message: t('exportData.validation.selectSection') }]}
-        >
-          <Select placeholder={t('exportData.placeholders.selectSection')} size='large' options={REPORT_TYPE_OPTIONS} />
-        </Form.Item>
-
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label={t('exportData.fields.statuses')} name='statuses' rules={[{ required: false }]}>
-              <Select
-                placeholder={t('common.all')}
-                size='large'
-                options={[
-                  { value: 'all', label: t('common.all') },
-                  { value: 'new', label: t('exportData.status.new') },
-                  { value: 'progress', label: t('exportData.status.inProgress') },
-                  { value: 'done', label: t('exportData.status.completed') }
-                ]}
-              />
+            <Form.Item label='Формат' name='export' rules={[{ required: true, message: 'Выберите формат' }]}>
+              <Select placeholder='Выберите формат' options={EXPORT_FORMAT_OPTIONS} size='large' />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label={t('exportData.fields.responsible')} name='responsible' rules={[{ required: false }]}>
-              <Select
-                placeholder={t('exportData.placeholders.responsible')}
-                size='large'
-                options={[
-                  { value: 'departmentA', label: t('exportData.responsible.departmentA') },
-                  { value: 'departmentB', label: t('exportData.responsible.departmentB') },
-                  { value: 'ivanov', label: t('exportData.responsible.ivanov') }
-                ]}
-              />
+            <Form.Item label='Сущность' name='entity' rules={[{ required: true, message: 'Выберите сущность' }]}>
+              <Select placeholder='Что экспортируем' options={EXPORT_ENTITY_OPTIONS} size='large' />
             </Form.Item>
           </Col>
         </Row>
 
+        <Divider />
+
+        <Title level={5} style={{ marginTop: 0 }}>
+          Фильтры
+        </Title>
+        <Typography.Paragraph type='secondary' style={{ marginTop: -8 }}>
+          Укажите один или несколько фильтров, либо заполните список ID ниже
+        </Typography.Paragraph>
+
+        <FiltersGrid fields={fieldsForEntity} />
+
         <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item label={t('exportData.fields.dateFrom')} name='dateFrom' rules={[{ required: false }]}>
-              <DatePicker placeholder='10-03-2025' style={{ width: '100%' }} size='large' />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label={t('exportData.fields.dateTo')} name='dateTo' rules={[{ required: false }]}>
-              <DatePicker placeholder='10-04-2025' style={{ width: '100%' }} size='large' />
+          <Col span={24}>
+            <Form.Item label='ID записей (через пробел или запятую)' name='ids' tooltip='Можно указать один или несколько ID'>
+              <Select mode='tags' placeholder='Например: 1, 2, 3' open={false} />
             </Form.Item>
           </Col>
         </Row>
 
-        {/* ПОЛЯ ДЛЯ ЭКСПОРТА */}
-        <Form.Item label={t('exportData.fields.selectFields')} style={{ marginTop: 24 }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <Checkbox>{t('exportData.checkboxes.registrationDate')}</Checkbox>
-            <Checkbox>{t('exportData.checkboxes.customer')}</Checkbox>
-            <div style={{ marginLeft: 24 }}>
-              <Checkbox defaultChecked>{t('exportData.checkboxes.customerSample')}</Checkbox>
-            </div>
-            <Checkbox defaultChecked>{t('exportData.checkboxes.rightToAddRequest')}</Checkbox>
+        <Divider />
 
-            <Checkbox>{t('exportData.checkboxes.customer')}</Checkbox>
-            <div style={{ marginLeft: 24 }}>
-              <Checkbox defaultChecked>{t('exportData.checkboxes.customerSample')}</Checkbox>
-            </div>
-            <Checkbox defaultChecked>{t('exportData.checkboxes.rightToAddRequest')}</Checkbox>
-            <Checkbox defaultChecked>{t('exportData.checkboxes.rightToAddRequest')}</Checkbox>
+        <Title level={5}>Склейка связанных сущностей</Title>
+        <Row gutter={16}>
+          <Col span={24}>
+            <Space wrap>
+              <Form.Item name={['include', 'customer']} valuePropName='checked' noStyle>
+                <Checkbox>customer</Checkbox>
+              </Form.Item>
+              <Form.Item name={['include', 'entity']} valuePropName='checked' noStyle>
+                <Checkbox>entity</Checkbox>
+              </Form.Item>
+              <Form.Item name={['include', 'protocol']} valuePropName='checked' noStyle>
+                <Checkbox>protocol</Checkbox>
+              </Form.Item>
+              <Form.Item name={['include', 'invoices']} valuePropName='checked' noStyle>
+                <Checkbox>invoices</Checkbox>
+              </Form.Item>
+              <Form.Item name={['include', 'payments']} valuePropName='checked' noStyle>
+                <Checkbox>payments</Checkbox>
+              </Form.Item>
+            </Space>
+          </Col>
+        </Row>
 
-            <Checkbox defaultChecked>{t('exportData.formats.excel')}</Checkbox>
-            <Checkbox>{t('exportData.formats.csv')}</Checkbox>
-            <Checkbox>{t('exportData.formats.pdf')}</Checkbox>
-          </div>
-        </Form.Item>
+        {isIncludePendingVisible(selectedEntity) && (
+          <Row gutter={16} style={{ marginTop: 8 }}>
+            <Col span={24}>
+              <Form.Item name='include_pending' valuePropName='checked'>
+                <Checkbox>Учитывать платежи в статусе pending</Checkbox>
+              </Form.Item>
+            </Col>
+          </Row>
+        )}
 
-        {/* КНОПКИ ВНИЗУ */}
+        <Divider />
+        {/* get заказчика(поиск по фамилии), обьекты, формулы(селект), тип ту, стадия, статусы */}
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item label='Колонки (опционально)' name='fields' tooltip='Список ключей данных. Оставьте пустым для дефолта сервера'>
+              <Select mode='tags' placeholder='Например: invoice_number, total_sum' />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item label='Имя файла (без расширения)' name='filename'>
+              <Input placeholder='unpaid_invoices' />
+            </Form.Item>
+          </Col>
+        </Row>
+
         <Row justify='end' gutter={16} style={{ marginTop: 24 }}>
           <Col>
-            <Button type='default'>{t('exportData.exportHistory')}</Button>
+            <Button type='default' onClick={() => navigate('/dashboard/export-data/history')}>
+              {t('exportData.exportHistory') || 'История экспортов'}
+            </Button>
           </Col>
           <Col>
             <Button
               type='primary'
               htmlType='submit'
               icon={<DownloadOutlined />}
-              loading={isFetching}
+              loading={isLoading}
               disabled={!hasPermission('add_report')}
             >
-              {t('common.export')}
+              {t('common.export') || 'Экспорт'}
             </Button>
           </Col>
         </Row>
