@@ -100,8 +100,11 @@ export const Profile: FC<IProps> = ({ title }) => {
   }, [refetchUser]);
 
   const changeLanguage = (lng: string): void => {
-    i18n.changeLanguage(lng);
+    if (i18n.language === lng) return;
     localStorage.setItem('i18nextLng', lng);
+    i18n.changeLanguage(lng).finally(() => {
+      window.location.reload();
+    });
   };
 
   const languageOptions = [
