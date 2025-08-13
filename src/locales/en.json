@@ -287,7 +287,14 @@
     },
     "placeholders": {
       "selectSection": "Select a section",
-      "responsible": "Full name or department"
+      "responsible": "Full name or department",
+      "selectFormula": "Select a formula",
+      "selectTypeTU": "Select TU type",
+      "searchCustomer": "Search customer (full name/company)",
+      "searchObject": "Search object (by title)",
+      "numberExample": "123",
+      "text": "Text",
+      "date": "YYYY-MM-DD"
     },
     "options": {
       "orders": "Orders",
@@ -314,6 +321,98 @@
       "excel": "Excel (.xlsx)",
       "csv": "CSV (.csv)",
       "pdf": "PDF (for reports)"
+    },
+    "entities": {
+      "technical_conditions": "TU",
+      "entities": "Objects",
+      "protocols": "Protocols",
+      "customers": "Customers",
+      "payments": "Payments",
+      "invoices": "Invoices",
+      "applications": "Applications"
+    },
+    "ui": {
+      "formatLabel": "Format",
+      "formatRequired": "Select format",
+      "formatPlaceholder": "Select format",
+      "entityLabel": "Entity",
+      "entityRequired": "Select entity",
+      "entityPlaceholder": "What to export",
+      "filtersTitle": "Filters",
+      "filtersHint": "Specify one or more filters, or fill in the list of IDs below",
+      "idsLabel": "Record IDs (space- or comma-separated)",
+      "idsTooltip": "You can specify one or more IDs",
+      "idsPlaceholder": "e.g., 1, 2, 3",
+      "includeTitle": "Include related entities",
+      "include": {
+        "customer": "Customer",
+        "entity": "Object",
+        "protocol": "Protocol",
+        "invoices": "Invoices",
+        "payments": "Payments",
+        "pending": "Include payments with pending status"
+      },
+      "fieldsLabel": "Columns (optional)",
+      "fieldsTooltip": "List of data keys. Leave empty for server defaults",
+      "fieldsPlaceholder": "e.g., invoice_number, total_sum",
+      "filenameLabel": "File name (without extension)",
+      "filenamePlaceholder": "unpaid_invoices"
+    },
+    "messages": {
+      "filtersOrIdsRequired": "You must specify either filters, a list of IDs, or both.",
+      "downloaded": "File generated and downloaded",
+      "failed": "Failed to generate export file"
+    },
+    "filters": {
+      "id": "ID",
+      "request_number": "Request number",
+      "status": "Status",
+      "stage": "Stage",
+      "type_ty": "TU type (ID)",
+      "customer_id": "Customer (ID)",
+      "entity_id": "Object (ID)",
+      "formula_id": "Formula (ID)",
+      "request_date_start": "Request date from",
+      "request_date_end": "Request date to",
+      "is_water": "Water connection",
+      "is_kanal": "Sewer connection",
+      "created_start": "Created from",
+      "created_end": "Created to",
+      "technical_condition_id": "TU (ID)",
+      "inn": "INN",
+      "full_name": "Full name / Company",
+      "invoice_id": "Invoice (ID)",
+      "payment_number": "Payment number",
+      "payment_date_start": "Payment date from",
+      "payment_date_end": "Payment date to",
+      "invoice_number": "Invoice number",
+      "is_paid": "Paid",
+      "protocol_id": "Protocol (ID)",
+      "invoice_type": "Invoice type",
+      "invoice_date_start": "Invoice date from",
+      "invoice_date_end": "Invoice date to"
+    },
+    "select": {
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "archived": "Archived",
+        "pending": "Pending",
+        "received": "Received",
+        "rejected": "Rejected",
+        "approved": "Approved",
+        "contracted": "Contracted"
+      },
+      "stage": {
+        "draft": "Draft",
+        "review": "In review",
+        "approved": "Approved",
+        "done": "Completed"
+      },
+      "invoice_type": {
+        "main": "Main",
+        "paper_tu": "Paper TU payment"
+      }
     },
     "exportHistory": "Export history"
   },

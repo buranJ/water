@@ -309,7 +309,14 @@
     },
     "placeholders": {
       "selectSection": "Бөлүмдү тандаңыз",
-      "responsible": "Аты-жөнү же бөлүм"
+      "responsible": "Аты-жөнү же бөлүм",
+      "selectFormula": "Формуланы тандаңыз",
+      "selectTypeTU": "ТУ тибин тандаңыз",
+      "searchCustomer": "Кардарды издөө (аты-жөнү/аты)",
+      "searchObject": "Объектти издөө (аталышы боюнча)",
+      "numberExample": "123",
+      "text": "Текст",
+      "date": "YYYY-MM-DD"
     },
     "options": {
       "orders": "Заказдар",
@@ -336,6 +343,98 @@
       "excel": "Excel (.xlsx)",
       "csv": "CSV (.csv)",
       "pdf": "PDF (отчеттор үчүн)"
+    },
+    "entities": {
+      "technical_conditions": "ТУ",
+      "entities": "Объекттер",
+      "protocols": "Протоколдор",
+      "customers": "Кардарлар",
+      "payments": "Төлөмдөр",
+      "invoices": "Эсептер",
+      "applications": "Арыздар"
+    },
+    "ui": {
+      "formatLabel": "Формат",
+      "formatRequired": "Форматты тандаңыз",
+      "formatPlaceholder": "Форматты тандаңыз",
+      "entityLabel": "Маалымат түрү",
+      "entityRequired": "Маалымат түрүн тандаңыз",
+      "entityPlaceholder": "Эмне экспорттойбуз",
+      "filtersTitle": "Фильтрлер",
+      "filtersHint": "Бир же бир нече фильтрди көрсөтүңүз же төмөндө ID тизмесин толтуруңуз",
+      "idsLabel": "Жазуулардын ID'лери (боштук же үтүр аркылуу)",
+      "idsTooltip": "Бир же бир нече ID көрсөтө аласыз",
+      "idsPlaceholder": "Мисалы: 1, 2, 3",
+      "includeTitle": "Тектеш объекттерди кошуу",
+      "include": {
+        "customer": "Кардар",
+        "entity": "Объект",
+        "protocol": "Протокол",
+        "invoices": "Эсептер",
+        "payments": "Төлөмдөр",
+        "pending": "Күтүү статусундагы төлөмдөрдү эске алуу"
+      },
+      "fieldsLabel": "Тилкелер (каалоого жараша)",
+      "fieldsTooltip": "Маалымат ачкычтарынын тизмеси. Сервердин демейкисин колдонуу үчүн бош калтырыңыз",
+      "fieldsPlaceholder": "Мисалы: invoice_number, total_sum",
+      "filenameLabel": "Файл аты (кеңейтүүсүз)",
+      "filenamePlaceholder": "unpaid_invoices"
+    },
+    "messages": {
+      "filtersOrIdsRequired": "Фильтрлерди, ID тизмесин же экөөнү тең көрсөтүү керек.",
+      "downloaded": "Файл түзүлүп жүктөлдү",
+      "failed": "Экспорт файлын түзүү мүмкүн болгон жок"
+    },
+    "filters": {
+      "id": "ID",
+      "request_number": "Сурам номери",
+      "status": "Статус",
+      "stage": "Баскыч",
+      "type_ty": "ТУ тиби (ID)",
+      "customer_id": "Кардар (ID)",
+      "entity_id": "Объект (ID)",
+      "formula_id": "Формула (ID)",
+      "request_date_start": "Сурам датасы (башталышы)",
+      "request_date_end": "Сурам датасы (аягы)",
+      "is_water": "Сууга туташуу",
+      "is_kanal": "Канализацияга туташуу",
+      "created_start": "Түзүлгөндөн",
+      "created_end": "Түзүлгөнгө чейин",
+      "technical_condition_id": "ТУ (ID)",
+      "inn": "ИНН",
+      "full_name": "ФИО/Аталышы",
+      "invoice_id": "Эсеп (ID)",
+      "payment_number": "Төлөм номери",
+      "payment_date_start": "Төлөм датасы (башталышы)",
+      "payment_date_end": "Төлөм датасы (аягы)",
+      "invoice_number": "Эсеп номери",
+      "is_paid": "Төлөнгөн",
+      "protocol_id": "Протокол (ID)",
+      "invoice_type": "Эсеп түрү",
+      "invoice_date_start": "Эсеп датасы (башталышы)",
+      "invoice_date_end": "Эсеп датасы (аягы)"
+    },
+    "select": {
+      "status": {
+        "active": "Активдүү",
+        "inactive": "Иштебейт",
+        "archived": "Архивде",
+        "pending": "Күтүүдө",
+        "received": "Түштү",
+        "rejected": "Четке кагылды",
+        "approved": "Бекитилди",
+        "contracted": "Түзүлгөн"
+      },
+      "stage": {
+        "draft": "Долбоор",
+        "review": "Каралууда",
+        "approved": "Бекитилди",
+        "done": "Аякталды"
+      },
+      "invoice_type": {
+        "main": "Негизги",
+        "paper_tu": "Кагаз ТУ үчүн төлөм"
+      }
     },
     "exportHistory": "Экспорт тарыхы"
   },

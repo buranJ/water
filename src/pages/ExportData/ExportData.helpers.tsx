@@ -6,6 +6,7 @@ import { useGetAllCustomersQuery } from 'api/Customer.api';
 import { useGetAllFormulasQuery } from 'api/Formula.api';
 import { useGetAllObjectsQuery } from 'api/Object.api';
 import { useGetTypesTyQuery } from 'api/Ty.api';
+import { t } from 'i18next';
 
 export const FiltersGrid: FC<{ fields: FieldConfig[] }> = ({ fields }) => {
   // Local state for live search inputs
@@ -32,7 +33,7 @@ export const FiltersGrid: FC<{ fields: FieldConfig[] }> = ({ fields }) => {
 
   const renderField = (fc: FieldConfig, idx: number) => {
     const name = ['filters', fc.name];
-    const commonProps = { name, label: fc.label } as const;
+    const commonProps = { name, label: t(`exportData.filters.${fc.name}`) || fc.label } as const;
 
     // Dynamic overrides by field name
     if (fc.name === 'formula_id') {
@@ -43,7 +44,7 @@ export const FiltersGrid: FC<{ fields: FieldConfig[] }> = ({ fields }) => {
               allowClear
               showSearch
               options={formulaOptions}
-              placeholder='Выберите формулу'
+              placeholder={t('exportData.placeholders.selectFormula') || 'Выберите формулу'}
               optionFilterProp='label'
               loading={formulasQuery.isLoading}
             />
@@ -60,7 +61,7 @@ export const FiltersGrid: FC<{ fields: FieldConfig[] }> = ({ fields }) => {
               allowClear
               showSearch
               options={typeTyOptions}
-              placeholder='Выберите тип ТУ'
+              placeholder={t('exportData.placeholders.selectTypeTU') || 'Выберите тип ТУ'}
               optionFilterProp='label'
               loading={typesTyQuery.isLoading}
             />
@@ -79,7 +80,7 @@ export const FiltersGrid: FC<{ fields: FieldConfig[] }> = ({ fields }) => {
               filterOption={false}
               onSearch={setCustomerSearch}
               options={customerOptions}
-              placeholder='Поиск заказчика (ФИО/Название)'
+              placeholder={t('exportData.placeholders.searchCustomer') || 'Поиск заказчика (ФИО/Название)'}
               loading={customersQuery.isLoading}
             />
           </Form.Item>
@@ -97,7 +98,7 @@ export const FiltersGrid: FC<{ fields: FieldConfig[] }> = ({ fields }) => {
               filterOption={false}
               onSearch={setObjectSearch}
               options={objectOptions}
-              placeholder='Поиск объекта (по названию)'
+              placeholder={t('exportData.placeholders.searchObject') || 'Поиск объекта (по названию)'}
               loading={objectsQuery.isLoading}
             />
           </Form.Item>
@@ -111,7 +112,7 @@ export const FiltersGrid: FC<{ fields: FieldConfig[] }> = ({ fields }) => {
         return (
           <Col span={12} key={`${fc.name}_${idx}`}>
             <Form.Item {...commonProps}>
-              <InputNumber style={{ width: '100%' }} placeholder='123' />
+              <InputNumber style={{ width: '100%' }} placeholder={t('exportData.placeholders.numberExample') || '123'} />
             </Form.Item>
           </Col>
         );
@@ -119,7 +120,7 @@ export const FiltersGrid: FC<{ fields: FieldConfig[] }> = ({ fields }) => {
         return (
           <Col span={12} key={`${fc.name}_${idx}`}>
             <Form.Item {...commonProps}>
-              <Input placeholder='Текст' />
+              <Input placeholder={t('exportData.placeholders.text') || 'Текст'} />
             </Form.Item>
           </Col>
         );
@@ -127,7 +128,7 @@ export const FiltersGrid: FC<{ fields: FieldConfig[] }> = ({ fields }) => {
         return (
           <Col span={12} key={`${fc.name}_${idx}`}>
             <Form.Item {...commonProps}>
-              <DatePicker style={{ width: '100%' }} placeholder='YYYY-MM-DD' />
+              <DatePicker style={{ width: '100%' }} placeholder={t('exportData.placeholders.date') || 'YYYY-MM-DD'} />
             </Form.Item>
           </Col>
         );
@@ -143,7 +144,14 @@ export const FiltersGrid: FC<{ fields: FieldConfig[] }> = ({ fields }) => {
         return (
           <Col span={12} key={`${fc.name}_${idx}`}>
             <Form.Item {...commonProps}>
-              <Select allowClear options={fc.options} />
+              <Select
+                allowClear
+                optionFilterProp='label'
+                options={fc.options?.map((o) => ({
+                  ...o,
+                  label: t(`exportData.select.${fc.name}.${o.value}`) || o.label
+                }))}
+              />
             </Form.Item>
           </Col>
         );

@@ -288,7 +288,14 @@
     },
     "placeholders": {
       "selectSection": "Выберите раздел",
-      "responsible": "ФИО или отдел"
+      "responsible": "ФИО или отдел",
+      "selectFormula": "Выберите формулу",
+      "selectTypeTU": "Выберите тип ТУ",
+      "searchCustomer": "Поиск заказчика (ФИО/Название)",
+      "searchObject": "Поиск объекта (по названию)",
+      "numberExample": "123",
+      "text": "Текст",
+      "date": "YYYY-MM-DD"
     },
     "options": {
       "orders": "Заказы",
@@ -315,6 +322,98 @@
       "excel": "Excel (.xlsx)",
       "csv": "CSV (.csv)",
       "pdf": "PDF (для отчётов)"
+    },
+    "entities": {
+      "technical_conditions": "ТУ",
+      "entities": "Объекты",
+      "protocols": "Протоколы",
+      "customers": "Заказчики",
+      "payments": "Платежи",
+      "invoices": "Счета",
+      "applications": "Заявки"
+    },
+    "ui": {
+      "formatLabel": "Формат",
+      "formatRequired": "Выберите формат",
+      "formatPlaceholder": "Выберите формат",
+      "entityLabel": "Сущность",
+      "entityRequired": "Выберите сущность",
+      "entityPlaceholder": "Что экспортируем",
+      "filtersTitle": "Фильтры",
+      "filtersHint": "Укажите один или несколько фильтров, либо заполните список ID ниже",
+      "idsLabel": "ID записей (через пробел или запятую)",
+      "idsTooltip": "Можно указать один или несколько ID",
+      "idsPlaceholder": "Например: 1, 2, 3",
+      "includeTitle": "Склейка связанных сущностей",
+      "include": {
+        "customer": "Заказчик",
+        "entity": "Объект",
+        "protocol": "Протокол",
+        "invoices": "Счета",
+        "payments": "Платежи",
+        "pending": "Учитывать платежи в статусе pending"
+      },
+      "fieldsLabel": "Колонки (опционально)",
+      "fieldsTooltip": "Список ключей данных. Оставьте пустым для дефолта сервера",
+      "fieldsPlaceholder": "Например: invoice_number, total_sum",
+      "filenameLabel": "Имя файла (без расширения)",
+      "filenamePlaceholder": "unpaid_invoices"
+    },
+    "messages": {
+      "filtersOrIdsRequired": "Нужно указать либо фильтры, либо список ID (или оба).",
+      "downloaded": "Файл сформирован и скачан",
+      "failed": "Не удалось сформировать файл экспорта"
+    },
+    "filters": {
+      "id": "ID",
+      "request_number": "Номер запроса",
+      "status": "Статус",
+      "stage": "Стадия",
+      "type_ty": "Тип ТУ (ID)",
+      "customer_id": "Заказчик (ID)",
+      "entity_id": "Объект (ID)",
+      "formula_id": "Формула (ID)",
+      "request_date_start": "Дата запроса с",
+      "request_date_end": "Дата запроса по",
+      "is_water": "Подключение к воде",
+      "is_kanal": "Подключение к канализации",
+      "created_start": "Создано с",
+      "created_end": "Создано по",
+      "technical_condition_id": "ТУ (ID)",
+      "inn": "ИНН",
+      "full_name": "ФИО/Название",
+      "invoice_id": "Счёт (ID)",
+      "payment_number": "Номер платежа",
+      "payment_date_start": "Дата платежа с",
+      "payment_date_end": "Дата платежа по",
+      "invoice_number": "Номер счёта",
+      "is_paid": "Оплачен",
+      "protocol_id": "Протокол (ID)",
+      "invoice_type": "Тип счёта",
+      "invoice_date_start": "Дата счёта с",
+      "invoice_date_end": "Дата счёта по"
+    },
+    "select": {
+      "status": {
+        "active": "Активен",
+        "inactive": "Неактивен",
+        "archived": "Архив",
+        "pending": "В ожидании",
+        "received": "Поступили",
+        "rejected": "Отклонено",
+        "approved": "Одобрено",
+        "contracted": "Заключено"
+      },
+      "stage": {
+        "draft": "Черновик",
+        "review": "На рассмотрении",
+        "approved": "Утверждено",
+        "done": "Завершено"
+      },
+      "invoice_type": {
+        "main": "Основной",
+        "paper_tu": "Оплата за бумагу ТУ"
+      }
     },
     "exportHistory": "История экспорта"
   },
