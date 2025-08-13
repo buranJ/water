@@ -63,14 +63,6 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
     }
   };
 
-  if (!hasPermission('view_report')) {
-    return (
-      <DashboardLayout title={title}>
-        <Typography.Text type='danger'>{t('common.noAccess') || 'Недостаточно прав для просмотра отчётов'}</Typography.Text>
-      </DashboardLayout>
-    );
-  }
-
   return (
     <DashboardLayout title={title}>
       <Form
