@@ -10,9 +10,13 @@ const { Option } = Select;
 interface TUFilterValues {
   search?: string;
   ordering?: string;
+  payment_ordering?: string;
   type?: IStageEnum;
   status?: IStatus6b3Enum;
   date?: string;
+  has_invoice?: boolean;
+  overdue?: boolean;
+  due_in_days?: number;
 }
 
 interface Props {
@@ -27,14 +31,20 @@ export const TUFilterBar = ({ onFilterChange, onAddClick, onDownloadClick }: Pro
   const handleValuesChange = (_: unknown, allValues: TUFilterValues) => {
     onFilterChange(allValues);
   };
+
   const handleAddClick = () => {
     onAddClick();
   };
+
   return (
     <div className='tu-filter-bar'>
       <Form form={form} layout='inline' onValuesChange={handleValuesChange} style={{ flexWrap: 'wrap', rowGap: 12 }}>
         <Form.Item name='search'>
           <Input prefix={<SearchOutlined />} placeholder={t('filterBar.search')} allowClear />
+        </Form.Item>
+
+        <Form.Item name='due_in_days'>
+          <Input placeholder='Срок оплаты (дней)' allowClear />
         </Form.Item>
 
         <Form.Item name='ordering'>
@@ -53,9 +63,32 @@ export const TUFilterBar = ({ onFilterChange, onAddClick, onDownloadClick }: Pro
         </Form.Item>
 
         <Form.Item name='date'>
-          <Select variant='filled' placeholder={t('filterBar.byDate')} allowClear style={{ width: 140 }}>
+          <Select variant='filled' placeholder={t('filterBar.byDate')} allowClear style={{ width: 180 }}>
             <Option value='created_at'>{t('filterBar.newOnesfirst')}</Option>
             <Option value='-created_at'>{t('filterBar.newOldFirst')}</Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item name='payment_ordering'>
+          <Select variant='filled' placeholder='Оплата' allowClear style={{ width: 180 }}>
+            <Option value='payment_deadline'>Срок оплаты (возр.)</Option>
+            <Option value='-payment_deadline'>Срок оплаты (убыв.)</Option>
+            <Option value='payment_date'>Дата оплаты (возр.)</Option>
+            <Option value='-payment_date'>Дата оплаты (убыв.)</Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item name='has_invoice' valuePropName='checked'>
+          <Select variant='filled' placeholder='Счёт' allowClear style={{ width: 180 }}>
+            <Option value='true'>Есть счёт</Option>
+            <Option value='false'>Нет счёта</Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item name='overdue' valuePropName='checked'>
+          <Select variant='filled' placeholder='Просроченные' allowClear style={{ width: 180 }}>
+            <Option value='true'>Просроченные</Option>
+            <Option value='false'>Не просроченные</Option>
           </Select>
         </Form.Item>
       </Form>

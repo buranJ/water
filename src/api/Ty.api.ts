@@ -19,6 +19,8 @@ import type {
   IITypesTYParams,
   IPatchTechnicalConditionParams,
   IPatchTechnicalConditionResponse,
+  IProtocolDocxParams,
+  IProtocolDocxResponse,
   ITypesTYResponse,
   IUpdateTechnicalConditionParams,
   IUpdateTechnicalConditionResponse
@@ -131,15 +133,62 @@ export const tyApi = createApi({
         },
         responseHandler: async (response) => {
           const blob = await response.blob();
-          const disposition = response.headers.get('content-disposition');
+          const disposition = response.headers.get('content-disposition') || '';
           let filename: string | null = null;
-          if (disposition) {
-            const match = /filename="?([^"]+)"?/.exec(disposition as string);
+
+          // Try RFC 5987 filename* first (e.g., filename*=UTF-8''encoded%20name.pdf)
+          const starMatch = /filename\*\s*=\s*[^']+'[^']*'([^;]+)/i.exec(disposition);
+          if (starMatch) {
+            try {
+              filename = decodeURIComponent(starMatch[1]);
+            } catch {
+              filename = starMatch[1];
+            }
+          }
+
+          // Fallback to regular filename="name.pdf"
+          if (!filename) {
+            const match = /filename="?([^";]+)"?/i.exec(disposition);
             filename = match ? match[1] : null;
           }
+
           return { blob, filename };
         }
-      })
+      }),
+      keepUnusedDataFor: 0
+    }),
+    downloadProtocolDocx: build.query<IProtocolDocxResponse, IProtocolDocxParams>({
+      query: ({ tyId }) => ({
+        url: `/ty/${tyId}/protocol-docx/`,
+        method: 'GET',
+        headers: {
+          Accept: '*/*'
+        },
+        responseHandler: async (response) => {
+          const blob = await response.blob();
+          const disposition = response.headers.get('content-disposition') || '';
+          let filename: string | null = null;
+
+          // Try RFC 5987 filename*
+          const starMatch = /filename\*\s*=\s*[^']+'[^']*'([^;]+)/i.exec(disposition);
+          if (starMatch) {
+            try {
+              filename = decodeURIComponent(starMatch[1]);
+            } catch {
+              filename = starMatch[1];
+            }
+          }
+
+          // Fallback to regular filename
+          if (!filename) {
+            const match = /filename="?([^";]+)"?/i.exec(disposition);
+            filename = match ? match[1] : null;
+          }
+
+          return { blob, filename };
+        }
+      }),
+      keepUnusedDataFor: 0
     })
   })
 });
@@ -156,5 +205,6 @@ export const {
   useCreateTyFromApplicationMutation,
   useAddLoadMutation,
   useGetLoadIncreasesQuery,
-  useLazyDownloadTyPdfQuery
+  useLazyDownloadTyPdfQuery,
+  useLazyDownloadProtocolDocxQuery
 } = tyApi;

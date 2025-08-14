@@ -18,7 +18,7 @@ import { Architecture } from './Tabs';
 
 import { useGetUserInfoQuery } from 'api/Auth.api';
 import { useGetFoldersQuery } from 'api/FileFolder.api';
-import { useGetTyByIdQuery, useLazyDownloadTyPdfQuery } from 'api/Ty.api';
+import { useGetTyByIdQuery, useLazyDownloadProtocolDocxQuery } from 'api/Ty.api';
 import { usePermissions } from 'hooks/useAuth';
 import { t } from 'i18next';
 
@@ -50,7 +50,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>('1');
   const [isAddLoadVisible, setIsAddLoadVisible] = useState<boolean>(false);
-  const [triggerDownload, { isFetching: isDownloading }] = useLazyDownloadTyPdfQuery();
+  const [triggerDownload, { isFetching: isDownloading }] = useLazyDownloadProtocolDocxQuery();
 
   const handleRejectClick = (): void => {
     setIsModalVisible(true);
@@ -281,13 +281,13 @@ export const TuDetails: FC<IProps> = ({ title }) => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = filename || `technical_condition_${id}.pdf`;
+      a.download = filename || `technical_condition_${id}.docx`;
       document.body.appendChild(a);
       a.click();
       a.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Failed to download TU PDF', error);
+      console.error('Failed to download TU DOCX', error);
     }
   };
 

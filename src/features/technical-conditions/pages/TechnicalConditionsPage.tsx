@@ -16,9 +16,13 @@ import { t } from 'i18next';
 interface TUFilterValues {
   search?: string;
   ordering?: string;
+  payment_ordering?: string;
   type?: IStageEnum;
   status?: IStatus6b3Enum;
   date?: string;
+  has_invoice?: boolean;
+  overdue?: boolean;
+  due_in_days?: number;
 }
 
 export const TechnicalConditionsPage = () => {
@@ -43,11 +47,11 @@ export const TechnicalConditionsPage = () => {
   }, [tuData]);
 
   const handleFilterChange = (values: TUFilterValues) => {
-    const { date, ordering: filterOrdering } = values;
-    const ordering = [date, filterOrdering].filter(Boolean).join(', ');
+    const { date, payment_ordering, ordering: filterOrdering, ...rest } = values;
+    const ordering = [date, payment_ordering, filterOrdering].filter(Boolean).join(', ');
     setFilters((prev) => ({
       ...prev,
-      ...values,
+      ...rest,
       ordering,
       page: 1
     }));

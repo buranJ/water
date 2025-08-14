@@ -40,6 +40,8 @@ export type {
   IITypesTYParams,
   IPatchTechnicalConditionParams,
   IPatchTechnicalConditionResponse,
+  IProtocolDocxParams,
+  IProtocolDocxResponse,
   ITypesTYResponse,
   IUpdateTechnicalConditionParams,
   IUpdateTechnicalConditionResponse

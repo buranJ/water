@@ -201,6 +201,9 @@ export interface ITyListQueryParams {
   search?: string;
   stage?: IStageEnum;
   status?: IStatus6b3Enum;
+  has_invoice?: boolean;
+  overdue?: boolean;
+  due_in_days?: number;
 }
 
 export interface ITypesTY {

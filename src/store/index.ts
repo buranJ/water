@@ -35,7 +35,12 @@ const store = configureStore({
     [reportsApi.reducerPath]: reportsApi.reducer
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ['tyApi/executeQuery/fulfilled', 'tyApi/executeQuery/rejected', 'tyApi/executeQuery/pending'],
+        ignoredPaths: ['tyApi.queries']
+      }
+    }).concat(
       authApi.middleware,
       buhgalteriaApi.middleware,
       customerApi.middleware,
