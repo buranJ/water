@@ -1,5 +1,4 @@
-// src/components/AccountingTab/AccountingTab.tsx
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Alert,
@@ -18,9 +17,10 @@ import {
   TabsProps,
   Typography
 } from 'antd';
-import { CheckCircleOutlined, ClockCircleOutlined, DownloadOutlined, EditOutlined, UploadOutlined } from '@ant-design/icons';
+import { ClockCircleOutlined, DownloadOutlined, EditOutlined, UploadOutlined } from '@ant-design/icons';
 import { EditProtocolModal } from 'components/EditProtocolModal/EditProtocolModal';
-import { PaymentsTab } from 'components/PaymentsTab/PaymentsTab';
+import { InvoicesList } from 'components/InvoicesList/InvoicesList';
+import { EnhancedPaymentsTab } from 'components/PaymentsTab/EnhancedPaymentsTab';
 
 import {
   useGenerateInvoiceMutation,
@@ -59,24 +59,18 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
   });
 
   const {
-    data: invoiceData,
+    data: invoicesData,
     isLoading: invoiceLoading,
     isError: invoiceError,
-    refetch: refetchInvoice
+    refetch: refetchInvoice,
+    error: invoiceApiError
   } = useGetInvoiceByProtocolQuery({ protocolId: protocolData?.id.toString() || '' }, { skip: !protocolData?.id });
-
+  console.log(invoiceApiError);
   const [generateInvoice, { isLoading: isGenerating }] = useGenerateInvoiceMutation();
   const [downloadProtocol, { isLoading: isDownloading }] = useLazyDownloadProtocolQuery();
 
-  const calculateTotalAmount = useCallback(() => {
-    if (protocolData) {
-      return (parseFloat(protocolData.total_water_sum) + parseFloat(protocolData.total_kanal_sum)).toString();
-    }
-    return invoiceData?.total_sum || '0';
-  }, [protocolData, invoiceData?.total_sum]);
-
-  const actualTotalAmount = calculateTotalAmount();
   const currency = t('tuDetails.currency');
+
   useEffect(() => {
     if (onOpenPaymentModal) {
       setActiveAccountingTab('2');
@@ -99,22 +93,35 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
   };
 
   const handleGenerateInvoice = async () => {
-    if (!protocolData?.id) return;
+    if (!protocolData?.id) {
+      message.error('Не найден ID протокола');
+      return;
+    }
 
     try {
-      await generateInvoice({ protocolId: protocolData.id.toString() }).unwrap();
-      message.success(t('accounting.messages.generateInvoiceSuccess'));
-      refetchInvoice();
-    } catch (error) {
-      console.log(error);
-    }
-  };
+      const response = await generateInvoice({ protocolId: protocolData.id.toString() }).unwrap();
+      if (Array.isArray(response) && response.length > 0) {
+        message.success(t('accounting.messages.generateInvoiceSuccess') || 'Счета успешно созданы');
+        refetchInvoice();
+      } else if (!Array.isArray(response)) {
+        message.success(t('accounting.messages.generateInvoiceSuccess') || 'Счет успешно создан');
+        refetchInvoice();
+      } else {
+        throw new Error('Empty response array');
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error('Generate invoice error:', error);
 
-  const handleDownloadInvoice = () => {
-    if (invoiceData?.pdf_file) {
-      window.open(invoiceData.pdf_file, '_blank');
-    } else {
-      message.info(t('accounting.messages.invoiceFileUnavailable'));
+      if (error?.status === 404) {
+        message.error('Эндпоинт для генерации счета не найден');
+      } else if (error?.status === 400) {
+        message.error('Неверные данные для генерации счета');
+      } else if (error?.status === 500) {
+        message.error('Ошибка сервера при генерации счета');
+      } else {
+        message.error(t('accounting.messages.generateInvoiceError') || 'Ошибка при генерации счета');
+      }
     }
   };
 
@@ -130,9 +137,10 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
       window.URL.revokeObjectURL(url);
       document.body.removeChild(link);
 
-      message.success(t('accounting.messages.protocolDownloaded'));
+      message.success(t('accounting.messages.protocolDownloaded') || 'Протокол скачан');
     } catch (error) {
-      console.log(error);
+      console.error('Download protocol error:', error);
+      message.error('Ошибка при скачивании протокола');
     }
   };
 
@@ -145,35 +153,42 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
   }
 
   if (protocolError || !protocolData) {
-    return <Alert message={t('accounting.errors.loadTitle')} description={t('accounting.errors.loadDesc')} type='error' showIcon />;
+    return (
+      <Alert
+        message={t('accounting.errors.loadTitle') || 'Ошибка загрузки'}
+        description={t('accounting.errors.loadDesc') || 'Не удалось загрузить данные протокола'}
+        type='error'
+        showIcon
+      />
+    );
   }
 
   const protocolTableData: IProtocolTableData[] = [
     {
       key: '1',
-      item: t('protocolDoc.companyName'),
+      item: t('protocolDoc.companyName') || 'Название компании',
       price: ''
     },
     {
       key: '2',
-      item: t('protocolDoc.vikCostLabel'),
+      item: t('protocolDoc.vikCostLabel') || 'Стоимость ВИК',
       price: `10080${currency}`
     },
     {
       key: '3',
-      item: t('protocolDoc.tuWater'),
+      item: t('protocolDoc.tuWater') || 'ТУ Водоснабжение',
       price: `${protocolData.water_price}${currency}`
     },
     {
       key: '4',
-      item: t('protocolDoc.tuSewer'),
+      item: t('protocolDoc.tuSewer') || 'ТУ Канализация',
       price: `${protocolData.kanal_price}${currency}`
     },
     {
       key: '5',
-      item: t('protocolDoc.totalWithoutVat'),
+      item: t('protocolDoc.totalWithoutVat') || 'Итого без НДС',
       price: `${protocolData.total_water_sum}${currency}`,
-      badge: t('protocolDoc.takeaway')
+      badge: t('protocolDoc.takeaway') || 'Вынос'
     }
   ];
 
@@ -201,20 +216,20 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
   const accountingTabItems: TabsProps['items'] = [
     {
       key: '1',
-      label: t('protocolDetail.tabs.protocol'),
+      label: t('protocolDetail.tabs.protocol') || 'Протокол',
       children: (
         <Card>
           <Flex justify='space-between' align='center' style={{ marginBottom: 16 }}>
             <Title level={4} style={{ margin: 0 }}>
-              {t('routers.tuNumberPrefix')}
+              {t('routers.tuNumberPrefix') || 'ТУ №'}
               {technicalConditionId}-472
             </Title>
             <Space>
               <Button icon={<EditOutlined />} type='primary' onClick={handleEditClick}>
-                {t('common.edit')}
+                {t('common.edit') || 'Редактировать'}
               </Button>
               <Button icon={<DownloadOutlined />} type='default' onClick={handleDownloadProtocol} loading={isDownloading}>
-                {t('protocolDetail.buttons.downloadProtocol')}
+                {t('protocolDetail.buttons.downloadProtocol') || 'Скачать протокол'}
               </Button>
             </Space>
           </Flex>
@@ -233,20 +248,31 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
     },
     {
       key: '2',
-      label: t('protocolDetail.tabs.payments'),
+      label: t('protocolDetail.tabs.payments') || 'Платежи',
       children:
-        invoiceData && !invoiceError ? (
-          <PaymentsTab
-            invoiceId={invoiceData.id.toString()}
-            totalAmount={actualTotalAmount}
+        invoicesData && invoicesData.length > 0 && !invoiceError ? (
+          <EnhancedPaymentsTab
+            invoices={invoicesData}
             autoOpenModal={shouldOpenPaymentModal}
             onModalOpen={() => setShouldOpenPaymentModal(false)}
           />
         ) : (
-          <div>{t('accounting.messages.needCreateInvoiceFirst')}</div>
+          <div>
+            {t('accounting.messages.needCreateInvoiceFirst') || 'Сначала необходимо создать счета'}
+            {invoiceError && (
+              <Alert
+                message='Ошибка загрузки счетов'
+                description='Возможно, счета еще не созданы или неверный URL API'
+                type='warning'
+                style={{ marginTop: 16 }}
+              />
+            )}
+          </div>
         )
     }
   ];
+
+  const hasInvoices = invoicesData && invoicesData.length > 0 && !invoiceError;
 
   return (
     <>
@@ -257,53 +283,41 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
 
         <Col span={8}>
           <Card style={{ marginBottom: 16 }}>
-            <Title level={4}>{t('protocolDetail.invoice.title')}</Title>
-
             {invoiceLoading && (
               <Flex justify='center' style={{ margin: '16px 0' }}>
                 <Spin />
               </Flex>
             )}
 
-            {!invoiceLoading && (
-              <Flex align='center' gap={8} style={{ marginBottom: 16 }}>
-                {invoiceData && !invoiceError ? (
-                  <>
-                    <CheckCircleOutlined style={{ color: '#52c41a' }} />
-                    <Text>
-                      {t('protocolDetail.invoice.title')} #{invoiceData.invoice_number}
-                    </Text>
-                    {invoiceData.is_paid && <Text type='success'>{t('accounting.messages.paidTag')}</Text>}
-                  </>
-                ) : (
-                  <>
-                    <ClockCircleOutlined style={{ color: '#1890ff' }} />
-                    <Text>{t('common.pending')}</Text>
-                  </>
-                )}
-              </Flex>
-            )}
+            {!invoiceLoading && hasInvoices ? (
+              <InvoicesList invoices={invoicesData} />
+            ) : !invoiceLoading && !hasInvoices ? (
+              <>
+                <Title level={4}>{t('protocolDetail.invoice.title') || 'Счет на оплату'}</Title>
+                <div style={{ textAlign: 'center', padding: '20px 0' }}>
+                  <ClockCircleOutlined style={{ fontSize: '32px', color: '#1890ff', marginBottom: '12px' }} />
+                  <div style={{ marginBottom: '16px' }}>
+                    <Text type='secondary'>{t('common.pending') || 'Счета не созданы'}</Text>
+                  </div>
+                  <Button type='primary' size='large' onClick={handleGenerateInvoice} loading={isGenerating} style={{ minWidth: '160px' }}>
+                    {t('protocolDetail.buttons.generateInvoice') || 'Сгенерировать счета'}
+                  </Button>
+                </div>
+              </>
+            ) : null}
 
-            {invoiceData && !invoiceError ? (
-              <Button
-                type='primary'
-                block
-                icon={<DownloadOutlined />}
-                onClick={handleDownloadInvoice}
-                disabled={!invoiceData.pdf_file}
-                style={{ marginBottom: 16 }}
-              >
-                {t('protocolDetail.buttons.downloadInvoice')}
-              </Button>
-            ) : (
-              <Button type='primary' block onClick={handleGenerateInvoice} loading={isGenerating} style={{ marginBottom: 16 }}>
-                {t('protocolDetail.buttons.generateInvoice')}
-              </Button>
+            {invoiceError && (
+              <Alert
+                message='Проблема с загрузкой счетов'
+                description="Проверьте правильность API endpoint'а"
+                type='warning'
+                style={{ marginTop: 16 }}
+              />
             )}
           </Card>
 
           <Card>
-            <Title level={4}>{t('protocolDetail.invoice.uploadReceipt')}</Title>
+            <Title level={4}>{t('protocolDetail.invoice.uploadReceipt') || 'Загрузить квитанцию'}</Title>
             <div
               style={{
                 backgroundColor: '#327BE8',
@@ -313,11 +327,11 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
               }}
             />
             <Text type='secondary' style={{ display: 'block', marginBottom: 16 }}>
-              {t('tuDetails.hint.uploadToFinishTu')}
+              {t('tuDetails.hint.uploadToFinishTu') || 'Загрузите документы для завершения ТУ'}
             </Text>
 
             <Button type='primary' block icon={<UploadOutlined />} onClick={handleUpload}>
-              {t('common.upload')}
+              {t('common.upload') || 'Загрузить'}
             </Button>
           </Card>
         </Col>

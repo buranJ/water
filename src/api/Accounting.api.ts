@@ -28,9 +28,10 @@ export const accountingApi = createApi({
       providesTags: ['Protocol']
     }),
 
+    // Исправленный endpoint - правильный URL
     getInvoiceByProtocol: build.query<IGetInvoiceByProtocolResponse, IGetInvoiceByProtocolParams>({
       query: ({ protocolId }) => ({
-        url: `/buhgalteria/invoicesbyprot/${protocolId}/`,
+        url: `/buhgalteria/invoices/by_protocol/${protocolId}/`,
         method: 'GET'
       }),
       providesTags: ['Invoice']
@@ -38,7 +39,7 @@ export const accountingApi = createApi({
 
     generateInvoice: build.mutation<IGenerateInvoiceResponse, IGenerateInvoiceParams>({
       query: ({ protocolId }) => ({
-        url: `/buhgaleria/invoices/generate/${protocolId}/`,
+        url: `/buhgalteria/invoices/generate/${protocolId}/`,
         method: 'POST'
       }),
       invalidatesTags: ['Invoice']

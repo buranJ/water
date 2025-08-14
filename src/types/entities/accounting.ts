@@ -18,6 +18,7 @@ export type IGetAccountingProtocolResponse = IAccountingProtocol;
 
 export interface IAccountingInvoice {
   id: number;
+  invoice_type: 'main' | string;
   pdf_file: string | null;
   invoice_number: string;
   invoice_date: string;
@@ -33,13 +34,15 @@ export interface IGetInvoiceByProtocolParams {
   protocolId: string;
 }
 
-export type IGetInvoiceByProtocolResponse = IAccountingInvoice;
+// API возвращает массив счетов по протоколу
+export type IGetInvoiceByProtocolResponse = IAccountingInvoice[];
 
 export interface IGenerateInvoiceParams {
   protocolId: string;
 }
 
-export type IGenerateInvoiceResponse = IAccountingInvoice;
+// API генерации также возвращает массив
+export type IGenerateInvoiceResponse = IAccountingInvoice[];
 
 export interface IUpdateProtocolParams {
   protocolId: string;
