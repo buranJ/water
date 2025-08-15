@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Table } from 'antd';
+import { Table } from 'common/ui';
 import { data, getColumns } from './Documents.helpers';
 import './styles.scss';
 

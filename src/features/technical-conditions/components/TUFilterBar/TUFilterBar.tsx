@@ -44,7 +44,7 @@ export const TUFilterBar = ({ onFilterChange, onAddClick, onDownloadClick }: Pro
         </Form.Item>
 
         <Form.Item name='due_in_days'>
-          <Input placeholder='Срок оплаты (дней)' allowClear />
+          <Input placeholder={t('tuDetails.labels.paymentDeadline')} allowClear />
         </Form.Item>
 
         <Form.Item name='ordering'>
@@ -70,25 +70,25 @@ export const TUFilterBar = ({ onFilterChange, onAddClick, onDownloadClick }: Pro
         </Form.Item>
 
         <Form.Item name='payment_ordering'>
-          <Select variant='filled' placeholder='Оплата' allowClear style={{ width: 180 }}>
-            <Option value='payment_deadline'>Срок оплаты (возр.)</Option>
-            <Option value='-payment_deadline'>Срок оплаты (убыв.)</Option>
-            <Option value='payment_date'>Дата оплаты (возр.)</Option>
-            <Option value='-payment_date'>Дата оплаты (убыв.)</Option>
+          <Select variant='filled' placeholder={t('tuDetails.titles.payment')} allowClear style={{ width: 180 }}>
+            <Option value='payment_deadline'>{t('filterBar.newOldFirst')}</Option>
+            <Option value='-payment_deadline'>{t('filterBar.newOnesfirst')}</Option>
+            <Option value='payment_date'>{t('filterBar.newOldFirst')}</Option>
+            <Option value='-payment_date'>{t('filterBar.newOnesfirst')}</Option>
           </Select>
         </Form.Item>
 
         <Form.Item name='has_invoice' valuePropName='checked'>
-          <Select variant='filled' placeholder='Счёт' allowClear style={{ width: 180 }}>
-            <Option value='true'>Есть счёт</Option>
-            <Option value='false'>Нет счёта</Option>
+          <Select variant='filled' placeholder={t('technicalConditions.filter.hasInvoice')} allowClear style={{ width: 180 }}>
+            <Option value='true'>{t('profile.yes')}</Option>
+            <Option value='false'>{t('profile.no')}</Option>
           </Select>
         </Form.Item>
 
         <Form.Item name='overdue' valuePropName='checked'>
-          <Select variant='filled' placeholder='Просроченные' allowClear style={{ width: 180 }}>
-            <Option value='true'>Просроченные</Option>
-            <Option value='false'>Не просроченные</Option>
+          <Select variant='filled' placeholder={t('technicalConditions.filter.overdue')} allowClear style={{ width: 180 }}>
+            <Option value='true'>{t('profile.yes')}</Option>
+            <Option value='false'>{t('profile.no')}</Option>
           </Select>
         </Form.Item>
       </Form>

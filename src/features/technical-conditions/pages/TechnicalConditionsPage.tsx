@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Table } from 'antd';
+import { Table } from 'common/ui';
 import { Pagination } from 'common/ui';
 import { TUFilterBar } from '../components/TUFilterBar/TUFilterBar';
 import { DashboardLayout } from 'components';

@@ -424,6 +424,7 @@
   "exportDataHistory": {
     "byType": "По типу",
     "byStatus": "По статусу",
+    "noPermission": "Недостаточно прав для просмотра отчётов",
     "reexport": "Повторная выгрузка записи №{{id}}",
     "deletedItem": "Запись №{{id}} удалена",
     "columns": {
@@ -437,6 +438,12 @@
       "tu": "ТУ",
       "requests": "Заявки",
       "invoice": "Счет на оплату"
+    }
+  },
+  "technicalConditions": {
+    "filter": {
+      "hasInvoice": "Счёт",
+      "overdue": "Просроченные"
     }
   },
   "customers": {

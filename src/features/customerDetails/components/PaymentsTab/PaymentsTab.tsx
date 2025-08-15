@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Table } from 'antd';
+import { Table } from 'common/ui';
 import { data, getColumns } from './PaymentsTab.helpers';
 
 export const PaymentsTab: React.FC = () => {

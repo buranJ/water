@@ -1,6 +1,7 @@
 import { FC, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { Table } from 'antd';
+import { useTranslation } from 'react-i18next';
+import { Table } from 'common/ui';
 import CustomPagination from 'common/ui/Pagination/CustomPagination';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { IObjectChangeHistory } from 'types/entities';
@@ -17,13 +18,15 @@ export const ChangeObjectHistory: FC<IProps> = ({ title }) => {
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(8);
 
+  const { t } = useTranslation();
+
   const { data, isLoading } = useGetObjectChangeHistoryQuery({
     object_id: id || '',
     page,
     page_size: pageSize
   });
 
-  const columns = useMemo(() => getColumns(), []);
+  const columns = useMemo(() => getColumns(t), [t]);
 
   const handlePaginationChange = (nextPage: number, nextPageSize?: number) => {
     setPage(nextPage);

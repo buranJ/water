@@ -278,6 +278,7 @@
   "exportDataHistory": {
     "byType": "Түрү боюнча",
     "byStatus": "Статусу боюнча",
+    "noPermission": "Отчетторду көрүүгө уруксат жетишсиз",
     "reexport": "Жазууну кайра экспорттоо №{{id}}",
     "deletedItem": "Жазуу №{{id}} өчүрүлдү",
     "columns": {
@@ -291,6 +292,12 @@
       "tu": "ТУ",
       "requests": "Арыздар",
       "invoice": "Төлөм эсеп-фактурасы"
+    }
+  },
+  "technicalConditions": {
+    "filter": {
+      "hasInvoice": "Эсеп",
+      "overdue": "Мөөнөтү өтүп кеткен"
     }
   },
   "exportData": {

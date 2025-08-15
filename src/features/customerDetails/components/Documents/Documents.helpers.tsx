@@ -2,7 +2,10 @@ import { Button, Flex, Space, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { DeleteOutlined, DownloadOutlined, FileTextOutlined } from '@ant-design/icons';
 
+import i18next from 'i18next';
+
 const { Title, Link } = Typography;
+const { t } = i18next;
 
 type actionType = 'download' | 'delete';
 
@@ -35,19 +38,19 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
   return [
     {
       key: 'name',
-      title: 'Название',
+      title: t('folderDetail.columns.title'),
       dataIndex: 'name',
       render: nameRender
     },
     {
       key: 'date',
-      title: 'Дата загрузки',
+      title: t('folderDetail.columns.uploadedAt'),
       dataIndex: 'uploadDate',
       align: 'center'
     },
     {
       key: 'actions',
-      title: 'Действия',
+      title: t('folderDetail.columns.actions'),
       dataIndex: 'actions',
       align: 'center',
       render: (_, record) => (

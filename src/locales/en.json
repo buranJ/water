@@ -423,6 +423,7 @@
   "exportDataHistory": {
     "byType": "By type",
     "byStatus": "By status",
+    "noPermission": "Insufficient permissions to view reports",
     "reexport": "Re-export record No. {{id}}",
     "deletedItem": "Record No. {{id}} deleted",
     "columns": {
@@ -436,6 +437,12 @@
       "tu": "TU",
       "requests": "Applications",
       "invoice": "Invoice"
+    }
+  },
+  "technicalConditions": {
+    "filter": {
+      "hasInvoice": "Invoice",
+      "overdue": "Overdue"
     }
   },
   "customers": {

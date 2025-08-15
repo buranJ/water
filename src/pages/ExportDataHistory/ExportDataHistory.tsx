@@ -1,9 +1,10 @@
 import { FC, useMemo } from 'react';
 import { useLocation } from 'react-router';
 import type { MenuProps } from 'antd';
-import { Button, Dropdown, Flex, Input, message, Space, Table, Typography } from 'antd';
+import { Button, Dropdown, Flex, Input, message, Space, Typography } from 'antd';
 import { DeleteOutlined, DownOutlined, RetweetOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import { Table } from 'common/ui';
 import { DashboardLayout } from 'components/DashboardLayout';
 
 import type { ReportsResponse } from 'api/Reports.api';
@@ -38,28 +39,28 @@ const ExportDataHistory: FC<ExportDataHistoryProps> = ({ title }) => {
   const columns = useMemo(
     () => [
       {
-        title: 'Дата',
+        title: t('exportDataHistory.columns.date'),
         dataIndex: 'created_at',
         key: 'created_at',
         render: (text: string) => (text ? dayjs(text).format('DD.MM.YYYY HH:mm') : '-')
       },
-      { title: 'Тип', dataIndex: 'report_type_display', key: 'report_type_display' },
-      { title: 'Название', dataIndex: 'title', key: 'title', render: (text: string) => text || '-' },
+      { title: t('exportDataHistory.columns.dataType'), dataIndex: 'report_type_display', key: 'report_type_display' },
+      { title: t('folderDetail.columns.title'), dataIndex: 'title', key: 'title', render: (text: string) => text || '-' },
       {
-        title: 'Файл',
+        title: t('exportDataHistory.columns.format'),
         dataIndex: 'pdf_file',
         key: 'pdf_file',
         render: (url: string | undefined) =>
           url ? (
             <a href={url} target='_blank' rel='noopener noreferrer'>
-              PDF
+              {t('paymentsTab.buttons.pdf')}
             </a>
           ) : (
             '-'
           )
       },
       {
-        title: 'Действия',
+        title: t('exportDataHistory.columns.actions'),
         key: 'actions',
         render: (_: unknown, record: { key: number }) => (
           <Space>
@@ -97,7 +98,7 @@ const ExportDataHistory: FC<ExportDataHistoryProps> = ({ title }) => {
   if (!hasPermission('view_report')) {
     return (
       <DashboardLayout title={title}>
-        <Typography.Text type='danger'>Недостаточно прав для просмотра отчётов</Typography.Text>
+        <Typography.Text type='danger'>{t('exportDataHistory.noPermission')}</Typography.Text>
       </DashboardLayout>
     );
   }

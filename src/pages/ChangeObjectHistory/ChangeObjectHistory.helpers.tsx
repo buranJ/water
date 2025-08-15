@@ -1,46 +1,49 @@
+import type { TableColumnsType } from 'antd';
 import { Tag } from 'antd';
-import { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { IHistoryType } from 'types/common';
 import { IObjectChangeHistory } from 'types/entities';
 
-const renderStatus = (text: IHistoryType) => {
+import type { TFunction } from 'i18next';
+
+const renderStatus = (text: IHistoryType, t: TFunction) => {
   if (text === '+') {
-    return <Tag color='success'>Создано</Tag>;
+    return <Tag color='success'>{t('changeHistory.status.created')}</Tag>;
   }
   if (text === '-') {
-    return <Tag color='error'>Удалено</Tag>;
+    return <Tag color='error'>{t('changeHistory.status.deleted')}</Tag>;
   }
   if (text === '~') {
-    return <Tag color='processing'>Изменено</Tag>;
+    return <Tag color='processing'>{t('changeHistory.status.updated')}</Tag>;
   }
+  return null;
 };
 
-export const getColumns = (): ColumnsType<IObjectChangeHistory> => [
+export const getColumns = (t: TFunction): TableColumnsType<IObjectChangeHistory> => [
   {
-    title: 'ID',
+    title: t('changeHistory.columns.id'),
     dataIndex: 'history_id',
     key: 'history_id',
     align: 'center'
   },
   {
-    title: 'Сотрудник',
+    title: t('changeHistory.columns.user'),
     dataIndex: 'history_user',
     key: 'history_user',
     align: 'center'
   },
   {
-    title: 'Дата',
+    title: t('changeHistory.columns.date'),
     dataIndex: 'history_date',
     key: 'history_date',
     align: 'center',
     render: (text: string) => dayjs(text).format('DD-MM-YYYY-HH:mm')
   },
   {
-    title: 'Тип',
+    title: t('changeHistory.columns.type'),
     dataIndex: 'history_type',
     key: 'history_type',
     align: 'center',
-    render: (text: IHistoryType) => renderStatus(text)
+    render: (text: IHistoryType) => renderStatus(text, t)
   }
 ];

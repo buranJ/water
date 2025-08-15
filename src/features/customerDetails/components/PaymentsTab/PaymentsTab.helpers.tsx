@@ -1,6 +1,10 @@
 import { Button, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 
+import i18next from 'i18next';
+
+const { t } = i18next;
+
 type actionType = 'payment';
 
 export interface PaymentData {
@@ -16,25 +20,27 @@ type IGetColumnsFn = (options: { onClick: (record: PaymentData, action: actionTy
 
 export const getColumns: IGetColumnsFn = ({ onClick }) => {
   return [
-    { title: '№ ПТУ', dataIndex: 'ptuNumber', key: 'ptuNumber' },
-    { title: 'Заказчик', dataIndex: 'customer', key: 'customer' },
-    { title: 'Дата регистрации', dataIndex: 'date', key: 'date' },
-    { title: 'Адрес', dataIndex: 'address', key: 'address' },
-    { title: 'Протокол', dataIndex: 'protocol', key: 'protocol' },
+    { title: t('historyOfLoads.columns.tu'), dataIndex: 'ptuNumber', key: 'ptuNumber' },
+    { title: t('customers.columns.customer'), dataIndex: 'customer', key: 'customer' },
+    { title: t('applications.columns.date'), dataIndex: 'date', key: 'date' },
+    { title: t('applications.columns.address'), dataIndex: 'address', key: 'address' },
+    { title: t('protocolDetail.tabs.protocol'), dataIndex: 'protocol', key: 'protocol' },
     {
-      title: 'Статус',
+      title: t('common.status'),
       dataIndex: 'status',
       key: 'status',
       render: (status: 'approved' | 'pending') => (
-        <Tag color={status === 'approved' ? 'green' : 'orange'}>{status === 'approved' ? 'Утверждено' : 'Ожидает'}</Tag>
+        <Tag color={status === 'approved' ? 'green' : 'orange'}>
+          {status === 'approved' ? t('applications.statusTag.approved') : t('applications.statusTag.pending')}
+        </Tag>
       )
     },
     {
-      title: 'Действие',
+      title: t('applications.columns.action'),
       key: 'action',
       render: (_, record: PaymentData) => (
         <Button size='large' type='primary' onClick={() => onClick(record, 'payment')}>
-          Счет на оплату
+          {t('protocolDetail.invoice.title')}
         </Button>
       )
     }
