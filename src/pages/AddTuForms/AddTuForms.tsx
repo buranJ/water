@@ -126,7 +126,15 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
   return (
     <DashboardLayout title={title}>
-      <Form form={form} requiredMark={false} name='add-tu-form' layout='vertical' onFinish={onFinish} className='add-tu-forms'>
+      <Form
+        scrollToFirstError={{ behavior: 'smooth', scrollMode: 'if-needed', block: 'center' }}
+        form={form}
+        requiredMark={false}
+        name='add-tu-form'
+        layout='vertical'
+        onFinish={onFinish}
+        className='add-tu-forms'
+      >
         <Title level={4} style={{ borderBottom: '1px solid #D9D9D9', paddingBottom: '4px' }}>
           {t('addTuForms.titles.main')}
         </Title>

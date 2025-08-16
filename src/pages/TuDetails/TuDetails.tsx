@@ -22,6 +22,20 @@ import { useGetTyByIdQuery, useLazyDownloadProtocolDocxQuery } from 'api/Ty.api'
 import { usePermissions } from 'hooks/useAuth';
 import { t } from 'i18next';
 
+type WithCategory = { category?: { id?: string | number; title?: string } };
+
+const normalize = (s?: string) => (s ? s.toLowerCase().trim() : '');
+const idsEqual = (a?: string | number, b?: string | number) => String(a ?? '') === String(b ?? '');
+
+const makeByCategory =
+  <T extends WithCategory>(list?: T[]) =>
+  (categoryId?: string | number, categoryTitle?: string): T[] =>
+    (list ?? []).filter((item) => {
+      const byId = categoryId !== undefined && idsEqual(item.category?.id, categoryId);
+      const byTitle = !!categoryTitle && normalize(item.category?.title) === normalize(categoryTitle);
+      return byId || byTitle;
+    });
+
 const { Title, Text } = Typography;
 
 interface IProps {
@@ -200,26 +214,8 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     () => [...(foldersQuery.data?.custom || []), ...(foldersQuery.data?.required || [])],
     [foldersQuery.data?.custom, foldersQuery.data?.required]
   );
-
-  const requireArchitectureDocs = useMemo(
-    () => foldersQuery.data?.required.filter((item) => item.category.title.toLowerCase() === 'архитектура') || [],
-    [foldersQuery.data?.required]
-  );
-
-  const requireDocumentsDocs = useMemo(
-    () => foldersQuery.data?.required.filter((item) => item.category.title.toLowerCase() === 'документы') || [],
-    [foldersQuery.data?.required]
-  );
-
-  const customArchitectureDocs = useMemo(
-    () => foldersQuery.data?.custom.filter((item) => item.category.title.toLowerCase() === 'архитектура') || [],
-    [foldersQuery.data?.custom]
-  );
-
-  const customDocumentsDocs = useMemo(
-    () => foldersQuery.data?.custom.filter((item) => item.category.title.toLowerCase() === 'документы') || [],
-    [foldersQuery.data?.custom]
-  );
+  const getRequiredByCategory = useMemo(() => makeByCategory(foldersQuery.data?.required), [foldersQuery.data?.required]);
+  const getCustomByCategory = useMemo(() => makeByCategory(foldersQuery.data?.custom), [foldersQuery.data?.custom]);
 
   const getCategoryLabel = (title: string) => {
     switch (title.toLowerCase()) {
@@ -239,18 +235,17 @@ export const TuDetails: FC<IProps> = ({ title }) => {
       let content: React.ReactNode = <Text>{t('tuDetails.contentNotImplemented', { title: category.title })}</Text>;
 
       switch (category.title.toLowerCase()) {
-        case 'архитектура':
-          content = (
-            <Architecture categoryId={category.id} documentsRequire={requireArchitectureDocs} documentsCustom={customArchitectureDocs} />
-          );
-          break;
-        case 'документы':
-          content = <Architecture categoryId={category.id} documentsRequire={requireDocumentsDocs} documentsCustom={customDocumentsDocs} />;
-          break;
         case 'бухгалтерия':
           content = id ? <AccountingTab technicalConditionId={id} /> : null;
           break;
         default:
+          content = (
+            <Architecture
+              categoryId={category.id}
+              documentsRequire={getRequiredByCategory(category.id, category.title)}
+              documentsCustom={getCustomByCategory(category.id, category.title)}
+            />
+          );
           break;
       }
 

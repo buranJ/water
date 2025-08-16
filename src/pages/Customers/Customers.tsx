@@ -58,7 +58,7 @@ export const Customers: FC<IProps> = ({ title }) => {
   };
 
   const onDownloadClick = () => {
-    console.log('Download button clicked');
+    navigate('/dashboard/export-data');
   };
 
   // Преобразование данных к формату таблицы

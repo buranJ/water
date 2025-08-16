@@ -64,6 +64,10 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
     createRefuse({ ...values, application: String(id || '') });
   };
 
+  const onPdfClick = () => {
+    navigate('/dashboard/export-data');
+  };
+
   useEffect(() => {
     if (isApproveSuccess) {
       message.success(t('applicationDetails.messages.approveSuccess'));
@@ -88,7 +92,9 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
   return (
     <DashboardLayout title={t(title) + id}>
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginBottom: 16 }}>
-        <Button icon={<DownloadOutlined />}>{t('applicationDetails.buttons.pdf')}</Button>
+        <Button onClick={onPdfClick} icon={<DownloadOutlined />}>
+          {t('applicationDetails.buttons.pdf')}
+        </Button>
         {hasPermission('change_application') && (
           <Button onClick={() => navigate(`/dashboard/applications/${id}/edit`)}>{t('applicationDetails.buttons.edit')}</Button>
         )}

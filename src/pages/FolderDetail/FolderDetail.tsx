@@ -1,21 +1,11 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { useLocation, useParams } from 'react-router';
-import { Button, Col, Dropdown, Input, List, message, Row, Space, Tabs, Typography, Upload, UploadFile, UploadProps } from 'antd';
+import { Button, Col, List, message, Row, Space, Tabs, Typography, Upload, UploadFile, UploadProps } from 'antd';
 import { UploadChangeParam } from 'antd/es/upload';
 import Dragger from 'antd/es/upload/Dragger';
-import {
-  CloseCircleTwoTone,
-  CloudDownloadOutlined,
-  DownloadOutlined,
-  DownOutlined,
-  FileTextOutlined,
-  InboxOutlined,
-  PlusOutlined,
-  SearchOutlined
-} from '@ant-design/icons';
+import { CloseCircleTwoTone, CloudDownloadOutlined, FileTextOutlined, InboxOutlined } from '@ant-design/icons';
 import { Modal, Table } from 'common/ui';
 import { DashboardLayout } from 'components/DashboardLayout';
-import { IFileItem } from 'types/entities';
 import { getColumns } from './FolderDetail.helpers';
 
 import { useGetFilefolderFilesQuery, useUploadFileMutation } from 'api/FileFolder.api';
@@ -34,18 +24,9 @@ export const FolderDetail: FC<IProps> = () => {
   const { folderId, tyId } = useParams<{ folderId: string; tyId: string }>();
   const filesQuery = useGetFilefolderFilesQuery({ folder_id: folderId || '', ty_id: tyId || '' });
   const [uploadFiles, { isSuccess, isLoading, isError }] = useUploadFileMutation();
-  const [searchText, setSearchText] = useState('');
   const [activeTab, setActiveTab] = useState('1');
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [filesList, setFilesList] = useState<UploadFile[]>([]);
-
-  const sortMenu = {
-    items: [
-      { key: 'alphabet', label: t('filterBar.filter.alphabet') },
-      { key: 'date', label: t('filterBar.byDate') }
-    ],
-    onClick: (info: { key: string }) => handleSortChange(info.key)
-  };
 
   const columns = useMemo(
     () =>
@@ -67,26 +48,8 @@ export const FolderDetail: FC<IProps> = () => {
 
   const data = useMemo(() => {
     const list = filesQuery.data?.results || [];
-    const s = searchText.trim().toLowerCase();
-    if (!s) return list;
-    return list.filter((item: IFileItem) => item.file.toLowerCase().includes(s));
-  }, [filesQuery.data, searchText]);
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(e.target.value);
-  };
-
-  const handleSortChange = (key: string) => {
-    console.log('Сортировка:', key);
-  };
-
-  const handleAdd = () => {
-    setIsAddModalVisible(true);
-  };
-
-  const handleDownloadPDF = () => {
-    console.log('Скачать PDF');
-  };
+    return list;
+  }, [filesQuery.data]);
 
   const handleCancelAdd = () => {
     setFilesList([]);
@@ -130,42 +93,9 @@ export const FolderDetail: FC<IProps> = () => {
 
   return (
     <DashboardLayout title={params.state.folderName}>
-      <Row justify='space-between' style={{ marginBottom: 16 }}>
-        <Col>
-          <Space>
-            <Input
-              placeholder={t('filterBar.search')}
-              prefix={<SearchOutlined />}
-              style={{ width: 200 }}
-              value={searchText}
-              onChange={handleSearchChange}
-            />
-            <Dropdown menu={sortMenu} trigger={['click']}>
-              <Button>
-                {t('filterBar.filter.alphabet')} <DownOutlined />
-              </Button>
-            </Dropdown>
-          </Space>
-        </Col>
-        <Col>
-          <Space>
-            <Button type='primary' icon={<PlusOutlined />} onClick={handleAdd}>
-              {t('filterBar.add')}
-            </Button>
-            <Button icon={<DownloadOutlined />} onClick={handleDownloadPDF}>
-              PDF
-            </Button>
-          </Space>
-        </Col>
-      </Row>
-
       <Tabs activeKey={activeTab} onChange={(key) => setActiveTab(key)}>
         <TabPane tab={t('folderDetail.tabs.uploaded')} key='1'>
           <Table columns={columns} dataSource={data} rowKey='id' pagination={false} />
-        </TabPane>
-        <TabPane tab={t('folderDetail.tabs.recent')} key='2'>
-          {/* Заглушка или своя таблица/контент */}
-          <div>{t('folderDetail.placeholder.recent')}</div>
         </TabPane>
       </Tabs>
       <Modal title={t('architectureDetails.titles.uploadDocument')} open={isAddModalVisible} onCancel={handleCancelAdd} footer={null}>
