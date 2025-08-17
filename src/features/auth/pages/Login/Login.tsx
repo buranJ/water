@@ -26,7 +26,7 @@ const Login: FC = () => {
       if (response?.refresh) {
         localStorage.setItem('refresh_token', JSON.stringify(response.refresh));
       }
-      navigate('/dashboard/geo');
+      navigate('/dashboard/technical-conditions');
     } catch (e) {
       console.error('t{"error"}', e);
     }
