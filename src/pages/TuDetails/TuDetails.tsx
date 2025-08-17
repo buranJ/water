@@ -1,17 +1,12 @@
-import { FC, useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router';
-import { Alert, Button, Card, Col, Flex, List, Progress, Row, Space, Spin, Tabs, TabsProps, Typography } from 'antd';
-import {
-  CheckCircleTwoTone,
-  ClockCircleTwoTone,
-  CloseCircleTwoTone,
-  DownloadOutlined,
-  FileOutlined,
-  PlusOutlined
-} from '@ant-design/icons';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { useParams, useSearchParams } from 'react-router';
+import { Alert, Card, Col, Flex, Row, Spin, Tabs, TabsProps, Typography } from 'antd';
+import { ClockCircleTwoTone } from '@ant-design/icons';
+import { ActionsBar } from './components/ActionsBar';
+import { DataSection } from './components/DataSection';
+import { DocumentsProgress } from './components/DocumentsProgress';
 import { AccountingTab } from 'components/AccountingTab/AccountingTab';
 import { DashboardLayout } from 'components/DashboardLayout';
-import { IStageEnum, IStatus6b3Enum } from 'types/common';
 import AddLoadModal from './AddLoadModal';
 import { MyModal } from './MyModal';
 import { Architecture } from './Tabs';
@@ -48,6 +43,8 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const foldersQuery = useGetFoldersQuery({ ty_id: id || '' });
   const { hasPermission } = usePermissions();
 
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const {
     data: objectData,
     isLoading,
@@ -62,7 +59,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   );
 
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<string>('1');
+  const [activeTab, setActiveTab] = useState<string>(searchParams.get('tab') || '1');
   const [isAddLoadVisible, setIsAddLoadVisible] = useState<boolean>(false);
   const [triggerDownload, { isFetching: isDownloading }] = useLazyDownloadProtocolDocxQuery();
 
@@ -76,139 +73,10 @@ export const TuDetails: FC<IProps> = ({ title }) => {
 
   const handleTabChange = (key: string): void => {
     setActiveTab(key);
+    const next = new URLSearchParams(searchParams);
+    next.set('tab', key);
+    setSearchParams(next);
   };
-
-  const statusRender = (status: IStatus6b3Enum) => {
-    switch (status) {
-      case 'active':
-        return <Text type='warning'>{t('tuDetails.status.active')}</Text>;
-      case 'inactive':
-        return <Text type='success'>{t('tuDetails.status.inactive')}</Text>;
-      case 'archived':
-        return <Text type='danger'>{t('tuDetails.status.archived')}</Text>;
-    }
-  };
-
-  const stageRender = (stage: IStageEnum) => {
-    switch (stage) {
-      case 'draft':
-        return <Text type='secondary'>{t('tuDetails.stage.draft')}</Text>;
-      case 'review':
-        return <Text type='warning'>{t('tuDetails.stage.review')}</Text>;
-      case 'approved':
-        return <Text type='success'>{t('tuDetails.stage.approved')}</Text>;
-      case 'done':
-        return <Text type='success'>{t('tuDetails.stage.done')}</Text>;
-      default:
-        return <Text type='secondary'>{t('tuDetails.stage.unknown')}</Text>;
-    }
-  };
-
-  const renderDataContent = () => (
-    <>
-      <Card style={{ marginBottom: 24 }}>
-        <Title level={4}>{t('tuDetails.titles.objectName')}</Title>
-        <Text>{objectData?.object_name || t('tuDetails.notSpecified')}</Text>
-      </Card>
-
-      <Card style={{ marginBottom: 24 }}>
-        <Title level={4}>{t('tuDetails.titles.applicationInfo')}</Title>
-        <Text strong>{t('tuDetails.labels.requestNumber')}</Text> <Text>{objectData?.request_number || '—'}</Text>
-        <br />
-        <Text strong>{t('tuDetails.labels.requestDate')}</Text> <Text>{(objectData?.request_date as string) || '—'}</Text>
-        <br />
-        <Text strong>{t('tuDetails.labels.requestSource')}</Text> <Text>{objectData?.request_source || '—'}</Text>
-        <br />
-        <Text strong>{t('tuDetails.labels.inn')}</Text> <Text>{objectData?.eni || '—'}</Text>
-        <br />
-        {objectData?.status && (
-          <Space>
-            <Text strong>{t('common.status')}</Text>
-            <Text>{statusRender(objectData?.status) || '—'}</Text>
-          </Space>
-        )}
-        <br />
-        {objectData?.stage && (
-          <Space>
-            <Text strong>{t('tuDetails.labels.stage')}</Text>
-            <Text>{stageRender(objectData?.stage) || '—'}</Text>
-          </Space>
-        )}
-      </Card>
-
-      {/* Новый блок: Дополнительные характеристики */}
-      <Card style={{ marginBottom: 24 }}>
-        <Title level={4}>{t('tuDetails.titles.additionalCharacteristics')}</Title>
-        <Text strong>{t('tuDetails.labels.connectionTarget')}</Text> <Text>{objectData?.connection_target || '—'}</Text>
-        <br />
-        <Text strong>{t('tuDetails.labels.streetPass')}</Text> <Text>{objectData?.street_pass || '—'}</Text>
-        <br />
-        <Text strong>{t('tuDetails.labels.collector')}</Text> <Text>{objectData?.collector || '—'}</Text>
-        <br />
-        <Text strong>{t('tuDetails.labels.fireFighting')}</Text> <Text>{objectData?.fire_fighting || '—'}</Text>
-        <br />
-        <Text strong>{t('tuDetails.labels.fireInput1')}</Text> <Text>{objectData?.fire_input_1 || '—'}</Text>
-        <br />
-        <Text strong>{t('tuDetails.labels.fireInput2')}</Text> <Text>{objectData?.fire_input_2 || '—'}</Text>
-        <br />
-        <Text strong>{t('tuDetails.labels.notes')}</Text> <Text>{objectData?.notes || '—'}</Text>
-      </Card>
-
-      {/* Новый блок: Оплата */}
-      <Card style={{ marginBottom: 24 }}>
-        <Title level={4}>{t('tuDetails.titles.payment')}</Title>
-        <Text strong>{t('tuDetails.labels.paymentInvoiceNumber')}</Text> <Text>{objectData?.payment_invoice_number || '—'}</Text>
-        <br />
-        <Text strong>{t('tuDetails.labels.paymentPaper')}</Text>{' '}
-        <Text>
-          {objectData?.payment_paper || '—'} {t('tuDetails.currency')}
-        </Text>
-        <br />
-        <Text strong>{t('tuDetails.labels.paymentConnection')}</Text>{' '}
-        <Text>
-          {objectData?.payment_connection || '—'} {t('tuDetails.currency')}
-        </Text>
-        <br />
-        <Text strong>{t('tuDetails.labels.paymentAmount')}</Text>{' '}
-        <Text>
-          {objectData?.payment_amount || '—'} {t('tuDetails.currency')}
-        </Text>
-        <br />
-        <Text strong>{t('tuDetails.labels.paymentDeadline')}</Text> <Text>{(objectData?.payment_deadline as string) || '—'}</Text>
-      </Card>
-
-      <Card style={{ marginBottom: 24 }}>
-        <Title level={4}>{t('tuDetails.titles.customer')}</Title>
-        <Text>{objectData?.customer.full_name}</Text>
-        <Title level={4} style={{ marginTop: 16 }}>
-          {t('tuDetails.titles.objectLocation')}
-        </Title>
-        <Text>{objectData?.address}</Text>
-        <Title level={4} style={{ marginTop: 16 }}>
-          {t('tuDetails.titles.waterRequired')}
-        </Title>
-        <Text>
-          {objectData?.water_required} {t('tuDetails.units.m3PerDay')}
-        </Text>
-        <Title level={4} style={{ marginTop: 16 }}>
-          {t('tuDetails.titles.pressureRequired')}
-        </Title>
-        <Text>
-          {objectData?.pressure_required} {t('tuDetails.units.mWaterCol')}
-        </Text>
-      </Card>
-
-      <Card style={{ marginBottom: 24 }}>
-        <Title level={4}>{t('tuDetails.titles.waterSupply')}</Title>
-        <Text>{objectData?.water_pipe || t('tuDetails.notSpecified')}</Text>
-      </Card>
-
-      <Card>
-        <Title level={4}>{t('tuDetails.titles.sewer')}</Title>
-        <Text>{objectData?.sewer || t('tuDetails.notSpecified')}</Text>
-      </Card>
-    </>
-  );
 
   const commonFolders = useMemo(
     () => [...(foldersQuery.data?.custom || []), ...(foldersQuery.data?.required || [])],
@@ -217,7 +85,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const getRequiredByCategory = useMemo(() => makeByCategory(foldersQuery.data?.required), [foldersQuery.data?.required]);
   const getCustomByCategory = useMemo(() => makeByCategory(foldersQuery.data?.custom), [foldersQuery.data?.custom]);
 
-  const getCategoryLabel = (title: string) => {
+  const getCategoryLabel = useCallback((title: string) => {
     switch (title.toLowerCase()) {
       case 'архитектура':
         return t('tuDetails.tabs.architecture');
@@ -228,42 +96,57 @@ export const TuDetails: FC<IProps> = ({ title }) => {
       default:
         return title;
     }
-  };
+  }, []);
 
-  const dynamicTabs =
-    userQuery.data?.user.allowed_categories?.map((category, index) => {
-      let content: React.ReactNode = <Text>{t('tuDetails.contentNotImplemented', { title: category.title })}</Text>;
+  const dynamicTabs: TabsProps['items'] = useMemo(
+    () =>
+      userQuery.data?.user.allowed_categories?.map((category, index) => {
+        let content: React.ReactNode = <Text>{t('tuDetails.contentNotImplemented', { title: category.title })}</Text>;
 
-      switch (category.title.toLowerCase()) {
-        case 'бухгалтерия':
-          content = id ? <AccountingTab technicalConditionId={id} /> : null;
-          break;
-        default:
-          content = (
-            <Architecture
-              categoryId={category.id}
-              documentsRequire={getRequiredByCategory(category.id, category.title)}
-              documentsCustom={getCustomByCategory(category.id, category.title)}
-            />
-          );
-          break;
-      }
+        switch (category.title.toLowerCase()) {
+          case 'бухгалтерия':
+            content = id ? <AccountingTab technicalConditionId={id} /> : null;
+            break;
+          default:
+            content = (
+              <Architecture
+                categoryId={category.id}
+                documentsRequire={getRequiredByCategory(category.id, category.title)}
+                documentsCustom={getCustomByCategory(category.id, category.title)}
+              />
+            );
+            break;
+        }
 
-      return {
-        key: `dynamic-${index + 2}`,
-        label: getCategoryLabel(category.title),
-        children: content
-      };
-    }) || [];
+        return {
+          key: `dynamic-${index + 2}`,
+          label: getCategoryLabel(category.title),
+          children: content
+        };
+      }) || [],
+    [userQuery.data?.user.allowed_categories, id, getRequiredByCategory, getCustomByCategory, getCategoryLabel]
+  );
 
-  const tabItems: TabsProps['items'] = [
-    {
-      key: '1',
-      label: t('tuDetails.tabs.data'),
-      children: objectData ? renderDataContent() : null
-    },
-    ...dynamicTabs
-  ];
+  const tabItems: TabsProps['items'] = useMemo(
+    () => [
+      {
+        key: '1',
+        label: t('tuDetails.tabs.data'),
+        children: objectData ? <DataSection objectData={objectData} /> : null
+      },
+      ...dynamicTabs
+    ],
+    [objectData, dynamicTabs]
+  );
+
+  useEffect(() => {
+    const validKeys = (tabItems || []).map((i) => i?.key as string);
+    const urlTab = searchParams.get('tab') || '1';
+    const next = validKeys.includes(urlTab) ? urlTab : '1';
+    if (next !== activeTab) {
+      setActiveTab(next);
+    }
+  }, [searchParams, tabItems, activeTab]);
 
   const handleAddLoad = () => {
     setIsAddLoadVisible(true);
@@ -317,67 +200,23 @@ export const TuDetails: FC<IProps> = ({ title }) => {
 
   return (
     <DashboardLayout title={`${t(title)} ${id}`}>
-      {activeTab === '1' && (
-        <Flex justify='end' align='center' gap={24} style={{ marginBottom: 16 }}>
-          {hasPermission('change_technicalcondition') && <Link to={'/dashboard/add-tu-forms/' + id}>{t('routers.editTy')}</Link>}
-          {hasPermission('view_actty') && (
-            <Link to={`/dashboard/technical-conditions/history-of-loads/${id}`}>{t('routers.historyOfLoads')}</Link>
-          )}
-          {hasPermission('view_historicaltechnicalcondition') && (
-            <Link to={`/dashboard/ty/${id}/change-history`}>{t('tuDetails.actions.changeTuData')}</Link>
-          )}
-          {hasPermission('view_technicalcondition') && (
-            <Button icon={<DownloadOutlined />} onClick={handleDownloadTu} loading={isDownloading} disabled={!id}>
-              {t('tuDetails.actions.downloadTu')}
-            </Button>
-          )}
-          {hasPermission('add_actty') && (
-            <Button onClick={handleAddLoad} icon={<PlusOutlined />}>
-              {t('historyOfLoads.addLoad')}
-            </Button>
-          )}
-          {hasPermission('delete_technicalcondition') && (
-            <Button danger onClick={handleRejectClick}>
-              {t('tuDetails.actions.rejectTu')}
-            </Button>
-          )}
-        </Flex>
-      )}
+      <ActionsBar
+        visible={activeTab === '1'}
+        id={id || ''}
+        hasPermission={hasPermission}
+        onDownloadTu={handleDownloadTu}
+        onAddLoad={handleAddLoad}
+        onReject={handleRejectClick}
+        isDownloading={isDownloading}
+      />
 
       <Row gutter={24}>
         <Col span={activeTab === '1' ? 16 : 24}>
-          <Tabs defaultActiveKey='1' items={tabItems} onChange={handleTabChange} />
+          <Tabs activeKey={activeTab} items={tabItems} onChange={handleTabChange} />
         </Col>
         {activeTab === '1' && (
           <Col span={8}>
-            <Card style={{ marginBottom: 16 }}>
-              <Title level={4}>{t('tuDetails.titles.otherDocuments')}</Title>
-              <Progress percent={percent} status={percent < 100 ? 'exception' : 'success'} />
-
-              <Text type='secondary'>{t('tuDetails.hint.uploadToFinishTu')}</Text>
-              {commonFolders.length > 0 && (
-                <List
-                  style={{ margin: '16px 0' }}
-                  bordered
-                  dataSource={commonFolders}
-                  renderItem={(item) => {
-                    return (
-                      <List.Item>
-                        <Space>
-                          {item.filled ? (
-                            <CheckCircleTwoTone twoToneColor='#6be275ff' style={{ marginRight: 8 }} />
-                          ) : (
-                            <CloseCircleTwoTone twoToneColor='#E63A3A' style={{ marginRight: 8 }} />
-                          )}
-                          <FileOutlined style={{ color: '#327BE8' }} />
-                          {item.title}
-                        </Space>
-                      </List.Item>
-                    );
-                  }}
-                />
-              )}
-            </Card>
+            <DocumentsProgress percent={percent} commonFolders={commonFolders} />
 
             <Card>
               <Title level={4}>{t('tuDetails.titles.confirmationAct')}</Title>

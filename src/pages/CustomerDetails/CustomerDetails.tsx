@@ -1,5 +1,5 @@
-import { FC, useState } from 'react';
-import { useParams } from 'react-router';
+import { FC, useEffect, useState } from 'react';
+import { useParams, useSearchParams } from 'react-router';
 import { Alert, Button, Card, Spin, Tabs, Tag, Typography } from 'antd';
 import { DeleteOutlined, DownloadOutlined, EditOutlined } from '@ant-design/icons';
 import { ApplicationsTab } from 'components/CustomerTabs/ApplicationsTab';
@@ -83,13 +83,21 @@ const tabItems = [
 
 export const CustomerDetails: FC<{ title?: string }> = ({ title }) => {
   const { customerId } = useParams<{ customerId: string }>();
-  const [activeTab, setActiveTab] = useState('data');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'data');
 
   // Используем существующий хук, но типизируем как расширенный ответ
   const { data, isLoading, isError } = useGetCustomerByIdQuery(customerId || '') as {
     data: ICustomerFullResponse | undefined;
     isLoading: boolean;
     isError: boolean;
+  };
+
+  const handleTabChange = (key: string): void => {
+    setActiveTab(key);
+    const next = new URLSearchParams(searchParams);
+    next.set('tab', key);
+    setSearchParams(next);
   };
 
   const renderTabContent = () => {
@@ -169,6 +177,15 @@ export const CustomerDetails: FC<{ title?: string }> = ({ title }) => {
     }
   };
 
+  useEffect(() => {
+    const validKeys = (tabItems || []).map((i) => i?.key as string);
+    const urlTab = searchParams.get('tab') || 'data';
+    const next = validKeys.includes(urlTab) ? urlTab : 'data';
+    if (next !== activeTab) {
+      setActiveTab(next);
+    }
+  }, [searchParams, activeTab]);
+
   return (
     <DashboardLayout title={data?.full_name || title || 'dashboard.pages.customers'}>
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginBottom: 16 }}>
@@ -177,7 +194,7 @@ export const CustomerDetails: FC<{ title?: string }> = ({ title }) => {
         <Button danger icon={<DeleteOutlined />} />
       </div>
 
-      <Tabs items={tabItems} activeKey={activeTab} onChange={setActiveTab} style={{ marginBottom: 24 }} />
+      <Tabs items={tabItems} activeKey={activeTab} onChange={handleTabChange} style={{ marginBottom: 24 }} />
 
       {isLoading ? (
         <div style={{ textAlign: 'center', padding: '50px 0' }}>
