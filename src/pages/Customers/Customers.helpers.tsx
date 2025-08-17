@@ -2,7 +2,7 @@ import { Button, Col, Row, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
-import { t } from 'i18next';
+import type { TFunction } from 'i18next';
 
 type actionType = 'edit' | 'delete' | 'registrationDate' | 'details';
 
@@ -22,9 +22,10 @@ export interface CustomerRecord {
 type IGetColumnsFn = (options: {
   onClick: (record: CustomerRecord, action: actionType) => void;
   hasPermission: (value: string) => boolean;
+  t: TFunction;
 }) => ColumnsType<CustomerRecord>;
 
-export const getColumns: IGetColumnsFn = ({ onClick, hasPermission }) => {
+export const getColumns: IGetColumnsFn = ({ onClick, hasPermission, t }) => {
   return [
     {
       title: t('customers.columns.number'),

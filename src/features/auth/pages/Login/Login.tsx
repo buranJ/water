@@ -1,6 +1,8 @@
 import { FC, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import type { SerializedError } from '@reduxjs/toolkit';
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { Button, Form, Input, Typography } from 'antd';
 import logo from 'assets/icons/logo.svg';
 import bg from 'assets/images/login-bg.png';
@@ -39,6 +41,26 @@ const Login: FC = () => {
       .catch(() => {
         setIsFormValid(false);
       });
+  };
+
+  const isFetchBaseQueryError = (e: unknown): e is FetchBaseQueryError => typeof e === 'object' && e !== null && 'status' in e;
+
+  const isSerializedError = (e: unknown): e is SerializedError => typeof e === 'object' && e !== null && 'message' in e && 'name' in e;
+
+  const getErrorMessageKey = (err: unknown): string => {
+    if (isFetchBaseQueryError(err)) {
+      const { status } = err;
+      if (status === 400 || status === 401) return 'login.errors.invalidCredentials';
+      if (status === 403) return 'login.errors.forbidden';
+      if (status === 'FETCH_ERROR') return 'login.errors.network';
+      if (status === 'PARSING_ERROR') return 'login.errors.parse';
+      if (typeof status === 'number' && status >= 500) return 'login.errors.server';
+      return 'login.errors.unknown';
+    }
+    if (isSerializedError(err)) {
+      return 'login.errors.unknown';
+    }
+    return 'login.errors.unknown';
   };
 
   return (
@@ -93,9 +115,7 @@ const Login: FC = () => {
           </Form.Item>
           {isError && error && (
             <Typography.Text type='danger'>
-              {' '}
-              {t('login.authorizationError')}
-              {'data' in error ? (error.data as { detail: string }).detail : ''}
+              {t('login.authorizationError')} {t(getErrorMessageKey(error))}
             </Typography.Text>
           )}
         </Form>

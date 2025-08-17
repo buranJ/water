@@ -11,26 +11,34 @@ import './styles.scss';
 
 import { ICustomer, IGetCustomersParams, useGetAllCustomersQuery } from 'api/Customer.api';
 import { usePermissions } from 'hooks/useAuth';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 
 interface IProps {
   title: string;
 }
 
-const CATEGORY_OPTIONS = [
-  { value: '', label: t('common.all') },
-  { value: '0', label: t('customers.category.legalShort') },
-  { value: '1', label: t('customers.category.physicalShort') }
-];
-
-const ALPHABET_OPTIONS = [
-  { value: 'full_name', label: t('filterBar.alphabetAsc') },
-  { value: '-full_name', label: t('filterBar.alphabetDesc') }
-];
 
 export const Customers: FC<IProps> = ({ title }) => {
   const navigate = useNavigate();
   const { hasPermission } = usePermissions();
+  const { t } = useTranslation();
+
+  const CATEGORY_OPTIONS = useMemo(
+    () => [
+      { value: '', label: t('common.all') },
+      { value: '0', label: t('customers.category.legalShort') },
+      { value: '1', label: t('customers.category.physicalShort') }
+    ],
+    [t]
+  );
+
+  const ALPHABET_OPTIONS = useMemo(
+    () => [
+      { value: 'full_name', label: t('filterBar.alphabetAsc') },
+      { value: '-full_name', label: t('filterBar.alphabetDesc') }
+    ],
+    [t]
+  );
 
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(8);
@@ -95,9 +103,10 @@ export const Customers: FC<IProps> = ({ title }) => {
             break;
         }
       },
-      hasPermission
+      hasPermission,
+      t
     });
-  }, [navigate, hasPermission]);
+  }, [navigate, hasPermission, t]);
 
   const handlePaginationChange = (page: number, pageSize?: number) => {
     setFilters({ ...filters, page });

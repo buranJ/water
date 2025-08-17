@@ -11,7 +11,15 @@
     "forgotPassword": "Forgot password?",
     "authorizationError": "An error occurred during authorization:",
     "login": "Log In",
-    "loading": "Logging in..."
+    "loading": "Logging in...",
+    "errors": {
+      "invalidCredentials": "Invalid email or password",
+      "forbidden": "Access denied",
+      "server": "Server error. Please try again later.",
+      "network": "Network error. Check your internet connection.",
+      "parse": "Unexpected response from server.",
+      "unknown": "Unknown error"
+    }
   },
   "dashboard": {
     "pages": {

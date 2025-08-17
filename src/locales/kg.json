@@ -11,7 +11,15 @@
     "forgotPassword": "Сырсөздү унуттуңузбу?",
     "authorizationError": "Авторизация учурунда ката кетти:",
     "login": "Кирүү",
-    "loading": "Кирип жатабыз..."
+    "loading": "Кирип жатабыз...",
+    "errors": {
+      "invalidCredentials": "Туура эмес email же сырсөз",
+      "forbidden": "Кирүүгө тыюу салынган",
+      "server": "Сервер катасы. Кийинчерээк кайра аракет кылыңыз.",
+      "network": "Тармак катасы. Интернет байланышын текшериңиз.",
+      "parse": "Серверден күтүлбөгөн жооп.",
+      "unknown": "Белгисиз ката"
+    }
   },
   "dashboard": {
     "pages": {
@@ -747,6 +755,21 @@
     }
   },
   "customers": {
+    "columns": {
+      "number": "№",
+      "customer": "Кардар",
+      "categories": "Категориялар",
+      "passportData": "Паспорттук маалымат",
+      "registrationDate": "Катталган күнү",
+      "address": "Дарек",
+      "contacts": "Байланыш",
+      "status": "Статус",
+      "action": "Аракет"
+    },
+    "category": {
+      "legalShort": "Юр. жак",
+      "physicalShort": "Физ. жак"
+    },
     "messages": {
       "created": "Кардар ийгиликтүү кошулду",
       "createError": "Кардарды түзүүдө ката"
