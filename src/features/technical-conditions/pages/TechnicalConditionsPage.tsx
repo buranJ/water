@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import { Table } from 'common/ui';
 import { Pagination } from 'common/ui';
 import { TUFilterBar } from '../components/TUFilterBar/TUFilterBar';
@@ -17,7 +17,7 @@ interface TUFilterValues {
   search?: string;
   ordering?: string;
   payment_ordering?: string;
-  type?: IStageEnum;
+  stage?: IStageEnum;
   status?: IStatus6b3Enum;
   date?: string;
   has_invoice?: boolean;
@@ -28,13 +28,42 @@ interface TUFilterValues {
 export const TechnicalConditionsPage = () => {
   const navigate = useNavigate();
 
-  const [filters, setFilters] = useState<IGetAllTechnicalConditionParams>({
-    page: 1,
-    page_size: 8,
-    ordering: 'created_at'
-  });
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const { data: tuData, isLoading } = useGetAllTyQuery(filters, {
+  const page = Number(searchParams.get('page')) > 0 ? Number(searchParams.get('page')) : 1;
+  const pageSize = Number(searchParams.get('page_size')) > 0 ? Number(searchParams.get('page_size')) : 8;
+
+  const s = (key: string) => searchParams.get(key) || undefined;
+
+  const search = s('search');
+  const status = (s('status') as IStatus6b3Enum | undefined) || undefined;
+  const stage = (s('stage') as IStageEnum | undefined) || undefined;
+  const date = s('date');
+  const payment_ordering = s('payment_ordering');
+  const filterOrdering = s('ordering');
+  const hasInvoiceStr = s('has_invoice');
+  const overdueStr = s('overdue');
+  const dueInDaysStr = s('due_in_days');
+
+  const has_invoice = hasInvoiceStr === 'true' ? true : hasInvoiceStr === 'false' ? false : undefined;
+  const overdue = overdueStr === 'true' ? true : overdueStr === 'false' ? false : undefined;
+  const due_in_days = dueInDaysStr && !Number.isNaN(Number(dueInDaysStr)) ? Number(dueInDaysStr) : undefined;
+
+  const ordering = [date, payment_ordering, filterOrdering].filter(Boolean).join(', ');
+
+  const queryParams: IGetAllTechnicalConditionParams = {
+    page,
+    page_size: pageSize,
+    search,
+    status,
+    stage,
+    ordering,
+    has_invoice,
+    overdue,
+    due_in_days
+  };
+
+  const { data: tuData, isLoading } = useGetAllTyQuery(queryParams, {
     refetchOnMountOrArgChange: true
   });
 
@@ -47,14 +76,23 @@ export const TechnicalConditionsPage = () => {
   }, [tuData]);
 
   const handleFilterChange = (values: TUFilterValues) => {
-    const { date, payment_ordering, ordering: filterOrdering, ...rest } = values;
-    const ordering = [date, payment_ordering, filterOrdering].filter(Boolean).join(', ');
-    setFilters((prev) => ({
-      ...prev,
-      ...rest,
-      ordering,
-      page: 1
-    }));
+    const next = new URLSearchParams(searchParams);
+    const { date, payment_ordering, ordering: filterOrd, ...rest } = values;
+
+    const setOrDelete = (key: string, val: unknown) => {
+      if (val === undefined || val === null || String(val).trim() === '') next.delete(key);
+      else next.set(key, String(val));
+    };
+
+    setOrDelete('date', date);
+    setOrDelete('payment_ordering', payment_ordering);
+    setOrDelete('ordering', filterOrd);
+
+    Object.entries(rest).forEach(([k, v]) => setOrDelete(k, v as unknown));
+
+    next.set('page', '1');
+    next.set('page_size', String(pageSize));
+    setSearchParams(next, { replace: false });
   };
 
   const handleAddClick = () => {
@@ -86,17 +124,31 @@ export const TechnicalConditionsPage = () => {
   );
 
   const handlePageChange = (newPage: number, newPageSize?: number) => {
-    setFilters((prev) => ({
-      ...prev,
-      page: newPage,
-      page_size: newPageSize ?? prev.page_size
-    }));
+    const next = new URLSearchParams(searchParams);
+    next.set('page', String(newPage));
+    next.set('page_size', String(newPageSize ?? pageSize));
+    setSearchParams(next, { replace: false });
   };
 
   return (
     <DashboardLayout title={t('routers.technicalSpecificatio')}>
       <div className='technical-conditions-page'>
-        <TUFilterBar onFilterChange={handleFilterChange} onAddClick={handleAddClick} onDownloadClick={handleDownloadClick} />
+        <TUFilterBar
+          initialValues={{
+            search: search || undefined,
+            ordering: filterOrdering,
+            payment_ordering,
+            status: status,
+            stage: stage,
+            date,
+            has_invoice,
+            overdue,
+            due_in_days
+          }}
+          onFilterChange={handleFilterChange}
+          onAddClick={handleAddClick}
+          onDownloadClick={handleDownloadClick}
+        />
         <Table
           tableLayout='fixed'
           pagination={false}
@@ -107,7 +159,7 @@ export const TechnicalConditionsPage = () => {
           bordered
           scroll={{ x: 'max-content' }}
         />
-        <Pagination total={tuData?.count || 0} current={filters.page} pageSize={filters.page_size} onChange={handlePageChange} />
+        <Pagination total={tuData?.count || 0} current={page} pageSize={pageSize} onChange={handlePageChange} />
       </div>
     </DashboardLayout>
   );

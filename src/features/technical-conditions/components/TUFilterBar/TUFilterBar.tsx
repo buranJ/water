@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Button, Form, Input, Select, Space } from 'antd';
 import { DownloadOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { IStageEnum, IStatus6b3Enum } from 'types/common';
@@ -11,7 +12,7 @@ interface TUFilterValues {
   search?: string;
   ordering?: string;
   payment_ordering?: string;
-  type?: IStageEnum;
+  stage?: IStageEnum;
   status?: IStatus6b3Enum;
   date?: string;
   has_invoice?: boolean;
@@ -20,13 +21,24 @@ interface TUFilterValues {
 }
 
 interface Props {
+  initialValues?: TUFilterValues;
   onFilterChange: (values: TUFilterValues) => void;
   onAddClick: () => void;
   onDownloadClick: () => void;
 }
 
-export const TUFilterBar = ({ onFilterChange, onAddClick, onDownloadClick }: Props) => {
+export const TUFilterBar = ({ onFilterChange, onAddClick, onDownloadClick, initialValues }: Props) => {
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (initialValues) {
+      form.setFieldsValue({
+        ...initialValues,
+        has_invoice: initialValues.has_invoice === undefined ? undefined : String(initialValues.has_invoice),
+        overdue: initialValues.overdue === undefined ? undefined : String(initialValues.overdue)
+      });
+    }
+  }, [form, initialValues]);
 
   const handleValuesChange = (_: unknown, allValues: TUFilterValues) => {
     onFilterChange(allValues);
@@ -38,7 +50,21 @@ export const TUFilterBar = ({ onFilterChange, onAddClick, onDownloadClick }: Pro
 
   return (
     <div className='tu-filter-bar'>
-      <Form form={form} layout='inline' onValuesChange={handleValuesChange} style={{ flexWrap: 'wrap', rowGap: 12 }}>
+      <Form
+        form={form}
+        layout='inline'
+        onValuesChange={handleValuesChange}
+        initialValues={
+          initialValues
+            ? {
+                ...initialValues,
+                has_invoice: initialValues.has_invoice === undefined ? undefined : String(initialValues.has_invoice),
+                overdue: initialValues.overdue === undefined ? undefined : String(initialValues.overdue)
+              }
+            : undefined
+        }
+        style={{ flexWrap: 'wrap', rowGap: 12 }}
+      >
         <Form.Item name='search'>
           <Input prefix={<SearchOutlined />} placeholder={t('filterBar.search')} allowClear />
         </Form.Item>

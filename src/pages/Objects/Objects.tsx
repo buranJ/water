@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import { Col, Empty, message, Row, Spin } from 'antd';
 import CustomPagination from 'common/ui/Pagination/CustomPagination';
 import { DashboardLayout } from 'components/DashboardLayout';
@@ -22,14 +22,17 @@ interface ApiError {
 
 export const Objects: FC<ObjectsProps> = ({ title }) => {
   const navigate = useNavigate();
-  const [filters, setFilters] = useState<ObjectFilters>({
-    search: '',
-    status: null,
-    date: 'created_at'
-  });
   const [showAddForm, setShowAddForm] = useState(false);
-  const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(12);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const page = Number(searchParams.get('page')) > 0 ? Number(searchParams.get('page')) : 1;
+  const pageSize = Number(searchParams.get('page_size')) > 0 ? Number(searchParams.get('page_size')) : 12;
+
+  const filters: ObjectFilters = {
+    search: searchParams.get('search') || '',
+    status: (searchParams.get('status') as 'active' | 'inactive' | null) || null,
+    date: (searchParams.get('date') as string) || 'created_at'
+  };
 
   // Подготавливаем параметры для API с обязательными page и page_size
   const queryParams: IGetObjectParams = {
@@ -77,11 +80,24 @@ export const Objects: FC<ObjectsProps> = ({ title }) => {
   }, [objects, filters.date]);
 
   const handleFilterChange = (filterType: keyof ObjectFilters, value: string | null): void => {
-    setFilters((prev) => ({ ...prev, [filterType]: value }));
+    const next = new URLSearchParams(searchParams);
+    if (value === null || value === '' || value === 'null') {
+      next.delete(filterType as string);
+    } else {
+      next.set(filterType as string, String(value));
+    }
+    // reset page on filter change
+    next.set('page', '1');
+    next.set('page_size', String(pageSize));
+    setSearchParams(next, { replace: false });
   };
 
   const handleSearchChange = (value: string): void => {
-    setFilters((prev) => ({ ...prev, search: value }));
+    const next = new URLSearchParams(searchParams);
+    if (value && value.trim().length > 0) next.set('search', value);
+    else next.delete('search');
+    next.set('page', '1'); // reset page on new search
+    setSearchParams(next, { replace: false });
   };
 
   const handleAddNew = (): void => {
@@ -148,8 +164,10 @@ export const Objects: FC<ObjectsProps> = ({ title }) => {
   }
 
   const handlePaginationChange = (newPage: number, newPageSize?: number) => {
-    setPage(newPage);
-    if (newPageSize) setPageSize(newPageSize);
+    const next = new URLSearchParams(searchParams);
+    next.set('page', String(newPage));
+    next.set('page_size', String(newPageSize ?? pageSize));
+    setSearchParams(next, { replace: false });
   };
 
   return (
