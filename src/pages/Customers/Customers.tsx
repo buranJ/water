@@ -1,5 +1,5 @@
-import { FC, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { FC, useMemo } from 'react';
+import { useNavigate, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'antd';
 import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
@@ -10,7 +10,7 @@ import type { FilterValues } from 'components/FilterBar/FilterBar';
 import { getColumns } from './Customers.helpers';
 import './styles.scss';
 
-import { ICustomer, IGetCustomersParams, useGetAllCustomersQuery } from 'api/Customer.api';
+import { ICustomer, useGetAllCustomersQuery } from 'api/Customer.api';
 import { usePermissions } from 'hooks/useAuth';
 
 interface IProps {
@@ -39,25 +39,40 @@ export const Customers: FC<IProps> = ({ title }) => {
     [t]
   );
 
-  const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(8);
-  const [filters, setFilters] = useState<IGetCustomersParams>({
-    page: 1,
-    page_size: 8
-  });
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const page = Number(searchParams.get('page')) > 0 ? Number(searchParams.get('page')) : 1;
+  const pageSize = Number(searchParams.get('page_size')) > 0 ? Number(searchParams.get('page_size')) : 8;
+
+  const s = (key: string) => searchParams.get(key) || undefined;
+  const search = s('search') || '';
+  const category = (s('category') as '0' | '1' | undefined) || undefined;
+  const alphabet = s('alphabet');
+  const date = s('date');
+  const ordering = [alphabet, date].filter(Boolean).join(', ');
 
   const { data, isLoading } = useGetAllCustomersQuery({
     page,
     page_size: pageSize,
-    ...filters
+    search: search || undefined,
+    category,
+    ordering
   });
 
   const handleFilterChange = (filter: FilterValues) => {
-    const { alphabet, date, ...rest } = filter;
-    const orderingValue = [alphabet, date].filter(Boolean).join(', ');
+    const next = new URLSearchParams(searchParams);
+    const setOrDelete = (key: string, val?: string | null) => {
+      if (!val || val.length === 0) next.delete(key);
+      else next.set(key, String(val));
+    };
 
-    setFilters({ ...rest, category: filter.category as '0' | '1', ordering: orderingValue });
-    setPage(1); // сбрасываем на первую страницу при фильтрации
+    setOrDelete('search', filter.search || '');
+    setOrDelete('category', (filter.category as string) || '');
+    setOrDelete('alphabet', filter.alphabet || '');
+    setOrDelete('date', filter.date || '');
+
+    next.set('page', '1'); // сбрасываем на первую страницу при фильтрации
+    setSearchParams(next, { replace: false });
   };
 
   const onAddClick = () => {
@@ -107,15 +122,18 @@ export const Customers: FC<IProps> = ({ title }) => {
     });
   }, [navigate, hasPermission, t]);
 
-  const handlePaginationChange = (page: number, pageSize?: number) => {
-    setFilters({ ...filters, page });
-    if (pageSize) setPageSize(pageSize);
+  const handlePaginationChange = (newPage: number, newPageSize?: number) => {
+    const next = new URLSearchParams(searchParams);
+    next.set('page', String(newPage));
+    if (newPageSize) next.set('page_size', String(newPageSize));
+    setSearchParams(next, { replace: false });
   };
 
   return (
     <DashboardLayout title={t(title)}>
       <div className='customers-page'>
         <FilterBar
+          initialValues={{ search, category, alphabet: alphabet || undefined, date: date || undefined }}
           onFilterChange={handleFilterChange}
           showAlphabet
           showCategory

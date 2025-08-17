@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Input, Select, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import './styles.scss';
@@ -17,6 +17,7 @@ export interface FilterValues {
 }
 
 interface Props {
+  initialValues?: FilterValues;
   onFilterChange: (values: FilterValues) => void;
   alphabetOptions?: { value: string; label: string }[];
   showAlphabet?: boolean;
@@ -31,6 +32,7 @@ interface Props {
 }
 
 export const FilterBar = ({
+  initialValues,
   onFilterChange,
   showAlphabet,
   showDate,
@@ -43,7 +45,12 @@ export const FilterBar = ({
   actionButtons,
   alphabetOptions
 }: Props) => {
-  const [values, setValues] = useState<FilterValues>({});
+  const [values, setValues] = useState<FilterValues>(() => initialValues || {});
+
+  useEffect(() => {
+    // Синхронизируем внутреннее состояние с начальными значениями (например, при смене URL)
+    setValues(initialValues || {});
+  }, [initialValues]);
 
   const handleChange = (key: keyof FilterValues, value: string) => {
     const newValues = { ...values, [key]: value };

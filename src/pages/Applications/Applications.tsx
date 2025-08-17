@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import { Button, message, Table } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
@@ -38,10 +38,13 @@ export const Applications: FC<IProps> = ({ title }) => {
   const navigate = useNavigate();
   const [debouncedSearch, setDebouncedSearch] = useState<string>('');
   const { hasPermission } = usePermissions();
-  const [status, setStatus] = useState<string>('');
-  const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(8);
-  const [ordering, setOrdering] = useState<string | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const page = Number(searchParams.get('page')) > 0 ? Number(searchParams.get('page')) : 1;
+  const pageSize = Number(searchParams.get('page_size')) > 0 ? Number(searchParams.get('page_size')) : 8;
+  const status = searchParams.get('status') || '';
+  const ordering = searchParams.get('ordering') || 'created_at';
+  const search = searchParams.get('search') || '';
 
   const { data, isLoading, refetch } = useGetApplicationsQuery(
     {
@@ -49,7 +52,7 @@ export const Applications: FC<IProps> = ({ title }) => {
       status: (status || undefined) as 'pending' | 'rejected' | 'approved' | 'contracted' | undefined,
       page,
       page_size: pageSize,
-      ordering: ordering ? ordering : 'created_at'
+      ordering
     },
     { refetchOnMountOrArgChange: true }
   );
@@ -58,7 +61,6 @@ export const Applications: FC<IProps> = ({ title }) => {
 
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [selectedApplication, setSelectedApplication] = useState<string>();
-  const [search, setSearch] = useState<string>('');
 
   const openRejectModal = useCallback((applicationId: string) => {
     setSelectedApplication(applicationId);
@@ -86,12 +88,21 @@ export const Applications: FC<IProps> = ({ title }) => {
   }, [search]);
 
   // Обработка фильтрации из FilterBar
-  const handleFilterChange = useCallback((filter: FilterValues) => {
-    setSearch(filter.search || '');
-    setStatus(filter.status || '');
-    setOrdering(filter.date || '');
-    setPage(1); // сбрасываем на первую страницу при фильтрации
-  }, []);
+  const handleFilterChange = useCallback(
+    (filter: FilterValues) => {
+      const next = new URLSearchParams(searchParams);
+      const setOrDelete = (key: string, val?: string | null) => {
+        if (!val || val.length === 0) next.delete(key);
+        else next.set(key, String(val));
+      };
+      setOrDelete('search', filter.search || '');
+      setOrDelete('status', filter.status || '');
+      setOrDelete('ordering', filter.date || '');
+      next.set('page', '1'); // сброс на первую страницу при смене фильтров
+      setSearchParams(next, { replace: false });
+    },
+    [searchParams, setSearchParams]
+  );
 
   // Преобразование данных к формату таблицы (если нужно)
   const tableData: ApplicationData[] = useMemo(() => {
@@ -141,9 +152,11 @@ export const Applications: FC<IProps> = ({ title }) => {
     navigate('create');
   };
 
-  const handlePaginationChange = (page: number, pageSize?: number) => {
-    setPage(page);
-    if (pageSize) setPageSize(pageSize);
+  const handlePaginationChange = (newPage: number, newPageSize?: number) => {
+    const next = new URLSearchParams(searchParams);
+    next.set('page', String(newPage));
+    if (newPageSize) next.set('page_size', String(newPageSize));
+    setSearchParams(next, { replace: false });
   };
 
   useEffect(() => {
@@ -173,6 +186,7 @@ export const Applications: FC<IProps> = ({ title }) => {
   return (
     <DashboardLayout title={t(title)}>
       <FilterBar
+        initialValues={{ search, status, date: ordering }}
         onFilterChange={handleFilterChange}
         showStatusSelect
         showDate
