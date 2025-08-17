@@ -1,5 +1,6 @@
 import { FC, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'antd';
 import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
 import { Table } from 'common/ui';
@@ -11,12 +12,10 @@ import './styles.scss';
 
 import { ICustomer, IGetCustomersParams, useGetAllCustomersQuery } from 'api/Customer.api';
 import { usePermissions } from 'hooks/useAuth';
-import { useTranslation } from 'react-i18next';
 
 interface IProps {
   title: string;
 }
-
 
 export const Customers: FC<IProps> = ({ title }) => {
   const navigate = useNavigate();
