@@ -53,7 +53,8 @@
     "technicalSpecificatio": "Техникалык шарттар",
     "applicationDetails": "Арыз №",
     "tuNumberPrefix": "ТУ №",
-    "changeHistory": "Өзгөрүүлөр тарыхы"
+    "changeHistory": "Өзгөрүүлөр тарыхы",
+    "notifications": "Билдирмелер"
   },
   "profile": {
     "title": "Жөндөөлөр",
@@ -99,6 +100,7 @@
       "alphabet": "Алфавит боюнча",
       "type": "Түрү боюнча",
       "status": "Статус",
+      "required": "Милдеттүү талаа",
       "date": "Күнү",
       "category": "Категория"
     }
@@ -142,24 +144,31 @@
     "upload": "Жүктөө",
     "pending": "Күтүүдө",
     "status": "Статус",
+    "required": "Милдеттүү талаа",
     "export": "Экспорт",
     "all": "Баары",
     "download": "Жүктөп алуу",
     "uploadMore": "Дагы жүктөө",
+    "inDevelopment": "Иштеп чыгууда",
     "back": "Артка",
     "uploadFile": "Файл жүктөө",
+    "supportedFormatsHint": "Сүрөттөр, PDF, DOC/DOCX, XLS/XLSX колдоого алынат",
     "bytes": "байт",
     "selectedFiles": "Тандалган файлдар: {{count}}",
     "errorPrefix": "Ката: ",
     "remaining": "Калдык",
     "coordinates": "Координаттар",
     "area": "Аянт",
+    "amountLabel": "Сумма:",
+    "dateLabel": "Күнү:",
+    "totalLabel": "Жалпы:",
     "save": "Сактоо",
     "edit": "Түзөтүү",
     "cancel": "Жокко чыгаруу",
     "latitude": "Кеңдик",
     "longitude": "Узундук",
-    "comment": "Комментарий"
+    "comment": "Комментарий",
+    "optionalComment": "Комментарий (милдеттүү эмес)"
   },
   "geoportal": {
     "errorLoad": "Маалыматтарды жүктөөдө ката",
@@ -203,6 +212,10 @@
     },
     "hint": {
       "ty": "ТУ"
+    },
+    "messages": {
+      "addSuccess": "Жүк кошулду",
+      "addError": "Жүктү кошуу мүмкүн болгон жок"
     }
   },
   "tuDetails": {
@@ -227,6 +240,7 @@
       "objectLocation": "Объекттин жайгашкан жери",
       "waterRequired": "Суу керектөө көлөмү",
       "pressureRequired": "Талап кылынган басым",
+      "sewageAmount": "Стоктор көлөмү",
       "geoportalRequest": "Геопорталды түзүү боюнча сурам",
       "savedGeoportalRequest": "Сакталган геопортал сурамы",
       "waterSupply": "Суу түтүгү",
@@ -240,7 +254,7 @@
       "requestSource": "Сурактын булагы:",
       "inn": "ИНН:",
       "connectionTarget": "Туташуу объекти:",
-      "streetPass": "ТУ маалыматтарынын өзгөрүү тарыхы",
+      "streetPass": "Көчө боюнча өтүү:",
       "collector": "Коллектор:",
       "fireFighting": "Өрт өчүрүү:",
       "fireInput1": "Өрт киргизүү 1:",
@@ -260,7 +274,7 @@
     "currency": "сом",
     "actions": {
       "request": "Сурам жөнөтүү",
-      "changeTuData": "ТУ маалыматтарын өзгөртүү",
+      "changeTuData": "ТУ маалыматтарынын өзгөрүү тарыхы",
       "downloadTu": "ТУ жүктөп алуу",
       "rejectTu": "ТУдан баш тартуу"
     },
@@ -341,7 +355,7 @@
     "status": {
       "new": "Жаңы",
       "inProgress": "Иштөөдө",
-      "completed": "Аяктады"
+      "completed": "Аякталды"
     },
     "responsible": {
       "departmentA": "A бөлүмү",
@@ -461,6 +475,7 @@
     },
     "defaultReason": "Зарыл документтер жетишпейт",
     "placeholders": {
+      "reason": "Себеп(тер)ин тандаңыз",
       "comment": "Себеби тууралуу кеңири жазыңыз..."
     },
     "buttons": {
@@ -768,11 +783,15 @@
     },
     "category": {
       "legalShort": "Юр. жак",
-      "physicalShort": "Физ. жак"
+      "physicalShort": "Физ. жак",
+      "legalFull": "Юридикалык жак",
+      "physicalFull": "Физикалык жак"
     },
     "messages": {
       "created": "Кардар ийгиликтүү кошулду",
-      "createError": "Кардарды түзүүдө ката"
+      "createError": "Кардарды түзүүдө ката",
+      "updated": "Кардар ийгиликтүү жаңыртылды",
+      "updateError": "Кардарды жаңыртууда ката"
     },
     "status": {
       "active": "Активдүү",
@@ -1034,7 +1053,7 @@
       "paymentDate": "Төлөм датасы",
       "amount": "Төлөм суммасы",
       "source": "Төлөм булагы",
-      "status": "Төлөм статусту",
+      "status": "Төлөм статусу",
       "optionalReceiptFile": "Чек файлы (милдеттүү эмес)"
     },
     "placeholders": {
@@ -1082,6 +1101,8 @@
       "empty": "Төлөмдөр жок",
       "actions": "Аракеттер"
     },
+    "of": "ичинен",
+    "headingByInvoices": "Эсептер боюнча төлөмдөр",
     "messages": {
       "loadErrorTitle": "Жүктөө катасы",
       "loadErrorDesc": "Төлөмдөр боюнча маалыматты жүктөө мүмкүн болгон жок",
@@ -1092,6 +1113,16 @@
     "errors": {
       "loadTitle": "Жүктөө катасы",
       "loadDesc": "Бухгалтерия маалыматын жүктөө мүмкүн болгон жок"
+    },
+    "labels": {
+      "paid": "Төлөндү",
+      "invoicesNotFound": "Эсептер табылган жок",
+      "waterSupply": "Суу менен камсыздоо",
+      "sewer": "Канализация"
+    },
+    "invoiceTypeLabels": {
+      "main": "Негизги эсеп",
+      "paper_tu": "Кагаз ТУ үчүн"
     },
     "messages": {
       "generateInvoiceSuccess": "Эсеп ийгиликтүү түзүлдү",

@@ -53,7 +53,8 @@
     "technicalSpecificatio": "Технические условия",
     "applicationDetails": "заявка №",
     "tuNumberPrefix": "ТУ №",
-    "changeHistory": "История изменений"
+    "changeHistory": "История изменений",
+    "notifications": "Уведомления"
   },
   "profile": {
     "title": "Настройки",
@@ -99,6 +100,7 @@
       "alphabet": "По алфавиту",
       "type": "По типу",
       "status": "Статус",
+    "required": "Обязательное поле",
       "date": "Дата",
       "category": "Категория"
     }
@@ -142,6 +144,7 @@
     "upload": "Загрузить",
     "pending": "В ожидании",
     "status": "Статус",
+    "required": "Обязательное поле",
     "export": "Экспорт",
     "all": "Все",
     "download": "Скачать",
@@ -149,18 +152,23 @@
     "inDevelopment": "В разработке",
     "back": "Назад",
     "uploadFile": "Загрузить файл",
+    "supportedFormatsHint": "Поддерживаются изображения, PDF, DOC/DOCX, XLS/XLSX",
     "bytes": "байт",
     "selectedFiles": "Выбрано файлов: {{count}}",
     "errorPrefix": "Ошибка: ",
     "remaining": "Остаток",
     "coordinates": "Координаты",
     "area": "Площадь",
+    "amountLabel": "Сумма:",
+    "dateLabel": "Дата:",
+    "totalLabel": "Итого:",
     "save": "Сохранить",
     "edit": "Редактировать",
     "cancel": "Отмена",
     "latitude": "Широта",
     "longitude": "Долгота",
-    "comment": "Комментарий"
+    "comment": "Комментарий",
+    "optionalComment": "Комментарий (необязательно)"
   },
   "geoportal": {
     "errorLoad": "Ошибка загрузки данных",
@@ -204,6 +212,10 @@
     },
     "hint": {
       "ty": "ТУ"
+    },
+    "messages": {
+      "addSuccess": "Нагрузка добавлена",
+      "addError": "Не удалось добавить нагрузку"
     }
   },
   "tuDetails": {
@@ -228,6 +240,7 @@
       "objectLocation": "Место нахождения объекта",
       "waterRequired": "Требуемое количество водопроводной воды",
       "pressureRequired": "Требуемый свободный напор",
+      "sewageAmount": "Количество стоков",
       "geoportalRequest": "Запрос на создание геопортала",
       "savedGeoportalRequest": "Сохраненный запрос на геопортал",
       "waterSupply": "Водопровод",
@@ -616,6 +629,7 @@
     },
     "defaultReason": "Отсутствие необходимых документов",
     "placeholders": {
+      "reason": "Выберите причину(ы)",
       "comment": "Напишите подробнее причину..."
     },
     "buttons": {
@@ -1087,6 +1101,8 @@
       "empty": "Нет платежей",
       "actions": "Действия"
     },
+    "of": "из",
+    "headingByInvoices": "Платежи по счетам",
     "messages": {
       "loadErrorTitle": "Ошибка загрузки",
       "loadErrorDesc": "Не удалось загрузить данные платежей",
@@ -1097,6 +1113,16 @@
     "errors": {
       "loadTitle": "Ошибка загрузки",
       "loadDesc": "Не удалось загрузить данные бухгалтерии"
+    },
+    "labels": {
+      "paid": "Оплачен",
+      "invoicesNotFound": "Счета не найдены",
+      "waterSupply": "Водоснабжение",
+      "sewer": "Канализация"
+    },
+    "invoiceTypeLabels": {
+      "main": "Основной счет",
+      "paper_tu": "За бумажный ТУ"
     },
     "messages": {
       "generateInvoiceSuccess": "Счет успешно сгенерирован",

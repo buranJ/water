@@ -17,9 +17,9 @@ export const InvoicesList: FC<IProps> = ({ invoices }) => {
   const getInvoiceTypeLabel = (invoiceType: string) => {
     switch (invoiceType) {
       case 'main':
-        return { label: 'Основной счет', color: 'blue' };
+        return { label: t('accounting.invoiceTypeLabels.main'), color: 'blue' };
       case 'paper_tu':
-        return { label: 'За бумажный ТУ', color: 'orange' };
+        return { label: t('accounting.invoiceTypeLabels.paper_tu'), color: 'orange' };
       default:
         return { label: invoiceType, color: 'default' };
     }
@@ -61,13 +61,23 @@ export const InvoicesList: FC<IProps> = ({ invoices }) => {
                 </Flex>
 
                 <div style={{ fontSize: '12px', color: '#666', marginBottom: 4 }}>
-                  Дата: {new Date(invoice.invoice_date).toLocaleDateString('ru-RU')}
+                  {t('common.dateLabel')} {new Date(invoice.invoice_date).toLocaleDateString('ru-RU')}
                 </div>
 
                 <Flex gap={16} style={{ fontSize: '12px' }}>
-                  {parseFloat(invoice.total_water_sum) > 0 && <Text>Водоснабжение: {formatCurrency(invoice.total_water_sum)}</Text>}
-                  {parseFloat(invoice.total_kanal_sum) > 0 && <Text>Канализация: {formatCurrency(invoice.total_kanal_sum)}</Text>}
-                  <Text strong>Итого: {formatCurrency(invoice.total_sum)}</Text>
+                  {parseFloat(invoice.total_water_sum) > 0 && (
+                    <Text>
+                      {t('accounting.labels.waterSupply')}: {formatCurrency(invoice.total_water_sum)}
+                    </Text>
+                  )}
+                  {parseFloat(invoice.total_kanal_sum) > 0 && (
+                    <Text>
+                      {t('accounting.labels.sewer')}: {formatCurrency(invoice.total_kanal_sum)}
+                    </Text>
+                  )}
+                  <Text strong>
+                    {t('common.totalLabel')} {formatCurrency(invoice.total_sum)}
+                  </Text>
                 </Flex>
               </div>
 

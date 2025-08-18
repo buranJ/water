@@ -93,7 +93,7 @@ const InvoicePayments: FC<IInvoicePaymentsProps> = ({ invoice, onAddPayment }) =
         <Space>
           {record.receipt_file && (
             <Button size='small' icon={<FileTextOutlined />} onClick={() => window.open(record.receipt_file || '', '_blank')}>
-              Файл
+              {t('paymentsTab.buttons.receipt')}
             </Button>
           )}
         </Space>
@@ -115,7 +115,14 @@ const InvoicePayments: FC<IInvoicePaymentsProps> = ({ invoice, onAddPayment }) =
   }
 
   if (isError) {
-    return <Alert message='Ошибка загрузки платежей' type='error' showIcon />;
+    return (
+      <Alert
+        message={t('paymentsTab.messages.loadErrorTitle')}
+        description={t('paymentsTab.messages.loadErrorDesc')}
+        type='error'
+        showIcon
+      />
+    );
   }
 
   return (
@@ -123,16 +130,22 @@ const InvoicePayments: FC<IInvoicePaymentsProps> = ({ invoice, onAddPayment }) =
       <Card size='small' style={{ marginBottom: 16, backgroundColor: '#fafafa' }}>
         <Flex justify='space-between' align='center' style={{ marginBottom: 12 }}>
           <div>
-            <Text strong>Оплачено: {formatCurrency(totalPaid)}</Text>
+            <Text strong>
+              {t('accounting.labels.paid')}: {formatCurrency(totalPaid)}
+            </Text>
             <br />
-            <Text type='secondary'>из {formatCurrency(totalAmount)}</Text>
+            <Text type='secondary'>
+              {t('paymentsTab.of')} {formatCurrency(totalAmount)}
+            </Text>
           </div>
           <div style={{ textAlign: 'right' }}>
             {remainingAmount > 0 ? (
-              <Text type='danger'>Остаток: {formatCurrency(remainingAmount)}</Text>
+              <Text type='danger'>
+                {t('common.remaining')}: {formatCurrency(remainingAmount)}
+              </Text>
             ) : (
               <Text type='success' strong>
-                Полностью оплачено
+                {t('paymentsTab.messages.invoiceFullyPaid')}
               </Text>
             )}
           </div>
@@ -147,9 +160,11 @@ const InvoicePayments: FC<IInvoicePaymentsProps> = ({ invoice, onAddPayment }) =
 
       {/* Кнопка добавления платежа */}
       <Flex justify='space-between' align='center' style={{ marginBottom: 16 }}>
-        <Text strong>Платежи ({payments.length})</Text>
+        <Text strong>
+          {t('protocolDetail.tabs.payments')} ({payments.length})
+        </Text>
         <Button type='primary' size='small' icon={<PlusOutlined />} onClick={() => onAddPayment(invoice.id.toString())}>
-          Добавить платеж
+          {t('paymentsTab.buttons.add')}
         </Button>
       </Flex>
 
@@ -159,7 +174,7 @@ const InvoicePayments: FC<IInvoicePaymentsProps> = ({ invoice, onAddPayment }) =
         rowKey='id'
         pagination={false}
         size='small'
-        locale={{ emptyText: 'Нет платежей' }}
+        locale={{ emptyText: t('paymentsTab.table.empty') }}
         scroll={{ x: 700 }}
       />
     </div>
@@ -200,9 +215,9 @@ export const EnhancedPaymentsTab: FC<IProps> = ({ invoices, autoOpenModal, onMod
   const getInvoiceTypeLabel = (invoiceType: string) => {
     switch (invoiceType) {
       case 'main':
-        return { label: 'Основной счет', color: 'blue' as const };
+        return { label: t('accounting.invoiceTypeLabels.main'), color: 'blue' as const };
       case 'paper_tu':
-        return { label: 'За бумажный ТУ', color: 'orange' as const };
+        return { label: t('accounting.invoiceTypeLabels.paper_tu'), color: 'orange' as const };
       default:
         return { label: invoiceType, color: 'default' as const };
     }
@@ -213,7 +228,14 @@ export const EnhancedPaymentsTab: FC<IProps> = ({ invoices, autoOpenModal, onMod
   };
 
   if (invoices.length === 0) {
-    return <Alert message='Счета не найдены' description='Сначала необходимо создать счета' type='info' showIcon />;
+    return (
+      <Alert
+        message={t('accounting.labels.invoicesNotFound') || t('accounting.errors.loadTitle')}
+        description={t('accounting.messages.needCreateInvoiceFirst')}
+        type='info'
+        showIcon
+      />
+    );
   }
 
   const collapseItems = invoices.map((invoice) => {
@@ -227,10 +249,12 @@ export const EnhancedPaymentsTab: FC<IProps> = ({ invoices, autoOpenModal, onMod
           <Space>
             <Tag color={typeInfo.color}>{typeInfo.label}</Tag>
             <Text strong>#{invoice.invoice_number}</Text>
-            {invoice.is_paid && <Tag color='success'>Оплачен</Tag>}
+            {invoice.is_paid && <Tag color='success'>{t('accounting.labels.paid')}</Tag>}
           </Space>
           <Space>
-            <Text>Сумма: {formatCurrency(totalAmount)}</Text>
+            <Text>
+              {t('common.amountLabel') || 'Сумма:'} {formatCurrency(totalAmount)}
+            </Text>
           </Space>
         </Flex>
       ),
@@ -246,10 +270,10 @@ export const EnhancedPaymentsTab: FC<IProps> = ({ invoices, autoOpenModal, onMod
     <div>
       <Flex justify='space-between' align='center' style={{ marginBottom: 16 }}>
         <Title level={4} style={{ margin: 0 }}>
-          Платежи по счетам
+          {t('paymentsTab.headingByInvoices')}
         </Title>
         <Space>
-          <Button icon={<FileTextOutlined />}>Экспорт в PDF</Button>
+          <Button icon={<FileTextOutlined />}>{t('paymentsTab.buttons.pdf')}</Button>
         </Space>
       </Flex>
 

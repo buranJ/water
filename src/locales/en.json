@@ -53,7 +53,8 @@
     "technicalSpecificatio": "Technical Conditions",
     "applicationDetails": "Application No.",
     "tuNumberPrefix": "TU No.",
-    "changeHistory": "Change history"
+      "changeHistory": "Change history",
+      "notifications": "Notifications"
   },
   "profile": {
     "title": "Settings",
@@ -99,6 +100,7 @@
       "alphabet": "Alphabetically",
       "type": "By Type",
       "status": "Status",
+      "required": "Required field",
       "date": "Date",
       "category": "Category"
     }
@@ -142,24 +144,31 @@
     "upload": "Upload",
     "pending": "Pending",
     "status": "Status",
+    "required": "Required field",
     "export": "Export",
     "all": "All",
     "download": "Download",
     "uploadMore": "Upload more",
+    "inDevelopment": "In development",
     "back": "Back",
     "uploadFile": "Upload file",
+    "supportedFormatsHint": "Images, PDF, DOC/DOCX, XLS/XLSX are supported",
     "bytes": "bytes",
     "selectedFiles": "Selected files: {{count}}",
     "errorPrefix": "Error: ",
     "remaining": "Remaining",
     "coordinates": "Coordinates",
     "area": "Area",
+    "amountLabel": "Amount:",
+    "dateLabel": "Date:",
+    "totalLabel": "Total:",
     "save": "Save",
     "edit": "Edit",
     "cancel": "Cancel",
     "latitude": "Latitude",
     "longitude": "Longitude",
-    "comment": "Comment"
+    "comment": "Comment",
+    "optionalComment": "Comment (optional)"
   },
   "geoportal": {
     "errorLoad": "Failed to load data",
@@ -203,6 +212,10 @@
     },
     "hint": {
       "ty": "TC"
+    },
+    "messages": {
+      "addSuccess": "Load added",
+      "addError": "Failed to add load"
     }
   },
   "tuDetails": {
@@ -227,6 +240,7 @@
       "objectLocation": "Object location",
       "waterRequired": "Required water supply",
       "pressureRequired": "Required pressure",
+      "sewageAmount": "Wastewater amount",
       "geoportalRequest": "Geoportal creation request",
       "savedGeoportalRequest": "Saved geoportal request",
       "waterSupply": "Water supply",
@@ -467,7 +481,9 @@
     },
     "category": {
       "legalShort": "Legal entity",
-      "physicalShort": "Individual"
+      "physicalShort": "Individual",
+      "legalFull": "Legal entity",
+      "physicalFull": "Individual"
     },
     "status": {
       "active": "Active",
@@ -613,6 +629,7 @@
     },
     "defaultReason": "Missing required documents",
     "placeholders": {
+      "reason": "Select reason(s)",
       "comment": "Provide more details about the reason..."
     },
     "buttons": {
@@ -1084,6 +1101,8 @@
       "empty": "No payments",
       "actions": "Actions"
     },
+    "of": "of",
+    "headingByInvoices": "Payments by invoices",
     "messages": {
       "loadErrorTitle": "Load error",
       "loadErrorDesc": "Failed to load payments data",
@@ -1094,6 +1113,16 @@
     "errors": {
       "loadTitle": "Load error",
       "loadDesc": "Failed to load accounting data"
+    },
+    "labels": {
+      "paid": "Paid",
+      "invoicesNotFound": "Invoices not found",
+      "waterSupply": "Water supply",
+      "sewer": "Sewer"
+    },
+    "invoiceTypeLabels": {
+      "main": "Main invoice",
+      "paper_tu": "Paper TU"
     },
     "messages": {
       "generateInvoiceSuccess": "Invoice generated successfully",

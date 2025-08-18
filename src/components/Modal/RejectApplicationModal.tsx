@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Form, Input, Modal, Select, Space, Typography, Upload } from 'antd';
 import type { UploadFile } from 'antd/es/upload/interface';
 import { CloseOutlined, UploadOutlined } from '@ant-design/icons';
@@ -18,6 +19,7 @@ export const RejectApplicationModal: React.FC<RejectApplicationModalProps> = ({ 
   const [form] = Form.useForm<RefusalBody>();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const refuseQuery = useGetRefusalCausesQuery();
+  const { t } = useTranslation();
 
   const handleFinish = (values: RefusalBody) => {
     const adaptedFiles = fileList.map((f) => f.originFileObj).filter(Boolean) as File[];
@@ -120,17 +122,17 @@ export const RejectApplicationModal: React.FC<RejectApplicationModalProps> = ({ 
 
   return (
     <Modal
-      title='Отклонение заявки'
+      title={t('tuRejectModal.title')}
       open={open}
       onCancel={handleCancel}
       width={600}
       footer={
         <Space>
           <Button size='large' onClick={handleCancel}>
-            Назад
+            {t('tuRejectModal.buttons.back')}
           </Button>
           <Button size='large' type='primary' danger htmlType='submit' form='rejectForm'>
-            Отказать
+            {t('tuRejectModal.buttons.reject')}
           </Button>
         </Space>
       }
@@ -138,26 +140,32 @@ export const RejectApplicationModal: React.FC<RejectApplicationModalProps> = ({ 
     >
       <Form id='rejectForm' form={form} layout='vertical' onFinish={handleFinish}>
         <Form.Item
-          label='Причина'
+          label={t('tuRejectModal.labels.reason')}
           name='causes_ids'
           rules={[
             {
               required: true,
-              message: 'Пожалуйста, укажите хотя бы одну причину.'
+              message: t('common.required')
             }
           ]}
         >
-          <Select mode='multiple' size='large' placeholder='Выберите причину(ы)' style={{ width: '100%' }} options={refusals} />
+          <Select
+            mode='multiple'
+            size='large'
+            placeholder={t('tuRejectModal.placeholders.reason')}
+            style={{ width: '100%' }}
+            options={refusals}
+          />
         </Form.Item>
 
-        <Form.Item label='Комментарий' name='comment'>
-          <TextArea placeholder='Напишите подробнее причину...' rows={4} style={{ resize: 'none' }} />
+        <Form.Item label={t('tuRejectModal.labels.comment')} name='comment'>
+          <TextArea placeholder={t('tuRejectModal.placeholders.comment')} rows={4} style={{ resize: 'none' }} />
         </Form.Item>
       </Form>
 
       <div style={{ marginBottom: 16 }}>
         <Text strong style={{ marginBottom: 8, display: 'block' }}>
-          Загрузить письмо
+          {t('tuRejectModal.buttons.upload')}
         </Text>
         <Upload {...uploadProps} fileList={fileList}>
           <Button
@@ -169,7 +177,7 @@ export const RejectApplicationModal: React.FC<RejectApplicationModalProps> = ({ 
               gap: 8
             }}
           >
-            Загрузить письмо
+            {t('tuRejectModal.buttons.upload')}
           </Button>
         </Upload>
         <div style={{ marginTop: 12 }}>{fileList.map((file) => renderFileItem(file))}</div>

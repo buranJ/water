@@ -56,7 +56,7 @@ export const routerConfig: RouteObject[] = [
   },
   {
     path: '/dashboard/objects/:id/change-history',
-    element: <ChangeObjectHistory title='История изменений объекта' />
+    element: <ChangeObjectHistory title='routers.changeHistory' />
   },
   {
     path: '/dashboard/technical-conditions',

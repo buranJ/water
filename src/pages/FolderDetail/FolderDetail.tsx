@@ -38,7 +38,7 @@ export const FolderDetail: FC<IProps> = () => {
               window.open(record.file);
               break;
             case 'delete':
-              message.info('В разработке');
+              message.info(t('common.inDevelopment'));
               break;
           }
         }

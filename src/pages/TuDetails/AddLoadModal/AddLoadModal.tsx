@@ -82,12 +82,12 @@ export const AddLoadModal: FC<IProps> = ({ visible, onClose, tyId }) => {
       };
 
       await addLoad(payload).unwrap();
-      message.success('Нагрузка добавлена');
+      message.success(t('historyOfLoads.messages.addSuccess') || 'Нагрузка добавлена');
       navigate(`/dashboard/technical-conditions/history-of-loads/${tyId}`);
       handleCancel();
     } catch (e) {
       console.error(e);
-      message.error('Не удалось добавить нагрузку');
+      message.error(t('historyOfLoads.messages.addError') || 'Не удалось добавить нагрузку');
     }
   };
 
@@ -134,7 +134,7 @@ export const AddLoadModal: FC<IProps> = ({ visible, onClose, tyId }) => {
           <Col span={24}>
             <Form.Item
               name='sewage_amount'
-              label={'Объем сточных вод'}
+              label={t('tuDetails.titles.sewageAmount') || 'Объем сточных вод'}
               rules={[{ required: true, message: t('common.required') || 'Обязательное поле' }]}
             >
               <InputNumber
@@ -150,7 +150,7 @@ export const AddLoadModal: FC<IProps> = ({ visible, onClose, tyId }) => {
 
           <Col span={24}>
             <Form.Item name='comment' label={t('common.comment') || 'Комментарий'}>
-              <Input.TextArea rows={1} placeholder='Комментарий (опционально)' />
+              <Input.TextArea rows={1} placeholder={t('common.optionalComment') || 'Комментарий (опционально)'} />
             </Form.Item>
           </Col>
         </Row>
@@ -167,8 +167,8 @@ export const AddLoadModal: FC<IProps> = ({ visible, onClose, tyId }) => {
             <p className='ant-upload-drag-icon'>
               <InboxOutlined />
             </p>
-            <p className='ant-upload-text'>Перетащите файлы или нажмите для выбора</p>
-            <p className='ant-upload-hint'>Поддерживаются изображения, PDF, DOC/DOCX, XLS/XLSX</p>
+            <p className='ant-upload-text'>{t('applicationsCreate.uploadModal.dropHint') || 'Перетащите файлы или нажмите для выбора'}</p>
+            <p className='ant-upload-hint'>{t('common.supportedFormatsHint') || 'Поддерживаются изображения, PDF, DOC/DOCX, XLS/XLSX'}</p>
           </Dragger>
         </Form.Item>
 
