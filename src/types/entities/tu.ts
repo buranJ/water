@@ -24,6 +24,25 @@ export interface ITechnicalCondition {
   collector: string;
   water_pipe: string;
   sewer: string;
+
+  // Новые поля - Подключение (Водопровод/Канализация/Пожаротушение)
+  street_pass_water?: string;
+  collector_diametr_water?: string;
+  provide_water?: string;
+
+  street_pass_sewer?: string;
+  collector_diametr_sewer?: string;
+  sewer_pipe?: string;
+  provide_sewer?: string;
+
+  street_pass_input_1?: string;
+  free_pressure_required_input_1?: string;
+  collector_diametr_fire_1?: string;
+
+  street_pass_input_2?: string;
+  free_pressure_required_input_2?: string;
+  collector_diametr_fire_2?: string;
+
   fire_input_1: string | null;
   fire_input_2: string | null;
   notes: string | null;
@@ -83,6 +102,25 @@ export interface IGetTyById {
   collector: string;
   water_pipe: string;
   sewer: string;
+
+  // Новые поля - Подключение (Водопровод/Канализация/Пожаротушение)
+  street_pass_water?: string;
+  collector_diametr_water?: string;
+  provide_water?: string;
+
+  street_pass_sewer?: string;
+  collector_diametr_sewer?: string;
+  sewer_pipe?: string;
+  provide_sewer?: string;
+
+  street_pass_input_1?: string;
+  free_pressure_required_input_1?: string;
+  collector_diametr_fire_1?: string;
+
+  street_pass_input_2?: string;
+  free_pressure_required_input_2?: string;
+  collector_diametr_fire_2?: string;
+
   fire_input_1?: string;
   fire_input_2?: string;
   notes?: string;
@@ -128,6 +166,25 @@ export interface ITyItem {
   collector: string;
   water_pipe: string;
   sewer: string;
+
+  // Новые поля - Подключение (Водопровод/Канализация/Пожаротушение)
+  street_pass_water?: string;
+  collector_diametr_water?: string;
+  provide_water?: string;
+
+  street_pass_sewer?: string;
+  collector_diametr_sewer?: string;
+  sewer_pipe?: string;
+  provide_sewer?: string;
+
+  street_pass_input_1?: string;
+  free_pressure_required_input_1?: string;
+  collector_diametr_fire_1?: string;
+
+  street_pass_input_2?: string;
+  free_pressure_required_input_2?: string;
+  collector_diametr_fire_2?: string;
+
   fire_input_1: string;
   fire_input_2: string;
   notes: string;
@@ -172,6 +229,25 @@ export interface ITyBody {
   collector: string;
   water_pipe: string;
   sewer: string;
+
+  // Новые поля - Подключение (Водопровод/Канализация/Пожаротушение)
+  street_pass_water?: string;
+  collector_diametr_water?: string;
+  provide_water?: string;
+
+  street_pass_sewer?: string;
+  collector_diametr_sewer?: string;
+  sewer_pipe?: string;
+  provide_sewer?: string;
+
+  street_pass_input_1?: string;
+  free_pressure_required_input_1?: string;
+  collector_diametr_fire_1?: string;
+
+  street_pass_input_2?: string;
+  free_pressure_required_input_2?: string;
+  collector_diametr_fire_2?: string;
+
   fire_input_1: string;
   fire_input_2: string;
   notes: string;

@@ -1,6 +1,7 @@
 import { FC, useCallback, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Button, Col, DatePicker, Form, Input, message, Row, Select, Typography } from 'antd';
+import TextArea from 'antd/es/input/TextArea';
 import dayjs, { Dayjs } from 'dayjs';
 import { DashboardLayout } from 'components';
 import { ITyItem } from 'types/entities';
@@ -46,6 +47,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
   const onFinish = useCallback(
     async (values: FormValues) => {
+      console.log(values);
+
       try {
         if (!tuQuery.data) {
           message.error(t('addTuForms.messages.loadTuError'));
@@ -54,14 +57,20 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
         const payload = {
           ...values,
+
           customer: tuQuery.data.customer.id,
           application: tuQuery.data.application!.id,
           entity: tuQuery.data.entity,
+
+          // Даты (на форме нормализуются в YYYY-MM-DD)
           request_date: values.request_date,
           payment_deadline: values.payment_deadline,
+
           // Select возвращает id типа, поэтому отправляем число, а не объект
           type_ty: values.type_ty
         };
+        console.log({ payload });
+
         updateTy({ id: tyId as string, body: payload });
       } catch (e) {
         console.error(e);
@@ -74,8 +83,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
   useEffect(() => {
     if (isSuccess) {
       message.success(t('addTuForms.messages.createTuSuccess'));
-      form.resetFields();
-      navigate(`/dashboard/technical-conditions/tu-details/${tyId}`);
+      // form.resetFields();
+      // navigate(`/dashboard/technical-conditions/tu-details/${tyId}`);
     }
   }, [form, isSuccess, navigate, tyId]);
 
@@ -269,8 +278,12 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Form.Item>
           </Col>
         </Row>
+        {/* ‹Form. Item label='Пожаротушение внутреннее' name='firefightingExpensesInner' rules={[{ required: fals */}
+        <Form.Item label='Пожаротушение наружнее' name='fire_fighting_inner' rules={[{ required: false }]}>
+          <Input size='large' placeholder={t('addTuForms.form.placeholders.fireFighting')} />
+        </Form.Item>
 
-        <Form.Item label={t('addTuForms.form.labels.fireFighting')} name='fire_fighting' rules={[{ required: false }]}>
+        <Form.Item label='Пожаротушение внутреннее' name='fire_fighting_outer' rules={[{ required: false }]}>
           <Input size='large' placeholder={t('addTuForms.form.placeholders.fireFighting')} />
         </Form.Item>
 
@@ -299,6 +312,20 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Col>
         </Row>
 
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item label={t('addTuForms.form.labels.status')} name='status' rules={[{ required: true }]}>
+              <Select size='large' placeholder={t('addTuForms.form.placeholders.status')}>
+                {statusOptions.map((option) => (
+                  <Option key={option.value} value={option.value}>
+                    {option.label}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+        </Row>
+
         {/* =========================
             ПОДКЛЮЧЕНИЕ
         ========================= */}
@@ -309,42 +336,119 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         <Form.Item label={t('addTuForms.form.labels.connectionTarget')} name='connection_target' rules={[{ required: false }]}>
           <Input size='large' placeholder={t('addTuForms.form.placeholders.connectionTarget')} />
         </Form.Item>
-
+        {/* Водопровод */}
+        <Title level={5} style={{ marginTop: '12px' }}>
+          Водопровод
+        </Title>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass' rules={[{ required: false }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.streetPass')} />
+            <Form.Item label='Проходящий по ул.' name='street_pass_water' rules={[{ required: false }]}>
+              <Input size='large' placeholder='Проходящий по ул.' />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.collector')} name='collector' rules={[{ required: false }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.collector')} />
+            <Form.Item label='Коллектор Д' name='collector_diametr_water' rules={[{ required: false }]}>
+              <Input type='number' size='large' placeholder='Диаметр' />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item label='Водопровод' name='water_pipe' rules={[{ required: false }]}>
+              <Select size='large' placeholder='Выберите вариант'>
+                <Option value='существующий'>существующий</Option>
+                <Option value='построенный'>построенный</Option>
+              </Select>
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item label='Предусмотреть водопровод' name='provide_water' rules={[{ required: false }]}>
+              <TextArea size='large' placeholder='Предусмотреть водопровод' />
             </Form.Item>
           </Col>
         </Row>
 
+        {/* Канализация */}
+        <Title level={5} style={{ marginTop: '12px' }}>
+          Канализация
+        </Title>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.waterPipe')} name='water_pipe' rules={[{ required: false }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.waterPipe')} />
+            <Form.Item label='Проходящий по ул.' name='street_pass_sewer' rules={[{ required: false }]}>
+              <Input size='large' placeholder='Проходящий по ул.' />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.sewer')} name='sewer' rules={[{ required: false }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.sewer')} />
+            <Form.Item label='Коллектор Д' name='collector_diametr_sewer' rules={[{ required: false }]}>
+              <Input type='number' size='large' placeholder='Диаметр' />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item label='Канализация' name='sewer_pipe' rules={[{ required: false }]}>
+              <Select size='large' placeholder='Выберите вариант'>
+                <Option value='существующий'>существующий</Option>
+                <Option value='построенный'>построенный</Option>
+              </Select>
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item label='Предусмотреть канализация' name='provide_sewer' rules={[{ required: false }]}>
+              <TextArea size='large' placeholder='Предусмотреть канализация' />
             </Form.Item>
           </Col>
         </Row>
 
+        {/* Пожаротушение */}
+        <Title level={5} style={{ marginTop: '12px' }}>
+          Пожаротушение 1
+        </Title>
+        <Form.Item label='Пожаротушение 1' name='fire_input_1' rules={[{ required: false }]}>
+          <Input size='large' placeholder='Пожаротушение 1' />
+        </Form.Item>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.fireInput1')} name='fire_input_1' rules={[{ required: false }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.fireInput1')} />
+            <Form.Item label='Проходящий по ул.' name='street_pass_input_1' rules={[{ required: false }]}>
+              <Input size='large' placeholder='Проходящий по ул.' />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.fireInput2')} name='fire_input_2' rules={[{ required: false }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.fireInput2')} />
+            <Form.Item label='Свободный напор ввод 1' name='free_pressure_required_input_1' rules={[{ required: false }]}>
+              <Input type='number' size='large' placeholder='Свободный напор ввод 1' />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item label='водопр Д 1' name='collector_diametr_fire_1' rules={[{ required: false }]}>
+              <Input size='large' placeholder='водопр Д 1' />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Title level={5} style={{ marginTop: '12px' }}>
+          Пожаротушение 2
+        </Title>
+        <Form.Item label='Пожаротушение 2' name='fire_input_2' rules={[{ required: false }]}>
+          <Input size='large' placeholder='Пожаротушение 2' />
+        </Form.Item>
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item label='Проходящий по ул.' name='street_pass_input_2' rules={[{ required: false }]}>
+              <Input size='large' placeholder='Проходящий по ул.' />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item label='Свободный напор ввод 2' name='free_pressure_required_input_2' rules={[{ required: false }]}>
+              <Input type='number' size='large' placeholder='Свободный напор ввод 2' />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item label='водопр Д 2' name='collector_diametr_fire_2' rules={[{ required: false }]}>
+              <Input size='large' placeholder='водопр Д 2' />
             </Form.Item>
           </Col>
         </Row>
@@ -360,56 +464,15 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           {t('addTuForms.titles.finance')}
         </Title>
 
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.paymentPaper')} name='payment_paper' rules={[{ required: false }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.paymentPaper')} />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.paymentConnection')} name='payment_connection' rules={[{ required: false }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.paymentConnection')} />
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.status')} name='status' rules={[{ required: true }]}>
-              <Select size='large' placeholder={t('addTuForms.form.placeholders.status')}>
-                {statusOptions.map((option) => (
-                  <Option key={option.value} value={option.value}>
-                    {option.label}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.paymentAmount')} name='payment_amount' rules={[{ required: false }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.paymentAmount')} />
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item
-              label={t('addTuForms.form.labels.paymentDeadline')}
-              name='payment_deadline'
-              rules={[{ required: false }]}
-              normalize={(value: Dayjs) => formatDate(value)}
-              getValueProps={(value: string) => ({ value: parseDate(value) })}
-            >
-              <DatePicker size='large' placeholder={t('addTuForms.form.placeholders.paymentDeadline')} format='YYYY-MM-DD' />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.paymentInvoiceNumber')} name='payment_invoice_number' rules={[{ required: false }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.invoiceNumber')} />
-            </Form.Item>
-          </Col>
-        </Row>
+        <Form.Item
+          label='Срок оплаты ТУ'
+          name='payment_deadline'
+          rules={[{ required: false }]}
+          normalize={(value: Dayjs) => formatDate(value)}
+          getValueProps={(value: string) => ({ value: parseDate(value) })}
+        >
+          <DatePicker size='large' placeholder={t('addTuForms.form.placeholders.paymentDeadline')} format='YYYY-MM-DD' />
+        </Form.Item>
 
         <Row justify='end'>
           <Col>
