@@ -12,7 +12,6 @@ import { t } from 'i18next';
 
 interface ICustomerFullResponse {
   id: number;
-  inn: string;
   full_name: string;
   category: string;
   created_at: string;
@@ -46,7 +45,6 @@ interface ICustomerFullResponse {
     customer: number;
     author: number;
     status: string;
-    INN: string;
     object: string;
     address: string;
     contact: string;
@@ -113,10 +111,6 @@ export const CustomerDetails: FC<{ title?: string }> = ({ title }) => {
             <Typography.Text type='secondary' style={{ display: 'block', marginBottom: 16 }}>
               {data.category === '1' ? t('customers.category.physicalFull') : t('customers.category.legalFull')}
             </Typography.Text>
-            <div style={{ marginBottom: 8 }}>
-              <b>{t('applicationsCreate.form.labels.inn')}:</b>
-              <div>{data.inn}</div>
-            </div>
             <div style={{ marginBottom: 8 }}>
               <b>{t('customers.columns.registrationDate')}</b>
               <div>{data.created_at ? new Date(data.created_at).toLocaleDateString() : ''}</div>

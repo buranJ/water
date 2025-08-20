@@ -4,7 +4,6 @@ import type { IApplication } from 'types/requests';
 export interface IApplicationResponse {
   id: number;
   status: 'pending' | 'rejected' | 'approved' | 'contracted';
-  INN: string;
   customer: number;
   object: string;
   address: string;

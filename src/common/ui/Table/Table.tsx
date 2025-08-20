@@ -1,4 +1,3 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Table as AntdTable, type TableProps } from 'antd';
 import './styles.scss';

@@ -3,7 +3,6 @@ import { IApplicationHistory } from 'types/entities';
 
 export interface IApplication {
   status: 'pending' | 'rejected' | 'approved' | 'contracted';
-  INN: string;
   customer: number;
   object: string;
   address: string;
@@ -12,6 +11,7 @@ export interface IApplication {
   pressure: string;
   waterRequired: string;
   firefightingExpenses: string;
+  firefightingExpensesOuter: string;
   x: number;
   y: number;
   attachments: string[];

@@ -25,7 +25,6 @@ export const EditCustomer: FC<IProps> = ({ title }) => {
       data
         ? {
             type: data.category === '0' ? 'legal' : 'individual',
-            inn: data.inn || '',
             passportData: data.pasport || '',
             companyName: data.category === '0' ? data.full_name || '' : '',
             fio: data.category === '1' ? data.full_name || '' : '',
@@ -49,7 +48,6 @@ export const EditCustomer: FC<IProps> = ({ title }) => {
       await updateCustomer({
         id: Number(customerId),
         body: {
-          inn: value.inn,
           full_name: isLegal ? value.companyName : value.fio,
           category: isLegal ? '0' : '1',
           pasport: value.passportData,

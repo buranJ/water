@@ -27,7 +27,6 @@ export const AddCustomer: FC<IProps> = ({ title }) => {
     try {
       const isLegal = value.type === 'legal';
       await createCustomer({
-        inn: value.inn,
         full_name: isLegal ? value.companyName : value.fio,
         category: isLegal ? '0' : '1',
         pasport: value.passportData,

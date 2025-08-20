@@ -10,7 +10,6 @@ const { Title } = Typography;
 
 export interface CustomerFormData {
   type: 'individual' | 'legal';
-  inn: string;
   passportData: string;
   companyName?: string;
   contactData: string;

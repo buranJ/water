@@ -2,7 +2,6 @@ import { IHistoryType } from 'types/common';
 
 export interface ICustomer {
   id: number;
-  inn: string;
   full_name: string;
   category: '1' | '0';
   pasport: string;

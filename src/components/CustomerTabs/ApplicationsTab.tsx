@@ -14,7 +14,6 @@ interface ICustomerApplication {
   customer: number;
   author: number;
   status: string;
-  INN: string;
   object: string;
   address: string;
   contact: string;
@@ -59,20 +58,6 @@ export const ApplicationsTab: FC<IProps> = ({ applications }) => {
       key: 'index',
       width: 60,
       render: (_, __, index) => index + 1
-    },
-    {
-      title: t('customers.details.columns.object'),
-      dataIndex: 'object',
-      key: 'object',
-      render: (text: string, record) => (
-        <div>
-          <Text strong>{text}</Text>
-          <br />
-          <Text type='secondary' style={{ fontSize: '12px' }}>
-            {t('applicationsCreate.form.labels.inn')}: {record.INN}
-          </Text>
-        </div>
-      )
     },
     {
       title: t('customers.details.columns.address'),

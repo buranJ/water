@@ -10,6 +10,7 @@ import { useGetAllFormulasQuery } from 'api/Formula.api';
 import { useLazyGetAllObjectsQuery } from 'api/Object.api';
 import { useGetTyByIdQuery, useGetTypesTyQuery, useUpdateTyMutation } from 'api/Ty.api';
 import { t } from 'i18next';
+import { handleEnterFocusNext } from 'utils/formNavigation';
 
 const { Option } = Select;
 const { Title } = Typography;
@@ -133,6 +134,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         name='add-tu-form'
         layout='vertical'
         onFinish={onFinish}
+        onKeyDown={handleEnterFocusNext}
         className='add-tu-forms'
       >
         <Title level={4} style={{ borderBottom: '1px solid #D9D9D9', paddingBottom: '4px' }}>

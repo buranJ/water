@@ -13,6 +13,7 @@ import { useCreateCustomerMutation, useLazyGetCustomerQuery } from 'api/Customer
 import { useCreateObjectMutation, useLazyGetAllObjectsQuery } from 'api/Object.api';
 import { useCreateTyFromApplicationMutation } from 'api/Ty.api';
 import { t } from 'i18next';
+import { handleEnterFocusNext } from 'utils/formNavigation';
 
 interface IProps {
   title: string;
@@ -33,17 +34,15 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
 
   const handleFinish = async (values: IApplication) => {
     try {
-      // 1. Поиск или создание заказчика
       let customerId: number | undefined;
-      const customerSearch = await triggerGetCustomers({ search: values.INN, page: 1, page_size: 10 }).unwrap();
+      const customerSearch = await triggerGetCustomers({ search: String(values.customer), page: 1, page_size: 10 }).unwrap();
       const foundCustomer = Array.isArray(customerSearch.results)
-        ? customerSearch.results.find((c: ICustomer) => c.inn === values.INN)
+        ? customerSearch.results.find((c: ICustomer) => c.full_name === String(values.customer))
         : undefined;
       if (foundCustomer) {
         customerId = foundCustomer.id;
       } else {
         const customerResponse = await createCustomer({
-          inn: values.INN,
           full_name: values.customer,
           pasport: '',
           address: values.address,
@@ -83,7 +82,6 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
       }
       const application = await createApplication({
         ...values,
-        INN: String(values.INN),
         object: values.object,
         customer: customerId,
         status: 'pending',
@@ -132,18 +130,7 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
   return (
     <DashboardLayout title={title}>
       <div className='applications-create'>
-        <Form form={form} layout='vertical' variant='filled' requiredMark={false} onFinish={handleFinish}>
-          <Form.Item
-            name='INN'
-            label={t('applicationsCreate.form.labels.inn')}
-            rules={[
-              { required: true, message: t('applicationsCreate.form.validation.required') },
-              { max: 14, message: t('applicationsCreate.form.validation.innLength') },
-              { min: 14, message: t('applicationsCreate.form.validation.innLength') }
-            ]}
-          >
-            <Input size='large' placeholder={t('applicationsCreate.form.placeholders.enterInn')} maxLength={14} />
-          </Form.Item>
+        <Form form={form} layout='vertical' variant='filled' requiredMark={false} onFinish={handleFinish} onKeyDown={handleEnterFocusNext}>
           <Form.Item
             name='customer'
             label={t('applicationsCreate.form.labels.customer')}
@@ -207,10 +194,17 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
           </Form.Item>
           <Form.Item
             label={t('applicationsCreate.form.labels.firefightingExpenses')}
-            name='firefightingExpenses'
+            name='firefightingExpensesInner'
             rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
           >
-            <Input size='large' placeholder={t('applicationsCreate.form.placeholders.enterValue')} />
+            <Input type='number' size='large' placeholder={t('applicationsCreate.form.placeholders.enterValue')} />
+          </Form.Item>
+          <Form.Item
+            label='Расходы воды на внеш. пожаротушение'
+            name='firefightingExpensesOuter'
+            rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+          >
+            <Input type='number' size='large' placeholder={t('applicationsCreate.form.placeholders.enterValue')} />
           </Form.Item>
           <Flex gap={16}>
             <Col span={12}>

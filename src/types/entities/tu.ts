@@ -112,7 +112,6 @@ export interface ITyItem {
   request_source: string;
   request_number: string;
   request_date: Date;
-  inn: string;
   object_name: string;
   address: string;
   eni: string;

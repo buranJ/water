@@ -21,7 +21,6 @@ export const EditApplication: FC<IProps> = ({ title }) => {
     () =>
       data
         ? {
-            INN: data.INN,
             customer: String(data.customer),
             object: data.object,
             address: data.address,

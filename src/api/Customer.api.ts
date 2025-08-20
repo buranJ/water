@@ -9,7 +9,6 @@ import {
 
 export interface ICustomer {
   id: number;
-  inn: string;
   full_name: string;
   category: string;
   created_at: string;
@@ -37,7 +36,6 @@ export interface IGetCustomersParams {
 }
 
 export interface ICreateCustomerParams {
-  inn: string;
   full_name?: string | number;
   category?: '0' | '1';
   pasport?: string | null;

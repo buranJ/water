@@ -3,7 +3,6 @@ import { Button, Col, Flex, Form, Input, Row, UploadFile } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 
 export interface ApplicationFormData {
-  INN: string;
   customer: string;
   object: string;
   address: string;
