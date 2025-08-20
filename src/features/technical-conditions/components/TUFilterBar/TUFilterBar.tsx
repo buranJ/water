@@ -90,8 +90,8 @@ export const TUFilterBar = ({ onFilterChange, onAddClick, onDownloadClick, initi
 
         <Form.Item name='date'>
           <Select variant='filled' placeholder={t('filterBar.byDate')} allowClear style={{ width: 180 }}>
-            <Option value='created_at'>{t('filterBar.newOnesfirst')}</Option>
-            <Option value='-created_at'>{t('filterBar.newOldFirst')}</Option>
+            <Option value='-created_at'>{t('filterBar.newOnesfirst')}</Option>
+            <Option value='created_at'>{t('filterBar.newOldFirst')}</Option>
           </Select>
         </Form.Item>
 
