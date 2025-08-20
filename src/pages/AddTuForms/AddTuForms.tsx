@@ -421,7 +421,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Row>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label='водопр Д 1' name='collector_diametr_fire_1' rules={[{ required: false }]}>
+            <Form.Item label='Водопр Д 1' name='collector_diametr_fire_1' rules={[{ required: false }]}>
               <Input size='large' placeholder='водопр Д 1' />
             </Form.Item>
           </Col>
@@ -447,8 +447,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Row>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label='водопр Д 2' name='collector_diametr_fire_2' rules={[{ required: false }]}>
-              <Input size='large' placeholder='водопр Д 2' />
+            <Form.Item label='Водопр Д 2' name='collector_diametr_fire_2' rules={[{ required: false }]}>
+              <Input size='large' placeholder='Водопр Д 2' />
             </Form.Item>
           </Col>
         </Row>
