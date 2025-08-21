@@ -12,6 +12,7 @@ import { MyModal } from './MyModal';
 import { Architecture } from './Tabs';
 
 import { useGetUserInfoQuery } from 'api/Auth.api';
+import { useLazyDownloadContractDocxQuery } from 'api/Buhgalteria.api';
 import { useGetFoldersQuery } from 'api/FileFolder.api';
 import { useGetTyByIdQuery, useLazyDownloadProtocolDocxQuery } from 'api/Ty.api';
 import { usePermissions } from 'hooks/useAuth';
@@ -62,6 +63,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const [activeTab, setActiveTab] = useState<string>(searchParams.get('tab') || '1');
   const [isAddLoadVisible, setIsAddLoadVisible] = useState<boolean>(false);
   const [triggerDownload, { isFetching: isDownloading }] = useLazyDownloadProtocolDocxQuery();
+  const [triggerContractDownload, { isFetching: isContractDownloading }] = useLazyDownloadContractDocxQuery();
 
   const handleRejectClick = (): void => {
     setIsModalVisible(true);
@@ -169,6 +171,23 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     }
   };
 
+  const handleDownloadContract = async () => {
+    if (!id) return;
+    try {
+      const { blob, filename } = await triggerContractDownload({ ty_id: id, customer_type: 'ur' }).unwrap();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename || `contract_${id}.docx`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Failed to download contract DOCX', error);
+    }
+  };
+
   if (isLoading) {
     return (
       <DashboardLayout title={`${t(title)} ${id}`}>
@@ -208,6 +227,8 @@ export const TuDetails: FC<IProps> = ({ title }) => {
         onAddLoad={handleAddLoad}
         onReject={handleRejectClick}
         isDownloading={isDownloading}
+        onDownloadContract={handleDownloadContract}
+        isContractDownloading={isContractDownloading}
       />
 
       <Row gutter={24}>
