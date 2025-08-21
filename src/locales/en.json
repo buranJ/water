@@ -904,7 +904,16 @@
         "status": "Payment status",
         "paymentAmount": "Payment amount",
         "paymentDeadline": "TU payment deadline",
-        "paymentInvoiceNumber": "Invoice No."
+        "paymentInvoiceNumber": "Invoice No.",
+        "fireFightingOuter": "External firefighting",
+        "fireFightingInner": "Internal firefighting",
+        "collectorDiameter": "Collector D",
+        "provideWater": "Provide water supply",
+        "provideSewer": "Provide sewer",
+        "freePressureInput1": "Free pressure input 1",
+        "waterPipeDiameter1": "Water pipe D 1",
+        "freePressureInput2": "Free pressure input 2",
+        "waterPipeDiameter2": "Water pipe D 2"
       },
       "placeholders": {
         "requestSource": "Object name",
@@ -934,7 +943,15 @@
         "paymentPaper": "Enter amount",
         "paymentConnection": "Enter amount",
         "paymentDeadline": "YYYY-MM-DD",
-        "invoiceNumber": "1234567890"
+        "invoiceNumber": "1234567890",
+        "diameter": "Diameter",
+        "selectOption": "Select an option",
+        "provideWater": "Provide water supply",
+        "provideSewer": "Provide sewer",
+        "freePressureInput1": "Free pressure input 1",
+        "waterPipeDiameter1": "Water pipe D 1",
+        "freePressureInput2": "Free pressure input 2",
+        "waterPipeDiameter2": "Water pipe D 2"
       },
       "validation": {
         "specifySource": "Specify source",
@@ -957,6 +974,10 @@
           "active": "Active",
           "inactive": "Inactive",
           "archived": "Archived"
+        },
+        "connectionType": {
+          "existing": "existing",
+          "built": "built"
         }
       },
       "buttons": {

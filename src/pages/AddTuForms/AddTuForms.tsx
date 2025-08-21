@@ -279,11 +279,11 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Col>
         </Row>
         {/* ‹Form. Item label='Пожаротушение внутреннее' name='firefightingExpensesInner' rules={[{ required: fals */}
-        <Form.Item label='Пожаротушение наружнее' name='fire_fighting_inner' rules={[{ required: false }]}>
+        <Form.Item label={t('addTuForms.form.labels.fireFightingOuter')} name='fire_fighting_inner' rules={[{ required: false }]}>
           <Input size='large' placeholder={t('addTuForms.form.placeholders.fireFighting')} />
         </Form.Item>
 
-        <Form.Item label='Пожаротушение внутреннее' name='fire_fighting_outer' rules={[{ required: false }]}>
+        <Form.Item label={t('addTuForms.form.labels.fireFightingInner')} name='fire_fighting_outer' rules={[{ required: false }]}>
           <Input size='large' placeholder={t('addTuForms.form.placeholders.fireFighting')} />
         </Form.Item>
 
@@ -338,117 +338,125 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Form.Item>
         {/* Водопровод */}
         <Title level={5} style={{ marginTop: '12px' }}>
-          Водопровод
+          {t('tuDetails.titles.waterSupply')}
         </Title>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label='Проходящий по ул.' name='street_pass_water' rules={[{ required: false }]}>
-              <Input size='large' placeholder='Проходящий по ул.' />
+            <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_water' rules={[{ required: false }]}>
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.streetPass')} />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label='Коллектор Д' name='collector_diametr_water' rules={[{ required: false }]}>
-              <Input type='number' size='large' placeholder='Диаметр' />
+            <Form.Item label={t('addTuForms.form.labels.collectorDiameter')} name='collector_diametr_water' rules={[{ required: false }]}>
+              <Input type='number' size='large' placeholder={t('addTuForms.form.placeholders.diameter')} />
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label='Водопровод' name='water_pipe' rules={[{ required: false }]}>
-              <Select size='large' placeholder='Выберите вариант'>
-                <Option value='существующий'>существующий</Option>
-                <Option value='построенный'>построенный</Option>
+            <Form.Item label={t('addTuForms.form.labels.waterPipe')} name='water_pipe' rules={[{ required: false }]}>
+              <Select size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
+                <Option value='существующий'>{t('addTuForms.form.options.connectionType.existing')}</Option>
+                <Option value='построенный'>{t('addTuForms.form.options.connectionType.built')}</Option>
               </Select>
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label='Предусмотреть водопровод' name='provide_water' rules={[{ required: false }]}>
-              <TextArea size='large' placeholder='Предусмотреть водопровод' />
+            <Form.Item label={t('addTuForms.form.labels.provideWater')} name='provide_water' rules={[{ required: false }]}>
+              <TextArea size='large' placeholder={t('addTuForms.form.placeholders.provideWater')} />
             </Form.Item>
           </Col>
         </Row>
 
         {/* Канализация */}
         <Title level={5} style={{ marginTop: '12px' }}>
-          Канализация
+          {t('tuDetails.titles.sewer')}
         </Title>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label='Проходящий по ул.' name='street_pass_sewer' rules={[{ required: false }]}>
-              <Input size='large' placeholder='Проходящий по ул.' />
+            <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_sewer' rules={[{ required: false }]}>
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.streetPass')} />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label='Коллектор Д' name='collector_diametr_sewer' rules={[{ required: false }]}>
-              <Input type='number' size='large' placeholder='Диаметр' />
+            <Form.Item label={t('addTuForms.form.labels.collectorDiameter')} name='collector_diametr_sewer' rules={[{ required: false }]}>
+              <Input type='number' size='large' placeholder={t('addTuForms.form.placeholders.diameter')} />
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label='Канализация' name='sewer_pipe' rules={[{ required: false }]}>
-              <Select size='large' placeholder='Выберите вариант'>
-                <Option value='существующий'>существующий</Option>
-                <Option value='построенный'>построенный</Option>
+            <Form.Item label={t('addTuForms.form.labels.sewer')} name='sewer_pipe' rules={[{ required: false }]}>
+              <Select size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
+                <Option value='существующий'>{t('addTuForms.form.options.connectionType.existing')}</Option>
+                <Option value='построенный'>{t('addTuForms.form.options.connectionType.built')}</Option>
               </Select>
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label='Предусмотреть канализация' name='provide_sewer' rules={[{ required: false }]}>
-              <TextArea size='large' placeholder='Предусмотреть канализация' />
+            <Form.Item label={t('addTuForms.form.labels.provideSewer')} name='provide_sewer' rules={[{ required: false }]}>
+              <TextArea size='large' placeholder={t('addTuForms.form.placeholders.provideSewer')} />
             </Form.Item>
           </Col>
         </Row>
 
         {/* Пожаротушение */}
         <Title level={5} style={{ marginTop: '12px' }}>
-          Пожаротушение 1
+          {t('addTuForms.form.labels.fireInput1')}
         </Title>
-        <Form.Item label='Пожаротушение 1' name='fire_input_1' rules={[{ required: false }]}>
-          <Input size='large' placeholder='Пожаротушение 1' />
+        <Form.Item label={t('addTuForms.form.labels.fireInput1')} name='fire_input_1' rules={[{ required: false }]}>
+          <Input size='large' placeholder={t('addTuForms.form.placeholders.fireInput1')} />
         </Form.Item>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label='Проходящий по ул.' name='street_pass_input_1' rules={[{ required: false }]}>
-              <Input size='large' placeholder='Проходящий по ул.' />
+            <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_input_1' rules={[{ required: false }]}>
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.streetPass')} />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label='Свободный напор ввод 1' name='free_pressure_required_input_1' rules={[{ required: false }]}>
-              <Input type='number' size='large' placeholder='Свободный напор ввод 1' />
+            <Form.Item
+              label={t('addTuForms.form.labels.freePressureInput1')}
+              name='free_pressure_required_input_1'
+              rules={[{ required: false }]}
+            >
+              <Input type='number' size='large' placeholder={t('addTuForms.form.placeholders.freePressureInput1')} />
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label='Водопр Д 1' name='collector_diametr_fire_1' rules={[{ required: false }]}>
-              <Input size='large' placeholder='водопр Д 1' />
+            <Form.Item label={t('addTuForms.form.labels.waterPipeDiameter1')} name='collector_diametr_fire_1' rules={[{ required: false }]}>
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.waterPipeDiameter1')} />
             </Form.Item>
           </Col>
         </Row>
 
         <Title level={5} style={{ marginTop: '12px' }}>
-          Пожаротушение 2
+          {t('addTuForms.form.labels.fireInput2')}
         </Title>
-        <Form.Item label='Пожаротушение 2' name='fire_input_2' rules={[{ required: false }]}>
-          <Input size='large' placeholder='Пожаротушение 2' />
+        <Form.Item label={t('addTuForms.form.labels.fireInput2')} name='fire_input_2' rules={[{ required: false }]}>
+          <Input size='large' placeholder={t('addTuForms.form.placeholders.fireInput2')} />
         </Form.Item>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label='Проходящий по ул.' name='street_pass_input_2' rules={[{ required: false }]}>
-              <Input size='large' placeholder='Проходящий по ул.' />
+            <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_input_2' rules={[{ required: false }]}>
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.streetPass')} />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label='Свободный напор ввод 2' name='free_pressure_required_input_2' rules={[{ required: false }]}>
-              <Input type='number' size='large' placeholder='Свободный напор ввод 2' />
+            <Form.Item
+              label={t('addTuForms.form.labels.freePressureInput2')}
+              name='free_pressure_required_input_2'
+              rules={[{ required: false }]}
+            >
+              <Input type='number' size='large' placeholder={t('addTuForms.form.placeholders.freePressureInput2')} />
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label='Водопр Д 2' name='collector_diametr_fire_2' rules={[{ required: false }]}>
-              <Input size='large' placeholder='Водопр Д 2' />
+            <Form.Item label={t('addTuForms.form.labels.waterPipeDiameter2')} name='collector_diametr_fire_2' rules={[{ required: false }]}>
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.waterPipeDiameter2')} />
             </Form.Item>
           </Col>
         </Row>
@@ -465,7 +473,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Title>
 
         <Form.Item
-          label='Срок оплаты ТУ'
+          label={t('addTuForms.form.labels.paymentDeadline')}
           name='payment_deadline'
           rules={[{ required: false }]}
           normalize={(value: Dayjs) => formatDate(value)}

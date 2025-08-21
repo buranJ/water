@@ -904,7 +904,16 @@
         "status": "Статус оплаты",
         "paymentAmount": "Сумма оплаты",
         "paymentDeadline": "Срок оплаты ТУ",
-        "paymentInvoiceNumber": "№ счета на оплату"
+        "paymentInvoiceNumber": "№ счета на оплату",
+        "fireFightingOuter": "Пожаротушение наружное",
+        "fireFightingInner": "Пожаротушение внутреннее",
+        "collectorDiameter": "Коллектор Д",
+        "provideWater": "Предусмотреть водопровод",
+        "provideSewer": "Предусмотреть канализацию",
+        "freePressureInput1": "Свободный напор ввод 1",
+        "waterPipeDiameter1": "Водопр Д 1",
+        "freePressureInput2": "Свободный напор ввод 2",
+        "waterPipeDiameter2": "Водопр Д 2"
       },
       "placeholders": {
         "requestSource": "Название объекта",
@@ -934,7 +943,15 @@
         "paymentPaper": "Введите сумму",
         "paymentConnection": "Введите сумму",
         "paymentDeadline": "ГГГГ-ММ-ДД",
-        "invoiceNumber": "1234567890"
+        "invoiceNumber": "1234567890",
+        "diameter": "Диаметр",
+        "selectOption": "Выберите вариант",
+        "provideWater": "Предусмотреть водопровод",
+        "provideSewer": "Предусмотреть канализацию",
+        "freePressureInput1": "Свободный напор ввод 1",
+        "waterPipeDiameter1": "Водопр Д 1",
+        "freePressureInput2": "Свободный напор ввод 2",
+        "waterPipeDiameter2": "Водопр Д 2"
       },
       "validation": {
         "specifySource": "Укажите источник",
@@ -957,6 +974,10 @@
           "active": "Активен",
           "inactive": "Неактивен",
           "archived": "Архивирован"
+        },
+        "connectionType": {
+          "existing": "существующий",
+          "built": "построенный"
         }
       },
       "buttons": {

@@ -904,7 +904,16 @@
         "status": "Төлөм статусу",
         "paymentAmount": "Төлөм суммасы",
         "paymentDeadline": "ТУ төлөө мөөнөтү",
-        "paymentInvoiceNumber": "Төлөм эсеби №"
+        "paymentInvoiceNumber": "Төлөм эсеби №",
+        "fireFightingOuter": "Өрт өчүрүү тышкы",
+        "fireFightingInner": "Өрт өчүрүү ички",
+        "collectorDiameter": "Коллектор D",
+        "provideWater": "Суу түтүгүн караштыруу",
+        "provideSewer": "Канализацияны караштыруу",
+        "freePressureInput1": "Эркин басым киргизүү 1",
+        "waterPipeDiameter1": "Суу түтүк D 1",
+        "freePressureInput2": "Эркин басым киргизүү 2",
+        "waterPipeDiameter2": "Суу түтүк D 2"
       },
       "placeholders": {
         "requestSource": "Объекттин аталышы",
@@ -934,7 +943,15 @@
         "paymentPaper": "Сумманы киргизиңиз",
         "paymentConnection": "Сумманы киргизиңиз",
         "paymentDeadline": "YYYY-MM-DD",
-        "invoiceNumber": "1234567890"
+        "invoiceNumber": "1234567890",
+        "diameter": "Диаметри",
+        "selectOption": "Вариант тандаңыз",
+        "provideWater": "Суу түтүгүн караштыруу",
+        "provideSewer": "Канализацияны караштыруу",
+        "freePressureInput1": "Эркин басым киргизүү 1",
+        "waterPipeDiameter1": "Суу түтүк D 1",
+        "freePressureInput2": "Эркин басым киргизүү 2",
+        "waterPipeDiameter2": "Суу түтүк D 2"
       },
       "validation": {
         "specifySource": "Булагын көрсөтүңүз",
@@ -957,6 +974,10 @@
           "active": "Активдүү",
           "inactive": "Иштебейт",
           "archived": "Архивде"
+        },
+        "connectionType": {
+          "existing": "бар",
+          "built": "курулган"
         }
       },
       "buttons": {
