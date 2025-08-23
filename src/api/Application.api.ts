@@ -1,18 +1,50 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { getBaseQuery } from 'common/helpers';
 import type { IApplicationResponse, IApplicationsListResponse, ICreateApplicationResponse } from 'types/entities';
-import type { IApplication, IGetApplicationHistoryParams, IGetApplicationHistoryResponse, IGetApplicationsParams } from 'types/requests';
+import type { IGetApplicationHistoryParams, IGetApplicationHistoryResponse, IGetApplicationsParams } from 'types/requests';
+
+interface CreateApplicationRequest {
+  customer: number;
+  object: string;
+  address: string;
+  contact: string;
+  quantity: string;
+  pressure: string;
+  waterRequired: string;
+  firefightingExpensesInner: string;
+  firefightingExpensesOuter: string;
+  status: 'pending' | 'rejected' | 'approved' | 'contracted';
+  entity: number;
+  latitude: number;
+  longitude: number;
+}
 
 export const applicationsApi = createApi({
   reducerPath: 'applicationsApi',
   baseQuery: getBaseQuery(),
   endpoints: (build) => ({
-    createApplication: build.mutation<ICreateApplicationResponse, IApplication>({
-      query: (data) => ({
-        url: 'application/create',
-        method: 'POST',
-        body: data
-      })
+    createApplication: build.mutation<ICreateApplicationResponse, CreateApplicationRequest>({
+      query: (data) => {
+        console.log('API: Отправляемые данные на сервер:', data);
+        console.log('API: JSON строка:', JSON.stringify(data));
+
+        return {
+          url: 'application/create',
+          method: 'POST',
+          body: data,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        };
+      },
+      transformResponse: (response: ICreateApplicationResponse) => {
+        console.log('API: Ответ от сервера:', response);
+        return response;
+      },
+      transformErrorResponse: (response: { status: number; data?: unknown }) => {
+        console.error('API: Ошибка от сервера:', response);
+        return response;
+      }
     }),
     getApplications: build.query<IApplicationsListResponse, IGetApplicationsParams>({
       query: ({ ordering = 'created_at', ...params }) => ({

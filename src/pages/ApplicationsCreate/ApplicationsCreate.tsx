@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 import { Button, Col, Flex, Form, Input, message, Row, UploadFile } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
+import { MapPointSelector } from 'components/MapPointSelector';
 import { ICustomer, ObjectItem } from 'types/entities';
 import { IApplication } from 'types/requests';
 import { UploadFilesModal } from './UploadFilesModal/UploadFilesModal';
@@ -14,6 +15,14 @@ import { useCreateObjectMutation, useLazyGetAllObjectsQuery } from 'api/Object.a
 import { useCreateTyFromApplicationMutation } from 'api/Ty.api';
 import { t } from 'i18next';
 import { handleEnterFocusNext } from 'utils/formNavigation';
+
+interface Coordinates {
+  latitude: number;
+  longitude: number;
+  address?: string;
+  description?: string;
+  timestamp?: string;
+}
 
 interface IProps {
   title: string;
@@ -31,9 +40,32 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
   const [form] = Form.useForm<IApplication>();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState<UploadFile[]>([]);
+  const [selectedCoordinates, setSelectedCoordinates] = useState<Coordinates | null>(null);
+  const handleCoordinatesSelect = (coordinates: Coordinates) => {
+    console.log('Координаты выбраны:', coordinates);
+    setSelectedCoordinates(coordinates);
+    // Обновляем значения в форме
+    form.setFieldsValue({
+      x: coordinates.latitude,
+      y: coordinates.longitude
+    });
+    message.success(`Координаты выбраны: ${coordinates.latitude.toFixed(6)}, ${coordinates.longitude.toFixed(6)}`);
+  };
 
   const handleFinish = async (values: IApplication) => {
     try {
+      const coordLatitude = selectedCoordinates?.latitude || values.x;
+      const coordLongitude = selectedCoordinates?.longitude || values.y;
+
+      if (!coordLatitude || !coordLongitude) {
+        message.warning('Пожалуйста, выберите координаты на карте');
+        return;
+      }
+
+      if (isNaN(Number(coordLatitude)) || isNaN(Number(coordLongitude))) {
+        message.error('Некорректные координаты');
+        return;
+      }
       let customerId: number | undefined;
       const customerSearch = await triggerGetCustomers({ search: String(values.customer), page: 1, page_size: 10 }).unwrap();
       const foundCustomer = Array.isArray(customerSearch.results)
@@ -50,8 +82,6 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
         }).unwrap();
         customerId = customerResponse.id;
       }
-
-      // 2. Поиск или создание объекта
       let objectId: number | undefined;
       const objectSearch = await triggerGetObjects({ search: values.object, page: 1, page_size: 10 }).unwrap();
       const foundObject = objectSearch.results?.find(
@@ -74,25 +104,55 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
         }).unwrap();
         objectId = objectResponse.id;
       }
-
-      // 3. Создание заявки
       if (!customerId || !objectId) {
         message.error(t('applicationsCreate.messages.customerOrObjectError'));
         return;
       }
-      const application = await createApplication({
-        ...values,
-        object: values.object,
+
+      const requestPayload = {
         customer: customerId,
-        status: 'pending',
-        entity: objectId
-      }).unwrap();
+        object: values.object,
+        address: values.address,
+        contact: values.contact,
+        quantity: values.quantity,
+        pressure: values.pressure,
+        waterRequired: values.waterRequired,
+        firefightingExpensesInner: values.firefightingExpensesInner,
+        firefightingExpensesOuter: values.firefightingExpensesOuter,
+        status: 'pending' as const,
+        entity: objectId,
+        latitude: parseFloat(String(coordLatitude)),
+        longitude: parseFloat(String(coordLongitude))
+      };
+      if (
+        !requestPayload.latitude ||
+        !requestPayload.longitude ||
+        isNaN(requestPayload.latitude) ||
+        isNaN(requestPayload.longitude) ||
+        requestPayload.latitude === 0 ||
+        requestPayload.longitude === 0
+      ) {
+        message.error('Ошибка: невалидные координаты для отправки');
+        console.error('Невалидные координаты:', {
+          latitude: requestPayload.latitude,
+          longitude: requestPayload.longitude,
+          original: { coordLatitude, coordLongitude }
+        });
+        return;
+      }
+
+      console.log('Финальные данные для отправки:', requestPayload);
+      console.log('Типы координат:', {
+        latitude: typeof requestPayload.latitude,
+        longitude: typeof requestPayload.longitude,
+        values: [requestPayload.latitude, requestPayload.longitude]
+      });
+
+      const application = await createApplication(requestPayload).unwrap();
 
       if (application.id) {
         await createTy({ application_id: application.id });
       }
-
-      // 4. Загрузка файлов, если есть
       if (attachedFiles.length > 0) {
         const files = attachedFiles.reduce<File[]>((acc, f) => {
           const raw = f.originFileObj as unknown;
@@ -111,6 +171,7 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
   useEffect(() => {
     if (isSuccess && data?.id) {
       form.resetFields();
+      setSelectedCoordinates(null);
       message.success(t('applicationsCreate.messages.created'));
       navigate(`/dashboard/applications/${data.id}`);
     }
@@ -206,26 +267,20 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
           >
             <Input type='number' size='large' placeholder={t('applicationsCreate.form.placeholders.enterValue')} />
           </Form.Item>
-          <Flex gap={16}>
-            <Col span={12}>
-              <Form.Item
-                name='x'
-                label={t('applicationsCreate.form.labels.coordX')}
-                rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
-              >
-                <Input variant='filled' size='large' placeholder={t('applicationsCreate.form.placeholders.xPlaceholder')} type='number' />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name='y'
-                label={t('applicationsCreate.form.labels.coordY')}
-                rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
-              >
-                <Input variant='filled' size='large' placeholder={t('applicationsCreate.form.placeholders.yPlaceholder')} type='number' />
-              </Form.Item>
-            </Col>
-          </Flex>
+          <Form.Item
+            label={t('applicationsCreate.form.labels.coordinates', 'Координаты объекта')}
+            required
+            style={{ marginBottom: '24px' }}
+          >
+            <MapPointSelector title='Выберите координаты объекта на карте' onCoordinatesSelect={handleCoordinatesSelect} />
+          </Form.Item>
+          <Form.Item name='x' hidden>
+            <Input />
+          </Form.Item>
+          <Form.Item name='y' hidden>
+            <Input />
+          </Form.Item>
+
           <Flex justify='space-between' align='center'>
             <Button onClick={() => setIsModalVisible(true)} icon={<UploadOutlined />}>
               {buttonText}

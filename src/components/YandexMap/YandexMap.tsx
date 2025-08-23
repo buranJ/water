@@ -1,65 +1,8 @@
 import { type FC, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { YMap } from 'types/entities/yandexMaps';
 
 import { type MapObject } from 'api/GeoPartal.api';
-
-interface YMapState {
-  center: number[];
-  zoom: number;
-  controls?: string[];
-}
-
-interface YMapOptions {
-  suppressMapOpenBlock?: boolean;
-}
-
-interface PlacemarkProperties {
-  balloonContent: string;
-  hintContent: string;
-}
-
-interface PlacemarkOptions {
-  iconLayout: string;
-  iconImageHref: string;
-  iconImageSize: number[];
-  iconImageOffset: number[];
-}
-
-interface YGeoObjectCollection {
-  add: (geoObject: YPlacemarkInstance) => void;
-  getBounds: () => number[][] | null;
-}
-
-interface YPlacemarkInstance {
-  events: {
-    add: (eventName: string, handler: () => void) => void;
-  };
-}
-
-interface YMapInstance {
-  geoObjects: {
-    removeAll: () => void;
-    add: (geoObject: YGeoObjectCollection) => void;
-  };
-  setCenter: (center: number[], zoom?: number, options?: { duration: number }) => void;
-  setBounds: (bounds: number[][], options?: { checkZoomRange: boolean; zoomMargin: number[] }) => void;
-  options: {
-    set: (options: YMapOptions) => void;
-  };
-}
-
-interface YandexMapsAPI {
-  Map: new (container: HTMLElement, state: YMapState, options?: YMapOptions) => YMapInstance;
-  Placemark: new (coordinates: number[], properties: PlacemarkProperties, options?: PlacemarkOptions) => YPlacemarkInstance;
-  GeoObjectCollection: new () => YGeoObjectCollection;
-  ready: (callback: () => void) => void;
-}
-
-declare global {
-  interface Window {
-    ymaps?: YandexMapsAPI;
-  }
-}
 
 interface YandexMapProps {
   objects: MapObject[];
@@ -86,19 +29,15 @@ const STAGE_OPACITY: Record<ObjectStage, string> = {
   completed: '1.0'
 };
 
-// Дополнительная валидация координат на уровне компонента карты
 const isValidMapCoordinates = (x: number, y: number): boolean => {
-  // Базовая проверка
   if (typeof x !== 'number' || typeof y !== 'number' || Number.isNaN(x) || Number.isNaN(y)) {
     return false;
   }
 
-  // Проверка на нулевые координаты
   if (x === 0 && y === 0) {
     return false;
   }
 
-  // Проверка на разумные географические границы для Кыргызстана
   const isLatitudeValid = x >= 39.0 && x <= 43.5;
   const isLongitudeValid = y >= 69.0 && y <= 81.0;
 
@@ -139,7 +78,7 @@ const createSvgIcon = (obj: MapObject): string => {
 
 export const YandexMap: FC<YandexMapProps> = ({ objects, onSelect }) => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<YMapInstance | null>(null);
+  const mapInstanceRef = useRef<YMap | null>(null);
   const scriptLoadedRef = useRef(false);
   const [mapReady, setMapReady] = useState(false);
   const { t } = useTranslation();
@@ -195,7 +134,6 @@ export const YandexMap: FC<YandexMapProps> = ({ objects, onSelect }) => {
       return;
     }
 
-    // Дополнительная фильтрация на уровне карты
     const validData = data.filter((obj) => {
       const isValid = isValidMapCoordinates(obj.x, obj.y);
       if (!isValid) {
@@ -254,7 +192,6 @@ export const YandexMap: FC<YandexMapProps> = ({ objects, onSelect }) => {
 
     mapInstance.geoObjects.add(collection);
 
-    // Более безопасная установка границ
     try {
       const bounds = collection.getBounds();
       if (bounds && bounds.length === 2 && Array.isArray(bounds[0]) && Array.isArray(bounds[1])) {
@@ -262,7 +199,6 @@ export const YandexMap: FC<YandexMapProps> = ({ objects, onSelect }) => {
         const latDiff = Math.abs(bounds[1][0] - bounds[0][0]);
         const lonDiff = Math.abs(bounds[1][1] - bounds[0][1]);
 
-        // Если разница координат слишком большая, не используем автоматические границы
         if (latDiff > 5 || lonDiff > 5) {
           console.warn('Границы карты слишком широкие, используем центр Бишкека');
           mapInstance.setCenter(BISHKEK_CENTER, DEFAULT_ZOOM);
@@ -274,7 +210,6 @@ export const YandexMap: FC<YandexMapProps> = ({ objects, onSelect }) => {
           });
         }
       } else {
-        // Если границы не определены, центрируем на первом объекте или Бишкеке
         const firstObj = validData[0];
         if (firstObj) {
           mapInstance.setCenter([firstObj.x, firstObj.y], 12);

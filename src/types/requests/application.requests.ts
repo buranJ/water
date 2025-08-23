@@ -3,19 +3,19 @@ import { IApplicationHistory } from 'types/entities';
 
 export interface IApplication {
   status: 'pending' | 'rejected' | 'approved' | 'contracted';
-  customer: number;
+  customer: number | string; // Может быть строка для поиска или ID
   object: string;
   address: string;
   contact: string;
   quantity: string;
   pressure: string;
   waterRequired: string;
-  firefightingExpenses: string;
+  firefightingExpensesInner: string; // Исправлено название поля
   firefightingExpensesOuter: string;
-  x: number;
-  y: number;
-  attachments: string[];
+  latitude: number; // Изменено с x на latitude
+  longitude: number; // Изменено с y на longitude
   entity: number;
+  INN?: string | null; // Добавлено поле INN
 }
 
 export interface IGetApplicationsParams {
