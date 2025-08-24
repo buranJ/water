@@ -5,6 +5,7 @@ import type { SerializedError } from '@reduxjs/toolkit';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { Alert, Avatar, Badge, Button, Divider, Flex, List, Popover, Spin, Typography } from 'antd';
 import { BellOutlined } from '@ant-design/icons';
+import type { INotification } from 'types/entities';
 import archiverIcon from 'assets/icons/archive.svg';
 import documentIcon from 'assets/icons/document.svg';
 import './styles.scss';
@@ -42,8 +43,7 @@ export const NotificationsBell = () => {
 
   const ws = useNotificationsWS({
     enabled: true,
-    onNotification: (payload) => {
-      console.log('[WS->UI] onNotification payload:', payload);
+    onNotification: () => {
       refetchList({ ordering: '-created_at' });
       refetchCount();
     },
@@ -54,7 +54,7 @@ export const NotificationsBell = () => {
     }
   });
 
-  const results = data?.results ?? [];
+  const results = useMemo<INotification[]>(() => data?.results ?? [], [data?.results]);
   const unreadCount = results.filter((n) => !n.is_read).length;
 
   const itemsToShow = useMemo(() => {
