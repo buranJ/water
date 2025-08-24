@@ -19,6 +19,10 @@ interface CreateApplicationRequest {
   longitude: number;
 }
 
+interface UpdateApplicationRequest extends Omit<CreateApplicationRequest, 'customer'> {
+  customer: number;
+}
+
 export const applicationsApi = createApi({
   reducerPath: 'applicationsApi',
   baseQuery: getBaseQuery(),
@@ -59,7 +63,7 @@ export const applicationsApi = createApi({
         method: 'GET'
       })
     }),
-    updateApplication: build.mutation<IApplicationResponse, { id: number; body: Partial<IApplicationResponse> }>({
+    updateApplication: build.mutation<IApplicationResponse, { id: number; body: Partial<UpdateApplicationRequest> }>({
       query: ({ id, body }) => ({
         url: `application/${id}`,
         method: 'PUT',

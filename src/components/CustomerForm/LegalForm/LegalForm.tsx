@@ -15,14 +15,6 @@ const LegalForm: FC = () => {
       </Form.Item>
 
       <Form.Item
-        name='inn'
-        label={t('applicationsCreate.form.labels.inn')}
-        rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
-      >
-        <Input size='large' placeholder={t('customerForm.placeholders.inn')} />
-      </Form.Item>
-
-      <Form.Item
         name='ogrn'
         label={t('customerForm.labels.ogrn')}
         rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}

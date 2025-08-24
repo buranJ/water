@@ -173,8 +173,13 @@ export const TuDetails: FC<IProps> = ({ title }) => {
 
   const handleDownloadContract = async () => {
     if (!id) return;
+    const customerType = objectData?.customer?.type;
+    if (!customerType) {
+      console.error('Cannot download contract: missing customer type');
+      return;
+    }
     try {
-      const { blob, filename } = await triggerContractDownload({ ty_id: id, customer_type: 'ur' }).unwrap();
+      const { blob, filename } = await triggerContractDownload({ ty_id: id, customer_type: customerType }).unwrap();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;

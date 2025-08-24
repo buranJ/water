@@ -46,16 +46,16 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
     setSelectedCoordinates(coordinates);
     // Обновляем значения в форме
     form.setFieldsValue({
-      x: coordinates.latitude,
-      y: coordinates.longitude
+      latitude: coordinates.latitude,
+      longitude: coordinates.longitude
     });
     message.success(`Координаты выбраны: ${coordinates.latitude.toFixed(6)}, ${coordinates.longitude.toFixed(6)}`);
   };
 
   const handleFinish = async (values: IApplication) => {
     try {
-      const coordLatitude = selectedCoordinates?.latitude || values.x;
-      const coordLongitude = selectedCoordinates?.longitude || values.y;
+      const coordLatitude = selectedCoordinates?.latitude || values.latitude;
+      const coordLongitude = selectedCoordinates?.longitude || values.longitude;
 
       if (!coordLatitude || !coordLongitude) {
         message.warning('Пожалуйста, выберите координаты на карте');
@@ -274,10 +274,10 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
           >
             <MapPointSelector title='Выберите координаты объекта на карте' onCoordinatesSelect={handleCoordinatesSelect} />
           </Form.Item>
-          <Form.Item name='x' hidden>
+          <Form.Item name='latitude' hidden>
             <Input />
           </Form.Item>
-          <Form.Item name='y' hidden>
+          <Form.Item name='longitude' hidden>
             <Input />
           </Form.Item>
 

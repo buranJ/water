@@ -17,24 +17,14 @@ export const EditApplication: FC<IProps> = ({ title }) => {
   const [updateApplication] = useUpdateApplicationMutation();
   const [form] = Form.useForm<ApplicationFormData>();
 
-  const initialValues: ApplicationFormData | undefined = useMemo(
-    () =>
-      data
-        ? {
-            customer: String(data.customer),
-            object: data.object,
-            address: data.address,
-            contact: data.contact,
-            quantity: data.quantity,
-            pressure: data.pressure,
-            waterRequired: data.waterRequired,
-            firefightingExpenses: data.firefightingExpenses,
-            x: data.x,
-            y: data.y
-          }
-        : undefined,
-    [data]
-  );
+  const initialValues: ApplicationFormData | undefined = useMemo(() => {
+    if (!data) return undefined;
+    const { customer, ...rest } = data;
+    return {
+      customer: customer.full_name,
+      ...rest
+    };
+  }, [data]);
 
   useEffect(() => {
     if (initialValues) {
@@ -43,22 +33,26 @@ export const EditApplication: FC<IProps> = ({ title }) => {
   }, [form, initialValues]);
 
   const onSave = async (values: ApplicationFormData) => {
+    console.log(values);
+
     try {
       await updateApplication({
         id: Number(id),
         body: {
           ...values,
-          customer: Number(values.customer),
-          entity: 1,
-          status: values.status || 'pending'
+          customer: data?.customer.id,
+          entity: data?.entity,
+          status: data?.status || 'pending'
         }
       }).unwrap();
       message.success('Заявка успешно обновлена');
       navigate('/dashboard/applications');
-    } catch (error: any) {
-      if (error?.data && typeof error.data === 'object') {
-        const messages = Object.entries(error.data)
-          .map(([field, msg]) => `${field}: ${Array.isArray(msg) ? msg.join(', ') : msg}`)
+    } catch (error: unknown) {
+      const data = typeof error === 'object' && error !== null && 'data' in error ? (error as { data?: unknown }).data : undefined;
+
+      if (data && typeof data === 'object') {
+        const messages = Object.entries(data as Record<string, unknown>)
+          .map(([field, msg]) => `${field}: ${Array.isArray(msg) ? (msg as unknown[]).join(', ') : String(msg)}`)
           .join('; ');
         message.error(`Ошибка: ${messages}`);
       } else {

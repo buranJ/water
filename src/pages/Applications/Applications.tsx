@@ -110,8 +110,8 @@ export const Applications: FC<IProps> = ({ title }) => {
       key: String(item.id),
       id: String(item.id),
       date: item.created_at ? dayjs(item.created_at).format('DD.MM.YYYY-HH:mm') : '',
-      customer: String(item.customer), // временно используем id как строку, если нет имени
-      customerId: item.customer,
+      customer: item.customer.full_name, // временно используем id как строку, если нет имени
+      customerId: item.customer.id,
       address: item.address,
       objectName: item.object,
       waterAmount: item.waterRequired,

@@ -54,7 +54,6 @@ export const DataSection: FC<DataSectionProps> = ({ objectData }) => {
         <br />
         <Text strong>{t('tuDetails.labels.requestSource')}</Text> <Text>{objectData?.request_source || '—'}</Text>
         <br />
-        <Text strong>{t('tuDetails.labels.inn')}</Text> <Text>{objectData?.eni || '—'}</Text>
         <br />
         {objectData?.status && (
           <Space>

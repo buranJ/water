@@ -162,7 +162,7 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
                 </div>
                 <div style={{ marginBottom: 8 }}>
                   <b>{t('applicationDetails.labels.customer')}</b>
-                  <div>{data.customer}</div>
+                  <div>{data.customer.full_name}</div>
                 </div>
                 <div style={{ marginBottom: 8 }}>
                   <b>{t('applicationDetails.labels.address')}</b>

@@ -4,7 +4,10 @@ import type { IApplication } from 'types/requests';
 export interface IApplicationResponse {
   id: number;
   status: 'pending' | 'rejected' | 'approved' | 'contracted';
-  customer: number;
+  customer: {
+    id: number;
+    full_name: string;
+  };
   object: string;
   address: string;
   contact: string;
@@ -12,8 +15,8 @@ export interface IApplicationResponse {
   pressure: string;
   waterRequired: string;
   firefightingExpenses: string;
-  x: number;
-  y: number;
+  latitude: number;
+  longitude: number;
   application_files: string[];
   entity: number;
   created_at: string;

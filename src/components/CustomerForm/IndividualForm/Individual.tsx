@@ -14,14 +14,6 @@ const Individual: FC = () => {
         <Input size='large' placeholder={t('customerForm.placeholders.fullName')} />
       </Form.Item>
 
-      <Form.Item
-        name='inn'
-        label={t('applicationsCreate.form.labels.inn')}
-        rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
-      >
-        <Input size='large' placeholder={t('customerForm.placeholders.inn')} />
-      </Form.Item>
-
       <Flex gap={16}>
         <Form.Item
           name='passportData'

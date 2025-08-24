@@ -83,8 +83,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
   useEffect(() => {
     if (isSuccess) {
       message.success(t('addTuForms.messages.createTuSuccess'));
-      // form.resetFields();
-      // navigate(`/dashboard/technical-conditions/tu-details/${tyId}`);
+      form.resetFields();
+      navigate(`/dashboard/technical-conditions/tu-details/${tyId}`);
     }
   }, [form, isSuccess, navigate, tyId]);
 

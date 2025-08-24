@@ -13,9 +13,8 @@ export interface ApplicationFormData {
   pressure: string;
   waterRequired: string;
   firefightingExpenses: string;
-  x: number;
-  y: number;
-  [key: string]: unknown;
+  latitude: number;
+  longitude: number;
 }
 
 interface ApplicationFormProps {
@@ -50,13 +49,6 @@ export const ApplicationForm: FC<ApplicationFormProps> = ({
   return (
     <Form form={usedForm} layout='vertical' variant='filled' requiredMark={false} onFinish={onSave} initialValues={initialValues}>
       <Form.Item
-        name='INN'
-        label={t('applicationsCreate.form.labels.inn')}
-        rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
-      >
-        <Input size='large' placeholder={t('applicationsCreate.form.placeholders.enterInn')} />
-      </Form.Item>
-      <Form.Item
         name='customer'
         label={t('applicationsCreate.form.labels.customer')}
         rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
@@ -82,7 +74,7 @@ export const ApplicationForm: FC<ApplicationFormProps> = ({
         </Col>
         <Col span={6}>
           <Form.Item
-            name='contact'
+            name='address_number'
             label={t('applicationsCreate.form.labels.house')}
             rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
           >
@@ -118,8 +110,15 @@ export const ApplicationForm: FC<ApplicationFormProps> = ({
         <Input size='large' placeholder={t('applicationsCreate.form.placeholders.waterPurpose')} />
       </Form.Item>
       <Form.Item
-        label={t('applicationsCreate.form.labels.firefightingExpenses')}
-        name='firefightingExpenses'
+        label='Расходы на внутреннее пожаротушение'
+        name='firefightingExpensesInner'
+        rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+      >
+        <Input size='large' placeholder={t('applicationsCreate.form.placeholders.enterValue')} />
+      </Form.Item>
+      <Form.Item
+        label='Расходы на внешнее пожаротушение'
+        name='firefightingExpensesOuter'
         rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
       >
         <Input size='large' placeholder={t('applicationsCreate.form.placeholders.enterValue')} />
@@ -127,7 +126,7 @@ export const ApplicationForm: FC<ApplicationFormProps> = ({
       <Flex gap={16}>
         <Col span={12}>
           <Form.Item
-            name='x'
+            name='latitude'
             label={t('applicationsCreate.form.labels.coordX')}
             rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
           >
@@ -136,7 +135,7 @@ export const ApplicationForm: FC<ApplicationFormProps> = ({
         </Col>
         <Col span={12}>
           <Form.Item
-            name='y'
+            name='longitude'
             label={t('applicationsCreate.form.labels.coordY')}
             rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
           >

@@ -1,4 +1,5 @@
 import { IHistoryType, IStageEnum, IStatus6b3Enum, ITyTypeEnum } from 'types/common';
+import { IContractCustomerType } from 'types/requests';
 
 export interface ITechnicalCondition {
   id: number;
@@ -74,6 +75,7 @@ export interface IGetTyById {
   customer: {
     id: string;
     full_name: string;
+    type: IContractCustomerType;
   };
   application?: {
     id: number;
