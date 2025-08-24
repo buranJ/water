@@ -1,14 +1,16 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { getBaseQuery } from 'common/helpers';
 import {
+  IAccountingProtocolsListResponse,
   ICreatePaymentResponse,
   IDownloadProtocolParams,
   IGenerateInvoiceParams,
   IGenerateInvoiceResponse,
   IGetAccountingProtocolParams,
   IGetAccountingProtocolResponse,
-  IGetInvoiceByProtocolParams,
-  IGetInvoiceByProtocolResponse,
+  IGetAccountingProtocolsListParams,
+  IGetInvoicesByProtocolParams,
+  IGetInvoicesByProtocolResponse,
   IGetPaymentsByInvoiceParams,
   IGetPaymentsByInvoiceResponse,
   IUpdateProtocolParams,
@@ -28,8 +30,16 @@ export const accountingApi = createApi({
       providesTags: ['Protocol']
     }),
 
-    // Исправленный endpoint - правильный URL
-    getInvoiceByProtocol: build.query<IGetInvoiceByProtocolResponse, IGetInvoiceByProtocolParams>({
+    getAllProtocols: build.query<IAccountingProtocolsListResponse, IGetAccountingProtocolsListParams>({
+      query: (params = {}) => ({
+        url: '/buhgalteria/protocols/',
+        method: 'GET',
+        params
+      }),
+      providesTags: ['Protocol']
+    }),
+
+    getInvoicesByProtocol: build.query<IGetInvoicesByProtocolResponse, IGetInvoicesByProtocolParams>({
       query: ({ protocolId }) => ({
         url: `/buhgalteria/invoices/by_protocol/${protocolId}/`,
         method: 'GET'
@@ -40,7 +50,8 @@ export const accountingApi = createApi({
     generateInvoice: build.mutation<IGenerateInvoiceResponse, IGenerateInvoiceParams>({
       query: ({ protocolId }) => ({
         url: `/buhgalteria/invoices/generate/${protocolId}/`,
-        method: 'POST'
+        method: 'POST',
+        body: {}
       }),
       invalidatesTags: ['Invoice']
     }),
@@ -84,7 +95,8 @@ export const accountingApi = createApi({
 
 export const {
   useGetAccountingProtocolQuery,
-  useGetInvoiceByProtocolQuery,
+  useGetAllProtocolsQuery,
+  useGetInvoicesByProtocolQuery,
   useGenerateInvoiceMutation,
   useUpdateProtocolMutation,
   useLazyDownloadProtocolQuery,
