@@ -1,0 +1,139 @@
+import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
+import type { SerializedError } from '@reduxjs/toolkit';
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import { Alert, Avatar, Badge, Button, Divider, Flex, List, Popover, Spin, Typography } from 'antd';
+import { BellOutlined } from '@ant-design/icons';
+import archiverIcon from 'assets/icons/archive.svg';
+import documentIcon from 'assets/icons/document.svg';
+import './styles.scss';
+
+import { useGetNotificationsQuery } from 'api/Notifications.api';
+import { formatDistanceToNow, parseISO } from 'date-fns';
+import { ru } from 'date-fns/locale';
+
+const getIconByType = (type: string) => {
+  switch (type) {
+    case 'tu_created':
+      return archiverIcon;
+    case 'application_created':
+      return documentIcon;
+    default:
+      return documentIcon;
+  }
+};
+
+export const NotificationsBell = () => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const { data, isLoading, isError, error } = useGetNotificationsQuery();
+
+  const results = data?.results ?? [];
+  const unreadCount = results.filter((n) => !n.is_read).length;
+
+  const itemsToShow = useMemo(() => {
+    // показываем до 5 последних
+    return [...results].sort((a, b) => (a.created_at < b.created_at ? 1 : -1)).slice(0, 5);
+  }, [results]);
+
+  const errorMsg = useMemo(() => {
+    if (!isError || !error) return '';
+    if ('status' in error) {
+      const e = error as FetchBaseQueryError;
+      if (typeof e.data === 'string') return e.data;
+      try {
+        return JSON.stringify(e.data);
+      } catch {
+        return 'Request error';
+      }
+    }
+    const e = error as SerializedError;
+    return e.message || 'Request error';
+  }, [isError, error]);
+
+  const content = (
+    <div className='notif-popover'>
+      <Flex align='center' justify='space-between' className='notif-popover__header'>
+        <Typography.Title level={4} style={{ margin: 0 }}>
+          {t('routers.notifications')}
+        </Typography.Title>
+        <Button type='link' onClick={() => console.log('mark all as read')}>
+          Отметьте все как прочитанные
+        </Button>
+      </Flex>
+
+      {isLoading && (
+        <Flex justify='center' style={{ padding: 16 }}>
+          <Spin />
+        </Flex>
+      )}
+
+      {isError && (
+        <Alert type='error' showIcon message={t('common.errorPrefix') || 'Ошибка:'} description={errorMsg} style={{ marginTop: 8 }} />
+      )}
+
+      {!isLoading && !isError && (
+        <>
+          <List
+            itemLayout='horizontal'
+            dataSource={itemsToShow}
+            locale={{ emptyText: t('common.noData') || 'Нет данных' }}
+            renderItem={(item) => (
+              <List.Item className='notif-popover__item'>
+                <Flex align='start' justify='space-between' style={{ width: '100%' }}>
+                  <Flex gap={12}>
+                    <Avatar
+                      shape='circle'
+                      style={{ backgroundColor: '#2F80ED' }}
+                      icon={<img src={getIconByType(item.type)} alt='icon' style={{ width: 22, height: 22 }} />}
+                    />
+                    <div>
+                      <Typography.Text strong className='notif-popover__title'>
+                        {item.title}
+                      </Typography.Text>
+                      <div className='notif-popover__message'>{item.message}</div>
+                      <div className='notif-popover__time'>
+                        {formatDistanceToNow(parseISO(item.created_at), { addSuffix: true, locale: ru })}
+                      </div>
+                    </div>
+                  </Flex>
+                  {!item.is_read && <span className='notif-popover__dot' />}
+                </Flex>
+              </List.Item>
+            )}
+          />
+
+          <Divider style={{ margin: '8px 0 12px' }} />
+          <div style={{ textAlign: 'center' }}>
+            <Button
+              type='link'
+              onClick={() => {
+                setOpen(false);
+                navigate('/dashboard/notifications');
+              }}
+            >
+              Смотреть все
+            </Button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+
+  return (
+    <Popover
+      placement='bottomRight'
+      trigger='click'
+      open={open}
+      onOpenChange={setOpen}
+      overlayClassName='notif-popover__overlay'
+      content={content}
+    >
+      <Badge dot={unreadCount > 0}>
+        <Button icon={<BellOutlined />} />
+      </Badge>
+    </Popover>
+  );
+};

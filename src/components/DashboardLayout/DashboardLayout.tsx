@@ -1,8 +1,9 @@
 import { type ReactNode, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { Avatar, Button, Flex, Layout, Menu, type MenuProps, Skeleton, theme, Typography } from 'antd';
-import { BellOutlined, LeftOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
+import { Avatar, Flex, Layout, Menu, type MenuProps, Skeleton, theme, Typography } from 'antd';
+import { LeftOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
+import { NotificationsBell } from 'components/NotificationsBell';
 import arrow from 'assets/icons/arrow.svg';
 import logo from 'assets/icons/logo.svg';
 import ApplicationIcon from 'assets/icons/sidebar/applications.svg?react';
@@ -229,7 +230,7 @@ export const DashboardLayout = ({ children, title }: Props) => {
                 <h2 style={{ margin: 0 }}>{title ? (title.includes('.') ? i18next.t(title) : title) : i18next.t('dashboard.panel')}</h2>
               </Flex>
               <div>
-                <Button icon={<BellOutlined />} />
+                <NotificationsBell />
               </div>
             </Flex>
           </Header>
