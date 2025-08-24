@@ -1,3 +1,4 @@
+// src/types/entities/accounting.ts
 export interface IAccountingProtocol {
   id: number;
   load: string;
@@ -8,6 +9,13 @@ export interface IAccountingProtocol {
   total_kanal_sum: string;
   created_at: string;
   technical_condition: number;
+  // Новые поля
+  nds: string | null;
+  nds_paper: string;
+  nsp: string;
+  nsp_paper: string;
+  paper_kanal_sum: string;
+  paper_water_sum: string;
 }
 
 export interface IGetAccountingProtocolParams {
@@ -16,9 +24,24 @@ export interface IGetAccountingProtocolParams {
 
 export type IGetAccountingProtocolResponse = IAccountingProtocol;
 
+// Новые типы для списка протоколов
+export interface IAccountingProtocolsListResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: IAccountingProtocol[];
+}
+
+export interface IGetAccountingProtocolsListParams {
+  page?: number;
+  page_size?: number;
+  ordering?: string;
+  search?: string;
+}
+
 export interface IAccountingInvoice {
   id: number;
-  invoice_type: 'main' | string;
+  invoice_type: 'main' | 'paper_tu';
   pdf_file: string | null;
   invoice_number: string;
   invoice_date: string;
@@ -30,19 +53,17 @@ export interface IAccountingInvoice {
   protocol: number;
 }
 
-export interface IGetInvoiceByProtocolParams {
+export interface IGetInvoicesByProtocolParams {
   protocolId: string;
 }
 
-// API возвращает массив счетов по протоколу
-export type IGetInvoiceByProtocolResponse = IAccountingInvoice[];
+export type IGetInvoicesByProtocolResponse = IAccountingInvoice[];
 
 export interface IGenerateInvoiceParams {
   protocolId: string;
 }
 
-// API генерации также возвращает массив
-export type IGenerateInvoiceResponse = IAccountingInvoice[];
+export type IGenerateInvoiceResponse = IAccountingInvoice;
 
 export interface IUpdateProtocolParams {
   protocolId: string;
@@ -54,6 +75,13 @@ export interface IUpdateProtocolParams {
     total_water_sum: string;
     total_kanal_sum: string;
     technical_condition: number;
+    // Новые поля для обновления
+    nds?: string | null;
+    nds_paper?: string;
+    nsp?: string;
+    nsp_paper?: string;
+    paper_kanal_sum?: string;
+    paper_water_sum?: string;
   };
 }
 

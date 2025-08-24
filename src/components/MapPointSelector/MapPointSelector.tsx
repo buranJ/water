@@ -124,8 +124,6 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
       console.error('Ошибка создания метки:', error);
     }
   }, []);
-
-  // Получение адреса по координатам
   const getAddressByCoords = useCallback(async (coords: number[]) => {
     if (!window.ymaps) return;
 
