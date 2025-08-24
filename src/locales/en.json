@@ -168,7 +168,9 @@
     "latitude": "Latitude",
     "longitude": "Longitude",
     "comment": "Comment",
-    "optionalComment": "Comment (optional)"
+    "optionalComment": "Comment (optional)",
+    "noData": "No data",
+    "error": "Error"
   },
   "geoportal": {
     "errorLoad": "Failed to load data",
@@ -1109,6 +1111,14 @@
     "openTu": "Open TU",
     "time": {
       "weekAgo": "a week ago"
+    },
+    "markAllAsRead": "Mark all as read",
+    "seeAll": "See all",
+    "date": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "lastMonth": "Last month",
+      "earlier": "Earlier"
     }
   },
   "paymentsTab": {

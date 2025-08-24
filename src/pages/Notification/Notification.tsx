@@ -19,15 +19,15 @@ interface IProps {
   title: string;
 }
 
-type SectionKey = 'Сегодня' | 'Вчера' | 'За последний месяц' | 'Ранее';
+type SectionKey = 'today' | 'yesterday' | 'lastMonth' | 'earlier';
 
 const getSectionKey = (isoDate: string): SectionKey => {
   const d = parseISO(isoDate);
-  if (isToday(d)) return 'Сегодня';
-  if (isYesterday(d)) return 'Вчера';
+  if (isToday(d)) return 'today';
+  if (isYesterday(d)) return 'yesterday';
   const diff = differenceInDays(new Date(), d);
-  if (diff < 30) return 'За последний месяц';
-  return 'Ранее';
+  if (diff < 30) return 'lastMonth';
+  return 'earlier';
 };
 
 const getIconByType = (type: string) => {
@@ -65,16 +65,16 @@ export const Notification: FC<IProps> = ({ title }) => {
   const sections = useMemo(() => {
     const results = data?.results ?? [];
     const grouped: Record<SectionKey, INotification[]> = {
-      Сегодня: [],
-      Вчера: [],
-      'За последний месяц': [],
-      Ранее: []
+      today: [],
+      yesterday: [],
+      lastMonth: [],
+      earlier: []
     };
     for (const n of results) {
       const key = getSectionKey(n.created_at);
       grouped[key].push(n);
     }
-    const order: SectionKey[] = ['Сегодня', 'Вчера', 'За последний месяц', 'Ранее'];
+    const order: SectionKey[] = ['today', 'yesterday', 'lastMonth', 'earlier'];
     return order.map((key) => ({ date: key, items: grouped[key] })).filter((section) => section.items.length > 0);
   }, [data]);
 
@@ -123,7 +123,7 @@ export const Notification: FC<IProps> = ({ title }) => {
           sections.map((section) => (
             <div key={section.date}>
               <Typography.Title level={5} style={{ borderBottom: '1px solid #D9D9D9', paddingBottom: 4 }}>
-                {section.date}
+                {t(`notification.date.${section.date}`)}
               </Typography.Title>
               <List
                 itemLayout='vertical'

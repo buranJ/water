@@ -168,7 +168,9 @@
     "latitude": "Кеңдик",
     "longitude": "Узундук",
     "comment": "Комментарий",
-    "optionalComment": "Комментарий (милдеттүү эмес)"
+    "optionalComment": "Комментарий (милдеттүү эмес)",
+    "noData": "Маалымат жок",
+    "error": "Ката"
   },
   "geoportal": {
     "errorLoad": "Маалыматтарды жүктөөдө ката",
@@ -1109,6 +1111,14 @@
     "openTu": "ТУну ачуу",
     "time": {
       "weekAgo": "бир жума мурун"
+    },
+    "markAllAsRead": "Баарын окулган деп белгилөө",
+    "seeAll": "Бардыгын көрүү",
+    "date": {
+      "today": "Бүгүн",
+      "yesterday": "Кечээ",
+      "lastMonth": "Акыркы ай",
+      "earlier": "Мурун"
     }
   },
   "paymentsTab": {

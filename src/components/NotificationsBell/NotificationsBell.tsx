@@ -97,7 +97,7 @@ export const NotificationsBell = () => {
           {t('routers.notifications')}
         </Typography.Title>
         <Button type='link' onClick={handleMarkAll} loading={isMarkingAll}>
-          Отметьте все как прочитанные
+          {t('notification.markAllAsRead')}
         </Button>
       </Flex>
 
@@ -107,16 +107,14 @@ export const NotificationsBell = () => {
         </Flex>
       )}
 
-      {isError && (
-        <Alert type='error' showIcon message={t('common.errorPrefix') || 'Ошибка:'} description={errorMsg} style={{ marginTop: 8 }} />
-      )}
+      {isError && <Alert type='error' showIcon message={t('common.errorPrefix')} description={errorMsg} style={{ marginTop: 8 }} />}
 
       {!isLoading && !isError && (
         <>
           <List
             itemLayout='horizontal'
             dataSource={itemsToShow}
-            locale={{ emptyText: t('common.noData') || 'Нет данных' }}
+            locale={{ emptyText: t('common.noData') }}
             renderItem={(item) => (
               <List.Item className='notif-popover__item'>
                 <Flex align='start' justify='space-between' style={{ width: '100%' }}>
@@ -151,7 +149,7 @@ export const NotificationsBell = () => {
                 navigate('/dashboard/notifications');
               }}
             >
-              Смотреть все
+              {t('notification.seeAll')}
             </Button>
           </div>
         </>

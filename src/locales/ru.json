@@ -168,7 +168,9 @@
     "latitude": "Широта",
     "longitude": "Долгота",
     "comment": "Комментарий",
-    "optionalComment": "Комментарий (необязательно)"
+    "optionalComment": "Комментарий (необязательно)",
+    "noData": "Нет данных",
+    "error": "Ошибка"
   },
   "geoportal": {
     "errorLoad": "Ошибка загрузки данных",
@@ -1109,6 +1111,14 @@
     "openTu": "Открыть ТУ",
     "time": {
       "weekAgo": "неделю назад"
+    },
+    "markAllAsRead": "Отметьте все как прочитанные",
+    "seeAll": "Смотреть все",
+    "date": {
+      "today": "Сегодня",
+      "yesterday": "Вчера",
+      "lastMonth": "За последний месяц",
+      "earlier": "Ранее"
     }
   },
   "paymentsTab": {
