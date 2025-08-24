@@ -133,20 +133,8 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
         requestPayload.longitude === 0
       ) {
         message.error('Ошибка: невалидные координаты для отправки');
-        console.error('Невалидные координаты:', {
-          latitude: requestPayload.latitude,
-          longitude: requestPayload.longitude,
-          original: { coordLatitude, coordLongitude }
-        });
         return;
       }
-
-      console.log('Финальные данные для отправки:', requestPayload);
-      console.log('Типы координат:', {
-        latitude: typeof requestPayload.latitude,
-        longitude: typeof requestPayload.longitude,
-        values: [requestPayload.latitude, requestPayload.longitude]
-      });
 
       const application = await createApplication(requestPayload).unwrap();
 

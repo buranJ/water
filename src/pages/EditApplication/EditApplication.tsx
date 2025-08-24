@@ -33,8 +33,6 @@ export const EditApplication: FC<IProps> = ({ title }) => {
   }, [form, initialValues]);
 
   const onSave = async (values: ApplicationFormData) => {
-    console.log(values);
-
     try {
       await updateApplication({
         id: Number(id),
