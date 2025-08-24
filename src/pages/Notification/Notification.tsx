@@ -1,10 +1,10 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { Alert, Avatar, Button, Flex, List, Spin, Typography } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons';
+// import { DeleteOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { FilterBar } from 'components/FilterBar';
 import type { INotification } from 'types/entities';
@@ -44,8 +44,9 @@ const getIconByType = (type: string) => {
 export const Notification: FC<IProps> = ({ title }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [ordering, setOrdering] = useState<string>('-created_at');
 
-  const { data, isLoading, isError, error } = useGetNotificationsQuery();
+  const { data, isLoading, isError, error } = useGetNotificationsQuery({ ordering });
 
   const errorMsg = useMemo(() => {
     if (!isError || !error) return '';
@@ -78,10 +79,10 @@ export const Notification: FC<IProps> = ({ title }) => {
     return order.map((key) => ({ date: key, items: grouped[key] })).filter((section) => section.items.length > 0);
   }, [data]);
 
-  const handleDelete = () => {
-    // TODO: очистка/удаление уведомлений через API, если появится эндпоинт
-    console.log('delete');
-  };
+  // const handleDelete = () => {
+  //   // TODO: очистка/удаление уведомлений через API, если появится эндпоинт
+  //   console.log('delete');
+  // };
 
   const handleOpen = (n: INotification) => {
     if (n.technical_condition_id) {
@@ -99,11 +100,16 @@ export const Notification: FC<IProps> = ({ title }) => {
       <div className='notification'>
         <FilterBar
           onFilterChange={(value) => console.log(value)}
+          showSearch={false}
           actionButtons={
             <>
-              <Button>{t('notification.active')}</Button>
-              <Button>{t('notification.new')}</Button>
-              <Button danger icon={<DeleteOutlined />} onClick={handleDelete} />
+              <Button type={ordering === 'created_at' ? 'primary' : 'default'} onClick={() => setOrdering('created_at')}>
+                {t('notification.active')}
+              </Button>
+              <Button type={ordering === '-created_at' ? 'primary' : 'default'} onClick={() => setOrdering('-created_at')}>
+                {t('notification.new')}
+              </Button>
+              {/* <Button danger icon={<DeleteOutlined />} onClick={handleDelete} /> */}
             </>
           }
         />
@@ -145,7 +151,7 @@ export const Notification: FC<IProps> = ({ title }) => {
                       />
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 10 }}>
                         <Flex gap={12} style={{ marginTop: 8 }}>
-                          <Button onClick={() => console.log('assign responsible', item.id)}>{t('notification.assignResponsible')}</Button>
+                          {/* <Button onClick={() => console.log('assign responsible', item.id)}>{t('notification.assignResponsible')}</Button> */}
                           <Button type='primary' onClick={() => handleOpen(item)}>
                             {t('notification.openTu')}
                           </Button>

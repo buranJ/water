@@ -29,6 +29,7 @@ interface Props {
   showStatusSelect?: boolean;
   statusOptions?: { value: string; label: string }[];
   actionButtons?: React.ReactNode;
+  showSearch?: boolean;
 }
 
 export const FilterBar = ({
@@ -43,7 +44,8 @@ export const FilterBar = ({
   showStatusSelect,
   statusOptions,
   actionButtons,
-  alphabetOptions
+  alphabetOptions,
+  showSearch = true
 }: Props) => {
   const [values, setValues] = useState<FilterValues>(() => initialValues || {});
 
@@ -61,14 +63,16 @@ export const FilterBar = ({
   return (
     <div className='filter-bar'>
       <Space style={{ flexWrap: 'wrap', rowGap: 12 }}>
-        <Input
-          prefix={<SearchOutlined />}
-          placeholder={t('filterBar.search')}
-          allowClear
-          value={values.search}
-          onChange={(e) => handleChange('search', e.target.value)}
-          style={{ width: 180 }}
-        />
+        {showSearch && (
+          <Input
+            prefix={<SearchOutlined />}
+            placeholder={t('filterBar.search')}
+            allowClear
+            value={values.search}
+            onChange={(e) => handleChange('search', e.target.value)}
+            style={{ width: 180 }}
+          />
+        )}
 
         {showAlphabet && !alphabetOptions && (
           <Select

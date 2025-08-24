@@ -10,12 +10,7 @@ import archiverIcon from 'assets/icons/archive.svg';
 import documentIcon from 'assets/icons/document.svg';
 import './styles.scss';
 
-import {
-  useGetNotificationsQuery,
-  useLazyGetNotificationsQuery,
-  useLazyGetUnreadCountQuery,
-  useMarkAllAsReadMutation
-} from 'api/Notifications.api';
+import { useGetNotificationsQuery, useLazyGetNotificationsQuery, useLazyGetUnreadCountQuery } from 'api/Notifications.api';
 import { formatDistanceToNow, parseISO } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { useNotificationsWS } from 'hooks/useNotificationsWS';
@@ -39,9 +34,8 @@ export const NotificationsBell = () => {
   const { data, isLoading, isError, error } = useGetNotificationsQuery();
   const [refetchList] = useLazyGetNotificationsQuery();
   const [refetchCount] = useLazyGetUnreadCountQuery();
-  const [markAllAsRead, { isLoading: isMarkingAll }] = useMarkAllAsReadMutation();
 
-  const ws = useNotificationsWS({
+  useNotificationsWS({
     enabled: true,
     onNotification: () => {
       refetchList({ ordering: '-created_at' });
@@ -77,28 +71,15 @@ export const NotificationsBell = () => {
     return e.message || 'Request error';
   }, [isError, error]);
 
-  const handleMarkAll = async () => {
-    console.log('[UI] Mark all as read clicked');
-    ws.sendMarkAllAsRead();
-    try {
-      await markAllAsRead().unwrap();
-      console.log('[REST] markAllAsRead: success');
-    } catch (e) {
-      console.log('[REST] markAllAsRead: failed', e);
-    }
-    refetchList({ ordering: '-created_at' });
-    refetchCount();
-  };
-
   const content = (
     <div className='notif-popover'>
       <Flex align='center' justify='space-between' className='notif-popover__header'>
         <Typography.Title level={4} style={{ margin: 0 }}>
           {t('routers.notifications')}
         </Typography.Title>
-        <Button type='link' onClick={handleMarkAll} loading={isMarkingAll}>
+        {/* <Button type='link' onClick={handleMarkAll} loading={isMarkingAll}>
           {t('notification.markAllAsRead')}
-        </Button>
+        </Button> */}
       </Flex>
 
       {isLoading && (
