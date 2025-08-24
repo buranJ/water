@@ -153,22 +153,11 @@ export const Notification: FC<IProps> = ({ title }) => {
                         <Flex gap={12} style={{ marginTop: 8 }}>
                           {/* <Button onClick={() => console.log('assign responsible', item.id)}>{t('notification.assignResponsible')}</Button> */}
                           <Button type='primary' onClick={() => handleOpen(item)}>
-                            {t('notification.openTu')}
+                            {t('notification.open')}
                           </Button>
                         </Flex>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                           <span style={{ color: '#8C8C8C', fontSize: 12 }}>{new Date(item.created_at).toLocaleString('ru-RU')}</span>
-                          {!item.is_read && (
-                            <span
-                              style={{
-                                width: 12,
-                                height: 12,
-                                backgroundColor: '#2F80ED',
-                                borderRadius: '50%',
-                                display: 'inline-block'
-                              }}
-                            />
-                          )}
                         </div>
                       </div>
                     </Flex>

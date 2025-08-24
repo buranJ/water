@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import { Alert, Avatar, Badge, Button, Divider, Flex, List, Popover, Spin, Typography } from 'antd';
+import { Alert, Avatar, Button, Divider, Flex, List, Popover, Spin, Typography } from 'antd';
 import { BellOutlined } from '@ant-design/icons';
 import type { INotification } from 'types/entities';
 import archiverIcon from 'assets/icons/archive.svg';
@@ -49,7 +49,6 @@ export const NotificationsBell = () => {
   });
 
   const results = useMemo<INotification[]>(() => data?.results ?? [], [data?.results]);
-  const unreadCount = results.filter((n) => !n.is_read).length;
 
   const itemsToShow = useMemo(() => {
     // показываем до 5 последних
@@ -115,7 +114,6 @@ export const NotificationsBell = () => {
                       </div>
                     </div>
                   </Flex>
-                  {!item.is_read && <span className='notif-popover__dot' />}
                 </Flex>
               </List.Item>
             )}
@@ -147,9 +145,7 @@ export const NotificationsBell = () => {
       overlayClassName='notif-popover__overlay'
       content={content}
     >
-      <Badge dot={unreadCount > 0}>
-        <Button icon={<BellOutlined />} />
-      </Badge>
+      <Button icon={<BellOutlined />} />
     </Popover>
   );
 };
