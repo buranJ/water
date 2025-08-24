@@ -49,7 +49,7 @@ export const accountingApi = createApi({
 
     generateInvoice: build.mutation<IGenerateInvoiceResponse, IGenerateInvoiceParams>({
       query: ({ protocolId }) => ({
-        url: `/buhgaleria/invoices/generate/${protocolId}/`,
+        url: `/buhgalteria/invoices/generate/${protocolId}/`,
         method: 'POST',
         body: {}
       }),
