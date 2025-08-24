@@ -9,9 +9,15 @@ import archiverIcon from 'assets/icons/archive.svg';
 import documentIcon from 'assets/icons/document.svg';
 import './styles.scss';
 
-import { useGetNotificationsQuery } from 'api/Notifications.api';
+import {
+  useGetNotificationsQuery,
+  useLazyGetNotificationsQuery,
+  useLazyGetUnreadCountQuery,
+  useMarkAllAsReadMutation
+} from 'api/Notifications.api';
 import { formatDistanceToNow, parseISO } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import { useNotificationsWS } from 'hooks/useNotificationsWS';
 
 const getIconByType = (type: string) => {
   switch (type) {
@@ -28,7 +34,25 @@ export const NotificationsBell = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+
   const { data, isLoading, isError, error } = useGetNotificationsQuery();
+  const [refetchList] = useLazyGetNotificationsQuery();
+  const [refetchCount] = useLazyGetUnreadCountQuery();
+  const [markAllAsRead, { isLoading: isMarkingAll }] = useMarkAllAsReadMutation();
+
+  const ws = useNotificationsWS({
+    enabled: true,
+    onNotification: (payload) => {
+      console.log('[WS->UI] onNotification payload:', payload);
+      refetchList({ ordering: '-created_at' });
+      refetchCount();
+    },
+    onUnreadList: (list) => {
+      console.log('[WS->UI] onUnreadList size:', Array.isArray(list) ? list.length : 0);
+      refetchList({ ordering: '-created_at' });
+      refetchCount();
+    }
+  });
 
   const results = data?.results ?? [];
   const unreadCount = results.filter((n) => !n.is_read).length;
@@ -53,13 +77,26 @@ export const NotificationsBell = () => {
     return e.message || 'Request error';
   }, [isError, error]);
 
+  const handleMarkAll = async () => {
+    console.log('[UI] Mark all as read clicked');
+    ws.sendMarkAllAsRead();
+    try {
+      await markAllAsRead().unwrap();
+      console.log('[REST] markAllAsRead: success');
+    } catch (e) {
+      console.log('[REST] markAllAsRead: failed', e);
+    }
+    refetchList({ ordering: '-created_at' });
+    refetchCount();
+  };
+
   const content = (
     <div className='notif-popover'>
       <Flex align='center' justify='space-between' className='notif-popover__header'>
         <Typography.Title level={4} style={{ margin: 0 }}>
           {t('routers.notifications')}
         </Typography.Title>
-        <Button type='link' onClick={() => console.log('mark all as read')}>
+        <Button type='link' onClick={handleMarkAll} loading={isMarkingAll}>
           Отметьте все как прочитанные
         </Button>
       </Flex>
