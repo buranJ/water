@@ -3,6 +3,7 @@ export type { IApplicationHistory, IApplicationResponse, IApplicationsListRespon
 export type { ICustomer, ICustomerChangeHistory, ICustomerParams } from './customer';
 export type { ICategory, IFileFolderFolder, IFileItem } from './fileFolder';
 export type { FormulaItem, FormulaListResponse, FormulaUpdateBody, IGetFormulasParams } from './formula';
+export type { INotification, INotificationsListResponse } from './notifications';
 export type {
   IGetObjectParams,
   IObjectChangeHistory,

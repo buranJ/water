@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { Alert, Avatar, Badge, Button, Card, Divider, Modal, Radio, Space, Spin, Typography } from 'antd';
-import { FlagOutlined, GlobalOutlined, IdcardOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
+import { BellOutlined, FlagOutlined, GlobalOutlined, IdcardOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components';
 import './style.scss';
 
@@ -223,6 +223,10 @@ export const Profile: FC<IProps> = ({ title }) => {
             <div className={`language-settings__item ${activeTab === 'account' ? 'active' : ''}`} onClick={() => setActiveTab('account')}>
               <UserOutlined style={{ fontSize: '20px' }} />
               <li>{t('profile.account')}</li>
+            </div>
+            <div className='language-settings__item' onClick={() => navigate('/dashboard/notifications')}>
+              <BellOutlined style={{ fontSize: '20px' }} />
+              <li>{t('routers.notifications')}</li>
             </div>
           </ul>
         </aside>

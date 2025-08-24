@@ -7,6 +7,7 @@ export { docsApi } from './Docs.api';
 export { filefolderApi } from './FileFolder.api';
 export { formulaApi } from './Formula.api';
 export { geoportalApi } from './GeoPartal.api';
+export { notificationsApi } from './Notifications.api';
 export { objectApi } from './Object.api';
 export { refusalApi } from './Refusal.api';
 export { reportsApi } from './Reports.api';

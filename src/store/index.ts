@@ -11,6 +11,7 @@ import {
   filefolderApi,
   formulaApi,
   geoportalApi,
+  notificationsApi,
   objectApi,
   refusalApi,
   reportsApi,
@@ -32,7 +33,8 @@ const store = configureStore({
     [accountingApi.reducerPath]: accountingApi.reducer,
     [applicationsApi.reducerPath]: applicationsApi.reducer,
     [formulaApi.reducerPath]: formulaApi.reducer,
-    [reportsApi.reducerPath]: reportsApi.reducer
+    [reportsApi.reducerPath]: reportsApi.reducer,
+    [notificationsApi.reducerPath]: notificationsApi.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -53,7 +55,8 @@ const store = configureStore({
       applicationsApi.middleware,
       accountingApi.middleware,
       formulaApi.middleware,
-      reportsApi.middleware
+      reportsApi.middleware,
+      notificationsApi.middleware
     )
 });
 
