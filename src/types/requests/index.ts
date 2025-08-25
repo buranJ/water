@@ -4,7 +4,13 @@ export type {
   IGetApplicationHistoryResponse,
   IGetApplicationsParams
 } from './application.requests';
-export type { IContractCustomerType, IDownloadContractDocxParams, IDownloadContractDocxResponse } from './buhgalteria.requests';
+export type {
+  IContractCustomerType,
+  IDownloadContractDocxParams,
+  IDownloadContractDocxResponse,
+  IGetInvoicesByProtocolTyParams,
+  IGetInvoicesByProtocolTyResponse
+} from './buhgalteria.requests';
 export type {
   IGetCustomerChangeHistoryParams,
   IGetCustomerChangeHistoryResponse,

@@ -1,20 +1,22 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router';
-import { Alert, Card, Col, Flex, Row, Spin, Tabs, TabsProps, Typography } from 'antd';
+import { Alert, Card, Col, Flex, message, Row, Spin, Tabs, TabsProps, Typography } from 'antd';
 import { ClockCircleTwoTone } from '@ant-design/icons';
 import { ActionsBar } from './components/ActionsBar';
 import { DataSection } from './components/DataSection';
 import { DocumentsProgress } from './components/DocumentsProgress';
 import { AccountingTab } from 'components/AccountingTab/AccountingTab';
 import { DashboardLayout } from 'components/DashboardLayout';
+import { RejectApplicationModal } from 'components/Modal/RejectApplicationModal';
+import type { ITyBody } from 'types/entities';
 import AddLoadModal from './AddLoadModal';
-import { MyModal } from './MyModal';
 import { Architecture } from './Tabs';
 
 import { useGetUserInfoQuery } from 'api/Auth.api';
 import { useLazyDownloadContractDocxQuery } from 'api/Buhgalteria.api';
 import { useGetFoldersQuery } from 'api/FileFolder.api';
-import { useGetTyByIdQuery, useLazyDownloadProtocolDocxQuery } from 'api/Ty.api';
+import { type RefusalBody, useCreateRefusalMutation } from 'api/Refusal.api';
+import { useGetTyByIdQuery, useLazyDownloadProtocolDocxQuery, useUpdateTyMutation } from 'api/Ty.api';
 import { usePermissions } from 'hooks/useAuth';
 import { t } from 'i18next';
 
@@ -49,7 +51,8 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const {
     data: objectData,
     isLoading,
-    isError
+    isError,
+    refetch
   } = useGetTyByIdQuery(
     {
       tyId: id || ''
@@ -64,9 +67,41 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const [isAddLoadVisible, setIsAddLoadVisible] = useState<boolean>(false);
   const [triggerDownload, { isFetching: isDownloading }] = useLazyDownloadProtocolDocxQuery();
   const [triggerContractDownload, { isFetching: isContractDownloading }] = useLazyDownloadContractDocxQuery();
+  const [updateTy] = useUpdateTyMutation();
+  const [createRefusal] = useCreateRefusalMutation();
 
   const handleRejectClick = (): void => {
     setIsModalVisible(true);
+  };
+
+  const handleApproveClick = async () => {
+    if (!id) return;
+    try {
+      await updateTy({ id, body: { ...objectData, stage: 'approved' } as unknown as ITyBody }).unwrap();
+      message.success(t('tuDetails.messages.approved', 'ТУ одобрены'));
+      refetch();
+    } catch (e) {
+      console.error('Failed to approve TU', e);
+      message.error(t('tuDetails.messages.approveFailed', 'Не удалось одобрить ТУ'));
+    }
+  };
+
+  const handleRejectSubmit = async (data: RefusalBody) => {
+    if (!id) return;
+    try {
+      await createRefusal({
+        ty: id,
+        causes_ids: (data.causes_ids as (number | string)[]).map((v) => Number(v)),
+        comment: data.comment,
+        refusal_files: data.refusal_files || []
+      }).unwrap();
+      message.success(t('tuDetails.messages.rejected', 'Отказ создан'));
+      setIsModalVisible(false);
+      refetch();
+    } catch (e) {
+      console.error('Failed to create refusal', e);
+      message.error(t('tuDetails.messages.rejectFailed', 'Не удалось создать отказ'));
+    }
   };
 
   const handleModalCancel = (): void => {
@@ -107,7 +142,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
 
         switch (category.title.toLowerCase()) {
           case 'бухгалтерия':
-            content = id ? <AccountingTab technicalConditionId={id} /> : null;
+            content = id ? <AccountingTab data={objectData} technicalConditionId={id} /> : null;
             break;
           default:
             content = (
@@ -126,7 +161,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
           children: content
         };
       }) || [],
-    [userQuery.data?.user.allowed_categories, id, getRequiredByCategory, getCustomByCategory, getCategoryLabel]
+    [userQuery.data?.user.allowed_categories, getCategoryLabel, id, objectData, getRequiredByCategory, getCustomByCategory]
   );
 
   const tabItems: TabsProps['items'] = useMemo(
@@ -231,9 +266,11 @@ export const TuDetails: FC<IProps> = ({ title }) => {
         onDownloadTu={handleDownloadTu}
         onAddLoad={handleAddLoad}
         onReject={handleRejectClick}
+        onApprove={handleApproveClick}
         isDownloading={isDownloading}
         onDownloadContract={handleDownloadContract}
         isContractDownloading={isContractDownloading}
+        data={objectData}
       />
 
       <Row gutter={24}>
@@ -255,7 +292,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
         )}
       </Row>
 
-      <MyModal onClose={handleModalCancel} visible={isModalVisible} />
+      <RejectApplicationModal open={isModalVisible} onCancel={handleModalCancel} onReject={handleRejectSubmit} />
       <AddLoadModal visible={isAddLoadVisible} onClose={() => setIsAddLoadVisible(false)} tyId={id || ''} />
     </DashboardLayout>
   );

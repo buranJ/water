@@ -1,4 +1,5 @@
 import { FC, useEffect, useState } from 'react';
+import { useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
   Alert,
@@ -21,6 +22,7 @@ import { ClockCircleOutlined, DownloadOutlined, EditOutlined, UploadOutlined } f
 import { EditProtocolModal } from 'components/EditProtocolModal/EditProtocolModal';
 import { InvoicesList } from 'components/InvoicesList/InvoicesList';
 import { EnhancedPaymentsTab } from 'components/PaymentsTab/EnhancedPaymentsTab';
+import { IGetTyById } from 'types/entities';
 
 import {
   useGenerateInvoiceMutation,
@@ -28,12 +30,14 @@ import {
   useGetInvoicesByProtocolQuery, // Обновленный хук
   useLazyDownloadProtocolQuery
 } from 'api/Accounting.api';
+import { useLazyGetInvoicesByProtocolTyQuery } from 'api/Buhgalteria.api';
 
 const { Title, Text } = Typography;
 
 interface IProps {
   technicalConditionId: string;
   onOpenPaymentModal?: () => void;
+  data?: IGetTyById;
 }
 
 interface IProtocolTableData {
@@ -43,7 +47,8 @@ interface IProtocolTableData {
   badge?: string;
 }
 
-export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentModal }) => {
+export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPaymentModal }) => {
+  const params = useParams();
   const [activeAccountingTab, setActiveAccountingTab] = useState<string>('1');
   const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false);
   const [shouldOpenPaymentModal, setShouldOpenPaymentModal] = useState<boolean>(false);
@@ -62,13 +67,12 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
     data: invoicesData,
     isLoading: invoiceLoading,
     isError: invoiceError,
-    refetch: refetchInvoice,
-    error: invoiceApiError
+    refetch: refetchInvoice
   } = useGetInvoicesByProtocolQuery({ protocolId: protocolData?.id.toString() || '' }, { skip: !protocolData?.id });
-  console.log(invoiceApiError);
 
   const [generateInvoice, { isLoading: isGenerating }] = useGenerateInvoiceMutation();
   const [downloadProtocol, { isLoading: isDownloading }] = useLazyDownloadProtocolQuery();
+  const [getInvoicesByProtocolTy] = useLazyGetInvoicesByProtocolTyQuery();
 
   const currency = t('tuDetails.currency');
 
@@ -110,6 +114,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
       } else {
         throw new Error('Empty response array');
       }
+      getInvoicesByProtocolTy({ tyId: params?.id || '' });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Generate invoice error:', error);
@@ -298,6 +303,10 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
 
   const hasInvoices = invoicesData && invoicesData.length > 0 && !invoiceError;
 
+  if (data?.status !== 'active') {
+    return 'ТУ находится в архиве';
+  }
+
   return (
     <Space direction='vertical' size={24} style={{ width: '100%' }}>
       {/* Основная область с вкладками - растянута на всю ширину */}
@@ -340,6 +349,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
                     size='large'
                     onClick={handleGenerateInvoice}
                     loading={isGenerating}
+                    disabled={data?.stage === 'approved' || data?.status !== 'active'}
                     block
                     style={{ maxWidth: '280px', margin: '0 auto', height: '48px', fontSize: '16px' }}
                   >

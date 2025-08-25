@@ -12,7 +12,6 @@ import './styles.scss';
 import { useCreateApplicationMutation, useUploadApplicationFilesMutation } from 'api/Application.api';
 import { useCreateCustomerMutation, useLazyGetCustomerQuery } from 'api/Customer.api';
 import { useCreateObjectMutation, useLazyGetAllObjectsQuery } from 'api/Object.api';
-import { useCreateTyFromApplicationMutation } from 'api/Ty.api';
 import { t } from 'i18next';
 import { handleEnterFocusNext } from 'utils/formNavigation';
 
@@ -34,7 +33,6 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
   const [uploadApplicationFiles] = useUploadApplicationFilesMutation();
   const [createCustomer, { isLoading: isCreatingCustomer }] = useCreateCustomerMutation();
   const [createObject, { isLoading: isCreatingObject }] = useCreateObjectMutation();
-  const [createTy] = useCreateTyFromApplicationMutation();
   const [triggerGetCustomers] = useLazyGetCustomerQuery();
   const [triggerGetObjects] = useLazyGetAllObjectsQuery();
   const [form] = Form.useForm<IApplication>();
@@ -138,9 +136,6 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
 
       const application = await createApplication(requestPayload).unwrap();
 
-      if (application.id) {
-        await createTy({ application_id: application.id });
-      }
       if (attachedFiles.length > 0) {
         const files = attachedFiles.reduce<File[]>((acc, f) => {
           const raw = f.originFileObj as unknown;

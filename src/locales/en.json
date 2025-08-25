@@ -279,7 +279,8 @@
       "request": "Request",
       "changeTuData": "History of changes to technical data",
       "downloadTu": "Download TU",
-      "rejectTu": "Reject TU"
+      "rejectTu": "Reject TU",
+      "approveTu": "Approve TU"
     },
     "autoLoaded": "Automatically loaded",
     "contentNotImplemented": "Content for \"{{title}}\" is not implemented yet",

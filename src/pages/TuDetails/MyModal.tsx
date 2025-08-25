@@ -1,15 +1,19 @@
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Form, Input, List, Modal, Space, Upload, UploadFile, UploadProps } from 'antd';
+import { Button, Form, Input, List, Modal, Select, Space, Upload, UploadFile, UploadProps } from 'antd';
 import type { UploadChangeParam } from 'antd/es/upload';
 import { CloseCircleTwoTone, FileOutlined, UploadOutlined } from '@ant-design/icons';
+
+import { type RefusalBody, useGetRefusalCausesQuery } from 'api/Refusal.api';
 
 interface MyModalProps {
   visible: boolean;
   onClose: () => void;
+  onReject: (data: RefusalBody) => void;
 }
 
-export const MyModal: FC<MyModalProps> = ({ visible, onClose }) => {
+export const MyModal: FC<MyModalProps> = ({ visible, onClose, onReject }) => {
+  const refuseQuery = useGetRefusalCausesQuery();
   const { t } = useTranslation();
   const [form] = Form.useForm();
   const [uploadFileList, setUploadFileList] = useState<UploadFile<File>[]>([]);
@@ -24,12 +28,7 @@ export const MyModal: FC<MyModalProps> = ({ visible, onClose }) => {
 
   const handleSubmit = () => {
     const values = form.getFieldsValue();
-    console.log('Причина отказа:', values.reason);
-    console.log('Комментарий:', values.comment);
-    console.log(
-      'Загруженные файлы:',
-      uploadFileList.map((f) => f.name)
-    );
+    onReject(values);
     onClose();
     form.resetFields();
     setUploadFileList([]);
@@ -45,7 +44,13 @@ export const MyModal: FC<MyModalProps> = ({ visible, onClose }) => {
     <Modal open={visible} title={t('tuRejectModal.title')} onCancel={handleCancel} footer={null}>
       <Form form={form} layout='vertical'>
         <Form.Item name='reason' label={t('tuRejectModal.labels.reason')} initialValue={t('tuRejectModal.defaultReason')}>
-          <Input />
+          <Select placeholder={t('tuRejectModal.placeholders.reason')}>
+            {refuseQuery.data?.results.map((cause) => (
+              <Select.Option key={cause.id} value={cause.id}>
+                {cause.title}
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
 
         <Form.Item name='comment' label={t('tuRejectModal.labels.comment')}>

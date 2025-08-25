@@ -11,6 +11,7 @@ import { ApplicationData, getColumns } from './Applications.helpers';
 
 import { useApproveApplicationMutation, useGetApplicationsQuery } from 'api/Application.api';
 import { RefusalBody, useCreateRefusalMutation } from 'api/Refusal.api';
+import { useCreateTyFromApplicationMutation } from 'api/Ty.api';
 import { usePermissions } from 'hooks/useAuth';
 import { t } from 'i18next';
 
@@ -58,6 +59,7 @@ export const Applications: FC<IProps> = ({ title }) => {
   );
   const [approveApplications, { isSuccess: isApproveSuccess, isError: isApproveError }] = useApproveApplicationMutation();
   const [createRefuse, { isSuccess: isRejectSuccess, isError: isRejectError }] = useCreateRefusalMutation();
+  const [createTy] = useCreateTyFromApplicationMutation();
 
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [selectedApplication, setSelectedApplication] = useState<string>();
@@ -140,13 +142,14 @@ export const Applications: FC<IProps> = ({ title }) => {
             openRejectModal(String(record.id));
             break;
           case 'approve':
+            createTy({ application_id: Number(record.id) });
             approveApplications({ applicationId: String(record.id) });
             break;
         }
       },
       hasPermission
     });
-  }, [approveApplications, hasPermission, navigate, openRejectModal]);
+  }, [approveApplications, createTy, hasPermission, navigate, openRejectModal]);
 
   const onAddClick = () => {
     navigate('create');

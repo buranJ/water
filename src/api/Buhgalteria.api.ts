@@ -1,6 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { getBaseQuery } from 'common/helpers';
 import type { IDownloadContractDocxParams, IDownloadContractDocxResponse } from 'types/requests';
+import type { IGetInvoicesByProtocolTyParams, IGetInvoicesByProtocolTyResponse } from 'types/requests';
 
 export const buhgalteriaApi = createApi({
   reducerPath: 'buhgalteriaApi',
@@ -45,8 +46,19 @@ export const buhgalteriaApi = createApi({
         }
       }),
       keepUnusedDataFor: 0
+    }),
+    getInvoicesByProtocolTy: build.query<IGetInvoicesByProtocolTyResponse, IGetInvoicesByProtocolTyParams>({
+      query: ({ tyId }) => ({
+        url: `/buhgalteria/invoices/by_protocol/${tyId}/`,
+        method: 'GET'
+      })
     })
   })
 });
 
-export const { usePostProtocolMutation, useLazyDownloadContractDocxQuery } = buhgalteriaApi;
+export const {
+  usePostProtocolMutation,
+  useLazyDownloadContractDocxQuery,
+  useGetInvoicesByProtocolTyQuery,
+  useLazyGetInvoicesByProtocolTyQuery
+} = buhgalteriaApi;
