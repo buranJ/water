@@ -31,7 +31,8 @@
       "bills": "Bills and Payments",
       "architecture": "Architecture",
       "export": "Export",
-      "formulas": "Formulas"
+      "formulas": "Formulas",
+      "archive": "Archive TU"
     },
     "panel": "Dashboard"
   },
@@ -1023,41 +1024,6 @@
       "add": "Add"
     }
   },
-  "paymentsModal": {
-    "title": "Add payment",
-    "labels": {
-      "paymentNumber": "Payment number",
-      "paymentDate": "Payment date",
-      "amount": "Payment amount",
-      "source": "Payment source",
-      "status": "Payment status",
-      "optionalReceiptFile": "Receipt file (optional)"
-    },
-    "placeholders": {
-      "paymentNumber": "Enter payment number",
-      "date": "Select date",
-      "amount": "Enter amount",
-      "source": "e.g., 1C",
-      "status": "Select status"
-    },
-    "buttons": {
-      "uploadReceipt": "Upload receipt",
-      "replaceFile": "Replace file",
-      "cancel": "Cancel",
-      "submit": "Add payment"
-    },
-    "messages": {
-      "success": "Payment added successfully",
-      "error": "Error adding payment",
-      "fileTypeError": "Only images, PDF, or documents are allowed",
-      "fileSizeError": "File must be smaller than 10MB",
-      "fileSelectedPrefix": "Selected file:"
-    },
-    "validation": {
-      "required": "This field is required",
-      "amountPositive": "Amount must be greater than 0"
-    }
-  },
   "objectCard": {
     "more": "Details",
     "createdAt": "Created at",
@@ -1163,6 +1129,145 @@
       "needCreateInvoiceFirst": "To view payments, you must first create an invoice",
       "paidTag": "(Paid)",
       "protocolUpdated": "Protocol updated successfully"
+    }
+  },
+  "tyImport": {
+    "title": "Import Technical Conditions from Excel",
+    "steps": {
+      "selectFile": "Select file",
+      "selectFileDesc": "Upload Excel file",
+      "processing": "Processing",
+      "processingDesc": "Data import",
+      "result": "Result",
+      "resultDesc": "View results"
+    },
+    "upload": {
+      "cardTitle": "File upload",
+      "dragTextStrong": "Click or drag file to this area",
+      "dragHint": "Only .xlsx and .xls files (up to 10MB) are supported",
+      "alertTitle": "Important!",
+      "alertDescription": "Make sure your Excel file contains all required columns and is properly formatted"
+    },
+    "requirements": {
+      "cardTitle": "File requirements",
+      "list": {
+        "item1": "The file must be in .xlsx or .xls format",
+        "item2": "The first row must contain column headers",
+        "item3": "Maximum file size: 10MB",
+        "item4": "Empty rows will be skipped",
+        "item5": "Status of all TUs will be set to \"Archived\"",
+        "item6": "Stage will be set to \"Completed\""
+      }
+    },
+    "processingFile": {
+      "cardTitle": "File processing",
+      "processingFile": "Processing file: {{name}}",
+      "size": "({{size}})",
+      "importing": "Importing data...",
+      "preparing": "Preparing..."
+    },
+    "results": {
+      "cardTitle": "Import results",
+      "createdTu": "TUs created",
+      "createdIds": "Record IDs",
+      "errors": "Errors",
+      "successTag": "Import successful",
+      "errorTag": "Import with errors",
+      "createdTuPrefix": "TUs created",
+      "archivedTag": "All TUs added to archive",
+      "createdTuCardTitle": "Created technical conditions ({{count}})",
+      "createdIdsPrefix": "IDs of created TUs:",
+      "tuLabel": "TU #{{id}}",
+      "showingFirst": "Showing first records. Total created: {{count}} TUs"
+    },
+    "errors": {
+      "cardTitle": "Import errors ({{count}})",
+      "downloadReport": "Download report",
+      "alertTitle": "Errors found",
+      "alertDesc": "Rows with errors were skipped. Fix them in the source file and try importing again.",
+      "table": {
+        "index": "No.",
+        "description": "Error description"
+      }
+    },
+    "actions": {
+      "importAnother": "Import another file",
+      "goToArchive": "Go to TU archive"
+    },
+    "excelFormat": {
+      "cardTitle": "Excel file format",
+      "intro": "Your Excel file must contain the following columns:",
+      "columnsTable": {
+        "title": "Column title",
+        "description": "Description",
+        "example": "Example",
+        "requiredTag": "required"
+      }
+    },
+    "messages": {
+      "importSuccess": "{{message}} TUs created: {{count}}",
+      "importWarning": "{{message}}. Errors found.",
+      "importError": "An error occurred while importing the file",
+      "reportDownloaded": "Error report downloaded"
+    },
+    "excel": {
+      "columns": {
+        "tu_number": {
+          "title": "TU No.",
+          "description": "Technical condition number",
+          "example": "TU-001-2024"
+        },
+        "registration_date": {
+          "title": "Reg. date",
+          "description": "Registration date",
+          "example": "15.01.2024"
+        },
+        "customer": {
+          "title": "Customer",
+          "description": "Customer name",
+          "example": "LLC \"Stroy Company\""
+        },
+        "address": {
+          "title": "Address",
+          "description": "Object address",
+          "example": "Bishkek, Manas St., 45"
+        },
+        "object_name": {
+          "title": "Object name",
+          "description": "Object description",
+          "example": "Residential building"
+        },
+        "water_quantity": {
+          "title": "Water quantity",
+          "description": "Water volume",
+          "example": "15.5"
+        },
+        "sewage_quantity": {
+          "title": "Sewage quantity",
+          "description": "Sewage volume",
+          "example": "12.0"
+        },
+        "contract_info": {
+          "title": "Contract No. and date for TU and permit payment",
+          "description": "Contract number and date",
+          "example": "Contract No. 123 dated 10.01.2024"
+        },
+        "invoice_number": {
+          "title": "Invoice No. for payment",
+          "description": "Invoice number",
+          "example": "INV-456"
+        },
+        "payment_amount": {
+          "title": "Payment amount for TU and permit",
+          "description": "Amount to pay",
+          "example": "25000"
+        },
+        "payment_date": {
+          "title": "Payment date",
+          "description": "Payment date",
+          "example": "20.01.2024"
+        }
+      }
     }
   }
 }

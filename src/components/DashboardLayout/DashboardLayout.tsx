@@ -117,7 +117,7 @@ export const DashboardLayout = ({ children, title }: Props) => {
     hasPermission('view_technicalcondition') && {
       key: '/dashboard/archive',
       icon: <ComputingIcon />,
-      label: 'Архив ТУ'
+      label: t('dashboard.pages.archive')
     }
   ].filter(Boolean) as MenuProps['items'];
 
