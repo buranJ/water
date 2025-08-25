@@ -1105,10 +1105,9 @@
     }
   },
   "notification": {
-    "active": "Активные",
+    "active": "Старые",
     "new": "Новые",
     "assignResponsible": "Назначить ответственного",
-    "openTu": "Открыть ТУ",
     "time": {
       "weekAgo": "неделю назад"
     },
@@ -1119,7 +1118,9 @@
       "yesterday": "Вчера",
       "lastMonth": "За последний месяц",
       "earlier": "Ранее"
-    }
+    },
+    "open": "Открыть",
+    "read": "Прочитано"
   },
   "paymentsTab": {
     "buttons": {

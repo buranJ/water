@@ -1105,10 +1105,9 @@
     }
   },
   "notification": {
-    "active": "Активдүү",
+    "active": "Эскилер",
     "new": "Жаңылары",
     "assignResponsible": "Жооптууну дайындоо",
-    "openTu": "ТУну ачуу",
     "time": {
       "weekAgo": "бир жума мурун"
     },
@@ -1119,7 +1118,9 @@
       "yesterday": "Кечээ",
       "lastMonth": "Акыркы ай",
       "earlier": "Мурун"
-    }
+    },
+    "open": "Ачуу",
+    "read": "Окулду"
   },
   "paymentsTab": {
     "buttons": {

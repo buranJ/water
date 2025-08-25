@@ -12,7 +12,7 @@ import archiverIcon from 'assets/icons/archive.svg';
 import documentIcon from 'assets/icons/document.svg';
 import './styles.scss';
 
-import { useGetNotificationsQuery } from 'api/Notifications.api';
+import { useGetNotificationsQuery, useMarkAsReadMutation } from 'api/Notifications.api';
 import { differenceInDays, isToday, isYesterday, parseISO } from 'date-fns';
 
 interface IProps {
@@ -45,8 +45,10 @@ export const Notification: FC<IProps> = ({ title }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [ordering, setOrdering] = useState<string>('-created_at');
+  const [optimisticRead, setOptimisticRead] = useState<Set<number>>(new Set());
 
-  const { data, isLoading, isError, error } = useGetNotificationsQuery({ ordering });
+  const { data, isLoading, isError, error, refetch } = useGetNotificationsQuery({ ordering });
+  const [markAsRead] = useMarkAsReadMutation();
 
   const errorMsg = useMemo(() => {
     if (!isError || !error) return '';
@@ -93,6 +95,28 @@ export const Notification: FC<IProps> = ({ title }) => {
       navigate(`/dashboard/applications/${n.application_id}`);
       return;
     }
+  };
+
+  const handleMarkOne = async (id: number) => {
+    // Оптимистично скрываем кнопку "Прочитано" сразу
+    setOptimisticRead((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+    try {
+      await markAsRead(id).unwrap();
+      console.log('[REST] markAsRead: success for id', id);
+    } catch (e) {
+      console.log('[REST] markAsRead: failed', id, e);
+      // Откат при ошибке
+      setOptimisticRead((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    }
+    refetch();
   };
 
   return (
@@ -156,8 +180,17 @@ export const Notification: FC<IProps> = ({ title }) => {
                             {t('notification.open')}
                           </Button>
                         </Flex>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between' }}>
                           <span style={{ color: '#8C8C8C', fontSize: 12 }}>{new Date(item.created_at).toLocaleString('ru-RU')}</span>
+                          {!(item.is_read || optimisticRead.has(item.id)) && (
+                            <Button
+                              type='link'
+                              style={{ padding: 0, height: 'auto', color: '#2F80ED', textDecoration: 'underline' }}
+                              onClick={() => handleMarkOne(item.id)}
+                            >
+                              {t('notification.read')}
+                            </Button>
+                          )}
                         </div>
                       </div>
                     </Flex>

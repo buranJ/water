@@ -44,21 +44,18 @@ export function useNotificationsWS(params: UseNotificationsWSParams = {}) {
 
       // If it's already a plain token string (most JWT setups)
       if (!raw.startsWith('{') && !raw.startsWith('[') && !raw.startsWith('"')) {
-        console.log('[WS] Using token from localStorage (raw string)');
         return raw;
       }
 
       // Try JSON parse
       const parsed = JSON.parse(raw);
       if (typeof parsed === 'string') {
-        console.log('[WS] Using token from localStorage (parsed string)');
         return parsed;
       }
       if (parsed && typeof parsed === 'object') {
         const guess =
           (parsed.access as string) || (parsed.token as string) || (parsed.access_token as string) || (parsed.value as string) || null;
 
-        console.log('[WS] Using token from localStorage (parsed object)', { hasGuess: Boolean(guess) });
         return guess;
       }
       return null;
@@ -74,7 +71,6 @@ export function useNotificationsWS(params: UseNotificationsWSParams = {}) {
     const token = getToken();
     // If backend supports token via query, attach it; otherwise server may rely on session cookies.
     const finalUrl = token ? `${base}?token=${encodeURIComponent(token)}` : base;
-    console.log('[WS] notifications URL:', finalUrl, 'hasToken:', Boolean(token));
     return finalUrl;
   }, [getToken]);
 
@@ -119,17 +115,14 @@ export function useNotificationsWS(params: UseNotificationsWSParams = {}) {
 
   const connect = useCallback(() => {
     if (!enabled) {
-      console.log('[WS] disabled, not connecting');
       return;
     }
     cleanup();
     try {
-      console.log('[WS] connecting...');
       const socket = new WebSocket(url);
       wsRef.current = socket;
 
       socket.onopen = () => {
-        console.log('[WS] connected');
         setConnected(true);
         retryRef.current = 0; // reset backoff
       };
@@ -139,12 +132,9 @@ export function useNotificationsWS(params: UseNotificationsWSParams = {}) {
           const data: unknown = JSON.parse(event.data);
 
           if (isNotificationMessage(data)) {
-            console.log('[WS] Incoming notification');
             setLastEvent(data);
             onNotification?.(data.notification);
           } else if (isUnreadListMessage(data)) {
-            const size = Array.isArray(data.notifications) ? data.notifications.length : 0;
-            console.log('[WS] Incoming unread list size:', size);
             setLastEvent(data);
             onUnreadList?.(data.notifications);
           } else {
@@ -180,7 +170,6 @@ export function useNotificationsWS(params: UseNotificationsWSParams = {}) {
 
   const send = useCallback((payload: unknown) => {
     if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
-      console.log('[WS] send: not connected, skipped', payload);
       return;
     }
     try {
@@ -192,14 +181,12 @@ export function useNotificationsWS(params: UseNotificationsWSParams = {}) {
 
   const sendMarkAsRead = useCallback(
     (notificationId: number) => {
-      console.log('[WS] action mark_as_read', notificationId);
       send({ action: 'mark_as_read', notification_id: notificationId });
     },
     [send]
   );
 
   const sendMarkAllAsRead = useCallback(() => {
-    console.log('[WS] action mark_all_as_read');
     send({ action: 'mark_all_as_read' });
   }, [send]);
 

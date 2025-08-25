@@ -1105,10 +1105,9 @@
     }
   },
   "notification": {
-    "active": "Active",
+    "active": "Old",
     "new": "New",
     "assignResponsible": "Assign responsible",
-    "openTu": "Open TU",
     "time": {
       "weekAgo": "a week ago"
     },
@@ -1119,7 +1118,9 @@
       "yesterday": "Yesterday",
       "lastMonth": "Last month",
       "earlier": "Earlier"
-    }
+    },
+    "open": "Open",
+    "read": "Read"
   },
   "paymentsTab": {
     "buttons": {
