@@ -956,7 +956,16 @@
   "accounting": {
     "errors": {
       "loadTitle": "Жүктөө катасы",
-      "loadDesc": "Бухгалтерия маалыматын жүктөө мүмкүн болгон жок"
+      "loadDesc": "Бухгалтерия маалыматын жүктөө мүмкүн болгон жок",
+      "protocolIdNotFound": "Протоколдун ID табылган жок",
+      "endpointNotFound": "Эсеп түзүү үчүн эндпоинт табылган жок",
+      "badRequest": "Эсеп түзүү үчүн туура эмес маалымат",
+      "serverError": "Эсеп түзүүдө сервер катасы",
+      "downloadProtocolError": "Протоколду жүктөп алууда ката",
+      "invoicesLoadTitle": "Эсептерди жүктөөдө ката",
+      "invoicesLoadDesc": "Балким, эсептер али түзүлө элек же API URL туура эмес",
+      "invoicesWarnTitle": "Эсептерди жүктөөдө көйгөй",
+      "invoicesWarnDesc": "API endpoint туура экенин текшериңиз"
     },
     "labels": {
       "paid": "Төлөндү",
@@ -968,13 +977,20 @@
       "main": "Негизги эсеп",
       "paper_tu": "Кагаз ТУ үчүн"
     },
+    "protocol": {
+      "nsp": "НСП",
+      "nds": "КНС",
+      "paperWorkWater": "Кагаз иштери (суу түтүгү)",
+      "paperWorkSewer": "Кагаз иштери (канализация)"
+    },
     "messages": {
       "generateInvoiceSuccess": "Эсеп ийгиликтүү түзүлдү",
       "invoiceFileUnavailable": "Эсеп файлын жүктөп алуу мүмкүн эмес",
       "protocolDownloaded": "Протокол ийгиликтүү жүктөлдү",
       "needCreateInvoiceFirst": "Төлөмдөрдү көрүү үчүн адегенде эсеп түзүү керек",
       "paidTag": "(Төлөндү)",
-      "protocolUpdated": "Протокол ийгиликтүү жаңыртылды"
+      "protocolUpdated": "Протокол ийгиликтүү жаңыртылды",
+      "generateInvoiceError": "Эсеп түзүүдө ката кетти"
     }
   },
   "tyImport": {

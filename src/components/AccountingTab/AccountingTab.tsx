@@ -95,7 +95,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
 
   const handleGenerateInvoice = async () => {
     if (!protocolData?.id) {
-      message.error('Не найден ID протокола');
+      message.error(t('accounting.errors.protocolIdNotFound') || 'Не найден ID протокола');
       return;
     }
 
@@ -115,11 +115,11 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
       console.error('Generate invoice error:', error);
 
       if (error?.status === 404) {
-        message.error('Эндпоинт для генерации счета не найден');
+        message.error(t('accounting.errors.endpointNotFound') || 'Эндпоинт для генерации счета не найден');
       } else if (error?.status === 400) {
-        message.error('Неверные данные для генерации счета');
+        message.error(t('accounting.errors.badRequest') || 'Неверные данные для генерации счета');
       } else if (error?.status === 500) {
-        message.error('Ошибка сервера при генерации счета');
+        message.error(t('accounting.errors.serverError') || 'Ошибка сервера при генерации счета');
       } else {
         message.error(t('accounting.messages.generateInvoiceError') || 'Ошибка при генерации счета');
       }
@@ -141,7 +141,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
       message.success(t('accounting.messages.protocolDownloaded') || 'Протокол скачан');
     } catch (error) {
       console.error('Download protocol error:', error);
-      message.error('Ошибка при скачивании протокола');
+      message.error(t('accounting.errors.downloadProtocolError') || 'Ошибка при скачивании протокола');
     }
   };
 
@@ -188,22 +188,22 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
     },
     {
       key: '5',
-      item: 'НСП',
+      item: t('accounting.protocol.nsp') || 'НСП',
       price: `${protocolData.nsp || '0'}${currency}`
     },
     {
       key: '6',
-      item: 'НДС',
-      price: protocolData.nds ? `${protocolData.nds}${currency}` : 'Не указан'
+      item: t('accounting.protocol.nds') || 'НДС',
+      price: protocolData.nds ? `${protocolData.nds}${currency}` : t('tuDetails.notSpecified') || 'Не указан'
     },
     {
       key: '7',
-      item: 'Бумажные работы (водопровод)',
+      item: t('accounting.protocol.paperWorkWater') || 'Бумажные работы (водопровод)',
       price: `${protocolData.paper_water_sum || '0'}${currency}`
     },
     {
       key: '8',
-      item: 'Бумажные работы (канализация)',
+      item: t('accounting.protocol.paperWorkSewer') || 'Бумажные работы (канализация)',
       price: `${protocolData.paper_kanal_sum || '0'}${currency}`
     },
     {
@@ -285,8 +285,8 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
             {t('accounting.messages.needCreateInvoiceFirst') || 'Сначала необходимо создать счета'}
             {invoiceError && (
               <Alert
-                message='Ошибка загрузки счетов'
-                description='Возможно, счета еще не созданы или неверный URL API'
+                message={t('accounting.errors.invoicesLoadTitle') || 'Ошибка загрузки счетов'}
+                description={t('accounting.errors.invoicesLoadDesc') || 'Возможно, счета еще не созданы или неверный URL API'}
                 type='warning'
                 style={{ marginTop: 16 }}
               />
@@ -332,7 +332,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
                   <ClockCircleOutlined style={{ fontSize: '48px', color: '#1890ff', marginBottom: '16px' }} />
                   <div style={{ marginBottom: '20px' }}>
                     <Text type='secondary' style={{ fontSize: '16px' }}>
-                      {t('common.pending') || 'Счета не созданы'}
+                      {t('accounting.labels.invoicesNotFound') || 'Счета не найдены'}
                     </Text>
                   </div>
                   <Button
@@ -351,8 +351,8 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, onOpenPaymentM
 
             {invoiceError && (
               <Alert
-                message='Проблема с загрузкой счетов'
-                description="Проверьте правильность API endpoint'а"
+                message={t('accounting.errors.invoicesWarnTitle') || 'Проблема с загрузкой счетов'}
+                description={t('accounting.errors.invoicesWarnDesc') || "Проверьте правильность API endpoint'а"}
                 type='warning'
                 style={{ marginTop: 16 }}
               />

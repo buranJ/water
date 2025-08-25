@@ -1110,7 +1110,16 @@
   "accounting": {
     "errors": {
       "loadTitle": "Load error",
-      "loadDesc": "Failed to load accounting data"
+      "loadDesc": "Failed to load accounting data",
+      "protocolIdNotFound": "Protocol ID not found",
+      "endpointNotFound": "Endpoint for invoice generation not found",
+      "badRequest": "Invalid data for invoice generation",
+      "serverError": "Server error during invoice generation",
+      "downloadProtocolError": "Error downloading protocol",
+      "invoicesLoadTitle": "Error loading invoices",
+      "invoicesLoadDesc": "Invoices may not have been created yet or the API URL is incorrect",
+      "invoicesWarnTitle": "Problem loading invoices",
+      "invoicesWarnDesc": "Check the correctness of the API endpoint"
     },
     "labels": {
       "paid": "Paid",
@@ -1122,13 +1131,20 @@
       "main": "Main invoice",
       "paper_tu": "Paper TU"
     },
+    "protocol": {
+      "nsp": "NSP",
+      "nds": "VAT",
+      "paperWorkWater": "Paperwork (water supply)",
+      "paperWorkSewer": "Paperwork (sewer)"
+    },
     "messages": {
       "generateInvoiceSuccess": "Invoice generated successfully",
       "invoiceFileUnavailable": "Invoice file is not available for download",
       "protocolDownloaded": "Protocol downloaded successfully",
       "needCreateInvoiceFirst": "To view payments, you must first create an invoice",
       "paidTag": "(Paid)",
-      "protocolUpdated": "Protocol updated successfully"
+      "protocolUpdated": "Protocol updated successfully",
+      "generateInvoiceError": "Error generating invoice"
     }
   },
   "tyImport": {

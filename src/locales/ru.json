@@ -1145,7 +1145,16 @@
   "accounting": {
     "errors": {
       "loadTitle": "Ошибка загрузки",
-      "loadDesc": "Не удалось загрузить данные бухгалтерии"
+      "loadDesc": "Не удалось загрузить данные бухгалтерии",
+      "protocolIdNotFound": "Не найден ID протокола",
+      "endpointNotFound": "Эндпоинт для генерации счета не найден",
+      "badRequest": "Неверные данные для генерации счета",
+      "serverError": "Ошибка сервера при генерации счета",
+      "downloadProtocolError": "Ошибка при скачивании протокола",
+      "invoicesLoadTitle": "Ошибка загрузки счетов",
+      "invoicesLoadDesc": "Возможно, счета еще не созданы или неверный URL API",
+      "invoicesWarnTitle": "Проблема с загрузкой счетов",
+      "invoicesWarnDesc": "Проверьте правильность API endpoint'а"
     },
     "labels": {
       "paid": "Оплачен",
@@ -1157,13 +1166,20 @@
       "main": "Основной счет",
       "paper_tu": "За бумажный ТУ"
     },
+    "protocol": {
+      "nsp": "НСП",
+      "nds": "НДС",
+      "paperWorkWater": "Бумажные работы (водопровод)",
+      "paperWorkSewer": "Бумажные работы (канализация)"
+    },
     "messages": {
       "generateInvoiceSuccess": "Счет успешно сгенерирован",
       "invoiceFileUnavailable": "Файл счета недоступен для скачивания",
       "protocolDownloaded": "Протокол успешно скачан",
       "needCreateInvoiceFirst": "Для просмотра платежей необходимо сначала создать счет",
       "paidTag": "(Оплачено)",
-      "protocolUpdated": "Протокол успешно обновлен"
+      "protocolUpdated": "Протокол успешно обновлен",
+      "generateInvoiceError": "Ошибка при генерации счета"
     }
   },
   "tyImport": {
