@@ -279,7 +279,8 @@
       "request": "Запросить",
       "changeTuData": "История изменений данных ТУ",
       "downloadTu": "Скачать ТУ",
-      "rejectTu": "Отказать ТУ"
+      "rejectTu": "Отказать ТУ",
+      "approveTu": "Одобрить ТУ"
     },
     "autoLoaded": "Автоматически загружено",
     "contentNotImplemented": "Контент для \"{{title}}\" пока не реализован",
