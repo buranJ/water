@@ -64,9 +64,48 @@ export const EditApplication: FC<IProps> = ({ title }) => {
     navigate(-1);
   };
 
+  // Кнопка "Изменить" у полей: Заказчик/Объект/Улица
+  const onCustomerEdit = () => {
+    const cid = data?.customer?.id;
+    if (cid) {
+      navigate(`/dashboard/customers/${cid}/edit`);
+    } else {
+      message.warning('Данные клиента не загружены');
+    }
+  };
+
+  const onObjectEdit = () => {
+    const objId = data?.entity;
+    if (objId) {
+      // Редактирование объекта выполняется на странице объекта
+      navigate(`/dashboard/objects/${objId}`);
+    } else {
+      message.warning('Данные объекта не загружены');
+    }
+  };
+
+  // Улица (address) — часть адреса объекта, ведём туда же
+  const onStreetEdit = () => {
+    const objId = data?.entity;
+    if (objId) {
+      navigate(`/dashboard/objects/${objId}`);
+    } else {
+      message.warning('Данные объекта не загружены');
+    }
+  };
+
   return (
     <DashboardLayout title={title}>
-      <ApplicationForm onCancel={onCancel} onSave={onSave} initialValues={initialValues} form={form} submitText='Сохранить' />
+      <ApplicationForm
+        onCancel={onCancel}
+        onSave={onSave}
+        initialValues={initialValues}
+        form={form}
+        submitText='Сохранить'
+        onCustomerEdit={onCustomerEdit}
+        onObjectEdit={onObjectEdit}
+        onStreetEdit={onStreetEdit}
+      />
     </DashboardLayout>
   );
 };

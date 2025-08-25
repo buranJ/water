@@ -26,6 +26,9 @@ interface ApplicationFormProps {
   attachedFiles?: UploadFile[];
   setAttachedFiles?: (files: UploadFile[]) => void;
   setIsModalVisible?: (v: boolean) => void;
+  onCustomerEdit?: () => void;
+  onObjectEdit?: () => void;
+  onStreetEdit?: () => void;
 }
 
 export const ApplicationForm: FC<ApplicationFormProps> = ({
@@ -36,7 +39,10 @@ export const ApplicationForm: FC<ApplicationFormProps> = ({
   submitText,
   attachedFiles,
   setAttachedFiles,
-  setIsModalVisible
+  setIsModalVisible,
+  onCustomerEdit,
+  onObjectEdit,
+  onStreetEdit
 }) => {
   const [form] = Form.useForm<ApplicationFormData>();
   const usedForm = externalForm || form;
@@ -53,35 +59,55 @@ export const ApplicationForm: FC<ApplicationFormProps> = ({
         label={t('applicationsCreate.form.labels.customer')}
         rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
       >
-        <Input size='large' placeholder={t('applicationsCreate.form.placeholders.fullName')} />
+        <Input
+          size='large'
+          placeholder={t('applicationsCreate.form.placeholders.fullName')}
+          disabled={!!onCustomerEdit}
+          addonAfter={
+            onCustomerEdit ? (
+              <Button type='link' style={{ padding: 0, height: 'auto' }} onClick={onCustomerEdit}>
+                <span style={{ fontSize: 14 }}>{t('addTuForms.form.buttons.change')}</span>
+              </Button>
+            ) : undefined
+          }
+        />
       </Form.Item>
       <Form.Item
         name='object'
         label={t('applicationsCreate.form.labels.object')}
         rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
       >
-        <Input size='large' placeholder={t('applicationsCreate.form.placeholders.companyName')} />
+        <Input
+          size='large'
+          placeholder={t('applicationsCreate.form.placeholders.companyName')}
+          disabled={!!onObjectEdit}
+          addonAfter={
+            onObjectEdit ? (
+              <Button type='link' style={{ padding: 0, height: 'auto' }} onClick={onObjectEdit}>
+                <span style={{ fontSize: 14 }}>{t('addTuForms.form.buttons.change')}</span>
+              </Button>
+            ) : undefined
+          }
+        />
       </Form.Item>
-      <Flex gap={16}>
-        <Col span={18}>
-          <Form.Item
-            name='address'
-            label={t('applicationsCreate.form.labels.street')}
-            rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
-          >
-            <Input size='large' placeholder={t('applicationsCreate.form.placeholders.address')} />
-          </Form.Item>
-        </Col>
-        <Col span={6}>
-          <Form.Item
-            name='address_number'
-            label={t('applicationsCreate.form.labels.house')}
-            rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
-          >
-            <Input size='large' placeholder={t('applicationsCreate.form.placeholders.houseNumberShort')} />
-          </Form.Item>
-        </Col>
-      </Flex>
+      <Form.Item
+        name='address'
+        label={t('applicationsCreate.form.labels.street')}
+        rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+      >
+        <Input
+          size='large'
+          placeholder={t('applicationsCreate.form.placeholders.address')}
+          disabled={!!onStreetEdit}
+          addonAfter={
+            onStreetEdit ? (
+              <Button type='link' style={{ padding: 0, height: 'auto' }} onClick={onStreetEdit}>
+                <span style={{ fontSize: 14 }}>{t('addTuForms.form.buttons.change')}</span>
+              </Button>
+            ) : undefined
+          }
+        />
+      </Form.Item>
       <Flex gap={16}>
         <Col span={12}>
           <Form.Item
