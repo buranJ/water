@@ -176,8 +176,8 @@ export const FilterBar = ({
             value={values.date}
             onChange={(v) => handleChange('date', v)}
           >
-            <Option value='created_at'>{t('filterBar.newOnesfirst')}</Option>
-            <Option value='-created_at'>{t('filterBar.newOldFirst')}</Option>
+            <Option value='-created_at'>{t('filterBar.newOnesfirst')}</Option>
+            <Option value='created_at'>{t('filterBar.newOldFirst')}</Option>
           </Select>
         )}
       </Space>

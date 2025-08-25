@@ -131,7 +131,7 @@ export const TUFilterBar = ({ onFilterChange, onAddClick, onDownloadClick, initi
           {t('filterBar.add')}
         </Button>
         <Button icon={<DownloadOutlined />} onClick={onDownloadClick}>
-          PDF
+          {t('common.export')}
         </Button>
       </Space>
     </div>

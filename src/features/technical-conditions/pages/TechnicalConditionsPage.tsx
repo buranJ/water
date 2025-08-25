@@ -100,7 +100,7 @@ export const TechnicalConditionsPage = () => {
   };
 
   const handleDownloadClick = () => {
-    console.log('Генерация PDF');
+    navigate('/dashboard/export-data');
   };
 
   const columns = useMemo(
