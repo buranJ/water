@@ -1,5 +1,6 @@
 import { lazy } from 'react';
 import { RouteObject } from 'react-router';
+import { DashboardLayout } from 'components/DashboardLayout';
 
 const Login = lazy(() => import('features/auth/pages'));
 const Geoportal = lazy(() => import('pages/Geoportal'));
@@ -31,6 +32,7 @@ const ChangeApplicationHistory = lazy(() => import('pages/ChangeApplicationHisto
 const ChangeCustomerHistory = lazy(() => import('pages/ChangeCustomerHistory'));
 const ChangeObjectHistory = lazy(() => import('pages/ChangeObjectHistory'));
 const Notifications = lazy(() => import('pages/Notification'));
+const TyImport = lazy(() => import('pages/TyImport'));
 
 export const routerConfig: RouteObject[] = [
   {
@@ -69,6 +71,14 @@ export const routerConfig: RouteObject[] = [
   {
     path: '/dashboard/technical-conditions/history-of-loads/:id',
     element: <HistoryOfLoads title='routers.historyOfLoads' />
+  },
+  {
+    path: '/dashboard/archive',
+    element: (
+      <DashboardLayout title='dashboard.pages.archive'>
+        <TyImport />
+      </DashboardLayout>
+    )
   },
   {
     path: '/dashboard/add-tu-forms/:tyId',

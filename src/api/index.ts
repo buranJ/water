@@ -12,3 +12,4 @@ export { objectApi } from './Object.api';
 export { refusalApi } from './Refusal.api';
 export { reportsApi } from './Reports.api';
 export { tyApi } from './Ty.api';
+export { tyImportApi } from './TyImport.api';

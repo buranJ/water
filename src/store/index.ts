@@ -15,7 +15,8 @@ import {
   objectApi,
   refusalApi,
   reportsApi,
-  tyApi
+  tyApi,
+  tyImportApi
 } from 'api/index';
 
 const store = configureStore({
@@ -30,6 +31,7 @@ const store = configureStore({
     [objectApi.reducerPath]: objectApi.reducer,
     [refusalApi.reducerPath]: refusalApi.reducer,
     [tyApi.reducerPath]: tyApi.reducer,
+    [tyImportApi.reducerPath]: tyImportApi.reducer,
     [accountingApi.reducerPath]: accountingApi.reducer,
     [applicationsApi.reducerPath]: applicationsApi.reducer,
     [formulaApi.reducerPath]: formulaApi.reducer,
@@ -56,7 +58,8 @@ const store = configureStore({
       accountingApi.middleware,
       formulaApi.middleware,
       reportsApi.middleware,
-      notificationsApi.middleware
+      notificationsApi.middleware,
+      tyImportApi.middleware
     )
 });
 

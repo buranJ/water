@@ -64,8 +64,6 @@ export const DashboardLayout = ({ children, title }: Props) => {
       const baseUrl = apiKey.replace('/api/v1/', '');
       return `${baseUrl}${user.avatar}`;
     }
-
-    // Если avatar не пустой и не начинается с /media/, возвращаем как есть
     return user.avatar.trim() || undefined;
   };
 
@@ -80,7 +78,6 @@ export const DashboardLayout = ({ children, title }: Props) => {
     scrollbarGutter: 'stable',
     background: '#001529'
   };
-
   const items: MenuProps['items'] = [
     {
       key: '/dashboard/geo',
@@ -116,6 +113,11 @@ export const DashboardLayout = ({ children, title }: Props) => {
       key: '/dashboard/formulas',
       icon: <ComputingIcon />,
       label: t('dashboard.pages.formulas')
+    },
+    hasPermission('view_technicalcondition') && {
+      key: '/dashboard/archive',
+      icon: <ComputingIcon />,
+      label: 'Архив ТУ'
     }
   ].filter(Boolean) as MenuProps['items'];
 
