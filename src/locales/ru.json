@@ -31,7 +31,8 @@
       "bills": "Счета и платежи",
       "architecture": "Архитектура",
       "export": "Экспорт",
-      "formulas": "Формулы"
+      "formulas": "Формулы",
+      "archive": "Архив"
     },
     "panel": "Панель управления"
   },
@@ -100,7 +101,7 @@
       "alphabet": "По алфавиту",
       "type": "По типу",
       "status": "Статус",
-    "required": "Обязательное поле",
+      "required": "Обязательное поле",
       "date": "Дата",
       "category": "Категория"
     }
@@ -969,7 +970,7 @@
         "stages": {
           "draft": "Черновик",
           "review": "На рассмотрении",
-          "approved": "Одобрено",
+          "approved": "Утверждено",
           "done": "Завершено"
         },
         "status": {
@@ -1163,6 +1164,145 @@
       "needCreateInvoiceFirst": "Для просмотра платежей необходимо сначала создать счет",
       "paidTag": "(Оплачено)",
       "protocolUpdated": "Протокол успешно обновлен"
+    }
+  },
+  "tyImport": {
+    "title": "Импорт технических условий из Excel",
+    "steps": {
+      "selectFile": "Выбор файла",
+      "selectFileDesc": "Загрузите Excel файл",
+      "processing": "Обработка",
+      "processingDesc": "Импорт данных",
+      "result": "Результат",
+      "resultDesc": "Просмотр результатов"
+    },
+    "upload": {
+      "cardTitle": "Загрузка файла",
+      "dragTextStrong": "Нажмите или перетащите файл в эту область",
+      "dragHint": "Поддерживаются файлы формата .xlsx и .xls (до 10MB)",
+      "alertTitle": "Важно!",
+      "alertDescription": "Убедитесь, что ваш Excel файл содержит все необходимые колонки и правильно отформатирован"
+    },
+    "requirements": {
+      "cardTitle": "Требования к файлу",
+      "list": {
+        "item1": "Файл должен быть в формате .xlsx или .xls",
+        "item2": "Первая строка должна содержать заголовки колонок",
+        "item3": "Максимальный размер файла: 10MB",
+        "item4": "Пустые строки будут пропущены",
+        "item5": "Статус всех ТУ будет установлен в \"Архивный\"",
+        "item6": "Стадия будет установлена в \"Завершено\""
+      }
+    },
+    "processingFile": {
+      "cardTitle": "Обработка файла",
+      "processingFile": "Обрабатывается файл: {{name}}",
+      "size": "({{size}})",
+      "importing": "Импортируем данные...",
+      "preparing": "Подготовка..."
+    },
+    "results": {
+      "cardTitle": "Результаты импорта",
+      "createdTu": "Создано ТУ",
+      "createdIds": "ID записей",
+      "errors": "Ошибок",
+      "successTag": "Импорт успешен",
+      "errorTag": "Импорт с ошибками",
+      "createdTuPrefix": "Созданы ТУ",
+      "archivedTag": "Все ТУ добавлены в архив",
+      "createdTuCardTitle": "Созданные технические условия ({{count}})",
+      "createdIdsPrefix": "ID созданных ТУ:",
+      "tuLabel": "ТУ #{{id}}",
+      "showingFirst": "Показаны первые записи. Всего создано: {{count}} ТУ"
+    },
+    "errors": {
+      "cardTitle": "Ошибки импорта ({{count}})",
+      "downloadReport": "Скачать отчет",
+      "alertTitle": "Обнаружены ошибки",
+      "alertDesc": "Строки с ошибками были пропущены. Исправьте их в исходном файле и повторите импорт.",
+      "table": {
+        "index": "№",
+        "description": "Описание ошибки"
+      }
+    },
+    "actions": {
+      "importAnother": "Импортировать еще один файл",
+      "goToArchive": "Перейти к архиву ТУ"
+    },
+    "excelFormat": {
+      "cardTitle": "Формат Excel файла",
+      "intro": "Ваш Excel файл должен содержать следующие колонки:",
+      "columnsTable": {
+        "title": "Название колонки",
+        "description": "Описание",
+        "example": "Пример",
+        "requiredTag": "обязательно"
+      }
+    },
+    "messages": {
+      "importSuccess": "{{message}} Создано ТУ: {{count}}",
+      "importWarning": "{{message}}. Обнаружены ошибки.",
+      "importError": "Произошла ошибка при импорте файла",
+      "reportDownloaded": "Отчет об ошибках скачан"
+    },
+    "excel": {
+      "columns": {
+        "tu_number": {
+          "title": "№ТУ",
+          "description": "Номер технического условия",
+          "example": "ТУ-001-2024"
+        },
+        "registration_date": {
+          "title": "Дата регистр.",
+          "description": "Дата регистрации",
+          "example": "15.01.2024"
+        },
+        "customer": {
+          "title": "Заказчик",
+          "description": "Имя заказчика",
+          "example": "ООО \"Строй Компани\""
+        },
+        "address": {
+          "title": "Адрес",
+          "description": "Адрес объекта",
+          "example": "г. Бишкек, ул. Манаса, 45"
+        },
+        "object_name": {
+          "title": "Наименование объекта",
+          "description": "Описание объекта",
+          "example": "Жилой дом"
+        },
+        "water_quantity": {
+          "title": "Количество воды",
+          "description": "Объем воды",
+          "example": "15.5"
+        },
+        "sewage_quantity": {
+          "title": "Количество стоков",
+          "description": "Объем стоков",
+          "example": "12.0"
+        },
+        "contract_info": {
+          "title": "№ и дата договора на оплату за ТУ и разреш.",
+          "description": "Номер и дата договора",
+          "example": "Договор №123 от 10.01.2024"
+        },
+        "invoice_number": {
+          "title": "№счета на оплату",
+          "description": "Номер счета",
+          "example": "СЧ-456"
+        },
+        "payment_amount": {
+          "title": "Сумма оплаты за ТУ и разреш.",
+          "description": "Сумма к оплате",
+          "example": "25000"
+        },
+        "payment_date": {
+          "title": "Дата оплаты",
+          "description": "Дата оплаты",
+          "example": "20.01.2024"
+        }
+      }
     }
   }
 }
