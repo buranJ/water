@@ -349,7 +349,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
                     size='large'
                     onClick={handleGenerateInvoice}
                     loading={isGenerating}
-                    disabled={data?.stage === 'approved' || data?.status !== 'active'}
+                    disabled={data?.stage === 'approved' && data?.status !== 'active'}
                     block
                     style={{ maxWidth: '280px', margin: '0 auto', height: '48px', fontSize: '16px' }}
                   >
