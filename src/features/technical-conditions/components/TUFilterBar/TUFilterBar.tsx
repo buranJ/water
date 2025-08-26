@@ -88,6 +88,15 @@ export const TUFilterBar = ({ onFilterChange, onAddClick, onDownloadClick, initi
           </Select>
         </Form.Item>
 
+        <Form.Item name='stage'>
+          <Select variant='filled' placeholder={t('tuDetails.labels.stage')} allowClear style={{ width: 140 }}>
+            <Option value='draft'>{t('tuDetails.stage.draft')}</Option>
+            <Option value='review'>{t('tuDetails.stage.review')}</Option>
+            <Option value='approved'>{t('tuDetails.stage.approved')}</Option>
+            <Option value='done'>{t('tuDetails.stage.done')}</Option>
+          </Select>
+        </Form.Item>
+
         <Form.Item name='date'>
           <Select variant='filled' placeholder={t('filterBar.byDate')} allowClear style={{ width: 180 }}>
             <Option value='-created_at'>{t('filterBar.newOnesfirst')}</Option>

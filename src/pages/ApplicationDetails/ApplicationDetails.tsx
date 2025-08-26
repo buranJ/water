@@ -22,6 +22,7 @@ import {
   useUploadApplicationFilesMutation
 } from 'api/Application.api';
 import { RefusalBody, useCreateRefusalMutation, useLazySearchRefusalQuery } from 'api/Refusal.api';
+import { useCreateTyFromApplicationMutation } from 'api/Ty.api';
 import { usePermissions } from 'hooks/useAuth';
 import { t } from 'i18next';
 
@@ -51,6 +52,8 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
   const [approveApplication, { isSuccess: isApproveSuccess, isError: isApproveError }] = useApproveApplicationMutation();
   const [createRefuse, { isSuccess: isRejectSuccess, isError: isRejectError }] = useCreateRefusalMutation();
   const [triggerRefusalSearch, { data: refusalSearch, isFetching: isRefusalFetching }] = useLazySearchRefusalQuery();
+  const [createTy] = useCreateTyFromApplicationMutation();
+
   const [isRefusalInfoOpen, setIsRefusalInfoOpen] = useState(false);
 
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
@@ -62,6 +65,11 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
   const handleReject = (values: RefusalBody) => {
     closeRejectModal();
     createRefuse({ ...values, application: String(id || '') });
+  };
+
+  const handleApprove = () => {
+    approveApplication({ applicationId: String(id) });
+    createTy({ application_id: Number(id) });
   };
 
   const onPdfClick = () => {
@@ -105,7 +113,7 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
         {data?.status === 'pending' && (
           <>
             <Button onClick={openRejectModal}>{t('applications.actions.reject')}</Button>
-            <Button type='primary' onClick={() => approveApplication({ applicationId: String(id) })}>
+            <Button type='primary' onClick={handleApprove}>
               {t('applications.actions.approve')}
             </Button>
           </>

@@ -247,7 +247,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Col>
         </Row>
 
-        <Form.Item label={t('addTuForms.form.labels.eni')} name='eni' rules={[{ required: false }]}>
+        <Form.Item label={t('addTuForms.form.labels.eni')} name='eni' rules={[{ required: true }]}>
           <Input size='large' placeholder={t('addTuForms.form.placeholders.eni')} />
         </Form.Item>
 
