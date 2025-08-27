@@ -1,4 +1,4 @@
-import { Component, ErrorInfo, FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { Component, ErrorInfo, FC, ReactNode, useEffect, useRef, useState } from 'react';
 import { Alert, Button, Card, Col, Input, message, Row, Space, Typography } from 'antd';
 import { ClearOutlined, EnvironmentOutlined, SaveOutlined } from '@ant-design/icons';
 import type { MapEvent, YMap, YPlacemark } from 'types/entities/yandexMaps';
@@ -51,6 +51,7 @@ class MapErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState>
     return this.props.children;
   }
 }
+
 interface Coordinates {
   latitude: number;
   longitude: number;
@@ -78,9 +79,8 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
   const placemarkRef = useRef<YPlacemark | null>(null);
   const scriptLoadedRef = useRef(false);
   const mapContainerRef = useRef<HTMLDivElement>(null);
-
-  // Создание/обновление метки на карте
-  const updatePlacemark = useCallback((coords: number[], address?: string) => {
+  const mapInitializedRef = useRef(false);
+  const updatePlacemark = (coords: number[], address?: string) => {
     if (!mapRef.current || !window.ymaps) return;
 
     const map = mapRef.current;
@@ -91,7 +91,6 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
         map.geoObjects.remove(placemarkRef.current);
         placemarkRef.current = null;
       }
-
       const placemark = new ymaps.Placemark(
         coords,
         {
@@ -111,7 +110,18 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
 
         try {
           const newCoords = placemarkRef.current.geometry.getCoordinates();
-          updateCoordinates(newCoords[0], newCoords[1]);
+
+          const newCoordinates: Coordinates = {
+            latitude: parseFloat(newCoords[0].toFixed(6)),
+            longitude: parseFloat(newCoords[1].toFixed(6))
+          };
+
+          setSelectedCoordinates(newCoordinates);
+
+          if (onCoordinatesSelect) {
+            onCoordinatesSelect(newCoordinates);
+          }
+
           getAddressByCoords(newCoords);
         } catch (error) {
           console.warn('Ошибка при перетаскивании:', error);
@@ -123,8 +133,9 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
     } catch (error) {
       console.error('Ошибка создания метки:', error);
     }
-  }, []);
-  const getAddressByCoords = useCallback(async (coords: number[]) => {
+  };
+
+  const getAddressByCoords = async (coords: number[]) => {
     if (!window.ymaps) return;
 
     try {
@@ -145,59 +156,62 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
     } catch (error) {
       console.warn('Ошибка геокодирования:', error);
     }
-  }, []);
+  };
 
-  const updateCoordinates = useCallback(
-    (latitude: number, longitude: number) => {
-      const coordinates: Coordinates = {
-        latitude: parseFloat(latitude.toFixed(6)),
-        longitude: parseFloat(longitude.toFixed(6))
-      };
-      setSelectedCoordinates(coordinates);
-
-      if (onCoordinatesSelect) {
-        onCoordinatesSelect(coordinates);
-      }
-    },
-    [onCoordinatesSelect]
-  );
-  const initializeMap = useCallback(() => {
-    if (!window.ymaps) return;
-
-    window.ymaps.ready(() => {
-      if (!mapContainerRef.current || mapRef.current || !window.ymaps) return;
-
-      try {
-        const map = new window.ymaps.Map(mapContainerRef.current, {
-          center: BISHKEK_CENTER,
-          zoom: 11,
-          controls: ['zoomControl', 'fullscreenControl']
-        });
-
-        map.events.add('click', (e: MapEvent) => {
-          try {
-            const coords = e.get('coords');
-            updateCoordinates(coords[0], coords[1]);
-            updatePlacemark(coords);
-            getAddressByCoords(coords);
-          } catch (error) {
-            console.error('Ошибка обработки клика:', error);
-          }
-        });
-
-        mapRef.current = map;
-        setIsMapLoaded(true);
-        console.log('Карта инициализирована');
-      } catch (error) {
-        console.error('Ошибка инициализации карты:', error);
-        message.error('Ошибка инициализации карты');
-      }
-    });
-  }, [updateCoordinates, updatePlacemark, getAddressByCoords]);
-
-  // Загрузка скрипта
   useEffect(() => {
-    if (scriptLoadedRef.current) return;
+    const initializeMap = () => {
+      if (mapInitializedRef.current || !window.ymaps || !mapContainerRef.current) {
+        return;
+      }
+
+      window.ymaps.ready(() => {
+        if (mapInitializedRef.current || !mapContainerRef.current || !window.ymaps) {
+          return;
+        }
+
+        try {
+          const map = new window.ymaps.Map(mapContainerRef.current, {
+            center: BISHKEK_CENTER,
+            zoom: 11,
+            controls: ['zoomControl', 'fullscreenControl']
+          });
+
+          map.events.add('click', (e: MapEvent) => {
+            try {
+              const coords = e.get('coords');
+
+              const newCoordinates: Coordinates = {
+                latitude: parseFloat(coords[0].toFixed(6)),
+                longitude: parseFloat(coords[1].toFixed(6))
+              };
+
+              setSelectedCoordinates(newCoordinates);
+
+              if (onCoordinatesSelect) {
+                onCoordinatesSelect(newCoordinates);
+              }
+
+              updatePlacemark(coords);
+              getAddressByCoords(coords);
+            } catch (error) {
+              console.error('Ошибка обработки клика:', error);
+            }
+          });
+
+          mapRef.current = map;
+          mapInitializedRef.current = true;
+          setIsMapLoaded(true);
+          console.log('Карта инициализирована');
+        } catch (error) {
+          console.error('Ошибка инициализации карты:', error);
+          message.error('Ошибка инициализации карты');
+        }
+      });
+    };
+
+    if (scriptLoadedRef.current) {
+      return;
+    }
 
     const existingScript = document.querySelector('script[src*="api-maps.yandex.ru"]');
 
@@ -215,6 +229,7 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
 
       script.onerror = () => {
         setIsLoading(false);
+        scriptLoadedRef.current = false;
         message.error('Не удалось загрузить карту');
       };
 
@@ -223,14 +238,18 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
       initializeMap();
     }
 
+    // Cleanup
     return () => {
-      // Безопасная очистка
-      mapRef.current = null;
-      placemarkRef.current = null;
+      if (mapRef.current && placemarkRef.current) {
+        try {
+          mapRef.current.geoObjects.remove(placemarkRef.current);
+        } catch (error) {
+          console.warn('Ошибка при очистке:', error);
+        }
+      }
     };
-  }, [initializeMap]);
+  }, []);
 
-  // Сохранение точки
   const handleSavePoint = async () => {
     if (!selectedCoordinates) {
       message.warning('Сначала выберите точку на карте');
@@ -273,10 +292,10 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
     if (mapRef.current && placemarkRef.current) {
       try {
         mapRef.current.geoObjects.remove(placemarkRef.current);
+        placemarkRef.current = null;
       } catch (error) {
         console.warn('Ошибка удаления метки:', error);
       }
-      placemarkRef.current = null;
     }
 
     message.info('Выбор очищен');
