@@ -911,7 +911,7 @@
         "paymentInvoiceNumber": "№ счета на оплату",
         "fireFightingOuter": "Пожаротушение наружное",
         "fireFightingInner": "Пожаротушение внутреннее",
-        "collectorDiameter": "Коллектор Д",
+        "collectorDiameter": "Трубопровод Д",
         "provideWater": "Предусмотреть водопровод",
         "provideSewer": "Предусмотреть канализацию",
         "freePressureInput1": "Свободный напор ввод 1",
