@@ -1,4 +1,4 @@
-import { Component, ErrorInfo, FC, ReactNode, useEffect, useRef, useState } from 'react';
+import { Component, ErrorInfo, FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, Button, Card, Col, Input, message, Row, Space, Typography } from 'antd';
 import { ClearOutlined, EnvironmentOutlined, SaveOutlined } from '@ant-design/icons';
 import type { MapEvent, YMap, YPlacemark } from 'types/entities/yandexMaps';
@@ -68,74 +68,86 @@ interface MapPointSelectorProps {
 
 const BISHKEK_CENTER: [number, number] = [42.8746, 74.5698];
 
+// Добавим enum для более четкого управления состояниями
+enum MapLoadingState {
+  INITIAL = 'initial',
+  LOADING_SCRIPT = 'loading_script',
+  SCRIPT_LOADED = 'script_loaded',
+  INITIALIZING_MAP = 'initializing_map',
+  MAP_READY = 'map_ready',
+  ERROR = 'error'
+}
+
 const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор точки на карте', onCoordinatesSelect, onSaveToBackend }) => {
   const [selectedCoordinates, setSelectedCoordinates] = useState<Coordinates | null>(null);
-  const [isMapLoaded, setIsMapLoaded] = useState(false);
+  const [loadingState, setLoadingState] = useState<MapLoadingState>(MapLoadingState.INITIAL);
   const [description, setDescription] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   const mapRef = useRef<YMap | null>(null);
   const placemarkRef = useRef<YPlacemark | null>(null);
-  const scriptLoadedRef = useRef(false);
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapInitializedRef = useRef(false);
-  const updatePlacemark = (coords: number[], address?: string) => {
-    if (!mapRef.current || !window.ymaps) return;
+  const initializationAttempted = useRef(false);
 
-    const map = mapRef.current;
-    const ymaps = window.ymaps;
+  // Создание/обновление метки на карте
+  const updatePlacemark = useCallback(
+    (coords: number[], address?: string) => {
+      if (!mapRef.current || !window.ymaps) return;
 
-    try {
-      if (placemarkRef.current) {
-        map.geoObjects.remove(placemarkRef.current);
-        placemarkRef.current = null;
-      }
-      const placemark = new ymaps.Placemark(
-        coords,
-        {
-          balloonContent: address
-            ? `${address}<br>Координаты: ${coords[0].toFixed(6)}, ${coords[1].toFixed(6)}`
-            : `Координаты: ${coords[0].toFixed(6)}, ${coords[1].toFixed(6)}`,
-          hintContent: 'Перетащите для изменения позиции'
-        },
-        {
-          preset: 'islands#redDotIcon',
-          draggable: true
+      const map = mapRef.current;
+      const ymaps = window.ymaps;
+
+      try {
+        // Удаляем существующую метку
+        if (placemarkRef.current) {
+          map.geoObjects.remove(placemarkRef.current);
+          placemarkRef.current = null;
         }
-      );
 
-      placemark.events.add('dragend', () => {
-        if (!placemarkRef.current) return;
-
-        try {
-          const newCoords = placemarkRef.current.geometry.getCoordinates();
-
-          const newCoordinates: Coordinates = {
-            latitude: parseFloat(newCoords[0].toFixed(6)),
-            longitude: parseFloat(newCoords[1].toFixed(6))
-          };
-
-          setSelectedCoordinates(newCoordinates);
-
-          if (onCoordinatesSelect) {
-            onCoordinatesSelect(newCoordinates);
+        // Создаем новую метку
+        const placemark = new ymaps.Placemark(
+          coords,
+          {
+            balloonContent: address
+              ? `${address}<br>Координаты: ${coords[0].toFixed(6)}, ${coords[1].toFixed(6)}`
+              : `Координаты: ${coords[0].toFixed(6)}, ${coords[1].toFixed(6)}`,
+            hintContent: 'Перетащите для изменения позиции'
+          },
+          {
+            preset: 'islands#redDotIcon',
+            draggable: true
           }
+        );
 
-          getAddressByCoords(newCoords);
-        } catch (error) {
-          console.warn('Ошибка при перетаскивании:', error);
-        }
-      });
+        // Обработчик перетаскивания
+        placemark.events.add('dragend', () => {
+          if (!placemarkRef.current) return;
 
-      map.geoObjects.add(placemark);
-      placemarkRef.current = placemark;
-    } catch (error) {
-      console.error('Ошибка создания метки:', error);
-    }
-  };
+          try {
+            const newCoords = placemarkRef.current.geometry.getCoordinates();
+            const newCoordinates: Coordinates = {
+              latitude: parseFloat(newCoords[0].toFixed(6)),
+              longitude: parseFloat(newCoords[1].toFixed(6))
+            };
 
-  const getAddressByCoords = async (coords: number[]) => {
+            setSelectedCoordinates(newCoordinates);
+            onCoordinatesSelect?.(newCoordinates);
+            getAddressByCoords(newCoords);
+          } catch (error) {
+            console.warn('Ошибка при перетаскивании:', error);
+          }
+        });
+
+        map.geoObjects.add(placemark);
+        placemarkRef.current = placemark;
+      } catch (error) {
+        console.error('Ошибка создания метки:', error);
+      }
+    },
+    [onCoordinatesSelect]
+  );
+
+  const getAddressByCoords = useCallback(async (coords: number[]) => {
     if (!window.ymaps) return;
 
     try {
@@ -156,100 +168,123 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
     } catch (error) {
       console.warn('Ошибка геокодирования:', error);
     }
-  };
+  }, []);
 
-  useEffect(() => {
-    const initializeMap = () => {
-      if (mapInitializedRef.current || !window.ymaps || !mapContainerRef.current) {
-        return;
-      }
-
-      window.ymaps.ready(() => {
-        if (mapInitializedRef.current || !mapContainerRef.current || !window.ymaps) {
-          return;
-        }
-
-        try {
-          const map = new window.ymaps.Map(mapContainerRef.current, {
-            center: BISHKEK_CENTER,
-            zoom: 11,
-            controls: ['zoomControl', 'fullscreenControl']
-          });
-
-          map.events.add('click', (e: MapEvent) => {
-            try {
-              const coords = e.get('coords');
-
-              const newCoordinates: Coordinates = {
-                latitude: parseFloat(coords[0].toFixed(6)),
-                longitude: parseFloat(coords[1].toFixed(6))
-              };
-
-              setSelectedCoordinates(newCoordinates);
-
-              if (onCoordinatesSelect) {
-                onCoordinatesSelect(newCoordinates);
-              }
-
-              updatePlacemark(coords);
-              getAddressByCoords(coords);
-            } catch (error) {
-              console.error('Ошибка обработки клика:', error);
-            }
-          });
-
-          mapRef.current = map;
-          mapInitializedRef.current = true;
-          setIsMapLoaded(true);
-          console.log('Карта инициализирована');
-        } catch (error) {
-          console.error('Ошибка инициализации карты:', error);
-          message.error('Ошибка инициализации карты');
-        }
-      });
-    };
-
-    if (scriptLoadedRef.current) {
+  // Инициализация карты
+  const initializeMap = useCallback(() => {
+    if (!window.ymaps || !mapContainerRef.current || initializationAttempted.current) {
       return;
     }
 
+    console.log('Начинаем инициализацию карты...');
+    setLoadingState(MapLoadingState.INITIALIZING_MAP);
+    initializationAttempted.current = true;
+
+    window.ymaps.ready(() => {
+      if (!mapContainerRef.current || !window.ymaps || mapRef.current) {
+        return;
+      }
+
+      try {
+        console.log('Создание экземпляра карты...');
+        const map = new window.ymaps.Map(mapContainerRef.current, {
+          center: BISHKEK_CENTER,
+          zoom: 11,
+          controls: ['zoomControl', 'fullscreenControl']
+        });
+
+        // Обработчик клика по карте
+        map.events.add('click', (e: MapEvent) => {
+          try {
+            const coords = e.get('coords');
+            const newCoordinates: Coordinates = {
+              latitude: parseFloat(coords[0].toFixed(6)),
+              longitude: parseFloat(coords[1].toFixed(6))
+            };
+
+            setSelectedCoordinates(newCoordinates);
+            onCoordinatesSelect?.(newCoordinates);
+            updatePlacemark(coords);
+            getAddressByCoords(coords);
+          } catch (error) {
+            console.error('Ошибка обработки клика:', error);
+          }
+        });
+
+        mapRef.current = map;
+        setLoadingState(MapLoadingState.MAP_READY);
+        console.log('Карта успешно инициализирована');
+      } catch (error) {
+        console.error('Ошибка инициализации карты:', error);
+        setLoadingState(MapLoadingState.ERROR);
+        message.error('Ошибка инициализации карты');
+      }
+    });
+  }, [onCoordinatesSelect, updatePlacemark, getAddressByCoords]);
+
+  // Загрузка скрипта Yandex Maps
+  useEffect(() => {
+    // Если карта уже готова, ничего не делаем
+    if (loadingState === MapLoadingState.MAP_READY) return;
+
+    // Проверяем, есть ли уже загруженный скрипт
     const existingScript = document.querySelector('script[src*="api-maps.yandex.ru"]');
 
-    if (!window.ymaps && !existingScript) {
-      scriptLoadedRef.current = true;
-      setIsLoading(true);
+    if (window.ymaps) {
+      // Скрипт уже загружен
+      console.log('Yandex Maps API уже доступен');
+      setLoadingState(MapLoadingState.SCRIPT_LOADED);
+      initializeMap();
+    } else if (!existingScript && loadingState === MapLoadingState.INITIAL) {
+      // Загружаем скрипт впервые
+      console.log('Загружаем скрипт Yandex Maps...');
+      setLoadingState(MapLoadingState.LOADING_SCRIPT);
 
       const script = document.createElement('script');
       script.src = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=0bfec104-5c26-4035-8b22-4c4d55448777';
 
       script.onload = () => {
-        setIsLoading(false);
-        initializeMap();
+        console.log('Скрипт Yandex Maps загружен');
+        setLoadingState(MapLoadingState.SCRIPT_LOADED);
+        // Небольшая задержка для полной инициализации API
+        setTimeout(() => {
+          initializeMap();
+        }, 100);
       };
 
-      script.onerror = () => {
-        setIsLoading(false);
-        scriptLoadedRef.current = false;
+      script.onerror = (error) => {
+        console.error('Ошибка загрузки скрипта Yandex Maps:', error);
+        setLoadingState(MapLoadingState.ERROR);
         message.error('Не удалось загрузить карту');
       };
 
       document.head.appendChild(script);
-    } else if (window.ymaps) {
-      initializeMap();
-    }
+    } else if (existingScript && loadingState === MapLoadingState.INITIAL) {
+      // Скрипт уже в процессе загрузки, ждем
+      setLoadingState(MapLoadingState.LOADING_SCRIPT);
 
-    // Cleanup
-    return () => {
-      if (mapRef.current && placemarkRef.current) {
-        try {
-          mapRef.current.geoObjects.remove(placemarkRef.current);
-        } catch (error) {
-          console.warn('Ошибка при очистке:', error);
+      // Проверяем готовность API каждые 100мс
+      const checkInterval = setInterval(() => {
+        if (window.ymaps) {
+          clearInterval(checkInterval);
+          setLoadingState(MapLoadingState.SCRIPT_LOADED);
+          initializeMap();
         }
-      }
-    };
-  }, []);
+      }, 100);
 
+      // Таймаут через 10 секунд
+      setTimeout(() => {
+        clearInterval(checkInterval);
+        // Проверяем текущее состояние через ref, так как setTimeout замыкает старое значение
+        if (!window.ymaps || !mapRef.current) {
+          setLoadingState(MapLoadingState.ERROR);
+          message.error('Таймаут загрузки карты');
+        }
+      }, 10000);
+    }
+  }, [loadingState, initializeMap]);
+
+  // Сохранение точки
   const handleSavePoint = async () => {
     if (!selectedCoordinates) {
       message.warning('Сначала выберите точку на карте');
@@ -272,10 +307,7 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
         console.log('Готово для отправки:', pointData);
       }
 
-      if (onCoordinatesSelect) {
-        onCoordinatesSelect(pointData);
-      }
-
+      onCoordinatesSelect?.(pointData);
       message.success('Координаты сохранены');
     } catch (error) {
       console.error('Ошибка сохранения:', error);
@@ -301,6 +333,30 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
     message.info('Выбор очищен');
   };
 
+  // Определяем текст загрузки и состояние
+  const getLoadingText = () => {
+    switch (loadingState) {
+      case MapLoadingState.INITIAL:
+        return 'Подготовка...';
+      case MapLoadingState.LOADING_SCRIPT:
+        return 'Загрузка карты...';
+      case MapLoadingState.SCRIPT_LOADED:
+        return 'Скрипт загружен...';
+      case MapLoadingState.INITIALIZING_MAP:
+        return 'Инициализация карты...';
+      case MapLoadingState.MAP_READY:
+        return null;
+      case MapLoadingState.ERROR:
+        return 'Ошибка загрузки';
+      default:
+        return 'Загрузка...';
+    }
+  };
+
+  const isLoading = loadingState !== MapLoadingState.MAP_READY;
+  const isError = loadingState === MapLoadingState.ERROR;
+  const loadingText = getLoadingText();
+
   return (
     <div style={{ padding: '20px' }}>
       <Title level={2} style={{ marginBottom: '20px' }}>
@@ -310,7 +366,7 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
 
       <Row gutter={[16, 16]}>
         <Col xs={24} lg={16}>
-          <Card title='Кликните по карте для выбора координат' style={{ height: '500px' }} loading={isLoading}>
+          <Card title='Кликните по карте для выбора координат' style={{ height: '500px' }} loading={false}>
             <div
               ref={mapContainerRef}
               style={{
@@ -323,8 +379,21 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
                 justifyContent: 'center'
               }}
             >
-              {isLoading && <Text>Загрузка карты...</Text>}
-              {!isLoading && !isMapLoaded && <Text type='secondary'>Инициализация...</Text>}
+              {isError && (
+                <div style={{ textAlign: 'center' }}>
+                  <Text type='danger'>Ошибка загрузки карты</Text>
+                  <br />
+                  <Button type='link' onClick={() => window.location.reload()} style={{ marginTop: '8px' }}>
+                    Перезагрузить страницу
+                  </Button>
+                </div>
+              )}
+              {isLoading && !isError && loadingText && <Text type='secondary'>{loadingText}</Text>}
+              {!isLoading &&
+                !isError &&
+                loadingState === MapLoadingState.MAP_READY &&
+                // Карта будет отображена здесь автоматически
+                null}
             </div>
           </Card>
         </Col>
@@ -374,7 +443,7 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
                 <div style={{ textAlign: 'center', padding: '40px 0' }}>
                   <EnvironmentOutlined style={{ fontSize: '48px', color: '#d9d9d9' }} />
                   <div style={{ marginTop: '16px' }}>
-                    <Text type='secondary'>{isLoading ? 'Загрузка карты...' : 'Кликните по карте для выбора координат'}</Text>
+                    <Text type='secondary'>{isLoading ? loadingText : 'Кликните по карте для выбора координат'}</Text>
                   </div>
                 </div>
               )}
