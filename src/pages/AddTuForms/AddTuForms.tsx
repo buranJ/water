@@ -278,7 +278,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Form.Item>
           </Col>
         </Row>
-        {/* ‹Form. Item label='Пожаротушение внутреннее' name='firefightingExpensesInner' rules={[{ required: fals */}
+
         <Form.Item label={t('addTuForms.form.labels.fireFightingOuter')} name='fire_fighting_inner' rules={[{ required: false }]}>
           <Input size='large' placeholder={t('addTuForms.form.placeholders.fireFighting')} />
         </Form.Item>
@@ -333,9 +333,6 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           {t('addTuForms.titles.connection')}
         </Title>
 
-        <Form.Item label={t('addTuForms.form.labels.connectionTarget')} name='connection_target' rules={[{ required: false }]}>
-          <Input size='large' placeholder={t('addTuForms.form.placeholders.connectionTarget')} />
-        </Form.Item>
         {/* Водопровод */}
         <Title level={5} style={{ marginTop: '12px' }}>
           {t('tuDetails.titles.waterSupply')}
@@ -379,7 +376,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.collectorDiameter')} name='collector_diametr_sewer' rules={[{ required: false }]}>
+            <Form.Item label={t('addTuForms.form.labels.collector')} name='collector_diametr_sewer' rules={[{ required: false }]}>
               <Input type='number' size='large' placeholder={t('addTuForms.form.placeholders.diameter')} />
             </Form.Item>
           </Col>

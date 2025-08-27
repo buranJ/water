@@ -44,7 +44,7 @@ export const Applications: FC<IProps> = ({ title }) => {
   const page = Number(searchParams.get('page')) > 0 ? Number(searchParams.get('page')) : 1;
   const pageSize = Number(searchParams.get('page_size')) > 0 ? Number(searchParams.get('page_size')) : 8;
   const status = searchParams.get('status') || '';
-  const ordering = searchParams.get('ordering') || 'created_at';
+  const ordering = searchParams.get('ordering') || '-created_at';
   const search = searchParams.get('search') || '';
 
   const { data, isLoading, refetch } = useGetApplicationsQuery(

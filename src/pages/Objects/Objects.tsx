@@ -31,7 +31,7 @@ export const Objects: FC<ObjectsProps> = ({ title }) => {
   const filters: ObjectFilters = {
     search: searchParams.get('search') || '',
     status: (searchParams.get('status') as 'active' | 'inactive' | null) || null,
-    date: (searchParams.get('date') as string) || 'created_at'
+    date: (searchParams.get('date') as string) || '-created_at'
   };
 
   // Подготавливаем параметры для API с обязательными page и page_size

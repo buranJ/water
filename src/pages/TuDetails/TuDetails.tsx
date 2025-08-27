@@ -206,7 +206,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     }
   };
 
-  const handleDownloadContract = async () => {
+  const handleDownloadContract = async (protocol_id: string) => {
     if (!id) return;
     const customerType = objectData?.customer?.type;
     if (!customerType) {
@@ -214,7 +214,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
       return;
     }
     try {
-      const { blob, filename } = await triggerContractDownload({ ty_id: id, customer_type: customerType }).unwrap();
+      const { blob, filename } = await triggerContractDownload({ ty_id: protocol_id, customer_type: customerType }).unwrap();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;

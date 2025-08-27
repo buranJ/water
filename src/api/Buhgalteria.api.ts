@@ -48,8 +48,8 @@ export const buhgalteriaApi = createApi({
       keepUnusedDataFor: 0
     }),
     getInvoicesByProtocolTy: build.query<IGetInvoicesByProtocolTyResponse, IGetInvoicesByProtocolTyParams>({
-      query: ({ tyId }) => ({
-        url: `/buhgalteria/invoices/by_protocol/${tyId}/`,
+      query: ({ protocol_id }) => ({
+        url: `/buhgalteria/invoices/by_protocol/${protocol_id}/`,
         method: 'GET'
       })
     })

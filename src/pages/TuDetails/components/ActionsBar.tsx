@@ -5,6 +5,7 @@ import { Button, Flex } from 'antd';
 import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
 import { IGetTyById } from 'types/entities';
 
+import { useGetAccountingProtocolQuery } from 'api/Accounting.api';
 import { useGetInvoicesByProtocolTyQuery } from 'api/Buhgalteria.api';
 
 interface ActionsBarProps {
@@ -16,7 +17,7 @@ interface ActionsBarProps {
   onApprove: () => void;
   isDownloading: boolean;
   // New props for contract download
-  onDownloadContract?: () => void;
+  onDownloadContract?: (protocol_id: string) => void;
   isContractDownloading?: boolean;
   visible?: boolean;
   data: IGetTyById;
@@ -36,9 +37,10 @@ export const ActionsBar: FC<ActionsBarProps> = ({
   visible = true
 }) => {
   const { t } = useTranslation();
-  const invoicesInfo = useGetInvoicesByProtocolTyQuery({ tyId: id });
+  const { data: protocolData } = useGetAccountingProtocolQuery({ technicalConditionId: id }, { skip: !id });
+  const protocolId = protocolData?.id ? String(protocolData.id) : '';
+  const invoicesInfo = useGetInvoicesByProtocolTyQuery({ protocol_id: protocolId }, { skip: !protocolId });
   if (!visible) return null;
-  console.log({ stage: data.stage, status: data.status });
 
   return (
     <Flex wrap justify='end' align='center' gap={16} style={{ marginBottom: 16 }}>
@@ -55,10 +57,16 @@ export const ActionsBar: FC<ActionsBarProps> = ({
             {t('tuDetails.actions.downloadTu')}
           </Button>
           <Button
-            onClick={onDownloadContract}
+            onClick={() => onDownloadContract && protocolId && onDownloadContract(protocolId)}
             icon={<DownloadOutlined />}
             loading={isContractDownloading}
-            disabled={data.stage === 'review' || invoicesInfo.data?.length === 0}
+            disabled={
+              data.stage === 'review' ||
+              !protocolId ||
+              invoicesInfo.isLoading ||
+              invoicesInfo.isFetching ||
+              (Array.isArray(invoicesInfo.data) && invoicesInfo.data.length === 0)
+            }
           >
             Скачать договор
           </Button>
@@ -69,7 +77,7 @@ export const ActionsBar: FC<ActionsBarProps> = ({
           {t('historyOfLoads.addLoad')}
         </Button>
       )}
-      {data.stage !== 'approved' && data.status !== 'inactive' && (
+      {data.stage !== 'approved' && data.status !== 'inactive' && data.status !== 'archived' && (
         <>
           {hasPermission('delete_technicalcondition') && (
             <Button danger onClick={onReject}>

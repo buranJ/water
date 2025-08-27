@@ -1,5 +1,4 @@
 import { FC, useEffect, useState } from 'react';
-import { useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
   Alert,
@@ -48,7 +47,6 @@ interface IProtocolTableData {
 }
 
 export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPaymentModal }) => {
-  const params = useParams();
   const [activeAccountingTab, setActiveAccountingTab] = useState<string>('1');
   const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false);
   const [shouldOpenPaymentModal, setShouldOpenPaymentModal] = useState<boolean>(false);
@@ -114,7 +112,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
       } else {
         throw new Error('Empty response array');
       }
-      getInvoicesByProtocolTy({ tyId: params?.id || '' });
+      getInvoicesByProtocolTy({ protocol_id: protocolData.id.toString() || '' });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Generate invoice error:', error);
@@ -349,7 +347,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
                     size='large'
                     onClick={handleGenerateInvoice}
                     loading={isGenerating}
-                    disabled={data?.stage === 'approved' && data?.status !== 'active'}
+                    disabled={data?.stage !== 'approved' || data?.status !== 'active'}
                     block
                     style={{ maxWidth: '280px', margin: '0 auto', height: '48px', fontSize: '16px' }}
                   >

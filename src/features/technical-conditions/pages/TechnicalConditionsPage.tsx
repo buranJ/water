@@ -57,7 +57,7 @@ export const TechnicalConditionsPage = () => {
     search,
     status,
     stage,
-    ordering,
+    ordering: ordering || '-created_at',
     has_invoice,
     overdue,
     due_in_days

@@ -13,7 +13,7 @@ export type IDownloadContractDocxResponse = {
 };
 
 export interface IGetInvoicesByProtocolTyParams {
-  tyId: string;
+  protocol_id: string;
 }
 
 export type IGetInvoicesByProtocolTyResponse = IAccountingInvoice[];
