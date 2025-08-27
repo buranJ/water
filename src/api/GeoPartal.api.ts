@@ -101,7 +101,11 @@ export const geoportalApi = createApi({
     getAllMapObjects: build.query<TransformedApiResponse, void>({
       query: () => ({
         url: 'ty/map/',
-        method: 'GET'
+        method: 'GET',
+        params: {
+          page_size: 500,
+          status: 'active'
+        }
       }),
       providesTags: ['MapObject'],
       transformResponse: (response: ApiResponse): TransformedApiResponse => {
