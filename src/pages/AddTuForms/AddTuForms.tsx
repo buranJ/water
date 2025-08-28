@@ -344,9 +344,9 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.collectorDiameter')} name='collector_diametr_water' rules={[{ required: false }]}>
+            {/* <Form.Item label={t('addTuForms.form.labels.collectorDiameter')} name='collector_diametr_water' rules={[{ required: false }]}>
               <Input type='number' size='large' placeholder={t('addTuForms.form.placeholders.diameter')} />
-            </Form.Item>
+            </Form.Item> */}
           </Col>
         </Row>
         <Row gutter={16}>
