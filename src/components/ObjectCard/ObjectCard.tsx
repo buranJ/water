@@ -82,105 +82,131 @@ export const ObjectCard: FC<ObjectCardProps> = ({ object, onTitleChange, onCardC
         borderRadius: 16,
         border: '1px solid #f0f0f0',
         marginBottom: 16,
-        cursor: 'pointer'
+        cursor: 'pointer',
+        height: 220,
+        display: 'flex',
+        flexDirection: 'column'
       }}
       styles={{
-        body: { padding: 20 }
+        body: {
+          padding: 20,
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column'
+        }
       }}
       onClick={handleCardClick}
     >
-      <div style={{ marginBottom: 12 }}>
-        <EditableText
-          initialValue={object.title}
-          onChange={handleTitleChange}
-          renderDisplay={(value) => (
-            <Typography.Title
-              level={5}
+      <div
+        style={{
+          marginBottom: 12,
+          minHeight: 50,
+          display: 'flex',
+          alignItems: 'flex-start'
+        }}
+      >
+        <div style={{ flex: 1, paddingRight: 8 }}>
+          <EditableText
+            initialValue={object.title}
+            onChange={handleTitleChange}
+            renderDisplay={(value) => (
+              <Typography.Title
+                level={5}
+                style={{
+                  margin: 0,
+                  fontSize: 16,
+                  fontWeight: 600,
+                  color: '#1d1d1f',
+                  lineHeight: '1.4',
+                  wordBreak: 'break-word',
+                  overflow: 'hidden',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical'
+                }}
+              >
+                {value}
+              </Typography.Title>
+            )}
+          />
+        </div>
+        <Link
+          style={{
+            color: '#007aff',
+            textDecoration: 'none',
+            fontSize: 14,
+            flexShrink: 0
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {t('objectCard.more')}
+        </Link>
+      </div>
+
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <div>
+          <div style={{ marginBottom: 8 }}>
+            <Text
+              type='secondary'
               style={{
-                margin: 0,
-                fontSize: 16,
-                fontWeight: 600,
-                color: '#1d1d1f'
+                fontSize: 14,
+                color: '#8e8e93'
               }}
             >
-              {value}
-            </Typography.Title>
+              {t('objectCard.createdAt')}: {formatDate(object.created_at)}
+            </Text>
+          </div>
+
+          <div style={{ marginBottom: 8 }}>
+            <Text
+              type='secondary'
+              style={{
+                fontSize: 14,
+                color: '#8e8e93',
+                wordBreak: 'break-word'
+              }}
+            >
+              {t('objectCard.address')}: {getFullAddress()}
+            </Text>
+          </div>
+
+          {object.kadastr_number && (
+            <div style={{ marginBottom: 8 }}>
+              <Text
+                type='secondary'
+                style={{
+                  fontSize: 14,
+                  color: '#8e8e93',
+                  wordBreak: 'break-word'
+                }}
+              >
+                {t('objectCard.cadastral')}: {object.kadastr_number}
+              </Text>
+            </div>
           )}
-        />
-        <div style={{ float: 'right' }}>
-          <Link
-            style={{
-              color: '#007aff',
-              textDecoration: 'none',
-              fontSize: 14
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {t('objectCard.more')}
-          </Link>
         </div>
-        <div style={{ clear: 'both' }} />
-      </div>
-
-      <div style={{ marginBottom: 8 }}>
-        <Text
-          type='secondary'
-          style={{
-            fontSize: 14,
-            color: '#8e8e93'
-          }}
-        >
-          {t('objectCard.createdAt')}: {formatDate(object.created_at)}
-        </Text>
-      </div>
-
-      <div style={{ marginBottom: 8 }}>
-        <Text
-          type='secondary'
-          style={{
-            fontSize: 14,
-            color: '#8e8e93'
-          }}
-        >
-          {t('objectCard.address')}: {getFullAddress()}
-        </Text>
-      </div>
-
-      {object.kadastr_number && (
-        <div style={{ marginBottom: 8 }}>
+        <div style={{ marginTop: 'auto', paddingTop: 8 }}>
           <Text
             type='secondary'
             style={{
               fontSize: 14,
-              color: '#8e8e93'
+              color: '#8e8e93',
+              marginRight: 8
             }}
           >
-            {t('objectCard.cadastral')}: {object.kadastr_number}
+            {t('objectCard.status')}:
           </Text>
+          <Tag
+            color={getStatusColor(object.status)}
+            style={{
+              borderRadius: 12,
+              border: 'none',
+              fontSize: 12
+            }}
+          >
+            {getStatusLabel(object.status)}
+          </Tag>
         </div>
-      )}
-
-      <div style={{ marginBottom: 0 }}>
-        <Text
-          type='secondary'
-          style={{
-            fontSize: 14,
-            color: '#8e8e93',
-            marginRight: 8
-          }}
-        >
-          {t('objectCard.status')}:
-        </Text>
-        <Tag
-          color={getStatusColor(object.status)}
-          style={{
-            borderRadius: 12,
-            border: 'none',
-            fontSize: 12
-          }}
-        >
-          {getStatusLabel(object.status)}
-        </Tag>
       </div>
     </Card>
   );
