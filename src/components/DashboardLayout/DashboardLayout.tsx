@@ -2,7 +2,7 @@ import { type ReactNode, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Avatar, Flex, Layout, Menu, type MenuProps, Skeleton, theme, Typography } from 'antd';
-import { LeftOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
+import { LeftOutlined, TeamOutlined, UploadOutlined, UserOutlined } from '@ant-design/icons';
 import { NotificationsBell } from 'components/NotificationsBell';
 import arrow from 'assets/icons/arrow.svg';
 import logo from 'assets/icons/logo.svg';
@@ -19,7 +19,6 @@ import { usePermissions, useUserInfo } from 'hooks/useAuth';
 import i18next from 'i18next';
 
 const { Header, Sider, Content } = Layout;
-
 interface Props {
   children: ReactNode;
   title?: string;
@@ -116,7 +115,7 @@ export const DashboardLayout = ({ children, title }: Props) => {
     },
     hasPermission('view_technicalcondition') && {
       key: '/dashboard/archive',
-      icon: <ComputingIcon />,
+      icon: <UploadOutlined />,
       label: t('dashboard.pages.archive')
     }
   ].filter(Boolean) as MenuProps['items'];
