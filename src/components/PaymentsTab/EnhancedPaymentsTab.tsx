@@ -272,9 +272,6 @@ export const EnhancedPaymentsTab: FC<IProps> = ({ invoices, autoOpenModal, onMod
         <Title level={4} style={{ margin: 0 }}>
           {t('paymentsTab.headingByInvoices')}
         </Title>
-        <Space>
-          <Button icon={<FileTextOutlined />}>{t('paymentsTab.buttons.pdf')}</Button>
-        </Space>
       </Flex>
 
       <Collapse activeKey={activeKeys} onChange={setActiveKeys} size='large' items={collapseItems} />
