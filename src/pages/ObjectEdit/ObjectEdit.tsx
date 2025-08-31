@@ -69,7 +69,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
 
       const updateData: ObjectUpdateBody = {
         title: values.title,
-        contract_date: values.contract_date ? values.contract_date.format('YYYY-MM-DD') : object.contract_date || '',
+        contract_date: values.contract_date ? dayjs(values.contract_date).format('YYYY-MM-DD') : null,
         type: values.type || object.type || '',
         status: values.status,
         address_street: values.address_street,
@@ -311,6 +311,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
                               backgroundColor: '#f5f5f7',
                               border: 'none'
                             }}
+                            format='YYYY-MM-DD'
                             placeholder={t('objectEdit.placeholders.pickDate')}
                           />
                         </Form.Item>

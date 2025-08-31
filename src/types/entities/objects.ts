@@ -23,7 +23,7 @@ export interface ObjectItem {
 
 export interface ObjectUpdateBody {
   title: string;
-  contract_date: string;
+  contract_date: string | null;
   type: string;
   status: string;
   address_street: string;
