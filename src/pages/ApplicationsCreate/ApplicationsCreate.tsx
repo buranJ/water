@@ -98,6 +98,8 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
           address_number: values.contact,
           kadastr_number: '',
           status: 'active',
+          latitude: parseFloat(String(coordLatitude)),
+          longitude: parseFloat(String(coordLongitude)),
           customer: customerId
         }).unwrap();
         objectId = objectResponse.id;
