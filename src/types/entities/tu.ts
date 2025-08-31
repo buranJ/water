@@ -17,6 +17,8 @@ export interface ITechnicalCondition {
   water_required: string;
   pressure_required: string;
   fire_fighting: string;
+  fire_fighting_inner?: string;
+  fire_fighting_outer?: string;
   is_water: boolean;
   is_kanal: boolean;
   stage: IStageEnum /** Стадия: 'draft' | 'review' | 'approved' | 'done' */;
@@ -96,6 +98,8 @@ export interface IGetTyById {
   water_required: string;
   pressure_required: string;
   fire_fighting: string;
+  fire_fighting_inner?: string;
+  fire_fighting_outer?: string;
   is_water?: boolean;
   is_kanal?: boolean;
   stage?: IStageEnum;
