@@ -104,10 +104,7 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
           {t('applicationDetails.buttons.pdf')}
         </Button>
         {hasPermission('change_application') && (
-          <Button
-            disabled={Boolean(data?.ty_id)}
-            onClick={() => navigate(`/dashboard/applications/${id}/edit`)}
-          >
+          <Button disabled={Boolean(data?.ty_id)} onClick={() => navigate(`/dashboard/applications/${id}/edit`)}>
             {t('applicationDetails.buttons.edit')}
           </Button>
         )}
