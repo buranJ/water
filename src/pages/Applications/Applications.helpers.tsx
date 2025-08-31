@@ -148,7 +148,6 @@ export const getColumns: IGetColumnsFn = ({ onClick, hasPermission }) => {
     { title: i18next.t('applications.columns.address'), dataIndex: 'address', key: 'address', align: 'center' },
     { title: i18next.t('applications.columns.objectName'), dataIndex: 'objectName', key: 'objectName', width: 260 },
     { title: i18next.t('applications.columns.waterAmount'), dataIndex: 'waterAmount', key: 'waterAmount', align: 'center' },
-    { title: i18next.t('applications.columns.wastewaterAmount'), dataIndex: 'wastewaterAmount', key: 'wastewaterAmount', align: 'center' },
     {
       title: i18next.t('applications.columns.status'),
       dataIndex: 'status',
