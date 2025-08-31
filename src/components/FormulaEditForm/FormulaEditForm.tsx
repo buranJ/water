@@ -99,6 +99,7 @@ export const FormulaEditForm: FC<FormulaEditFormProps> = ({ visible, formula, lo
             placeholder={t('formulas.form.placeholders.fill')}
             step={0.1}
             precision={2}
+            min={0}
             style={{
               width: '100%',
               height: 48,

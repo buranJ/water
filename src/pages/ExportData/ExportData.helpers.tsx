@@ -112,7 +112,7 @@ export const FiltersGrid: FC<{ fields: FieldConfig[] }> = ({ fields }) => {
         return (
           <Col span={12} key={`${fc.name}_${idx}`}>
             <Form.Item {...commonProps}>
-              <InputNumber style={{ width: '100%' }} placeholder={t('exportData.placeholders.numberExample') || '123'} />
+              <InputNumber min={0} style={{ width: '100%' }} placeholder={t('exportData.placeholders.numberExample') || '123'} />
             </Form.Item>
           </Col>
         );

@@ -608,6 +608,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
                             <Input
                               type='number'
                               step='any'
+                              min={0}
                               style={{
                                 borderRadius: '12px 0 0 12px',
                                 backgroundColor: '#f5f5f7',
@@ -622,6 +623,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
                             <Input
                               type='number'
                               step='any'
+                              min={0}
                               style={{
                                 borderRadius: '0 12px 12px 0',
                                 backgroundColor: '#f5f5f7',

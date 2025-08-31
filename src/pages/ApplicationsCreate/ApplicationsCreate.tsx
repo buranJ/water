@@ -216,7 +216,7 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
                 label={t('applicationsCreate.form.labels.waterAmountRequired')}
                 rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }, { max: 5 }]}
               >
-                <Input size='large' placeholder='16,93' type='number' maxLength={5} />
+                <Input size='large' placeholder='16,93' type='number' min={0} maxLength={5} />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -225,7 +225,7 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
                 label={t('applicationsCreate.form.labels.pressureRequired')}
                 rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }, { max: 5 }]}
               >
-                <Input size='large' placeholder='16,93' type='number' maxLength={5} />
+                <Input size='large' placeholder='16,93' type='number' min={0} maxLength={5} />
               </Form.Item>
             </Col>
           </Flex>
@@ -241,14 +241,14 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
             name='firefightingExpensesInner'
             rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
           >
-            <Input type='number' size='large' placeholder={t('applicationsCreate.form.placeholders.enterValue')} />
+            <Input type='number' min={0} size='large' placeholder={t('applicationsCreate.form.placeholders.enterValue')} />
           </Form.Item>
           <Form.Item
             label='Расходы воды на внеш. пожаротушение'
             name='firefightingExpensesOuter'
             rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
           >
-            <Input type='number' size='large' placeholder={t('applicationsCreate.form.placeholders.enterValue')} />
+            <Input type='number' min={0} size='large' placeholder={t('applicationsCreate.form.placeholders.enterValue')} />
           </Form.Item>
           <Form.Item
             label={t('applicationsCreate.form.labels.coordinates', 'Координаты объекта')}

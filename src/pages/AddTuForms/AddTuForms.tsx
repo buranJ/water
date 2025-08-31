@@ -345,7 +345,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Col>
           <Col span={12}>
             {/* <Form.Item label={t('addTuForms.form.labels.collectorDiameter')} name='collector_diametr_water' rules={[{ required: false }]}>
-              <Input type='number' size='large' placeholder={t('addTuForms.form.placeholders.diameter')} />
+              <Input type='number' min={0} size='large' placeholder={t('addTuForms.form.placeholders.diameter')} />
             </Form.Item> */}
           </Col>
         </Row>
@@ -377,7 +377,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Col>
           <Col span={12}>
             <Form.Item label={t('addTuForms.form.labels.collector')} name='collector_diametr_sewer' rules={[{ required: false }]}>
-              <Input type='number' size='large' placeholder={t('addTuForms.form.placeholders.diameter')} />
+              <Input type='number' min={0} size='large' placeholder={t('addTuForms.form.placeholders.diameter')} />
             </Form.Item>
           </Col>
         </Row>
@@ -416,7 +416,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               name='free_pressure_required_input_1'
               rules={[{ required: false }]}
             >
-              <Input type='number' size='large' placeholder={t('addTuForms.form.placeholders.freePressureInput1')} />
+              <Input type='number' min={0} size='large' placeholder={t('addTuForms.form.placeholders.freePressureInput1')} />
             </Form.Item>
           </Col>
         </Row>
@@ -446,7 +446,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               name='free_pressure_required_input_2'
               rules={[{ required: false }]}
             >
-              <Input type='number' size='large' placeholder={t('addTuForms.form.placeholders.freePressureInput2')} />
+              <Input type='number' min={0} size='large' placeholder={t('addTuForms.form.placeholders.freePressureInput2')} />
             </Form.Item>
           </Col>
         </Row>

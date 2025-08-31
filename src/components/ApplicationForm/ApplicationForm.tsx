@@ -115,7 +115,7 @@ export const ApplicationForm: FC<ApplicationFormProps> = ({
             label={t('applicationsCreate.form.labels.waterAmountRequired')}
             rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }, { max: 5 }]}
           >
-            <Input size='large' placeholder={t('applicationsCreate.form.placeholders.enterValue')} type='number' maxLength={5} />
+            <Input size='large' placeholder={t('applicationsCreate.form.placeholders.enterValue')} type='number' min={0} maxLength={5} />
           </Form.Item>
         </Col>
         <Col span={12}>
@@ -124,7 +124,7 @@ export const ApplicationForm: FC<ApplicationFormProps> = ({
             label={t('applicationsCreate.form.labels.pressureRequired')}
             rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }, { max: 5 }]}
           >
-            <Input size='large' placeholder={t('applicationsCreate.form.placeholders.enterValue')} type='number' maxLength={5} />
+            <Input size='large' placeholder={t('applicationsCreate.form.placeholders.enterValue')} type='number' min={0} maxLength={5} />
           </Form.Item>
         </Col>
       </Flex>
@@ -156,7 +156,13 @@ export const ApplicationForm: FC<ApplicationFormProps> = ({
             label={t('applicationsCreate.form.labels.coordX')}
             rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
           >
-            <Input variant='filled' size='large' placeholder={t('applicationsCreate.form.placeholders.xPlaceholder')} type='number' />
+            <Input
+              variant='filled'
+              size='large'
+              placeholder={t('applicationsCreate.form.placeholders.xPlaceholder')}
+              type='number'
+              min={0}
+            />
           </Form.Item>
         </Col>
         <Col span={12}>
@@ -165,7 +171,13 @@ export const ApplicationForm: FC<ApplicationFormProps> = ({
             label={t('applicationsCreate.form.labels.coordY')}
             rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
           >
-            <Input variant='filled' size='large' placeholder={t('applicationsCreate.form.placeholders.yPlaceholder')} type='number' />
+            <Input
+              variant='filled'
+              size='large'
+              placeholder={t('applicationsCreate.form.placeholders.yPlaceholder')}
+              type='number'
+              min={0}
+            />
           </Form.Item>
         </Col>
       </Flex>

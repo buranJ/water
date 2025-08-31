@@ -536,6 +536,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                         <Input
                           type='number'
                           step='any'
+                          min={0}
                           style={{
                             borderRadius: '12px 0 0 12px',
                             backgroundColor: '#f5f5f7',
@@ -550,6 +551,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                         <Input
                           type='number'
                           step='any'
+                          min={0}
                           style={{
                             borderRadius: '0 12px 12px 0',
                             backgroundColor: '#f5f5f7',
