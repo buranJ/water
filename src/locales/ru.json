@@ -97,6 +97,10 @@
     "byDate": "По дате",
     "alphabetAsc": "А-Я",
     "alphabetDesc": "Я-А",
+    "paymentDeadlineAsc": "Срок оплаты: ранние",
+    "paymentDeadlineDesc": "Срок оплаты: поздние",
+    "paymentDateAsc": "Дата оплаты: ранние",
+    "paymentDateDesc": "Дата оплаты: поздние",
     "filter": {
       "alphabet": "По алфавиту",
       "type": "По типу",

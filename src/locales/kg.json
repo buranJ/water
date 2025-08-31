@@ -95,9 +95,13 @@
     "newOldFirst": "Эскилер биринчи",
     "add": "Кошуу",
     "byDate": "Күнү боюнча",
-    "alphabetAsc": "А-Я",
-    "alphabetDesc": "Я-А",
-    "filter": {
+      "alphabetAsc": "А-Я",
+      "alphabetDesc": "Я-А",
+      "paymentDeadlineAsc": "Төлөө мөөнөтү: адегенде эрте",
+      "paymentDeadlineDesc": "Төлөө мөөнөтү: адегенде кеч",
+      "paymentDateAsc": "Төлөө датасы: адегенде эрте",
+      "paymentDateDesc": "Төлөө датасы: адегенде кеч",
+      "filter": {
       "alphabet": "Алфавит боюнча",
       "type": "Түрү боюнча",
       "status": "Статус",

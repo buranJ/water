@@ -97,6 +97,10 @@
     "byDate": "By Date",
     "alphabetAsc": "A-Z",
     "alphabetDesc": "Z-A",
+    "paymentDeadlineAsc": "Payment deadline: earlier",
+    "paymentDeadlineDesc": "Payment deadline: later",
+    "paymentDateAsc": "Payment date: earlier",
+    "paymentDateDesc": "Payment date: later",
     "filter": {
       "alphabet": "Alphabetically",
       "type": "By Type",

@@ -105,11 +105,11 @@ export const TUFilterBar = ({ onFilterChange, onAddClick, onDownloadClick, initi
         </Form.Item>
 
         <Form.Item name='payment_ordering'>
-          <Select variant='filled' placeholder={t('tuDetails.titles.payment')} allowClear style={{ width: 180 }}>
-            <Option value='payment_deadline'>{t('filterBar.newOldFirst')}</Option>
-            <Option value='-payment_deadline'>{t('filterBar.newOnesfirst')}</Option>
-            <Option value='payment_date'>{t('filterBar.newOldFirst')}</Option>
-            <Option value='-payment_date'>{t('filterBar.newOnesfirst')}</Option>
+          <Select variant='filled' placeholder={t('tuDetails.titles.payment')} allowClear style={{ width: 220 }}>
+            <Option value='payment_deadline'>{t('filterBar.paymentDeadlineAsc')}</Option>
+            <Option value='-payment_deadline'>{t('filterBar.paymentDeadlineDesc')}</Option>
+            <Option value='payment_date'>{t('filterBar.paymentDateAsc')}</Option>
+            <Option value='-payment_date'>{t('filterBar.paymentDateDesc')}</Option>
           </Select>
         </Form.Item>
 
