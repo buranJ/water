@@ -36,7 +36,8 @@ export const getColumns: IGetColumnsFn = ({ onClick, hasPermission, t }) => {
         <span style={{ color: '#1677ff', cursor: 'pointer', textDecoration: 'underline' }} onClick={() => onClick(record, 'details')}>
           {number}
         </span>
-      )
+      ),
+      onCell: (record) => ({ style: { cursor: 'pointer' }, onClick: () => onClick(record, 'details') })
     },
     {
       title: t('customers.columns.customer'),

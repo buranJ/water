@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
@@ -105,9 +105,6 @@ const Login: FC = () => {
           >
             <Input.Password placeholder={t('login.password')} size='large' style={{ background: '#f0f1f2' }} />
           </Form.Item>
-          <div style={{ textAlign: 'right' }}>
-            <Link to='/auth/forgot'>{t('login.forgotPassword')}</Link>
-          </div>
           <Form.Item style={{ marginTop: '24px' }}>
             <Button type='primary' htmlType='submit' size='large' style={{ width: '100%' }} disabled={!isFormValid || isLoading}>
               {isLoading ? t('login.loading') : t('login.login')}

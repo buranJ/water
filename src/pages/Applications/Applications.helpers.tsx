@@ -3,7 +3,7 @@ import { ColumnsType } from 'antd/es/table';
 
 import i18next from 'i18next';
 
-export type actionType = 'create' | 'reject' | 'approve' | 'tuDetails';
+export type actionType = 'create' | 'reject' | 'approve' | 'tuDetails' | 'applicationView' | 'customerView';
 
 export const tabItems: TabsProps['items'] = [
   { key: 'all', label: i18next.t('applications.tabs.all'), children: null },
@@ -122,7 +122,8 @@ export const getColumns: IGetColumnsFn = ({ onClick, hasPermission }) => {
             {id}
           </span>
         );
-      }
+      },
+      onCell: (record) => ({ style: { cursor: 'pointer' }, onClick: () => onClick(record, 'applicationView') })
     },
     { title: i18next.t('applications.columns.date'), dataIndex: 'date', key: 'date', align: 'center' },
     {
@@ -141,7 +142,8 @@ export const getColumns: IGetColumnsFn = ({ onClick, hasPermission }) => {
         >
           {text}
         </span>
-      )
+      ),
+      onCell: (record) => ({ style: { cursor: 'pointer' }, onClick: () => onClick(record, 'customerView') })
     },
     { title: i18next.t('applications.columns.address'), dataIndex: 'address', key: 'address', align: 'center' },
     { title: i18next.t('applications.columns.objectName'), dataIndex: 'objectName', key: 'objectName', width: 260 },

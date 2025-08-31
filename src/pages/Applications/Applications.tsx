@@ -75,8 +75,6 @@ export const Applications: FC<IProps> = ({ title }) => {
   };
 
   const handleReject = (values: RefusalBody) => {
-    console.log({ ...values, applicationId: selectedApplication || '' });
-
     closeRejectModal();
     createRefuse({ ...values, application: selectedApplication || '' });
   };
@@ -144,6 +142,12 @@ export const Applications: FC<IProps> = ({ title }) => {
           case 'approve':
             createTy({ application_id: Number(record.id) });
             approveApplications({ applicationId: String(record.id) });
+            break;
+          case 'applicationView':
+            navigate(`/dashboard/applications/${record.id}`);
+            break;
+          case 'customerView':
+            navigate(`/dashboard/customers/${record.customerId}`);
             break;
         }
       },

@@ -23,6 +23,7 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
           {text}
         </Typography.Link>
       ),
+      onCell: (record) => ({ style: { cursor: 'pointer' }, onClick: () => onClick(record, 'view') }),
       width: 90
     },
     {
