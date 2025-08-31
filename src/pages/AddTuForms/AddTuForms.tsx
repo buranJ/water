@@ -45,6 +45,9 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
   const parseDate = useCallback((dateString: string | undefined) => (dateString ? dayjs(dateString) : null), []);
 
+  // Минимально допустимый срок оплаты: сегодня + 3 месяца (по дню)
+  const minDeadline = useMemo(() => dayjs().startOf('day').add(3, 'month'), []);
+
   const onFinish = useCallback(
     async (values: FormValues) => {
       console.log(values);
@@ -472,11 +475,25 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         <Form.Item
           label={t('addTuForms.form.labels.paymentDeadline')}
           name='payment_deadline'
-          rules={[{ required: false }]}
+          rules={[
+            {
+              validator: (_, value) => {
+                if (!value) return Promise.resolve();
+                const v = typeof value === 'string' ? dayjs(value) : value;
+                return v && v.isBefore(minDeadline, 'day') ? Promise.reject(new Error('Не ранее, чем через 3 месяца')) : Promise.resolve();
+              }
+            }
+          ]}
           normalize={(value: Dayjs) => formatDate(value)}
           getValueProps={(value: string) => ({ value: parseDate(value) })}
         >
-          <DatePicker size='large' placeholder={t('addTuForms.form.placeholders.paymentDeadline')} format='YYYY-MM-DD' />
+          <DatePicker
+            size='large'
+            placeholder={t('addTuForms.form.placeholders.paymentDeadline')}
+            format='YYYY-MM-DD'
+            disabledDate={(current) => !!current && current.isBefore(minDeadline, 'day')}
+            inputReadOnly
+          />
         </Form.Item>
 
         <Row justify='end'>
