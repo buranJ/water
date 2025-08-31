@@ -12,7 +12,6 @@ export interface ObjectFormData {
   address_number: string;
   kadastr_number: string;
   status: string;
-  customer: number;
   type?: string;
   usage_type?: string;
 }
@@ -100,7 +99,6 @@ export const ObjectForm: FC<ObjectFormProps> = ({ onSubmit, onCancel, initialVal
           onFinish={handleSubmit}
           initialValues={{
             status: 'active',
-            customer: 1,
             type: 'Новостройка',
             usage_type: 'Жилой дом',
             ...initialValues
@@ -305,12 +303,6 @@ export const ObjectForm: FC<ObjectFormProps> = ({ onSubmit, onCancel, initialVal
               <Option value='rejected'>{t('applications.statusTag.rejected')}</Option>
             </Select>
           </Form.Item>
-
-          {/* Скрытое поле для customer */}
-          <Form.Item name='customer' hidden>
-            <Input type='hidden' />
-          </Form.Item>
-
           {/* Кнопки */}
           <div
             style={{

@@ -30,8 +30,7 @@ export const AddObject: FC<AddObjectProps> = ({ title: titleProp }) => {
         address_street: formData.address_street,
         address_number: formData.address_number || '',
         kadastr_number: formData.kadastr_number,
-        status: formData.status,
-        customer: formData.customer || 1
+        status: formData.status
       };
 
       await createObject(objectData).unwrap();
