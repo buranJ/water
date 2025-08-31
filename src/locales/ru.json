@@ -1169,13 +1169,13 @@
     },
     "invoiceTypeLabels": {
       "main": "Основной счет",
-      "paper_tu": "За бумажный ТУ"
+      "paper_tu": "Выдача тех условия"
     },
     "protocol": {
       "nsp": "НСП",
       "nds": "НДС",
-      "paperWorkWater": "Бумажные работы (водопровод)",
-      "paperWorkSewer": "Бумажные работы (канализация)"
+      "paperWorkWater": "Выдача тех условия (водопровод)",
+      "paperWorkSewer": "Выдача тех условия (канализация)"
     },
     "messages": {
       "generateInvoiceSuccess": "Счет успешно сгенерирован",

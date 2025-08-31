@@ -35,7 +35,7 @@ const InvoicePayments: FC<IInvoicePaymentsProps> = ({ invoice, onAddPayment }) =
 
   const getStatusTag = (status: string) => {
     switch (status) {
-      case 'completed':
+      case 'received':
         return <Tag color='success'>{t('protocolDetail.payment.status.received')}</Tag>;
       case 'pending':
         return <Tag color='warning'>{t('protocolDetail.payment.status.pending')}</Tag>;

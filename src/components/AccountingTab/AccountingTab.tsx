@@ -1,22 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Alert,
-  Badge,
-  Button,
-  Card,
-  Col,
-  Flex,
-  message,
-  Row,
-  Space,
-  Spin,
-  Table,
-  TableColumnsType,
-  Tabs,
-  TabsProps,
-  Typography
-} from 'antd';
+import { Alert, Button, Card, Col, Flex, message, Row, Space, Spin, Table, TableColumnsType, Tabs, TabsProps, Typography } from 'antd';
 import { ClockCircleOutlined, DownloadOutlined, EditOutlined, UploadOutlined } from '@ant-design/icons';
 import { EditProtocolModal } from 'components/EditProtocolModal/EditProtocolModal';
 import { InvoicesList } from 'components/InvoicesList/InvoicesList';
@@ -225,7 +209,6 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
       render: (text: string, record) => (
         <Flex justify='space-between' align='center' wrap='wrap' gap={8}>
           <Text strong={record.key === '9'}>{text}</Text>
-          {record.badge && <Badge count={record.badge} style={{ backgroundColor: '#ff4d4f' }} />}
         </Flex>
       )
     },
@@ -325,9 +308,6 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
 
             {!invoiceLoading && hasInvoices ? (
               <>
-                <Title level={4} style={{ fontSize: '18px', marginBottom: 20 }}>
-                  {t('protocolDetail.invoice.title') || 'Счет на оплату'} ({invoicesData.length})
-                </Title>
                 <InvoicesList invoices={invoicesData} />
               </>
             ) : !invoiceLoading && !hasInvoices ? (
