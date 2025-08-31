@@ -44,7 +44,14 @@ export const ActionsBar: FC<ActionsBarProps> = ({
 
   return (
     <Flex wrap justify='end' align='center' gap={16} style={{ marginBottom: 16 }}>
-      {hasPermission('change_technicalcondition') && <Link to={'/dashboard/add-tu-forms/' + id}>{t('routers.editTy')}</Link>}
+      {hasPermission('change_technicalcondition') &&
+        (data.status === 'inactive' ? (
+          <Button type='link' disabled>
+            {t('routers.editTy')}
+          </Button>
+        ) : (
+          <Link to={'/dashboard/add-tu-forms/' + id}>{t('routers.editTy')}</Link>
+        ))}
       {hasPermission('view_actty') && (
         <Link to={`/dashboard/technical-conditions/history-of-loads/${id}`}>{t('routers.historyOfLoads')}</Link>
       )}
@@ -73,7 +80,7 @@ export const ActionsBar: FC<ActionsBarProps> = ({
         </>
       )}
       {hasPermission('add_actty') && (
-        <Button onClick={onAddLoad} icon={<PlusOutlined />}>
+        <Button onClick={onAddLoad} icon={<PlusOutlined />} disabled={data.status === 'inactive'}>
           {t('historyOfLoads.addLoad')}
         </Button>
       )}

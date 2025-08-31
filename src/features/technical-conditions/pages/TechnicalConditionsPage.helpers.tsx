@@ -91,7 +91,7 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
       key: 'action',
       render: (_, record) => (
         <Space>
-          <Button icon={<EditOutlined />} onClick={() => onClick(record, 'edit')} />
+          <Button icon={<EditOutlined />} onClick={() => onClick(record, 'edit')} disabled={record.status === 'inactive'} />
           <Button icon={<DeleteOutlined />} onClick={() => onClick(record, 'delete')} danger />
         </Space>
       ),

@@ -21,6 +21,31 @@ const renderStatus = (text: IHistoryType, t: TFunction) => {
   return null;
 };
 
+const translateStatus = (val: string, t: TFunction): string => {
+  const key = (val || '').toString().trim().toLowerCase();
+  switch (key) {
+    // Application statuses
+    case 'pending':
+      return t('applications.statusTag.pending');
+    case 'approved':
+      return t('applications.statusTag.approved');
+    case 'rejected':
+      return t('applications.statusTag.rejected');
+    case 'contracted':
+      return t('applications.statusTag.contracted');
+    // Common TU/application stage synonyms that might appear in English
+    case 'review':
+    case 'in review':
+      return 'На рассмотрении';
+    case 'done':
+    case 'completed':
+    case 'complete':
+      return 'Завершено';
+    default:
+      return val;
+  }
+};
+
 export const getColumns: IGetColumnsFn = (t) => {
   return [
     {
@@ -61,13 +86,17 @@ export const getColumns: IGetColumnsFn = (t) => {
       title: t('changeHistory.columns.oldValue'),
       dataIndex: 'changes',
       key: 'changes_old',
-      render: (changes: { field: string; new: string; old: string }[]) => <>{changes?.map((c, i) => <div key={i}>{c.old || '-'}</div>)}</>
+      render: (changes: { field: string; new: string; old: string }[]) => (
+        <>{changes?.map((c, i) => <div key={i}>{translateStatus(c.old, t) || '-'}</div>)}</>
+      )
     },
     {
       title: t('changeHistory.columns.newValue'),
       dataIndex: 'changes',
       key: 'changes_new',
-      render: (changes: { field: string; new: string; old: string }[]) => <>{changes?.map((c, i) => <div key={i}>{c.new || '-'}</div>)}</>
+      render: (changes: { field: string; new: string; old: string }[]) => (
+        <>{changes?.map((c, i) => <div key={i}>{translateStatus(c.new, t) || '-'}</div>)}</>
+      )
     }
   ];
 };
