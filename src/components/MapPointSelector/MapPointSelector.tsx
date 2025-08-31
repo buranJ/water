@@ -1,5 +1,5 @@
 import { Component, ErrorInfo, FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, Button, Card, Col, Input, message, Row, Space, Typography } from 'antd';
+import { Alert, Button, Card, Col, message, Row, Space, Typography } from 'antd';
 import { ClearOutlined, EnvironmentOutlined, SaveOutlined } from '@ant-design/icons';
 import type { MapEvent, YMap, YPlacemark } from 'types/entities/yandexMaps';
 
@@ -222,21 +222,16 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
     });
   }, [onCoordinatesSelect, updatePlacemark, getAddressByCoords]);
 
-  // Загрузка скрипта Yandex Maps
   useEffect(() => {
-    // Если карта уже готова, ничего не делаем
     if (loadingState === MapLoadingState.MAP_READY) return;
 
-    // Проверяем, есть ли уже загруженный скрипт
     const existingScript = document.querySelector('script[src*="api-maps.yandex.ru"]');
 
     if (window.ymaps) {
-      // Скрипт уже загружен
       console.log('Yandex Maps API уже доступен');
       setLoadingState(MapLoadingState.SCRIPT_LOADED);
       initializeMap();
     } else if (!existingScript && loadingState === MapLoadingState.INITIAL) {
-      // Загружаем скрипт впервые
       console.log('Загружаем скрипт Yandex Maps...');
       setLoadingState(MapLoadingState.LOADING_SCRIPT);
 
@@ -246,7 +241,6 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
       script.onload = () => {
         console.log('Скрипт Yandex Maps загружен');
         setLoadingState(MapLoadingState.SCRIPT_LOADED);
-        // Небольшая задержка для полной инициализации API
         setTimeout(() => {
           initializeMap();
         }, 100);
@@ -260,10 +254,8 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
 
       document.head.appendChild(script);
     } else if (existingScript && loadingState === MapLoadingState.INITIAL) {
-      // Скрипт уже в процессе загрузки, ждем
       setLoadingState(MapLoadingState.LOADING_SCRIPT);
 
-      // Проверяем готовность API каждые 100мс
       const checkInterval = setInterval(() => {
         if (window.ymaps) {
           clearInterval(checkInterval);
@@ -272,10 +264,8 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
         }
       }, 100);
 
-      // Таймаут через 10 секунд
       setTimeout(() => {
         clearInterval(checkInterval);
-        // Проверяем текущее состояние через ref, так как setTimeout замыкает старое значение
         if (!window.ymaps || !mapRef.current) {
           setLoadingState(MapLoadingState.ERROR);
           message.error('Таймаут загрузки карты');
@@ -284,7 +274,6 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
     }
   }, [loadingState, initializeMap]);
 
-  // Сохранение точки
   const handleSavePoint = async () => {
     if (!selectedCoordinates) {
       message.warning('Сначала выберите точку на карте');
@@ -388,12 +377,7 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
                   </Button>
                 </div>
               )}
-              {isLoading && !isError && loadingText && <Text type='secondary'>{loadingText}</Text>}
-              {!isLoading &&
-                !isError &&
-                loadingState === MapLoadingState.MAP_READY &&
-                // Карта будет отображена здесь автоматически
-                null}
+              {!isLoading && !isError && loadingState === MapLoadingState.MAP_READY && null}
             </div>
           </Card>
         </Col>
@@ -420,16 +404,6 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
                       <Text>{selectedCoordinates.address}</Text>
                     </div>
                   )}
-                  <div>
-                    <Text strong>Описание:</Text>
-                    <Input.TextArea
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      placeholder='Добавьте описание (опционально)'
-                      rows={3}
-                      style={{ marginTop: '8px' }}
-                    />
-                  </div>
                   <Space style={{ width: '100%', justifyContent: 'space-between' }}>
                     <Button type='primary' icon={<SaveOutlined />} onClick={handleSavePoint} loading={isSaving}>
                       Сохранить
