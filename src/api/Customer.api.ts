@@ -47,20 +47,23 @@ export interface ICreateCustomerParams {
 export const customerApi = createApi({
   reducerPath: 'customerApi',
   baseQuery: getBaseQuery(),
+  tagTypes: ['Customer'],
   endpoints: (build) => ({
     getCustomer: build.query<IGetCustomerResponse, IGetCustomerParams>({
       query: (params) => ({
         url: '/customer/',
         method: 'GET',
         params
-      })
+      }),
+      providesTags: ['Customer']
     }),
     getAllCustomers: build.query<ICustomersListResponse, IGetCustomersParams>({
       query: ({ ordering = 'created_at', ...params }) => ({
         url: 'customer/',
         method: 'GET',
         params: { ...params, ordering }
-      })
+      }),
+      providesTags: ['Customer']
     }),
 
     getCustomerById: build.query<ICustomer, number | string>({
@@ -75,7 +78,8 @@ export const customerApi = createApi({
         url: `customer/${id}`,
         method: 'PUT',
         body
-      })
+      }),
+      invalidatesTags: ['Customer']
     }),
 
     patchCustomer: build.mutation({
@@ -83,14 +87,16 @@ export const customerApi = createApi({
         url: `customer/${id}`,
         method: 'PATCH',
         body
-      })
+      }),
+      invalidatesTags: ['Customer']
     }),
 
     deleteCustomer: build.mutation({
       query: (id) => ({
         url: `customer/${id}`,
         method: 'DELETE'
-      })
+      }),
+      invalidatesTags: ['Customer']
     }),
 
     getCustomerHistory: build.query({
@@ -105,7 +111,8 @@ export const customerApi = createApi({
         url: 'customer/create',
         method: 'POST',
         body
-      })
+      }),
+      invalidatesTags: ['Customer']
     }),
     getCustomerChangeHistory: build.query<IGetCustomerChangeHistoryResponse, IGetCustomerChangeHistoryParams>({
       query: ({ customer_id, ...params }) => ({
