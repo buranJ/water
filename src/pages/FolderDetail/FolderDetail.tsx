@@ -93,6 +93,11 @@ export const FolderDetail: FC<IProps> = () => {
 
   return (
     <DashboardLayout title={params.state.folderName}>
+      <Row justify='end' style={{ marginBottom: 16 }}>
+        <Button type='primary' icon={<CloudDownloadOutlined />} onClick={() => setIsAddModalVisible(true)}>
+          {t('common.upload')}
+        </Button>
+      </Row>
       <Tabs activeKey={activeTab} onChange={(key) => setActiveTab(key)}>
         <TabPane tab={t('folderDetail.tabs.uploaded')} key='1'>
           <Table columns={columns} dataSource={data} rowKey='id' pagination={false} />
