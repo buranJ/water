@@ -77,7 +77,7 @@ export const CustomerForm: FC<CustomerFormProps> = ({ initialValues, onSave, onC
         >
           <Select size='large' placeholder={t('customerForm.placeholders.selectStatus')}>
             <Option value='active'>{t('customers.status.active')}</Option>
-            <Option value='rejected'>{t('applications.statusTag.rejected')}</Option>
+            <Option value='rejected'>{t('customers.status.inactive')}</Option>
           </Select>
         </Form.Item>
 
