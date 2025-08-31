@@ -10,7 +10,7 @@ import { IGetAllTechnicalConditionParams } from 'types/requests';
 import { getColumns } from './TechnicalConditionsPage.helpers';
 import './styles.scss';
 
-import { useGetAllTyQuery } from 'api/Ty.api';
+import { useGetAllTyQuery, usePatchTyMutation } from 'api/Ty.api';
 import { t } from 'i18next';
 
 interface TUFilterValues {
@@ -66,6 +66,7 @@ export const TechnicalConditionsPage = () => {
   const { data: tuData, isLoading } = useGetAllTyQuery(queryParams, {
     refetchOnMountOrArgChange: true
   });
+  const [patchTy] = usePatchTyMutation();
 
   const [tableData, setTableData] = useState<ITechnicalCondition[]>([]);
 
@@ -112,7 +113,7 @@ export const TechnicalConditionsPage = () => {
               navigate(`/dashboard/technical-conditions/tu-details/${record.id}`);
               break;
             case 'delete':
-              console.log('Delete action clicked for record:', record);
+              patchTy({ id: record.id, body: { status: 'inactive' } });
               break;
             case 'view':
               navigate(`/dashboard/technical-conditions/tu-details/${record.id}`);
@@ -120,7 +121,7 @@ export const TechnicalConditionsPage = () => {
           }
         }
       }),
-    [navigate]
+    [navigate, patchTy]
   );
 
   const handlePageChange = (newPage: number, newPageSize?: number) => {

@@ -36,7 +36,8 @@ export const tyApi = createApi({
         url: '/ty/',
         method: 'GET',
         params
-      })
+      }),
+      providesTags: ['Ty']
     }),
 
     createTy: build.mutation<ICreateTechnicalConditionRequest, ICreateTechnicalConditionParams>({
@@ -44,7 +45,8 @@ export const tyApi = createApi({
         url: '/ty/',
         method: 'POST',
         body
-      })
+      }),
+      invalidatesTags: ['Ty']
     }),
 
     getTyById: build.query<IGetTechnicalConditionByIdResponse, IGetTechnicalConditionByIdParams>({
@@ -69,7 +71,8 @@ export const tyApi = createApi({
         url: `/ty/${id}/`,
         method: 'PATCH',
         body
-      })
+      }),
+      invalidatesTags: ['Ty']
     }),
 
     deleteTy: build.mutation<IDeleteTechnicalConditionResponse, IDeleteTechnicalConditionParams>({
