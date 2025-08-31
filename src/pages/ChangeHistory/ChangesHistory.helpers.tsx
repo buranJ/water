@@ -18,6 +18,41 @@ const renderStatus = (text: IHistoryType) => {
   }
 };
 
+const translateValue = (val: string): string => {
+  const key = (val || '').toString().trim().toLowerCase();
+  switch (key) {
+    // Application statuses
+    case 'pending':
+      return i18next.t('applications.statusTag.pending');
+    case 'approved':
+      return i18next.t('applications.statusTag.approved');
+    case 'rejected':
+      return i18next.t('applications.statusTag.rejected');
+    case 'contracted':
+      return i18next.t('applications.statusTag.contracted');
+    // TU statuses
+    case 'active':
+      return i18next.t('filterBar.approved');
+    case 'inactive':
+      return i18next.t('filterBar.rejected');
+    case 'archived':
+      return i18next.t('filterBar.archived');
+    // TU stages
+    case 'draft':
+      return i18next.t('tuDetails.stage.draft');
+    // Common stage synonyms that might appear in English
+    case 'review':
+    case 'in review':
+      return 'На рассмотрении';
+    case 'done':
+    case 'completed':
+    case 'complete':
+      return 'Завершено';
+    default:
+      return val;
+  }
+};
+
 export const getColumns = (): ColumnsType<IHistory> => [
   {
     title: i18next.t('changeHistory.columns.id'),
@@ -57,12 +92,16 @@ export const getColumns = (): ColumnsType<IHistory> => [
     title: i18next.t('changeHistory.columns.oldValue'),
     dataIndex: 'changes',
     key: 'changes_old',
-    render: (changes: { field: string; new: string; old: string }[]) => <>{changes?.map((c, i) => <div key={i}>{c.old || '-'}</div>)}</>
+    render: (changes: { field: string; new: string; old: string }[]) => (
+      <>{changes?.map((c, i) => <div key={i}>{translateValue(c.old) || '-'}</div>)}</>
+    )
   },
   {
     title: i18next.t('changeHistory.columns.newValue'),
     dataIndex: 'changes',
     key: 'changes_new',
-    render: (changes: { field: string; new: string; old: string }[]) => <>{changes?.map((c, i) => <div key={i}>{c.new || '-'}</div>)}</>
+    render: (changes: { field: string; new: string; old: string }[]) => (
+      <>{changes?.map((c, i) => <div key={i}>{translateValue(c.new) || '-'}</div>)}</>
+    )
   }
 ];
