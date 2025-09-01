@@ -1,6 +1,9 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Form, Input } from 'antd';
+import { MaskedInput } from 'common/ui';
+
+import { phoneSchema, zodRule } from 'utils/validation';
 
 const LegalForm: FC = () => {
   const { t } = useTranslation();
@@ -33,9 +36,9 @@ const LegalForm: FC = () => {
       <Form.Item
         name='contactData'
         label={t('customerForm.labels.contactData')}
-        rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+        rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }, { validator: zodRule(phoneSchema) }]}
       >
-        <Input size='large' placeholder={t('customerForm.placeholders.contactData')} />
+        <MaskedInput size='large' mask='+996 000 000 000' inputMode='tel' placeholder={t('customerForm.placeholders.contactData')} />
       </Form.Item>
     </>
   );

@@ -3,10 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { Button, Card, Col, DatePicker, Form, Input, message, Row, Select, Space, Tag, Typography } from 'antd';
 import { CloseOutlined, EditOutlined, SaveOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import { MaskedInput } from 'common/ui';
 import { EditableText } from 'components/EditableText';
 import { ObjectItem, ObjectUpdateBody } from 'types/entities/objects';
 
 import { useUpdateObjectMutation } from 'api/Object.api';
+import { cadastralSchema, zodRule } from 'utils/validation';
 
 const { Text, Title } = Typography;
 const { Option } = Select;
@@ -416,19 +418,13 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                   {isEditMode ? (
                     <Form.Item
                       name='kadastr_number'
-                      rules={[{ required: true, message: t('objectForm.validation.cadastralRequired') }]}
+                      rules={[
+                        { required: true, message: t('objectForm.validation.cadastralRequired') },
+                        { validator: zodRule(cadastralSchema) }
+                      ]}
                       style={{ marginBottom: 0 }}
                     >
-                      <Input
-                        style={{
-                          borderRadius: 12,
-                          backgroundColor: '#f5f5f7',
-                          border: 'none',
-                          padding: '12px 16px',
-                          fontFamily: 'monospace'
-                        }}
-                        placeholder={t('objectForm.placeholders.cadastralNumber')}
-                      />
+                      <MaskedInput mask='00-000-000-000' inputMode='numeric' placeholder={t('objectForm.placeholders.cadastralNumber')} />
                     </Form.Item>
                   ) : (
                     <Text

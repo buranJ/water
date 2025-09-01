@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router';
 import { Button, Col, DatePicker, Form, Input, message, Row, Select, Typography } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import dayjs, { Dayjs } from 'dayjs';
+import { MaskedInput } from 'common/ui';
 import { DashboardLayout } from 'components';
 import { ITyItem } from 'types/entities';
 import './style.scss';
@@ -12,6 +13,7 @@ import { useLazyGetAllObjectsQuery } from 'api/Object.api';
 import { useGetTyByIdQuery, useGetTypesTyQuery, useUpdateTyMutation } from 'api/Ty.api';
 import { t } from 'i18next';
 import { handleEnterFocusNext } from 'utils/formNavigation';
+import { eniSchema, zodRule } from 'utils/validation';
 
 const { Option } = Select;
 const { Title } = Typography;
@@ -250,8 +252,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Col>
         </Row>
 
-        <Form.Item label={t('addTuForms.form.labels.eni')} name='eni' rules={[{ required: true }]}>
-          <Input size='large' placeholder={t('addTuForms.form.placeholders.eni')} />
+        <Form.Item label={t('addTuForms.form.labels.eni')} name='eni' rules={[{ required: true }, { validator: zodRule(eniSchema) }]}>
+          <MaskedInput size='large' mask='000-000-000-000' placeholder={t('addTuForms.form.placeholders.eni')} inputMode='numeric' />
         </Form.Item>
 
         {/* =========================

@@ -1,8 +1,10 @@
 import { FC } from 'react';
 import { Button, Col, Form, Input, Row, Select } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
+import { MaskedInput } from 'common/ui';
 
 import { t } from 'i18next';
+import { cadastralSchema, zodRule } from 'utils/validation';
 
 const { Option } = Select;
 
@@ -203,19 +205,9 @@ export const ObjectForm: FC<ObjectFormProps> = ({ onSubmit, onCancel, initialVal
                   </span>
                 }
                 name='kadastr_number'
-                rules={[{ required: true, message: t('objectForm.validation.cadastralRequired') }]}
+                rules={[{ required: true, message: t('objectForm.validation.cadastralRequired') }, { validator: zodRule(cadastralSchema) }]}
               >
-                <Input
-                  placeholder={t('objectForm.placeholders.cadastralNumber')}
-                  style={{
-                    borderRadius: 12,
-                    border: 'none',
-                    backgroundColor: '#f5f5f7',
-                    padding: '12px 16px',
-                    fontSize: 16,
-                    fontFamily: 'monospace'
-                  }}
-                />
+                <MaskedInput mask='00-000-000-000' inputMode='numeric' placeholder={t('objectForm.placeholders.cadastralNumber')} />
               </Form.Item>
             </Col>
 
