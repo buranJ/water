@@ -313,7 +313,12 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
           )}
         </>
       ) : null}
-      <Modal open={isRefusalInfoOpen} title='Причины отказа' onCancel={() => setIsRefusalInfoOpen(false)} footer={null}>
+      <Modal
+        open={isRefusalInfoOpen}
+        title={t('applicationDetails.refusal.title')}
+        onCancel={() => setIsRefusalInfoOpen(false)}
+        footer={null}
+      >
         {isRefusalFetching ? (
           <Spin />
         ) : Array.isArray(refusalSearch) && (refusalSearch as RefusalItem[]).length > 0 ? (
@@ -321,24 +326,27 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
             {(refusalSearch as RefusalItem[]).map((item, idx) => (
               <div key={idx} style={{ border: '1px solid #f0f0f0', borderRadius: 8, padding: 12 }}>
                 <div style={{ marginBottom: 8 }}>
-                  <b>Причины:</b> {Array.isArray(item.causes) && item.causes.length ? item.causes.map((c) => c.title).join(', ') : '—'}
+                  <b>{t('applicationDetails.refusal.causes')}:</b>{' '}
+                  {Array.isArray(item.causes) && item.causes.length ? item.causes.map((c) => c.title).join(', ') : t('common.noData')}
                 </div>
                 {item.comment && (
                   <div style={{ marginBottom: 8 }}>
-                    <b>Комментарий:</b> {item.comment}
+                    <b>{t('applicationDetails.refusal.comment')}:</b>
+                    {item.comment}
                   </div>
                 )}
                 <div style={{ marginBottom: 8 }}>
-                  <b>Дата:</b> {item.created_at ? new Date(item.created_at).toLocaleString() : '—'}
+                  <b>{t('applicationDetails.refusal.date')}:</b>{' '}
+                  {item.created_at ? new Date(item.created_at).toLocaleString() : t('common.noData')}
                 </div>
                 {Array.isArray(item.refusal_files) && item.refusal_files.length > 0 && (
                   <div>
-                    <b>Файлы:</b>
+                    <b>{t('applicationDetails.refusal.files')}:</b>
                     <ul style={{ marginTop: 4 }}>
                       {item.refusal_files.map((f, i) => (
                         <li key={i}>
                           <a href={f.file} target='_blank' rel='noopener noreferrer'>
-                            {f.title || (f.file ? String(f.file).split('/').pop() : 'file')}
+                            {f.title || (f.file ? String(f.file).split('/').pop() : t('applicationDetails.refusal.untitledFile'))}
                           </a>
                         </li>
                       ))}
@@ -349,7 +357,7 @@ export const ApplicationDetails: FC<{ title?: string }> = ({ title = 'routers.Ap
             ))}
           </div>
         ) : (
-          <Typography.Text type='secondary'>Данных об отказе нет</Typography.Text>
+          <Typography.Text type='secondary'>{t('applicationDetails.refusal.noData')}</Typography.Text>
         )}
       </Modal>
       <RejectApplicationModal open={isRejectModalOpen} onCancel={closeRejectModal} onReject={handleReject} />

@@ -208,6 +208,50 @@
     "noDataDescription": "No object data available",
     "refresh": "Refresh"
   },
+  "objectEdit": {
+    "buttons": {
+      "backToObjects": "Back to objects",
+      "cancel": "Cancel",
+      "save": "Save",
+      "edit": "Edit"
+    },
+    "labels": {
+      "contractDate": "Contract date",
+      "type": "Type",
+      "status": "Status",
+      "address": "Address",
+      "cadastralNumber": "Cadastral number",
+      "usageType": "Usage type",
+      "tuStatus": "TU status",
+      "coordinates": "Coordinates"
+    },
+    "placeholders": {
+      "pickDate": "Pick a date",
+      "objectType": "Object type",
+      "selectStatus": "Select status",
+      "street": "Street",
+      "house": "House",
+      "cadastralNumber": "Cadastral number",
+      "usageType": "Usage type",
+      "tuStatus": "TU status",
+      "latitude": "Latitude",
+      "longitude": "Longitude"
+    },
+    "validation": {
+      "enterTitle": "Enter object name",
+      "selectStatus": "Select status"
+    },
+    "messages": {
+      "updated": "Object updated",
+      "updateError": "Failed to update object"
+    },
+    "statusOptions": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "pending": "Pending",
+      "rejected": "Rejected"
+    }
+  },
   "historyOfLoads": {
     "addLoad": "Add load",
     "columns": {
@@ -299,7 +343,8 @@
     },
     "notSpecified": "Not specified",
     "loadError": "Loading error",
-    "loadErrorDescription": "Failed to load technical conditions data"
+    "loadErrorDescription": "Failed to load technical conditions data",
+    "archivedMessage": "TU is archived"
   },
   "exportData": {
     "formSubmitted": "Form submitted:",
@@ -442,6 +487,50 @@
       "invoice_type": {
         "main": "Main",
         "paper_tu": "Paper TU payment"
+      }
+    },
+    "config": {
+      "formatOptions": {
+        "pdf": "PDF",
+        "xlsx": "Excel (XLSX)"
+      },
+      "entityOptions": {
+        "technical_conditions": "TU",
+        "entities": "Objects",
+        "protocols": "Protocols",
+        "customers": "Customers",
+        "payments": "Payments",
+        "invoices": "Invoices",
+        "applications": "Applications"
+      },
+      "statusOptions": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "archived": "Archived"
+      },
+      "stageOptions": {
+        "draft": "Draft",
+        "review": "In review",
+        "approved": "Approved",
+        "done": "Completed"
+      },
+      "customerStatusOptions": {
+        "active": "Active",
+        "rejected": "Rejected"
+      },
+      "paymentStatusOptions": {
+        "pending": "Pending",
+        "received": "Received"
+      },
+      "invoiceTypeOptions": {
+        "main": "Main",
+        "paper_tu": "Paper TU payment"
+      },
+      "applicationStatusOptions": {
+        "pending": "Pending",
+        "rejected": "Rejected",
+        "approved": "Approved",
+        "contracted": "Contracted"
       }
     },
     "exportHistory": "Export history"
@@ -681,6 +770,15 @@
       "actions": "Actions"
     },
     "noDocs": "No uploaded documents",
+    "refusal": {
+      "title": "Reasons for refusal",
+      "causes": "Causes",
+      "comment": "Comment",
+      "date": "Date",
+      "files": "Files",
+      "untitledFile": "file",
+      "noData": "No refusal data"
+    },
     "messages": {
       "approveSuccess": "Application approved",
       "approveError": "Error approving application",
@@ -969,7 +1067,8 @@
         "specifyObjectName": "Specify object name",
         "specifyAddress": "Specify address",
         "selectType": "Select type",
-        "required": "Required field"
+        "required": "Required field",
+        "paymentDeadlineMin": "Not earlier than 3 months from today"
       },
       "options": {
         "stages": {
@@ -1044,6 +1143,44 @@
       "stage": "Stage"
     }
   },
+  "mapPointSelector": {
+    "title": "Select a point on the map",
+    "hint": {
+      "dragToMove": "Drag to change position"
+    },
+    "errors": {
+      "initMap": "Map initialization error",
+      "loadMap": "Failed to load map",
+      "loadMapTitle": "Map load error"
+    },
+    "messages": {
+      "timeout": "Map load timeout",
+      "selectPointFirst": "Select a point on the map first",
+      "saved": "Coordinates saved",
+      "saveError": "Error saving",
+      "cleared": "Selection cleared"
+    },
+    "loading": {
+      "preparing": "Preparing...",
+      "loadingMap": "Loading map...",
+      "scriptLoaded": "Script loaded...",
+      "initializingMap": "Initializing map...",
+      "loadError": "Load error",
+      "loading": "Loading..."
+    },
+    "actions": {
+      "reloadPage": "Reload page",
+      "clear": "Clear",
+      "tryAgain": "Try again"
+    },
+    "card": {
+      "clickToSelect": "Click on the map to select coordinates",
+      "selectedCoordinates": "Selected coordinates"
+    },
+    "labels": {
+      "address": "Address"
+    }
+  },
   "protocolDoc": {
     "companyName": "MP \"Bishkekteploset\"",
     "takeaway": "Takeaway",
@@ -1058,6 +1195,7 @@
     "sections": {
       "main": "Main data",
       "cost": "Cost",
+      "taxes": "Taxes",
       "total": "Total amount"
     },
     "fields": {
@@ -1066,7 +1204,11 @@
       "waterPrice": "Water supply cost",
       "kanalPrice": "Sewer cost",
       "totalWater": "Total water supply amount",
-      "totalKanal": "Total sewer amount"
+      "totalKanal": "Total sewer amount",
+      "ndsMain": "VAT (main)",
+      "ndsPaper": "VAT (paperwork)",
+      "nspMain": "NSP (main)",
+      "nspPaper": "NSP (paperwork)"
     },
     "placeholders": {
       "enterLoad": "Enter load",

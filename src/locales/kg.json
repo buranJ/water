@@ -208,6 +208,50 @@
     "noDataDescription": "Объект боюнча маалымат жок",
     "refresh": "Жаңылоо"
   },
+  "objectEdit": {
+    "buttons": {
+      "backToObjects": "Объекттерге кайтуу",
+      "cancel": "Жокко чыгаруу",
+      "save": "Сактоо",
+      "edit": "Түзөтүү"
+    },
+    "labels": {
+      "contractDate": "Келишим датасы",
+      "type": "Түрү",
+      "status": "Статус",
+      "address": "Дарек",
+      "cadastralNumber": "Кадастр номери",
+      "usageType": "Колдонуу түрү",
+      "tuStatus": "ТУ статусу",
+      "coordinates": "Координаттар"
+    },
+    "placeholders": {
+      "pickDate": "Датаны тандаңыз",
+      "objectType": "Объекттин түрү",
+      "selectStatus": "Статусту тандаңыз",
+      "street": "Көчө",
+      "house": "Үй",
+      "cadastralNumber": "Кадастр номери",
+      "usageType": "Колдонуу түрү",
+      "tuStatus": "ТУ статусу",
+      "latitude": "Кеңдик",
+      "longitude": "Узундук"
+    },
+    "validation": {
+      "enterTitle": "Объекттин аталышын киргизиңиз",
+      "selectStatus": "Статусту тандаңыз"
+    },
+    "messages": {
+      "updated": "Объект ийгиликтүү жаңыртылды",
+      "updateError": "Объектти жаңыртууда ката кетти"
+    },
+    "statusOptions": {
+      "active": "Активдүү",
+      "inactive": "Иштебейт",
+      "pending": "Күтүүдө",
+      "rejected": "Четке кагылды"
+    }
+  },
   "historyOfLoads": {
     "addLoad": "Жүктү кошуу",
     "columns": {
@@ -299,7 +343,8 @@
     },
     "notSpecified": "Көрсөтүлгөн эмес",
     "loadError": "Жүктөө катасы",
-    "loadErrorDescription": "Техникалык шарттар боюнча маалыматты жүктөө мүмкүн болгон жок"
+    "loadErrorDescription": "Техникалык шарттар боюнча маалыматты жүктөө мүмкүн болгон жок",
+    "archivedMessage": "ТУ архивде"
   },
   "notFound": {
     "subtitle": "Мындай барак жок",
@@ -473,6 +518,50 @@
         "paper_tu": "Кагаз ТУ үчүн төлөм"
       }
     },
+    "config": {
+      "formatOptions": {
+        "pdf": "PDF",
+        "xlsx": "Excel (XLSX)"
+      },
+      "entityOptions": {
+        "technical_conditions": "ТУ",
+        "entities": "Объекттер",
+        "protocols": "Протоколдор",
+        "customers": "Кардарлар",
+        "payments": "Төлөмдөр",
+        "invoices": "Эсептер",
+        "applications": "Арыздар"
+      },
+      "statusOptions": {
+        "active": "Активдүү",
+        "inactive": "Иштебейт",
+        "archived": "Архивде"
+      },
+      "stageOptions": {
+        "draft": "Долбоор",
+        "review": "Каралууда",
+        "approved": "Бекитилди",
+        "done": "Аякталды"
+      },
+      "customerStatusOptions": {
+        "active": "Активдүү",
+        "rejected": "Четке кагылды"
+      },
+      "paymentStatusOptions": {
+        "pending": "Күтүүдө",
+        "received": "Түштү"
+      },
+      "invoiceTypeOptions": {
+        "main": "Негизги",
+        "paper_tu": "Кагаз ТУ үчүн төлөм"
+      },
+      "applicationStatusOptions": {
+        "pending": "Күтүүдө",
+        "rejected": "Четке кагылды",
+        "approved": "Бекитилди",
+        "contracted": "Түзүлгөн"
+      }
+    },
     "exportHistory": "Экспорт тарыхы"
   },
   "tuRejectModal": {
@@ -527,6 +616,15 @@
       "actions": "Аракеттер"
     },
     "noDocs": "Жүктөлгөн документтер жок",
+    "refusal": {
+      "title": "Баш тартуунун себептери",
+      "causes": "Себептер",
+      "comment": "Комментарий",
+      "date": "Күнү",
+      "files": "Файлдар",
+      "untitledFile": "файл",
+      "noData": "Баш тартуу боюнча маалымат жок"
+    },
     "messages": {
       "approveSuccess": "Арыз бекитилди",
       "approveError": "Арызды бекитүүдө ката кетти",
@@ -890,6 +988,44 @@
       "address": "Дарек",
       "status": "Статус",
       "stage": "Баскыч"
+    }
+  },
+  "mapPointSelector": {
+    "title": "Картадан чекит тандаңыз",
+    "hint": {
+      "dragToMove": "Ордун өзгөртүү үчүн жылдырыңыз"
+    },
+    "errors": {
+      "initMap": "Картаны инициализациялоо катасы",
+      "loadMap": "Картаны жүктөө мүмкүн болгон жок",
+      "loadMapTitle": "Картаны жүктөө катасы"
+    },
+    "messages": {
+      "timeout": "Картаны жүктөө убактысы өттү",
+      "selectPointFirst": "Адегенде картадагы чекитти тандаңыз",
+      "saved": "Координаттар сакталды",
+      "saveError": "Сактоодо ката кетти",
+      "cleared": "Тандоо тазаланды"
+    },
+    "loading": {
+      "preparing": "Даярдалып жатат...",
+      "loadingMap": "Карта жүктөлүүдө...",
+      "scriptLoaded": "Скрипт жүктөлдү...",
+      "initializingMap": "Карта инициализацияланууда...",
+      "loadError": "Жүктөө катасы",
+      "loading": "Жүктөлүүдө..."
+    },
+    "actions": {
+      "reloadPage": "Баракты кайра жүктөө",
+      "clear": "Тазалоо",
+      "tryAgain": "Кайра аракет кылуу"
+    },
+    "card": {
+      "clickToSelect": "Координаттарды тандоо үчүн картага басыңыз",
+      "selectedCoordinates": "Тандалган координаттар"
+    },
+    "labels": {
+      "address": "Дарек"
     }
   },
   "protocolDoc": {

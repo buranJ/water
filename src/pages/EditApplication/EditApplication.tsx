@@ -5,6 +5,7 @@ import { ApplicationForm, ApplicationFormData } from 'components/ApplicationForm
 import { DashboardLayout } from 'components/DashboardLayout';
 
 import { useGetApplicationByIdQuery, useUpdateApplicationMutation } from 'api/Application.api';
+import { t } from 'i18next';
 
 interface IProps {
   title: string;
@@ -43,7 +44,7 @@ export const EditApplication: FC<IProps> = ({ title }) => {
           status: data?.status || 'pending'
         }
       }).unwrap();
-      message.success('Заявка успешно обновлена');
+      message.success(t('applications.messages.updated'));
       navigate('/dashboard/applications');
     } catch (error: unknown) {
       const data = typeof error === 'object' && error !== null && 'data' in error ? (error as { data?: unknown }).data : undefined;
@@ -52,9 +53,9 @@ export const EditApplication: FC<IProps> = ({ title }) => {
         const messages = Object.entries(data as Record<string, unknown>)
           .map(([field, msg]) => `${field}: ${Array.isArray(msg) ? (msg as unknown[]).join(', ') : String(msg)}`)
           .join('; ');
-        message.error(`Ошибка: ${messages}`);
+        message.error(`${t('common.errorPrefix')}${messages}`);
       } else {
-        message.error('Ошибка при обновлении заявки');
+        message.error(t('applications.messages.updateError'));
       }
       console.error('Ошибка при обновлении заявки:', error);
     }
@@ -70,7 +71,7 @@ export const EditApplication: FC<IProps> = ({ title }) => {
     if (cid) {
       navigate(`/dashboard/customers/${cid}/edit`);
     } else {
-      message.warning('Данные клиента не загружены');
+      message.warning(t('applications.messages.customerDataNotLoaded'));
     }
   };
 
@@ -80,7 +81,7 @@ export const EditApplication: FC<IProps> = ({ title }) => {
       // Редактирование объекта выполняется на странице объекта
       navigate(`/dashboard/objects/${objId}`);
     } else {
-      message.warning('Данные объекта не загружены');
+      message.warning(t('applications.messages.objectDataNotLoaded'));
     }
   };
 
@@ -101,7 +102,7 @@ export const EditApplication: FC<IProps> = ({ title }) => {
         onSave={onSave}
         initialValues={initialValues}
         form={form}
-        submitText='Сохранить'
+        submitText={t('common.save')}
         onCustomerEdit={onCustomerEdit}
         onObjectEdit={onObjectEdit}
         onStreetEdit={onStreetEdit}

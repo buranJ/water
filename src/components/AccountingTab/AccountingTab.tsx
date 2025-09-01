@@ -81,17 +81,17 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
 
   const handleGenerateInvoice = async () => {
     if (!protocolData?.id) {
-      message.error(t('accounting.errors.protocolIdNotFound') || 'Не найден ID протокола');
+      message.error(t('accounting.errors.protocolIdNotFound'));
       return;
     }
 
     try {
       const response = await generateInvoice({ protocolId: protocolData.id.toString() }).unwrap();
       if (Array.isArray(response) && response.length > 0) {
-        message.success(t('accounting.messages.generateInvoiceSuccess') || 'Счета успешно созданы');
+        message.success(t('accounting.messages.generateInvoiceSuccess'));
         refetchInvoice();
       } else if (!Array.isArray(response)) {
-        message.success(t('accounting.messages.generateInvoiceSuccess') || 'Счет успешно создан');
+        message.success(t('accounting.messages.generateInvoiceSuccess'));
         refetchInvoice();
       } else {
         throw new Error('Empty response array');
@@ -102,13 +102,13 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
       console.error('Generate invoice error:', error);
 
       if (error?.status === 404) {
-        message.error(t('accounting.errors.endpointNotFound') || 'Эндпоинт для генерации счета не найден');
+        message.error(t('accounting.errors.endpointNotFound'));
       } else if (error?.status === 400) {
-        message.error(t('accounting.errors.badRequest') || 'Неверные данные для генерации счета');
+        message.error(t('accounting.errors.badRequest'));
       } else if (error?.status === 500) {
-        message.error(t('accounting.errors.serverError') || 'Ошибка сервера при генерации счета');
+        message.error(t('accounting.errors.serverError'));
       } else {
-        message.error(t('accounting.messages.generateInvoiceError') || 'Ошибка при генерации счета');
+        message.error(t('accounting.messages.generateInvoiceError'));
       }
     }
   };
@@ -125,10 +125,10 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
       window.URL.revokeObjectURL(url);
       document.body.removeChild(link);
 
-      message.success(t('accounting.messages.protocolDownloaded') || 'Протокол скачан');
+      message.success(t('accounting.messages.protocolDownloaded'));
     } catch (error) {
       console.error('Download protocol error:', error);
-      message.error(t('accounting.errors.downloadProtocolError') || 'Ошибка при скачивании протокола');
+      message.error(t('accounting.errors.downloadProtocolError'));
     }
   };
 
@@ -141,63 +141,56 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
   }
 
   if (protocolError || !protocolData) {
-    return (
-      <Alert
-        message={t('accounting.errors.loadTitle') || 'Ошибка загрузки'}
-        description={t('accounting.errors.loadDesc') || 'Не удалось загрузить данные протокола'}
-        type='error'
-        showIcon
-      />
-    );
+    return <Alert message={t('accounting.errors.loadTitle')} description={t('accounting.errors.loadDesc')} type='error' showIcon />;
   }
 
   // Обновленная таблица с новыми полями
   const protocolTableData: IProtocolTableData[] = [
     {
       key: '1',
-      item: t('protocolDoc.companyName') || 'МП "Бишкектеплосеть"',
+      item: t('protocolDoc.companyName'),
       price: ''
     },
     {
       key: '2',
-      item: t('protocolDoc.vikCostLabel') || 'Ст-ть подключ. ВиК сом(без НДС)',
+      item: t('protocolDoc.vikCostLabel'),
       price: `10080${currency}`
     },
     {
       key: '3',
-      item: t('protocolDoc.tuWater') || 'ТУ водопровод',
+      item: t('protocolDoc.tuWater'),
       price: `${protocolData.water_price}${currency}`
     },
     {
       key: '4',
-      item: t('protocolDoc.tuSewer') || 'ТУ канализация',
+      item: t('protocolDoc.tuSewer'),
       price: `${protocolData.kanal_price}${currency}`
     },
     {
       key: '5',
-      item: t('accounting.protocol.nsp') || 'НСП',
+      item: t('accounting.protocol.nsp'),
       price: `${protocolData.nsp || '0'}${currency}`
     },
     {
       key: '6',
-      item: t('accounting.protocol.nds') || 'НДС',
-      price: protocolData.nds ? `${protocolData.nds}${currency}` : t('tuDetails.notSpecified') || 'Не указан'
+      item: t('accounting.protocol.nds'),
+      price: protocolData.nds ? `${protocolData.nds}${currency}` : t('tuDetails.notSpecified')
     },
     {
       key: '7',
-      item: t('accounting.protocol.paperWorkWater') || 'Бумажные работы (водопровод)',
+      item: t('accounting.protocol.paperWorkWater'),
       price: `${protocolData.paper_water_sum || '0'}${currency}`
     },
     {
       key: '8',
-      item: t('accounting.protocol.paperWorkSewer') || 'Бумажные работы (канализация)',
+      item: t('accounting.protocol.paperWorkSewer'),
       price: `${protocolData.paper_kanal_sum || '0'}${currency}`
     },
     {
       key: '9',
-      item: t('protocolDoc.totalWithoutVat') || 'Всего (без НДС)',
+      item: t('protocolDoc.totalWithoutVat'),
       price: `${protocolData.total_water_sum}${currency}`,
-      badge: t('protocolDoc.takeaway') || 'На вынос'
+      badge: t('protocolDoc.takeaway')
     }
   ];
 
@@ -224,20 +217,20 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
   const accountingTabItems: TabsProps['items'] = [
     {
       key: '1',
-      label: t('protocolDetail.tabs.protocol') || 'Протокол',
+      label: t('protocolDetail.tabs.protocol'),
       children: (
         <Card>
           <Flex justify='space-between' align='flex-start' style={{ marginBottom: 24 }} wrap='wrap' gap={16}>
             <Title level={4} style={{ margin: 0, flex: '1 1 auto', minWidth: 200 }}>
-              {t('routers.tuNumberPrefix') || 'ТУ №'}
+              {t('routers.tuNumberPrefix')}
               {technicalConditionId}-472
             </Title>
             <Space wrap size={[12, 8]} style={{ flex: '0 0 auto' }}>
               <Button icon={<EditOutlined />} type='primary' onClick={handleEditClick} size='middle'>
-                {t('common.edit') || 'Редактировать'}
+                {t('common.edit')}
               </Button>
               <Button icon={<DownloadOutlined />} type='default' onClick={handleDownloadProtocol} loading={isDownloading} size='middle'>
-                {t('protocolDetail.buttons.downloadProtocol') || 'Скачать протокол'}
+                {t('protocolDetail.buttons.downloadProtocol')}
               </Button>
             </Space>
           </Flex>
@@ -258,7 +251,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
     },
     {
       key: '2',
-      label: t('protocolDetail.tabs.payments') || 'Платежи',
+      label: t('protocolDetail.tabs.payments'),
       children:
         invoicesData && invoicesData.length > 0 && !invoiceError ? (
           <EnhancedPaymentsTab
@@ -268,11 +261,11 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
           />
         ) : (
           <div>
-            {t('accounting.messages.needCreateInvoiceFirst') || 'Сначала необходимо создать счета'}
+            {t('accounting.messages.needCreateInvoiceFirst')}
             {invoiceError && (
               <Alert
-                message={t('accounting.errors.invoicesLoadTitle') || 'Ошибка загрузки счетов'}
-                description={t('accounting.errors.invoicesLoadDesc') || 'Возможно, счета еще не созданы или неверный URL API'}
+                message={t('accounting.errors.invoicesLoadTitle')}
+                description={t('accounting.errors.invoicesLoadDesc')}
                 type='warning'
                 style={{ marginTop: 16 }}
               />
@@ -285,7 +278,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
   const hasInvoices = invoicesData && invoicesData.length > 0 && !invoiceError;
 
   if (data?.status !== 'active') {
-    return 'ТУ находится в архиве';
+    return t('tuDetails.archivedMessage');
   }
 
   return (
@@ -313,13 +306,13 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
             ) : !invoiceLoading && !hasInvoices ? (
               <>
                 <Title level={4} style={{ fontSize: '18px', marginBottom: 20 }}>
-                  {t('protocolDetail.invoice.title') || 'Счет на оплату'}
+                  {t('protocolDetail.invoice.title')}
                 </Title>
                 <div style={{ textAlign: 'center', padding: '30px 0' }}>
                   <ClockCircleOutlined style={{ fontSize: '48px', color: '#1890ff', marginBottom: '16px' }} />
                   <div style={{ marginBottom: '20px' }}>
                     <Text type='secondary' style={{ fontSize: '16px' }}>
-                      {t('accounting.labels.invoicesNotFound') || 'Счета не найдены'}
+                      {t('accounting.labels.invoicesNotFound')}
                     </Text>
                   </div>
                   <Button
@@ -331,7 +324,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
                     block
                     style={{ maxWidth: '280px', margin: '0 auto', height: '48px', fontSize: '16px' }}
                   >
-                    {t('protocolDetail.buttons.generateInvoice') || 'Сгенерировать счета'}
+                    {t('protocolDetail.buttons.generateInvoice')}
                   </Button>
                 </div>
               </>
@@ -339,8 +332,8 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
 
             {invoiceError && (
               <Alert
-                message={t('accounting.errors.invoicesWarnTitle') || 'Проблема с загрузкой счетов'}
-                description={t('accounting.errors.invoicesWarnDesc') || "Проверьте правильность API endpoint'а"}
+                message={t('accounting.errors.invoicesWarnTitle')}
+                description={t('accounting.errors.invoicesWarnDesc')}
                 type='warning'
                 style={{ marginTop: 16 }}
               />
@@ -352,7 +345,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
         <Col xs={24} sm={24} md={12} lg={12} xl={12} xxl={12}>
           <Card style={{ height: '100%' }} bodyStyle={{ padding: '20px' }}>
             <Title level={4} style={{ fontSize: '18px', marginBottom: 20 }}>
-              {t('protocolDetail.invoice.uploadReceipt') || 'Загрузить квитанцию'}
+              {t('protocolDetail.invoice.uploadReceipt')}
             </Title>
 
             <div
@@ -373,7 +366,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
                 lineHeight: '1.6'
               }}
             >
-              {t('tuDetails.hint.uploadToFinishTu') || 'Загрузите документы для завершения ТУ'}
+              {t('tuDetails.hint.uploadToFinishTu')}
             </Text>
 
             <Button
@@ -384,7 +377,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
               size='large'
               style={{ height: '48px', fontSize: '16px' }}
             >
-              {t('common.upload') || 'Загрузить'}
+              {t('common.upload')}
             </Button>
           </Card>
         </Col>

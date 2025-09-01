@@ -208,6 +208,50 @@
     "noDataDescription": "Данные об объекте отсутствуют",
     "refresh": "Обновить"
   },
+  "objectEdit": {
+    "buttons": {
+      "backToObjects": "Назад к объектам",
+      "cancel": "Отмена",
+      "save": "Сохранить",
+      "edit": "Редактировать"
+    },
+    "labels": {
+      "contractDate": "Дата договора",
+      "type": "Тип",
+      "status": "Статус",
+      "address": "Адрес",
+      "cadastralNumber": "Кадастровый номер",
+      "usageType": "Вид использования",
+      "tuStatus": "Статус ТУ",
+      "coordinates": "Координаты"
+    },
+    "placeholders": {
+      "pickDate": "Выберите дату",
+      "objectType": "Тип объекта",
+      "selectStatus": "Выберите статус",
+      "street": "Улица",
+      "house": "Дом",
+      "cadastralNumber": "Кадастровый номер",
+      "usageType": "Вид использования",
+      "tuStatus": "Статус ТУ",
+      "latitude": "Широта",
+      "longitude": "Долгота"
+    },
+    "validation": {
+      "enterTitle": "Введите название объекта",
+      "selectStatus": "Выберите статус"
+    },
+    "messages": {
+      "updated": "Объект обновлён",
+      "updateError": "Не удалось обновить объект"
+    },
+    "statusOptions": {
+      "active": "Активен",
+      "inactive": "Неактивен",
+      "pending": "В ожидании",
+      "rejected": "Отклонен"
+    }
+  },
   "historyOfLoads": {
     "addLoad": "Добавить нагрузку",
     "columns": {
@@ -299,7 +343,8 @@
     },
     "notSpecified": "Не указано",
     "loadError": "Ошибка загрузки",
-    "loadErrorDescription": "Не удалось загрузить данные технических условий"
+    "loadErrorDescription": "Не удалось загрузить данные технических условий",
+    "archivedMessage": "ТУ находится в архиве"
   },
   "exportData": {
     "formSubmitted": "Форма отправлена:",
@@ -442,6 +487,50 @@
       "invoice_type": {
         "main": "Основной",
         "paper_tu": "Оплата за бумагу ТУ"
+      }
+    },
+    "config": {
+      "formatOptions": {
+        "pdf": "PDF",
+        "xlsx": "Excel (XLSX)"
+      },
+      "entityOptions": {
+        "technical_conditions": "ТУ",
+        "entities": "Объекты",
+        "protocols": "Протоколы",
+        "customers": "Заказчики",
+        "payments": "Платежи",
+        "invoices": "Счета",
+        "applications": "Заявки"
+      },
+      "statusOptions": {
+        "active": "Активен",
+        "inactive": "Неактивен",
+        "archived": "Архив"
+      },
+      "stageOptions": {
+        "draft": "Черновик",
+        "review": "На рассмотрении",
+        "approved": "Утверждено",
+        "done": "Завершено"
+      },
+      "customerStatusOptions": {
+        "active": "Активен",
+        "rejected": "Отклонено"
+      },
+      "paymentStatusOptions": {
+        "pending": "В ожидании",
+        "received": "Поступили"
+      },
+      "invoiceTypeOptions": {
+        "main": "Основной",
+        "paper_tu": "Оплата за бумагу ТУ"
+      },
+      "applicationStatusOptions": {
+        "pending": "В ожидании",
+        "rejected": "Отклонено",
+        "approved": "Одобрено",
+        "contracted": "Заключено"
       }
     },
     "exportHistory": "История экспорта"
@@ -681,6 +770,15 @@
       "actions": "Действия"
     },
     "noDocs": "Нет загруженных документов",
+    "refusal": {
+      "title": "Причины отказа",
+      "causes": "Причины",
+      "comment": "Комментарий",
+      "date": "Дата",
+      "files": "Файлы",
+      "untitledFile": "файл",
+      "noData": "Данных об отказе нет"
+    },
     "messages": {
       "approveSuccess": "Заявка одобрена",
       "approveError": "Ошибка при одобрении заявки",
@@ -969,7 +1067,8 @@
         "specifyObjectName": "Укажите наименование объекта",
         "specifyAddress": "Укажите адрес",
         "selectType": "Выберите тип",
-        "required": "Обязательное поле"
+        "required": "Обязательное поле",
+        "paymentDeadlineMin": "Не ранее, чем через 3 месяца"
       },
       "options": {
         "stages": {
@@ -1044,6 +1143,44 @@
       "stage": "Этап"
     }
   },
+  "mapPointSelector": {
+    "title": "Выбор точки на карте",
+    "hint": {
+      "dragToMove": "Перетащите для изменения позиции"
+    },
+    "errors": {
+      "initMap": "Ошибка инициализации карты",
+      "loadMap": "Не удалось загрузить карту",
+      "loadMapTitle": "Ошибка загрузки карты"
+    },
+    "messages": {
+      "timeout": "Таймаут загрузки карты",
+      "selectPointFirst": "Сначала выберите точку на карте",
+      "saved": "Координаты сохранены",
+      "saveError": "Ошибка при сохранении",
+      "cleared": "Выбор очищен"
+    },
+    "loading": {
+      "preparing": "Подготовка...",
+      "loadingMap": "Загрузка карты...",
+      "scriptLoaded": "Скрипт загружен...",
+      "initializingMap": "Инициализация карты...",
+      "loadError": "Ошибка загрузки",
+      "loading": "Загрузка..."
+    },
+    "actions": {
+      "reloadPage": "Перезагрузить страницу",
+      "clear": "Очистить",
+      "tryAgain": "Попробовать снова"
+    },
+    "card": {
+      "clickToSelect": "Кликните по карте для выбора координат",
+      "selectedCoordinates": "Выбранные координаты"
+    },
+    "labels": {
+      "address": "Адрес"
+    }
+  },
   "paymentsModal": {
     "title": "Добавить платеж",
     "labels": {
@@ -1093,6 +1230,7 @@
     "sections": {
       "main": "Основные данные",
       "cost": "Стоимость",
+      "taxes": "НДС и налоги",
       "total": "Итоговая сумма"
     },
     "fields": {
@@ -1101,7 +1239,11 @@
       "waterPrice": "Стоимость водопровода",
       "kanalPrice": "Стоимость канализации",
       "totalWater": "Общая сумма водопровода",
-      "totalKanal": "Общая сумма канализации"
+      "totalKanal": "Общая сумма канализации",
+      "ndsMain": "НДС основной",
+      "ndsPaper": "НДС бумажные работы",
+      "nspMain": "НСП основной",
+      "nspPaper": "НСП бумажные работы"
     },
     "placeholders": {
       "enterLoad": "Введите нагрузку",

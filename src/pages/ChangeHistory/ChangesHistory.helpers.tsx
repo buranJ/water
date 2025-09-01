@@ -32,22 +32,22 @@ const translateValue = (val: string): string => {
       return i18next.t('applications.statusTag.contracted');
     // TU statuses
     case 'active':
-      return i18next.t('filterBar.approved');
+      return i18next.t('tuDetails.status.active');
     case 'inactive':
-      return i18next.t('filterBar.rejected');
+      return i18next.t('tuDetails.status.inactive');
     case 'archived':
-      return i18next.t('filterBar.archived');
+      return i18next.t('tuDetails.status.archived');
     // TU stages
     case 'draft':
       return i18next.t('tuDetails.stage.draft');
     // Common stage synonyms that might appear in English
     case 'review':
     case 'in review':
-      return 'На рассмотрении';
+      return i18next.t('tuDetails.stage.review');
     case 'done':
     case 'completed':
     case 'complete':
-      return 'Завершено';
+      return i18next.t('tuDetails.stage.done');
     default:
       return val;
   }
@@ -85,7 +85,7 @@ export const getColumns = (): ColumnsType<IHistory> => [
     dataIndex: 'changes',
     key: 'changes_field',
     render: (changes: { field: string; new: string; old: string }[]) => {
-      return changes ? changes?.map((c, i) => <div key={i}>{c.field}</div>) : '-';
+      return changes ? changes?.map((c, i) => <div key={i}>{c.field}</div>) : i18next.t('common.noData');
     }
   },
   {
@@ -93,7 +93,7 @@ export const getColumns = (): ColumnsType<IHistory> => [
     dataIndex: 'changes',
     key: 'changes_old',
     render: (changes: { field: string; new: string; old: string }[]) => (
-      <>{changes?.map((c, i) => <div key={i}>{translateValue(c.old) || '-'}</div>)}</>
+      <>{changes?.map((c, i) => <div key={i}>{translateValue(c.old) || i18next.t('common.noData')}</div>)}</>
     )
   },
   {
@@ -101,7 +101,7 @@ export const getColumns = (): ColumnsType<IHistory> => [
     dataIndex: 'changes',
     key: 'changes_new',
     render: (changes: { field: string; new: string; old: string }[]) => (
-      <>{changes?.map((c, i) => <div key={i}>{translateValue(c.new) || '-'}</div>)}</>
+      <>{changes?.map((c, i) => <div key={i}>{translateValue(c.new) || i18next.t('common.noData')}</div>)}</>
     )
   }
 ];

@@ -1,4 +1,5 @@
 import { Component, ErrorInfo, FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert, Button, Card, Col, message, Row, Space, Typography } from 'antd';
 import { ClearOutlined, EnvironmentOutlined, SaveOutlined } from '@ant-design/icons';
 import type { MapEvent, YMap, YPlacemark } from 'types/entities/yandexMaps';
@@ -12,6 +13,9 @@ interface ErrorBoundaryState {
 
 interface ErrorBoundaryProps {
   children: ReactNode;
+  alertTitle?: string;
+  alertDescription?: string;
+  tryAgainText?: string;
 }
 
 class MapErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
@@ -36,13 +40,13 @@ class MapErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState>
     if (this.state.hasError) {
       return (
         <Alert
-          message='Ошибка карты'
-          description='Произошла ошибка при работе с картой'
+          message={this.props.alertTitle}
+          description={this.props.alertDescription}
           type='error'
           showIcon
           action={
             <Button size='small' onClick={this.handleReset}>
-              Попробовать снова
+              {this.props.tryAgainText}
             </Button>
           }
         />
@@ -78,11 +82,13 @@ enum MapLoadingState {
   ERROR = 'error'
 }
 
-const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор точки на карте', onCoordinatesSelect, onSaveToBackend }) => {
+const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title, onCoordinatesSelect, onSaveToBackend }) => {
   const [selectedCoordinates, setSelectedCoordinates] = useState<Coordinates | null>(null);
   const [loadingState, setLoadingState] = useState<MapLoadingState>(MapLoadingState.INITIAL);
   const [description, setDescription] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const { t } = useTranslation();
+  const computedTitle = title ?? t('mapPointSelector.title');
 
   const mapRef = useRef<YMap | null>(null);
   const placemarkRef = useRef<YPlacemark | null>(null);
@@ -109,9 +115,9 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
           coords,
           {
             balloonContent: address
-              ? `${address}<br>Координаты: ${coords[0].toFixed(6)}, ${coords[1].toFixed(6)}`
-              : `Координаты: ${coords[0].toFixed(6)}, ${coords[1].toFixed(6)}`,
-            hintContent: 'Перетащите для изменения позиции'
+              ? `${address}<br>${t('common.coordinates')}: ${coords[0].toFixed(6)}, ${coords[1].toFixed(6)}`
+              : `${t('common.coordinates')}: ${coords[0].toFixed(6)}, ${coords[1].toFixed(6)}`,
+            hintContent: t('mapPointSelector.hint.dragToMove')
           },
           {
             preset: 'islands#redDotIcon',
@@ -161,7 +167,7 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
         if (placemarkRef.current) {
           placemarkRef.current.properties.set(
             'balloonContent',
-            `${address}<br>Координаты: ${coords[0].toFixed(6)}, ${coords[1].toFixed(6)}`
+            `${address}<br>${t('common.coordinates')}: ${coords[0].toFixed(6)}, ${coords[1].toFixed(6)}`
           );
         }
       }
@@ -217,7 +223,7 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
       } catch (error) {
         console.error('Ошибка инициализации карты:', error);
         setLoadingState(MapLoadingState.ERROR);
-        message.error('Ошибка инициализации карты');
+        message.error(t('mapPointSelector.errors.initMap'));
       }
     });
   }, [onCoordinatesSelect, updatePlacemark, getAddressByCoords]);
@@ -249,7 +255,7 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
       script.onerror = (error) => {
         console.error('Ошибка загрузки скрипта Yandex Maps:', error);
         setLoadingState(MapLoadingState.ERROR);
-        message.error('Не удалось загрузить карту');
+        message.error(t('mapPointSelector.errors.loadMap'));
       };
 
       document.head.appendChild(script);
@@ -268,7 +274,7 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
         clearInterval(checkInterval);
         if (!window.ymaps || !mapRef.current) {
           setLoadingState(MapLoadingState.ERROR);
-          message.error('Таймаут загрузки карты');
+          message.error(t('mapPointSelector.messages.timeout'));
         }
       }, 10000);
     }
@@ -276,7 +282,7 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
 
   const handleSavePoint = async () => {
     if (!selectedCoordinates) {
-      message.warning('Сначала выберите точку на карте');
+      message.warning(t('mapPointSelector.messages.selectPointFirst'));
       return;
     }
 
@@ -297,10 +303,10 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
       }
 
       onCoordinatesSelect?.(pointData);
-      message.success('Координаты сохранены');
+      message.success(t('mapPointSelector.messages.saved'));
     } catch (error) {
       console.error('Ошибка сохранения:', error);
-      message.error('Ошибка при сохранении');
+      message.error(t('mapPointSelector.messages.saveError'));
     } finally {
       setIsSaving(false);
     }
@@ -319,26 +325,26 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
       }
     }
 
-    message.info('Выбор очищен');
+    message.info(t('mapPointSelector.messages.cleared'));
   };
 
   // Определяем текст загрузки и состояние
   const getLoadingText = () => {
     switch (loadingState) {
       case MapLoadingState.INITIAL:
-        return 'Подготовка...';
+        return t('mapPointSelector.loading.preparing');
       case MapLoadingState.LOADING_SCRIPT:
-        return 'Загрузка карты...';
+        return t('mapPointSelector.loading.loadingMap');
       case MapLoadingState.SCRIPT_LOADED:
-        return 'Скрипт загружен...';
+        return t('mapPointSelector.loading.scriptLoaded');
       case MapLoadingState.INITIALIZING_MAP:
-        return 'Инициализация карты...';
+        return t('mapPointSelector.loading.initializingMap');
       case MapLoadingState.MAP_READY:
         return null;
       case MapLoadingState.ERROR:
-        return 'Ошибка загрузки';
+        return t('mapPointSelector.loading.loadError');
       default:
-        return 'Загрузка...';
+        return t('mapPointSelector.loading.loading');
     }
   };
 
@@ -350,12 +356,12 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
     <div style={{ padding: '20px' }}>
       <Title level={2} style={{ marginBottom: '20px' }}>
         <EnvironmentOutlined style={{ marginRight: '8px' }} />
-        {title}
+        {computedTitle}
       </Title>
 
       <Row gutter={[16, 16]}>
         <Col xs={24} lg={16}>
-          <Card title='Кликните по карте для выбора координат' style={{ height: '500px' }} loading={false}>
+          <Card title={t('mapPointSelector.card.clickToSelect')} style={{ height: '500px' }} loading={false}>
             <div
               ref={mapContainerRef}
               style={{
@@ -370,10 +376,10 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
             >
               {isError && (
                 <div style={{ textAlign: 'center' }}>
-                  <Text type='danger'>Ошибка загрузки карты</Text>
+                  <Text type='danger'>{t('mapPointSelector.errors.loadMapTitle')}</Text>
                   <br />
                   <Button type='link' onClick={() => window.location.reload()} style={{ marginTop: '8px' }}>
-                    Перезагрузить страницу
+                    {t('mapPointSelector.actions.reloadPage')}
                   </Button>
                 </div>
               )}
@@ -383,33 +389,33 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
         </Col>
 
         <Col xs={24} lg={8}>
-          <Card title='Выбранные координаты'>
+          <Card title={t('mapPointSelector.card.selectedCoordinates')}>
             <Space direction='vertical' style={{ width: '100%' }} size='middle'>
               {selectedCoordinates ? (
                 <>
                   <div>
-                    <Text strong>Широта:</Text>
+                    <Text strong>{t('common.latitude')}:</Text>
                     <br />
                     <Text code>{selectedCoordinates.latitude}</Text>
                   </div>
                   <div>
-                    <Text strong>Долгота:</Text>
+                    <Text strong>{t('common.longitude')}:</Text>
                     <br />
                     <Text code>{selectedCoordinates.longitude}</Text>
                   </div>
                   {selectedCoordinates.address && (
                     <div>
-                      <Text strong>Адрес:</Text>
+                      <Text strong>{t('mapPointSelector.labels.address')}:</Text>
                       <br />
                       <Text>{selectedCoordinates.address}</Text>
                     </div>
                   )}
                   <Space style={{ width: '100%', justifyContent: 'space-between' }}>
                     <Button type='primary' icon={<SaveOutlined />} onClick={handleSavePoint} loading={isSaving}>
-                      Сохранить
+                      {t('common.save')}
                     </Button>
                     <Button danger icon={<ClearOutlined />} onClick={handleClearSelection} disabled={isSaving}>
-                      Очистить
+                      {t('mapPointSelector.actions.clear')}
                     </Button>
                   </Space>
                 </>
@@ -417,7 +423,7 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
                 <div style={{ textAlign: 'center', padding: '40px 0' }}>
                   <EnvironmentOutlined style={{ fontSize: '48px', color: '#d9d9d9' }} />
                   <div style={{ marginTop: '16px' }}>
-                    <Text type='secondary'>{isLoading ? loadingText : 'Кликните по карте для выбора координат'}</Text>
+                    <Text type='secondary'>{isLoading ? loadingText : t('mapPointSelector.card.clickToSelect')}</Text>
                   </div>
                 </div>
               )}
@@ -430,8 +436,13 @@ const MapPointSelectorCore: FC<MapPointSelectorProps> = ({ title = 'Выбор �
 };
 
 export const MapPointSelector: FC<MapPointSelectorProps> = (props) => {
+  const { t } = useTranslation();
   return (
-    <MapErrorBoundary>
+    <MapErrorBoundary
+      alertTitle={t('mapPointSelector.errors.loadMapTitle')}
+      alertDescription={t('mapPointSelector.errors.loadMap')}
+      tryAgainText={t('mapPointSelector.actions.tryAgain')}
+    >
       <MapPointSelectorCore {...props} />
     </MapErrorBoundary>
   );

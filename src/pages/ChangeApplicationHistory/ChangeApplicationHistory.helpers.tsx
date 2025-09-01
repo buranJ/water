@@ -36,11 +36,11 @@ const translateStatus = (val: string, t: TFunction): string => {
     // Common TU/application stage synonyms that might appear in English
     case 'review':
     case 'in review':
-      return 'На рассмотрении';
+      return t('tuDetails.stage.review');
     case 'done':
     case 'completed':
     case 'complete':
-      return 'Завершено';
+      return t('tuDetails.stage.done');
     default:
       return val;
   }
@@ -79,7 +79,7 @@ export const getColumns: IGetColumnsFn = (t) => {
       dataIndex: 'changes',
       key: 'changes_field',
       render: (changes: { field: string; new: string; old: string }[]) => {
-        return changes ? changes?.map((c, i) => <div key={i}>{c.field}</div>) : '-';
+        return changes ? changes?.map((c, i) => <div key={i}>{c.field}</div>) : t('common.noData');
       }
     },
     {
@@ -87,7 +87,7 @@ export const getColumns: IGetColumnsFn = (t) => {
       dataIndex: 'changes',
       key: 'changes_old',
       render: (changes: { field: string; new: string; old: string }[]) => (
-        <>{changes?.map((c, i) => <div key={i}>{translateStatus(c.old, t) || '-'}</div>)}</>
+        <>{changes?.map((c, i) => <div key={i}>{translateStatus(c.old, t) || t('common.noData')}</div>)}</>
       )
     },
     {
@@ -95,7 +95,7 @@ export const getColumns: IGetColumnsFn = (t) => {
       dataIndex: 'changes',
       key: 'changes_new',
       render: (changes: { field: string; new: string; old: string }[]) => (
-        <>{changes?.map((c, i) => <div key={i}>{translateStatus(c.new, t) || '-'}</div>)}</>
+        <>{changes?.map((c, i) => <div key={i}>{translateStatus(c.new, t) || t('common.noData')}</div>)}</>
       )
     }
   ];

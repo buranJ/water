@@ -482,7 +482,9 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               validator: (_, value) => {
                 if (!value) return Promise.resolve();
                 const v = typeof value === 'string' ? dayjs(value) : value;
-                return v && v.isBefore(minDeadline, 'day') ? Promise.reject(new Error('Не ранее, чем через 3 месяца')) : Promise.resolve();
+                return v && v.isBefore(minDeadline, 'day')
+                  ? Promise.reject(new Error(t('addTuForms.form.validation.paymentDeadlineMin')))
+                  : Promise.resolve();
               }
             }
           ]}
