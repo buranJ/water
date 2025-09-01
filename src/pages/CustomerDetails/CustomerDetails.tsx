@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
-import { useParams, useSearchParams } from 'react-router';
+import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { Alert, Button, Card, Spin, Tabs, Tag, Typography } from 'antd';
-import { DeleteOutlined, DownloadOutlined, EditOutlined } from '@ant-design/icons';
+import { DownloadOutlined, EditOutlined } from '@ant-design/icons';
 import { ApplicationsTab } from 'components/CustomerTabs/ApplicationsTab';
 import { ObjectsTab } from 'components/CustomerTabs/ObjectsTab';
 import { CustomerPaymentsTab } from 'components/CustomerTabs/PaymentsTab';
@@ -80,6 +80,7 @@ const tabItems = [
 ];
 
 export const CustomerDetails: FC<{ title?: string }> = ({ title }) => {
+  const navigate = useNavigate();
   const { customerId } = useParams<{ customerId: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'data');
@@ -96,6 +97,14 @@ export const CustomerDetails: FC<{ title?: string }> = ({ title }) => {
     const next = new URLSearchParams(searchParams);
     next.set('tab', key);
     setSearchParams(next);
+  };
+
+  const handleEditClick = () => {
+    navigate(`/dashboard/customers/${customerId}/edit`);
+  };
+
+  const handleExportClick = () => {
+    navigate(`/dashboard/export-data`);
   };
 
   const renderTabContent = () => {
@@ -183,9 +192,10 @@ export const CustomerDetails: FC<{ title?: string }> = ({ title }) => {
   return (
     <DashboardLayout title={data?.full_name || title || 'dashboard.pages.customers'}>
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginBottom: 16 }}>
-        <Button icon={<DownloadOutlined />}>PDF</Button>
-        <Button icon={<EditOutlined />} />
-        <Button danger icon={<DeleteOutlined />} />
+        <Button onClick={handleExportClick} icon={<DownloadOutlined />}>
+          Export
+        </Button>
+        <Button onClick={handleEditClick} icon={<EditOutlined />} />
       </div>
 
       <Tabs items={tabItems} activeKey={activeTab} onChange={handleTabChange} style={{ marginBottom: 24 }} />
