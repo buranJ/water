@@ -58,6 +58,10 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
 
   const currency = t('tuDetails.currency');
 
+  // Проверяем, есть ли счета на оплату
+  const hasInvoices = invoicesData && invoicesData.length > 0 && !invoiceError;
+  const isEditDisabled = hasInvoices;
+
   useEffect(() => {
     if (onOpenPaymentModal) {
       setActiveAccountingTab('2');
@@ -71,6 +75,10 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
   };
 
   const handleEditClick = () => {
+    if (isEditDisabled) {
+      message.warning(t('accounting.warnings.cannotEditWithInvoices') || 'Нельзя редактировать протокол при наличии счетов на оплату');
+      return;
+    }
     setIsEditModalVisible(true);
   };
 
@@ -97,16 +105,21 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
         throw new Error('Empty response array');
       }
       getInvoicesByProtocolTy({ protocol_id: protocolData.id.toString() || '' });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Generate invoice error:', error);
 
-      if (error?.status === 404) {
-        message.error(t('accounting.errors.endpointNotFound'));
-      } else if (error?.status === 400) {
-        message.error(t('accounting.errors.badRequest'));
-      } else if (error?.status === 500) {
-        message.error(t('accounting.errors.serverError'));
+      if (error && typeof error === 'object' && 'status' in error) {
+        const httpError = error as { status: number };
+
+        if (httpError.status === 404) {
+          message.error(t('accounting.errors.endpointNotFound'));
+        } else if (httpError.status === 400) {
+          message.error(t('accounting.errors.badRequest'));
+        } else if (httpError.status === 500) {
+          message.error(t('accounting.errors.serverError'));
+        } else {
+          message.error(t('accounting.messages.generateInvoiceError'));
+        }
       } else {
         message.error(t('accounting.messages.generateInvoiceError'));
       }
@@ -196,6 +209,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
       badge: t('protocolDoc.takeaway')
     }
   ];
+
   const paperWorkData: IProtocolTableData[] = [
     {
       key: 'paper-1',
@@ -265,8 +279,6 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
     }
   ];
 
-  const hasInvoices = invoicesData && invoicesData.length > 0 && !invoiceError;
-
   const accountingTabItems: TabsProps['items'] = [
     {
       key: '1',
@@ -279,7 +291,18 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
               {technicalConditionId}-472
             </Title>
             <Space wrap size={[12, 8]} style={{ flex: '0 0 auto' }}>
-              <Button icon={<EditOutlined />} type='primary' onClick={handleEditClick} size='middle'>
+              <Button
+                icon={<EditOutlined />}
+                type='primary'
+                onClick={handleEditClick}
+                size='middle'
+                disabled={isEditDisabled}
+                title={
+                  isEditDisabled
+                    ? t('accounting.warnings.cannotEditWithInvoices') || 'Нельзя редактировать протокол при наличии счетов на оплату'
+                    : ''
+                }
+              >
                 {t('common.edit')}
               </Button>
               <Button icon={<DownloadOutlined />} type='default' onClick={handleDownloadProtocol} loading={isDownloading} size='middle'>
