@@ -3,7 +3,6 @@ import { getBaseQuery } from 'common/helpers';
 import {
   IAccountingProtocolsListResponse,
   ICreatePaymentResponse,
-  IDownloadProtocolParams,
   IGenerateInvoiceParams,
   IGenerateInvoiceResponse,
   IGetAccountingProtocolParams,
@@ -56,6 +55,15 @@ export const accountingApi = createApi({
       invalidatesTags: ['Invoice']
     }),
 
+    downloadInvoice: build.query<Blob, { invoiceId: string }>({
+      query: ({ invoiceId }) => ({
+        url: `/buhgalteria/invoices/dublicate/${invoiceId}/`,
+        method: 'GET',
+        responseHandler: (response) => response.blob()
+      }),
+      keepUnusedDataFor: 0
+    }),
+
     updateProtocol: build.mutation<IUpdateProtocolResponse, IUpdateProtocolParams>({
       query: ({ protocolId, body }) => ({
         url: `/buhgalteria/protocols/${protocolId}/`,
@@ -65,12 +73,25 @@ export const accountingApi = createApi({
       invalidatesTags: ['Protocol', 'Invoice']
     }),
 
-    downloadProtocol: build.query<Blob, IDownloadProtocolParams>({
+    downloadProtocol: build.query<Blob, { technicalConditionId: string }>({
       query: ({ technicalConditionId }) => ({
         url: `/ty/${technicalConditionId}/protocol-excel/`,
         method: 'GET',
-        responseHandler: (response) => response.blob()
-      })
+        responseHandler: async (response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const blob = await response.blob();
+
+          if (blob.size === 0) {
+            throw new Error('Получен пустой файл');
+          }
+
+          return blob;
+        }
+      }),
+      keepUnusedDataFor: 0
     }),
 
     getPaymentsByInvoice: build.query<IGetPaymentsByInvoiceResponse, IGetPaymentsByInvoiceParams>({
@@ -98,6 +119,7 @@ export const {
   useGetAllProtocolsQuery,
   useGetInvoicesByProtocolQuery,
   useGenerateInvoiceMutation,
+  useLazyDownloadInvoiceQuery,
   useUpdateProtocolMutation,
   useLazyDownloadProtocolQuery,
   useGetPaymentsByInvoiceQuery,

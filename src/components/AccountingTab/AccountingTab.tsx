@@ -10,7 +10,7 @@ import { IGetTyById } from 'types/entities';
 import {
   useGenerateInvoiceMutation,
   useGetAccountingProtocolQuery,
-  useGetInvoicesByProtocolQuery, // Обновленный хук
+  useGetInvoicesByProtocolQuery,
   useLazyDownloadProtocolQuery
 } from 'api/Accounting.api';
 import { useLazyGetInvoicesByProtocolTyQuery } from 'api/Buhgalteria.api';
@@ -132,6 +132,10 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
     }
   };
 
+  const formatCurrency = (amount: string | number) => {
+    return `${parseFloat(amount.toString()).toLocaleString('ru-RU')} ${currency}`;
+  };
+
   if (protocolLoading) {
     return (
       <Flex justify='center' align='center' style={{ minHeight: 200 }}>
@@ -144,7 +148,6 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
     return <Alert message={t('accounting.errors.loadTitle')} description={t('accounting.errors.loadDesc')} type='error' showIcon />;
   }
 
-  // Обновленная таблица с новыми полями
   const protocolTableData: IProtocolTableData[] = [
     {
       key: '1',
@@ -193,6 +196,54 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
       badge: t('protocolDoc.takeaway')
     }
   ];
+  const paperWorkData: IProtocolTableData[] = [
+    {
+      key: 'paper-1',
+      item: 'Бумажные работы (водопровод)',
+      price: formatCurrency(protocolData.paper_water_sum)
+    },
+    {
+      key: 'paper-2',
+      item: 'Бумажные работы (канализация)',
+      price: formatCurrency(protocolData.paper_kanal_sum)
+    },
+    {
+      key: 'paper-3',
+      item: 'НСП водопровод (бумаги)',
+      price: formatCurrency(protocolData.nsp_water_paper)
+    },
+    {
+      key: 'paper-4',
+      item: 'НСП канализация (бумаги)',
+      price: formatCurrency(protocolData.nsp_kanal_paper)
+    },
+    {
+      key: 'paper-5',
+      item: 'НСП общий (бумаги)',
+      price: formatCurrency(protocolData.nsp_paper)
+    },
+    {
+      key: 'paper-6',
+      item: 'НДС водопровод (бумаги)',
+      price: formatCurrency(protocolData.nds_water_paper)
+    },
+    {
+      key: 'paper-7',
+      item: 'НДС канализация (бумаги)',
+      price: formatCurrency(protocolData.nds_kanal_paper)
+    },
+    {
+      key: 'paper-8',
+      item: 'НДС общий (бумаги)',
+      price: formatCurrency(protocolData.nds_paper)
+    },
+    {
+      key: 'paper-9',
+      item: 'Итог:',
+      price: formatCurrency(protocolData.total_sum_paper),
+      badge: 'На вынос'
+    }
+  ];
 
   const columns: TableColumnsType<IProtocolTableData> = [
     {
@@ -201,7 +252,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
       key: 'item',
       render: (text: string, record) => (
         <Flex justify='space-between' align='center' wrap='wrap' gap={8}>
-          <Text strong={record.key === '9'}>{text}</Text>
+          <Text strong={record.badge !== undefined}>{text}</Text>
         </Flex>
       )
     },
@@ -210,9 +261,11 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
       dataIndex: 'price',
       key: 'price',
       align: 'right' as const,
-      render: (text: string, record) => <Text strong={record.key === '9'}>{text}</Text>
+      render: (text: string, record) => <Text strong={record.badge !== undefined}>{text}</Text>
     }
   ];
+
+  const hasInvoices = invoicesData && invoicesData.length > 0 && !invoiceError;
 
   const accountingTabItems: TabsProps['items'] = [
     {
@@ -235,16 +288,38 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
             </Space>
           </Flex>
 
-          <div style={{ overflowX: 'auto' }}>
-            <Table
-              dataSource={protocolTableData}
-              columns={columns}
-              pagination={false}
-              showHeader={false}
-              size='middle'
-              bordered
-              style={{ marginBottom: 0, minWidth: 500 }}
-            />
+          <div style={{ marginBottom: 24 }}>
+            <Title level={5} style={{ marginBottom: 16 }}>
+              Основные расчеты
+            </Title>
+            <div style={{ overflowX: 'auto' }}>
+              <Table
+                dataSource={protocolTableData}
+                columns={columns}
+                pagination={false}
+                showHeader={false}
+                size='middle'
+                bordered
+                style={{ marginBottom: 16, minWidth: 500 }}
+              />
+            </div>
+          </div>
+
+          <div>
+            <Title level={5} style={{ marginBottom: 16 }}>
+              Выдача технических условий
+            </Title>
+            <div style={{ overflowX: 'auto' }}>
+              <Table
+                dataSource={paperWorkData}
+                columns={columns}
+                pagination={false}
+                showHeader={false}
+                size='middle'
+                bordered
+                style={{ marginBottom: 0, minWidth: 500 }}
+              />
+            </div>
           </div>
         </Card>
       )
@@ -274,8 +349,6 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
         )
     }
   ];
-
-  const hasInvoices = invoicesData && invoicesData.length > 0 && !invoiceError;
 
   if (data?.status !== 'active') {
     return t('tuDetails.archivedMessage');

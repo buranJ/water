@@ -1,21 +1,35 @@
-// src/types/entities/accounting.ts
 export interface IAccountingProtocol {
   id: number;
   load: string;
   water_price: string;
   kanal_price: string;
   coefficient: number;
+  // Основные суммы
+  water_sum: string;
+  kanal_sum: string;
   total_water_sum: string;
   total_kanal_sum: string;
+  // Бумажные работы
+  paper_water_sum: string;
+  paper_kanal_sum: string;
+  // НСП для бумажных работ
+  nsp_water_paper: string;
+  nsp_kanal_paper: string;
+  nsp_paper: string;
+  // НДС для бумажных работ
+  nds_kanal_paper: string;
+  nds_water_paper: string;
+  nds_paper: string;
+  // Итоговые суммы
+  total_sum_main: string;
+  total_sum_paper: string;
+  // Основные налоги
+  nds: string;
+  nsp: string;
+  nsp_water: string;
+  nsp_kanal: string;
   created_at: string;
   technical_condition: number;
-  // Новые поля
-  nds: string | null;
-  nds_paper: string;
-  nsp: string;
-  nsp_paper: string;
-  paper_kanal_sum: string;
-  paper_water_sum: string;
 }
 
 export interface IGetAccountingProtocolParams {
@@ -72,16 +86,31 @@ export interface IUpdateProtocolParams {
     water_price: string;
     kanal_price: string;
     coefficient: number;
-    total_water_sum: string;
-    total_kanal_sum: string;
-    technical_condition: number;
-    // Новые поля для обновления
-    nds?: string | null;
-    nds_paper?: string;
-    nsp?: string;
-    nsp_paper?: string;
-    paper_kanal_sum?: string;
+    // Основные суммы
+    water_sum?: string;
+    kanal_sum?: string;
+    total_water_sum?: string;
+    total_kanal_sum?: string;
+    // Бумажные работы
     paper_water_sum?: string;
+    paper_kanal_sum?: string;
+    // НСП для бумажных работ
+    nsp_water_paper?: string;
+    nsp_kanal_paper?: string;
+    nsp_paper?: string;
+    // НДС для бумажных работ
+    nds_kanal_paper?: string;
+    nds_water_paper?: string;
+    nds_paper?: string;
+    // Итоговые суммы
+    total_sum_main?: string;
+    total_sum_paper?: string;
+    // Основные налоги
+    nds?: string;
+    nsp?: string;
+    nsp_water?: string;
+    nsp_kanal?: string;
+    technical_condition: number;
   };
 }
 

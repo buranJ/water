@@ -19,15 +19,30 @@ interface IFormValues {
   water_price: string;
   kanal_price: string;
   coefficient: number;
+  // Основные суммы
+  water_sum: string;
+  kanal_sum: string;
   total_water_sum: string;
   total_kanal_sum: string;
-  // Новые поля
-  nds: string;
-  nds_paper: string;
-  nsp: string;
-  nsp_paper: string;
-  paper_kanal_sum: string;
+  // Бумажные работы
   paper_water_sum: string;
+  paper_kanal_sum: string;
+  // НСП для бумажных работ
+  nsp_water_paper: string;
+  nsp_kanal_paper: string;
+  nsp_paper: string;
+  // НДС для бумажных работ
+  nds_kanal_paper: string;
+  nds_water_paper: string;
+  nds_paper: string;
+  // Итоговые суммы
+  total_sum_main: string;
+  total_sum_paper: string;
+  // Основные налоги
+  nds: string;
+  nsp: string;
+  nsp_water: string;
+  nsp_kanal: string;
 }
 
 export const EditProtocolModal: FC<IProps> = ({ visible, onClose, protocolData, onSuccess }) => {
@@ -42,14 +57,30 @@ export const EditProtocolModal: FC<IProps> = ({ visible, onClose, protocolData, 
         water_price: protocolData.water_price,
         kanal_price: protocolData.kanal_price,
         coefficient: protocolData.coefficient,
+        // Основные суммы
+        water_sum: protocolData.water_sum,
+        kanal_sum: protocolData.kanal_sum,
         total_water_sum: protocolData.total_water_sum,
         total_kanal_sum: protocolData.total_kanal_sum,
-        nds: protocolData.nds || '0',
-        nds_paper: protocolData.nds_paper,
-        nsp: protocolData.nsp,
-        nsp_paper: protocolData.nsp_paper,
+        // Бумажные работы
+        paper_water_sum: protocolData.paper_water_sum,
         paper_kanal_sum: protocolData.paper_kanal_sum,
-        paper_water_sum: protocolData.paper_water_sum
+        // НСП для бумажных работ
+        nsp_water_paper: protocolData.nsp_water_paper,
+        nsp_kanal_paper: protocolData.nsp_kanal_paper,
+        nsp_paper: protocolData.nsp_paper,
+        // НДС для бумажных работ
+        nds_kanal_paper: protocolData.nds_kanal_paper,
+        nds_water_paper: protocolData.nds_water_paper,
+        nds_paper: protocolData.nds_paper,
+        // Итоговые суммы
+        total_sum_main: protocolData.total_sum_main,
+        total_sum_paper: protocolData.total_sum_paper,
+        // Основные налоги
+        nds: protocolData.nds,
+        nsp: protocolData.nsp,
+        nsp_water: protocolData.nsp_water,
+        nsp_kanal: protocolData.nsp_kanal
       });
     }
   }, [visible, protocolData, form]);
@@ -71,6 +102,7 @@ export const EditProtocolModal: FC<IProps> = ({ visible, onClose, protocolData, 
       onClose();
     } catch (error) {
       console.log(error);
+      message.error('Ошибка при обновлении протокола');
     }
   };
 
