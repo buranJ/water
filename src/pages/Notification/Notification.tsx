@@ -166,8 +166,15 @@ export const Notification: FC<IProps> = ({ title }) => {
                         avatar={
                           <Avatar
                             shape='circle'
-                            style={{ backgroundColor: '#2F80ED' }}
-                            icon={<img src={getIconByType(item.type)} alt='icon' style={{ width: 26, height: 26 }} />}
+                            size={36}
+                            style={{ backgroundColor: '#2F80ED', flex: '0 0 auto' }}
+                            icon={
+                              <img
+                                src={getIconByType(item.type)}
+                                alt='icon'
+                                style={{ width: 22, height: 22, objectFit: 'contain', display: 'block' }}
+                              />
+                            }
                           />
                         }
                         title={<strong>{item.title}</strong>}

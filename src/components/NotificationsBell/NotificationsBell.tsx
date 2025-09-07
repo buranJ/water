@@ -131,8 +131,15 @@ export const NotificationsBell = () => {
                 <Flex gap={12}>
                   <Avatar
                     shape='circle'
-                    style={{ backgroundColor: '#2F80ED' }}
-                    icon={<img src={getIconByType(item.type)} alt='icon' style={{ width: 22, height: 22 }} />}
+                    size={36}
+                    style={{ backgroundColor: '#2F80ED', flex: '0 0 auto' }}
+                    icon={
+                      <img
+                        src={getIconByType(item.type)}
+                        alt='icon'
+                        style={{ width: 22, height: 22, objectFit: 'contain', display: 'block' }}
+                      />
+                    }
                   />
                   <div>
                     <Typography.Text strong className='notif-popover__title'>
