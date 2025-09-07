@@ -89,8 +89,14 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     return idx >= 0 && idx < ACT_ORDER.length - 1 ? (ACT_ORDER[idx + 1] as IActEnum) : null;
   }, [objectData?.act]);
 
+  const isTuApproved = objectData?.stage === 'approved';
+
   const openActStatusModal = async (status: IActEnum) => {
     if (!id) return;
+    if (objectData?.stage !== 'approved') {
+      message.warning('Действие доступно только после утверждения ТУ');
+      return;
+    }
     if (objectData?.act) {
       try {
         console.log('[ACT] patch status', { actId: objectData.act.id, status });
@@ -327,7 +333,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
               {objectData.act && objectData.act.file && (
                 <Button onClick={() => window.open(objectData.act!.file, '_blank')}>Скачать акт</Button>
               )}
-              {nextActStatus && (
+              {isTuApproved && nextActStatus && (
                 <Button
                   type='primary'
                   style={{ marginTop: 8, marginLeft: objectData.act ? 8 : 0 }}
