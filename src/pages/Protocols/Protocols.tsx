@@ -114,7 +114,7 @@ export default function ProtocolsPage({ title = 'Протоколы' }: { title?
 
   const columns: ColumnsType<IAccountingProtocol> = [
     {
-      title: 'ID',
+      title: t('changeHistory.columns.id') || 'ID',
       dataIndex: 'id',
       key: 'id',
       sorter: true,
@@ -191,13 +191,13 @@ export default function ProtocolsPage({ title = 'Протоколы' }: { title?
             />
             <Input
               style={{ width: 160 }}
-              placeholder='ТУ (ID)'
+              placeholder={t('exportData.filters.technical_condition_id') || 'TU (ID)'}
               value={searchState.technical_condition_id || ''}
               onChange={(e) => setParams({ technical_condition_id: e.target.value })}
               allowClear
             />
             <Select
-              placeholder='Счёт'
+              placeholder={t('technicalConditions.filter.hasInvoice') || 'Счёт'}
               style={{ width: 140 }}
               allowClear
               value={searchState.has_invoice || undefined}
@@ -218,7 +218,11 @@ export default function ProtocolsPage({ title = 'Протоколы' }: { title?
                 { value: 'created_at', label: t('filterBar.newOldFirst') || 'Старые сверху' }
               ]}
             />
-            <RangePicker showTime onChange={handleDateChange} placeholder={['Создано с', 'Создано по']} />
+            <RangePicker
+              showTime
+              onChange={handleDateChange}
+              placeholder={[t('common.dateStart') || 'Дата с', t('common.dateEnd') || 'Дата по']}
+            />
 
             <Button type='primary' onClick={() => setParams({ search: searchInput })}>
               {t('filterBar.search') || 'Найти'}

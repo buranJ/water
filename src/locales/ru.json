@@ -97,8 +97,9 @@
     "newOnesfirst": "Сначала новые",
     "newOldFirst": "Сначало последние",
     "add": "Добавить",
-    "filters": "Фильтрация",
-    "byDate": "По дате",
+      "filters": "Фильтрация",
+      "searchButton": "Найти",
+      "byDate": "По дате",
     "alphabetAsc": "А-Я",
     "alphabetDesc": "Я-А",
     "paymentDeadlineAsc": "Срок оплаты: ранние",
@@ -168,9 +169,11 @@
     "remaining": "Остаток",
     "coordinates": "Координаты",
     "area": "Площадь",
-    "amountLabel": "Сумма:",
-    "dateLabel": "Дата:",
-    "totalLabel": "Итого:",
+      "amountLabel": "Сумма:",
+      "dateLabel": "Дата:",
+      "dateStart": "Дата с",
+      "dateEnd": "Дата по",
+      "totalLabel": "Итого:",
     "save": "Сохранить",
     "edit": "Редактировать",
     "cancel": "Отмена",
@@ -971,7 +974,8 @@
     "paid": "Оплачено:",
     "invoice": {
       "title": "Счет на оплату",
-      "uploadReceipt": "Загрузить чек об оплате"
+      "uploadReceipt": "Загрузить чек об оплате",
+      "number": "Номер"
     },
     "payment": {
       "columns": {
@@ -1319,9 +1323,14 @@
     },
     "labels": {
       "paid": "Оплачен",
+      "pending": "Ожидает оплаты",
       "invoicesNotFound": "Счета не найдены",
       "waterSupply": "Водоснабжение",
-      "sewer": "Канализация"
+      "sewer": "Канализация",
+      "type": "Тип",
+      "status": "Статус",
+      "total": "Итого",
+      "invoiceNumber": "Номер счёта"
     },
     "invoiceTypeLabels": {
       "main": "Основной счет",

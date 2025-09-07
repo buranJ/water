@@ -124,7 +124,7 @@ export default function InvoicesPage({ title = 'Счета' }: { title?: string 
 
   const columns: ColumnsType<IAccountingInvoice> = [
     {
-      title: 'ID',
+      title: t('changeHistory.columns.id') || 'ID',
       dataIndex: 'id',
       key: 'id',
       sorter: true,
@@ -215,21 +215,21 @@ export default function InvoicesPage({ title = 'Счета' }: { title?: string 
             />
             <Input
               style={{ width: 140 }}
-              placeholder='Customer ID'
+              placeholder={t('exportData.filters.customer_id') || 'Customer (ID)'}
               value={searchState.customer_id || ''}
               onChange={(e) => setParams({ customer_id: e.target.value })}
               allowClear
             />
             <Input
               style={{ width: 120 }}
-              placeholder='Entity ID'
+              placeholder={t('exportData.filters.entity_id') || 'Entity (ID)'}
               value={searchState.entity_id || ''}
               onChange={(e) => setParams({ entity_id: e.target.value })}
               allowClear
             />
             <Input
               style={{ width: 140 }}
-              placeholder='Protocol ID'
+              placeholder={t('exportData.filters.protocol_id') || 'Protocol (ID)'}
               value={searchState.protocol_id || ''}
               onChange={(e) => setParams({ protocol_id: e.target.value })}
               allowClear

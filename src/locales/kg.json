@@ -32,7 +32,8 @@
       "architecture": "Архитектура",
       "export": "Экспорт",
       "formulas": "Формулалар",
-      "archive": "Архив"
+      "archive": "Архив",
+      "protocols": "Протоколдор"
     },
     "panel": "Башкаруу панели"
   },
@@ -55,7 +56,9 @@
     "applicationDetails": "Арыз №",
     "tuNumberPrefix": "ТУ №",
     "changeHistory": "Өзгөрүүлөр тарыхы",
-    "notifications": "Билдирмелер"
+    "notifications": "Билдирмелер",
+    "invoices": "Эсептер",
+    "protocols": "Протоколдор"
   },
   "profile": {
     "title": "Жөндөөлөр",
@@ -95,6 +98,7 @@
     "newOldFirst": "Эскилер биринчи",
     "add": "Кошуу",
     "filters": "Фильтрлер",
+    "searchButton": "Издөө",
     "byDate": "Күнү боюнча",
       "alphabetAsc": "А-Я",
       "alphabetDesc": "Я-А",
@@ -167,6 +171,8 @@
     "area": "Аянт",
     "amountLabel": "Сумма:",
     "dateLabel": "Күнү:",
+    "dateStart": "Күнү (башталышы)",
+    "dateEnd": "Күнү (аягы)",
     "totalLabel": "Жалпы:",
     "save": "Сактоо",
     "edit": "Түзөтүү",
@@ -798,7 +804,8 @@
     "paid": "Төлөндү:",
     "invoice": {
       "title": "Төлөм эсеби",
-      "uploadReceipt": "Төлөм чегин жүктөө"
+      "uploadReceipt": "Төлөм чегин жүктөө",
+      "number": "Номуру"
     },
     "payment": {
       "columns": {
@@ -829,6 +836,35 @@
       "field": "Талаа",
       "oldValue": "Эски маани",
       "newValue": "Жаңы маани"
+    }
+  },
+  "customerForm": {
+    "labels": {
+      "type": "Түрүн тандоо",
+      "individual": "Физикалык жак",
+      "legal": "Юридикалык жак",
+      "addressReg": "Каттоо дареги",
+      "status": "Статус",
+      "companyName": "Компаниянын аталышы",
+      "ogrn": "ОГРН",
+      "passportData": "Паспорт маалыматтар",
+      "contactData": "Байланыш маалыматтары",
+      "fio": "Аты-жөнү"
+    },
+    "placeholders": {
+      "address": "Дарек киргизиңиз",
+      "selectStatus": "Статусту тандаңыз",
+      "companyName": "Компаниянын аталышы",
+      "ogrn": "789010",
+      "passportData": "AB123456",
+      "contactData": "0999700700",
+      "fullName": "Толук аты-жөнү",
+      "inn": "123456789010"
+    },
+    "validation": {
+      "pleaseSelectType": "Сураныч, түрүн тандаңыз!",
+      "pleaseEnterAddress": "Сураныч, даректи киргизиңиз!",
+      "pleaseSelectStatus": "Сураныч, статусту тандаңыз!"
     }
   },
   "formulas": {
@@ -956,6 +992,130 @@
       }
     }
   },
+  "addTuForms": {
+    "titles": {
+      "main": "Негизги маалымат",
+      "techParams": "Техникалык параметрлер",
+      "connection": "Туташуу",
+      "finance": "Финансы"
+    },
+    "form": {
+      "labels": {
+        "requestSource": "Сурам булагы",
+        "requestNumber": "Сурам номери",
+        "requestDate": "Сурам датасы",
+        "customer": "Кардар",
+        "objectName": "Объекттин аталышы",
+        "address": "Объекттин жайгашкан жери",
+        "techConditionType": "Техникалык шарттын тиби",
+        "eni": "ЕНИ",
+        "sewageAmount": "Стоктор көлөмү",
+        "waterRequired": "Суу керектөө көлөмү",
+        "pressureRequired": "Талап кылынган басым",
+        "fireFighting": "Өрт өчүрүү (ички/сырт)",
+        "stage": "Баскыч",
+        "formula": "Формулалар",
+        "connectionTarget": "Кайсы объектке туташат",
+        "streetPass": "Көчө боюнча өтүү",
+        "collector": "Коллектор",
+        "waterPipe": "Суу түтүгү",
+        "sewer": "Канализация",
+        "fireInput1": "Өрт киргизүү 1",
+        "fireInput2": "Өрт киргизүү 2",
+        "notes": "Эскертүүлөр жана комментарийлер",
+        "paymentPaper": "ТУ (кагаз иштери) үчүн төлөм",
+        "paymentConnection": "Туташтыруу үчүн төлөм",
+        "status": "Төлөм статусу",
+        "paymentAmount": "Төлөм суммасы",
+        "paymentDeadline": "ТУ төлөмүнүн мөөнөтү",
+        "paymentInvoiceNumber": "Эсеп №",
+        "fireFightingOuter": "Сырткы өрт өчүрүү",
+        "fireFightingInner": "Ички өрт өчүрүү",
+        "collectorDiameter": "Коллектор D",
+        "provideWater": "Суу түтүгүн караштыруу",
+        "provideSewer": "Канализацияны караштыруу",
+        "freePressureInput1": "Эркин басым киргизүү 1",
+        "waterPipeDiameter1": "Суу түтүгү D 1",
+        "freePressureInput2": "Эркин басым киргизүү 2",
+        "waterPipeDiameter2": "Суу түтүгү D 2"
+      },
+      "placeholders": {
+        "requestSource": "Объекттин аталышы",
+        "requestNumber": "12345",
+        "requestDate": "YYYY-MM-DD",
+        "customer": "Аты-жөнү же уюм",
+        "objectName": "Турак үй",
+        "address": "Объекттин дареги",
+        "techConditionType": "ТУ тиби",
+        "eni": "1234",
+        "sewageAmount": "Мисалы: 2",
+        "waterRequired": "123",
+        "pressureRequired": "10",
+        "fireFighting": "Турак үй",
+        "stage": "Баскычты тандаңыз",
+        "formula": "Формулалар",
+        "connectionTarget": "Объекттин аталышы",
+        "streetPass": "Көчө боюнча өтүү",
+        "collector": "01:00|12:34567",
+        "waterPipe": "Көчө боюнча өтүү",
+        "sewer": "01:00|12:34567",
+        "fireInput1": "киргизүү 1",
+        "fireInput2": "киргизүү 2",
+        "notes": "Комментарий",
+        "status": "Статусту тандаңыз",
+        "paymentAmount": "1000",
+        "paymentPaper": "Сумманы киргизиңиз",
+        "paymentConnection": "Сумманы киргизиңиз",
+        "paymentDeadline": "YYYY-MM-DD",
+        "invoiceNumber": "1234567890",
+        "diameter": "Диаметр",
+        "selectOption": "Вариант тандаңыз",
+        "provideWater": "Суу түтүгүн караштыруу",
+        "provideSewer": "Канализацияны караштыруу",
+        "freePressureInput1": "Эркин басым киргизүү 1",
+        "waterPipeDiameter1": "Суу түтүгү D 1",
+        "freePressureInput2": "Эркин басым киргизүү 2",
+        "waterPipeDiameter2": "Суу түтүгү D 2"
+      },
+      "validation": {
+        "specifySource": "Булакты көрсөтүңүз",
+        "specifyRequestNumber": "Сурам номерин көрсөтүңүз",
+        "specifyRequestDate": "Сурам датасын көрсөтүңүз",
+        "specifyCustomer": "Кардарды көрсөтүңүз",
+        "specifyObjectName": "Объекттин аталышын көрсөтүңүз",
+        "specifyAddress": "Даректи көрсөтүңүз",
+        "selectType": "Түрүн тандаңыз",
+        "required": "Милдеттүү талаа",
+        "paymentDeadlineMin": "Бүгүнтөн эрте эмес 3 айдан кийин"
+      },
+      "options": {
+        "stages": {
+          "draft": "Долбоор",
+          "review": "Каралууда",
+          "approved": "Бекитилди",
+          "done": "Аякталды"
+        },
+        "status": {
+          "active": "Активдүү",
+          "inactive": "Иштебейт",
+          "archived": "Архивде"
+        },
+        "connectionType": {
+          "existing": "бар",
+          "built": "курулган"
+        }
+      },
+      "buttons": {
+        "change": "Өзгөртүү",
+        "submit": "Даяр"
+      }
+    },
+    "messages": {
+      "loadTuError": "ТУ маалыматын алуу мүмкүн болгон жок.",
+      "createTuSuccess": "Техникалык шарт ийгиликтүү түзүлдү!",
+      "createTuError": "ТУ түзүүдө ката кетти."
+    }
+  },
   "objectForm": {
     "labels": {
       "title": "Объекттин аталышы",
@@ -1053,6 +1213,7 @@
     "sections": {
       "main": "Негизги маалымат",
       "cost": "Баасы",
+      "taxes": "КНС жана салыктар",
       "total": "Жалпы сумма"
     },
     "fields": {
@@ -1061,7 +1222,11 @@
       "waterPrice": "Суу түтүгүнүн баасы",
       "kanalPrice": "Канализациянын баасы",
       "totalWater": "Суу түтүгү боюнча жалпы сумма",
-      "totalKanal": "Канализация боюнча жалпы сумма"
+      "totalKanal": "Канализация боюнча жалпы сумма",
+      "ndsMain": "КНС (негизги)",
+      "ndsPaper": "КНС (кагаз иштери)",
+      "nspMain": "НСП (негизги)",
+      "nspPaper": "НСП (кагаз иштери)"
     },
     "placeholders": {
       "enterLoad": "Жүктү киргизиңиз",
@@ -1069,6 +1234,24 @@
       "enterCost": "Бааны киргизиңиз",
       "enterTotal": "Жалпы сумманы киргизиңиз"
     }
+  },
+  "notification": {
+    "active": "Эски",
+    "new": "Жаңы",
+    "assignResponsible": "Жооптууну дайындоо",
+    "time": {
+      "weekAgo": "бир жума мурун"
+    },
+    "markAllAsRead": "Баарын окулган деп белгилөө",
+    "seeAll": "Баарын көрсөтүү",
+    "date": {
+      "today": "Бүгүн",
+      "yesterday": "Кечээ",
+      "lastMonth": "Өткөн ай",
+      "earlier": "Мурдараак"
+    },
+    "open": "Ачуу",
+    "read": "Окутулган"
   },
   "paymentsModal": {
     "title": "Төлөм кошуу",
@@ -1105,6 +1288,25 @@
       "amountPositive": "Сумма 0 дөн чоң болушу керек"
     }
   },
+  "paymentsTab": {
+    "buttons": {
+      "add": "Кошуу",
+      "pdf": "PDF",
+      "receipt": "Чек",
+      "closeInvoice": "Эсепти жабуу"
+    },
+    "table": {
+      "empty": "Төлөмдөр жок",
+      "actions": "Аракеттер"
+    },
+    "of": "дан",
+    "headingByInvoices": "Эсептер боюнча төлөмдөр",
+    "messages": {
+      "loadErrorTitle": "Жүктөө катасы",
+      "loadErrorDesc": "Төлөмдөрдүн маалыматын жүктөө мүмкүн болгон жок",
+      "invoiceFullyPaid": "Эсеп толугу менен төлөндү"
+    }
+  },
   "accounting": {
     "errors": {
       "loadTitle": "Жүктөө катасы",
@@ -1121,9 +1323,14 @@
     },
     "labels": {
       "paid": "Төлөндү",
+      "pending": "Төлөм күтүлүүдө",
       "invoicesNotFound": "Эсептер табылган жок",
       "waterSupply": "Суу менен камсыздоо",
-      "sewer": "Канализация"
+      "sewer": "Канализация",
+      "type": "Түрү",
+      "status": "Статус",
+      "total": "Жалпы",
+      "invoiceNumber": "Эсеп номери"
     },
     "invoiceTypeLabels": {
       "main": "Негизги эсеп",

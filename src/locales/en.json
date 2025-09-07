@@ -97,7 +97,8 @@
     "newOnesfirst": "Newest First",
     "newOldFirst": "Oldest First",
     "add": "Add",
-    "filters": "Filters",
+      "filters": "Filters",
+      "searchButton": "Search",
     "byDate": "By Date",
     "alphabetAsc": "A-Z",
     "alphabetDesc": "Z-A",
@@ -170,6 +171,8 @@
     "area": "Area",
     "amountLabel": "Amount:",
     "dateLabel": "Date:",
+    "dateStart": "Date from",
+    "dateEnd": "Date to",
     "totalLabel": "Total:",
     "save": "Save",
     "edit": "Edit",
@@ -971,7 +974,8 @@
     "paid": "Paid:",
     "invoice": {
       "title": "Invoice",
-      "uploadReceipt": "Upload payment receipt"
+      "uploadReceipt": "Upload payment receipt",
+      "number": "Number"
     },
     "payment": {
       "columns": {
@@ -1195,6 +1199,41 @@
       "address": "Address"
     }
   },
+  "paymentsModal": {
+    "title": "Add payment",
+    "labels": {
+      "paymentNumber": "Payment number",
+      "paymentDate": "Payment date",
+      "amount": "Payment amount",
+      "source": "Payment source",
+      "status": "Payment status",
+      "optionalReceiptFile": "Receipt file (optional)"
+    },
+    "placeholders": {
+      "paymentNumber": "Enter payment number",
+      "date": "Pick a date",
+      "amount": "Enter amount",
+      "source": "e.g., 1C",
+      "status": "Select status"
+    },
+    "buttons": {
+      "uploadReceipt": "Upload receipt",
+      "replaceFile": "Replace file",
+      "cancel": "Cancel",
+      "submit": "Add payment"
+    },
+    "messages": {
+      "success": "Payment added successfully",
+      "error": "Error adding payment",
+      "fileTypeError": "Only images, PDF or documents are allowed",
+      "fileSizeError": "File must be smaller than 10MB",
+      "fileSelectedPrefix": "Selected file:"
+    },
+    "validation": {
+      "required": "Field is required",
+      "amountPositive": "Amount must be greater than 0"
+    }
+  },
   "protocolDoc": {
     "companyName": "MP \"Bishkekteploset\"",
     "takeaway": "Takeaway",
@@ -1284,9 +1323,14 @@
     },
     "labels": {
       "paid": "Paid",
+      "pending": "Pending payment",
       "invoicesNotFound": "Invoices not found",
       "waterSupply": "Water supply",
-      "sewer": "Sewer"
+      "sewer": "Sewer",
+      "type": "Type",
+      "status": "Status",
+      "total": "Total",
+      "invoiceNumber": "Invoice number"
     },
     "invoiceTypeLabels": {
       "main": "Main invoice",
