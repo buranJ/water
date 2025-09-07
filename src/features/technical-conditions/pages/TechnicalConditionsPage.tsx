@@ -23,6 +23,11 @@ interface TUFilterValues {
   has_invoice?: boolean;
   overdue?: boolean;
   due_in_days?: number;
+  type_ty?: number;
+  id?: number;
+  address?: string;
+  payment_amount?: number;
+  tu_with_loads?: boolean;
 }
 
 export const TechnicalConditionsPage = () => {
@@ -49,6 +54,18 @@ export const TechnicalConditionsPage = () => {
   const overdue = overdueStr === 'true' ? true : overdueStr === 'false' ? false : undefined;
   const due_in_days = dueInDaysStr && !Number.isNaN(Number(dueInDaysStr)) ? Number(dueInDaysStr) : undefined;
 
+  const typeTyStr = s('type_ty');
+  const idStr = s('id');
+  const addressParam = s('address');
+  const paymentAmountStr = s('payment_amount');
+  const tuWithLoadsStr = s('tu_with_loads');
+
+  const type_ty = typeTyStr && !Number.isNaN(Number(typeTyStr)) ? Number(typeTyStr) : undefined;
+  const id = idStr && !Number.isNaN(Number(idStr)) ? Number(idStr) : undefined;
+  const address = addressParam || undefined;
+  const payment_amount = paymentAmountStr && !Number.isNaN(Number(paymentAmountStr)) ? Number(paymentAmountStr) : undefined;
+  const tu_with_loads = tuWithLoadsStr === 'true' ? true : tuWithLoadsStr === 'false' ? false : undefined;
+
   const ordering = [date, payment_ordering, filterOrdering].filter(Boolean).join(', ');
 
   const queryParams: IGetAllTechnicalConditionParams = {
@@ -57,6 +74,7 @@ export const TechnicalConditionsPage = () => {
     search,
     status,
     stage,
+    type_ty,
     ordering: ordering || '-created_at',
     has_invoice,
     overdue,
@@ -72,9 +90,31 @@ export const TechnicalConditionsPage = () => {
 
   useEffect(() => {
     if (tuData && Array.isArray(tuData.results)) {
-      setTableData(tuData.results);
+      let data = tuData.results;
+
+      if (id !== undefined) {
+        data = data.filter((d) => d.id === id);
+      }
+
+      if (address) {
+        const addr = address.toLowerCase();
+        data = data.filter((d) => (d.address || '').toLowerCase().includes(addr));
+      }
+
+      if (payment_amount !== undefined) {
+        data = data.filter((d) => {
+          const amt = parseFloat(String(d.payment_amount).replace(/\s/g, '').replace(',', '.'));
+          return !Number.isNaN(amt) && amt === payment_amount;
+        });
+      }
+
+      if (tu_with_loads !== undefined) {
+        data = data.filter((d) => ((d.type || '') === 'load_increase') === tu_with_loads);
+      }
+
+      setTableData(data);
     }
-  }, [tuData]);
+  }, [tuData, id, address, payment_amount, tu_with_loads]);
 
   const handleFilterChange = (values: TUFilterValues) => {
     const next = new URLSearchParams(searchParams);
@@ -144,7 +184,12 @@ export const TechnicalConditionsPage = () => {
             date,
             has_invoice,
             overdue,
-            due_in_days
+            due_in_days,
+            type_ty,
+            id,
+            address,
+            payment_amount,
+            tu_with_loads
           }}
           onFilterChange={handleFilterChange}
           onAddClick={handleAddClick}

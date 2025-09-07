@@ -252,7 +252,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Col>
         </Row>
 
-        <Form.Item label={t('addTuForms.form.labels.eni')} name='eni' rules={[{ required: true }, { validator: zodRule(eniSchema) }]}>
+        <Form.Item label={t('addTuForms.form.labels.eni')} name='eni' rules={[{ required: false }, { validator: zodRule(eniSchema) }]}>
           <MaskedInput size='large' mask='000-000-000-000' placeholder={t('addTuForms.form.placeholders.eni')} inputMode='numeric' />
         </Form.Item>
 

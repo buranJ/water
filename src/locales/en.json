@@ -94,6 +94,7 @@
     "newOnesfirst": "Newest First",
     "newOldFirst": "Oldest First",
     "add": "Add",
+    "filters": "Filters",
     "byDate": "By Date",
     "alphabetAsc": "A-Z",
     "alphabetDesc": "Z-A",
@@ -316,7 +317,8 @@
       "paymentConnection": "Connection amount:",
       "paymentAmount": "Total amount:",
       "paymentDeadline": "Payment deadline:",
-      "stage": "Stage:"
+      "stage": "Stage:",
+      "address": "Enter address"
     },
     "units": {
       "m3PerDay": "m³/day",
@@ -561,7 +563,9 @@
   "technicalConditions": {
     "filter": {
       "hasInvoice": "Invoice",
-      "overdue": "Overdue"
+      "overdue": "Overdue",
+      "dueInDays": "Days until payment due",
+      "tuWithLoads": "TUs with load increases"
     }
   },
   "customers": {

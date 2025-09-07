@@ -94,6 +94,7 @@
     "newOnesfirst": "Биринчи жаңылар",
     "newOldFirst": "Эскилер биринчи",
     "add": "Кошуу",
+    "filters": "Фильтрлер",
     "byDate": "Күнү боюнча",
       "alphabetAsc": "А-Я",
       "alphabetDesc": "Я-А",
@@ -316,7 +317,8 @@
       "paymentConnection": "Туташуу суммасы:",
       "paymentAmount": "Жалпы сумма:",
       "paymentDeadline": "Төлөөнүн акыркы мөөнөтү:",
-      "stage": "Баскыч:"
+      "stage": "Баскыч:",
+      "address":"Дарек:"
     },
     "units": {
       "m3PerDay": "м³/сут",
@@ -372,7 +374,9 @@
   "technicalConditions": {
     "filter": {
       "hasInvoice": "Эсеп",
-      "overdue": "Мөөнөтү өтүп кеткен"
+      "overdue": "Мөөнөтү өтүп кеткен",
+      "dueInDays": "Төлөө мөөнөтүнө чейин калган күндөр",
+      "tuWithLoads": "Жүктөрдү жогорулатуу бар ТУ"
     }
   },
   "exportData": {

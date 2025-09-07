@@ -94,6 +94,7 @@
     "newOnesfirst": "Сначала новые",
     "newOldFirst": "Сначало последние",
     "add": "Добавить",
+    "filters": "Фильтрация",
     "byDate": "По дате",
     "alphabetAsc": "А-Я",
     "alphabetDesc": "Я-А",
@@ -316,7 +317,8 @@
       "paymentConnection": "Сумма за подключение:",
       "paymentAmount": "Итого к оплате:",
       "paymentDeadline": "Крайний срок оплаты:",
-      "stage": "Этап:"
+      "stage": "Этап:",
+      "address":"Введите адрес"
     },
     "units": {
       "m3PerDay": "м³/сут",
@@ -561,7 +563,9 @@
   "technicalConditions": {
     "filter": {
       "hasInvoice": "Счёт",
-      "overdue": "Просроченные"
+      "overdue": "Просроченные",
+      "dueInDays": "Дни до срока оплаты",
+      "tuWithLoads": "ТУ с увеличением нагрузок"
     }
   },
   "customers": {
