@@ -1,7 +1,10 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { getBaseQuery } from 'common/helpers';
 import type {
+  IActTyResponse,
   IAddLoadParams,
+  // act_ty
+  ICreateActTyParams,
   ICreateTechnicalConditionParams,
   ICreateTechnicalConditionRequest,
   IDeleteTechnicalConditionParams,
@@ -17,6 +20,7 @@ import type {
   IGetTyHistoryParams,
   IGetTyHistoryResponse,
   IITypesTYParams,
+  IPatchActTyParams,
   IPatchTechnicalConditionParams,
   IPatchTechnicalConditionResponse,
   IProtocolDocxParams,
@@ -192,6 +196,41 @@ export const tyApi = createApi({
         }
       }),
       keepUnusedDataFor: 0
+    }),
+    // ACT TY: create (POST) and patch (PATCH)
+    createActTy: build.mutation<IActTyResponse, ICreateActTyParams>({
+      query: (body) => {
+        if (body.file && body.file instanceof File) {
+          const formData = new FormData();
+          formData.append('ty', String(body.ty));
+          if (body.status) formData.append('status', body.status);
+          formData.append('file', body.file);
+          return {
+            url: `/ty/act_ty/`,
+            method: 'POST',
+            body: formData,
+            formData: true
+          };
+        }
+        return {
+          url: `/ty/act_ty/`,
+          method: 'POST',
+          body: {
+            ty: typeof body.ty === 'string' ? Number(body.ty) : body.ty,
+            ...(body.status ? { status: body.status } : {}),
+            ...(body.file ? { file: body.file } : {})
+          }
+        };
+      },
+      invalidatesTags: (_result, _error, body) => [{ type: 'Ty', id: String(body.ty) }, 'Ty']
+    }),
+    patchActTy: build.mutation<IActTyResponse, IPatchActTyParams>({
+      query: ({ id, body }) => ({
+        url: `/ty/act_ty/${id}`,
+        method: 'PATCH',
+        body
+      }),
+      invalidatesTags: (result) => (result ? [{ type: 'Ty', id: String(result.ty) }, 'Ty'] : ['Ty'])
     })
   })
 });
@@ -209,5 +248,7 @@ export const {
   useAddLoadMutation,
   useGetLoadIncreasesQuery,
   useLazyDownloadTyPdfQuery,
-  useLazyDownloadProtocolDocxQuery
+  useLazyDownloadProtocolDocxQuery,
+  useCreateActTyMutation,
+  usePatchActTyMutation
 } = tyApi;

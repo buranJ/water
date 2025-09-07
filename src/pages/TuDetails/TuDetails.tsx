@@ -1,6 +1,6 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router';
-import { Alert, Card, Col, Flex, message, Row, Spin, Tabs, TabsProps, Typography } from 'antd';
+import { Alert, Button, Card, Col, Flex, message, Row, Spin, Tabs, TabsProps, Typography } from 'antd';
 import { ClockCircleTwoTone } from '@ant-design/icons';
 import { ActionsBar } from './components/ActionsBar';
 import { DataSection } from './components/DataSection';
@@ -8,15 +8,17 @@ import { DocumentsProgress } from './components/DocumentsProgress';
 import { AccountingTab } from 'components/AccountingTab/AccountingTab';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { RejectApplicationModal } from 'components/Modal/RejectApplicationModal';
+import { IActEnum } from 'types/common';
 import type { ITyBody } from 'types/entities';
 import AddLoadModal from './AddLoadModal';
+import CreateActModal from './CreateActModal';
 import { Architecture } from './Tabs';
 
 import { useGetUserInfoQuery } from 'api/Auth.api';
 import { useLazyDownloadContractDocxQuery } from 'api/Buhgalteria.api';
 import { useGetFoldersQuery } from 'api/FileFolder.api';
 import { type RefusalBody, useCreateRefusalMutation } from 'api/Refusal.api';
-import { useGetTyByIdQuery, useLazyDownloadProtocolDocxQuery, useUpdateTyMutation } from 'api/Ty.api';
+import { useGetTyByIdQuery, useLazyDownloadProtocolDocxQuery, usePatchActTyMutation, useUpdateTyMutation } from 'api/Ty.api';
 import { usePermissions } from 'hooks/useAuth';
 import { t } from 'i18next';
 
@@ -65,10 +67,44 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>(searchParams.get('tab') || '1');
   const [isAddLoadVisible, setIsAddLoadVisible] = useState<boolean>(false);
+  const [isActModalVisible, setIsActModalVisible] = useState<boolean>(false);
+  const [pendingActStatus, setPendingActStatus] = useState<IActEnum | null>(null);
   const [triggerDownload, { isFetching: isDownloading }] = useLazyDownloadProtocolDocxQuery();
   const [triggerContractDownload, { isFetching: isContractDownloading }] = useLazyDownloadContractDocxQuery();
   const [updateTy] = useUpdateTyMutation();
+  const [patchActTy] = usePatchActTyMutation();
   const [createRefusal] = useCreateRefusalMutation();
+
+  // Act TY sequential statuses and labels
+  const ACT_ORDER: IActEnum[] = ['draft', 'review', 'approved', 'done'];
+  const actStatusLabels: Record<IActEnum, string> = {
+    draft: 'Загрузить акт',
+    review: 'На рассмотрение',
+    approved: 'Утвердить',
+    done: 'Завершить'
+  };
+  const nextActStatus = useMemo(() => {
+    if (!objectData?.act) return 'draft' as IActEnum;
+    const idx = ACT_ORDER.indexOf(objectData.act.status as IActEnum);
+    return idx >= 0 && idx < ACT_ORDER.length - 1 ? (ACT_ORDER[idx + 1] as IActEnum) : null;
+  }, [objectData?.act]);
+
+  const openActStatusModal = async (status: IActEnum) => {
+    if (!id) return;
+    if (objectData?.act) {
+      try {
+        console.log('[ACT] patch status', { actId: objectData.act.id, status });
+        await patchActTy({ id: objectData.act.id, body: { status } }).unwrap();
+        message.success('Статус акта обновлён');
+        refetch();
+      } catch {
+        message.error('Не удалось изменить статус акта');
+      }
+    } else {
+      setPendingActStatus(status);
+      setIsActModalVisible(true);
+    }
+  };
 
   const handleRejectClick = (): void => {
     setIsModalVisible(true);
@@ -287,6 +323,19 @@ export const TuDetails: FC<IProps> = ({ title }) => {
                 <Text>{t('common.pending')}</Text>
                 <ClockCircleTwoTone twoToneColor='#327BE8' />
               </Row>
+              <br />
+              {objectData.act && objectData.act.file && (
+                <Button onClick={() => window.open(objectData.act!.file, '_blank')}>Скачать акт</Button>
+              )}
+              {nextActStatus && (
+                <Button
+                  type='primary'
+                  style={{ marginTop: 8, marginLeft: objectData.act ? 8 : 0 }}
+                  onClick={() => openActStatusModal(nextActStatus)}
+                >
+                  {actStatusLabels[nextActStatus]}
+                </Button>
+              )}
             </Card>
           </Col>
         )}
@@ -294,6 +343,18 @@ export const TuDetails: FC<IProps> = ({ title }) => {
 
       <RejectApplicationModal open={isModalVisible} onCancel={handleModalCancel} onReject={handleRejectSubmit} />
       <AddLoadModal visible={isAddLoadVisible} onClose={() => setIsAddLoadVisible(false)} tyId={id || ''} />
+      {pendingActStatus && (
+        <CreateActModal
+          open={isActModalVisible}
+          tyId={id || ''}
+          status={pendingActStatus}
+          onClose={() => {
+            setIsActModalVisible(false);
+            setPendingActStatus(null);
+          }}
+          onCreated={() => refetch()}
+        />
+      )}
     </DashboardLayout>
   );
 };

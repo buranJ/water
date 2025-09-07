@@ -5,6 +5,7 @@ export type IStatus6b3Enum = 'active' | 'inactive' | 'archived';
  * * `archived` - Archived
  */
 
+export type IActEnum = 'draft' | 'review' | 'approved' | 'done';
 export type IStageEnum = 'draft' | 'review' | 'approved' | 'done';
 /**
  * * `draft` - Draft

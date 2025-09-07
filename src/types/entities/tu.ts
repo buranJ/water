@@ -1,4 +1,4 @@
-import { IHistoryType, IStageEnum, IStatus6b3Enum, ITyTypeEnum } from 'types/common';
+import { IActEnum, IHistoryType, IStageEnum, IStatus6b3Enum, ITyTypeEnum } from 'types/common';
 import { IContractCustomerType } from 'types/requests';
 
 export interface ITechnicalCondition {
@@ -72,8 +72,16 @@ export interface ITechnicalCondition {
   application: number | null;
 }
 
+export interface IActTy {
+  id: number;
+  file: string;
+  status: IActEnum;
+  ty?: number;
+}
+
 export interface IGetTyById {
   id: number;
+  act?: IActTy | null;
   customer: {
     id: string;
     full_name: string;

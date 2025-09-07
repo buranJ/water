@@ -51,5 +51,9 @@ export type {
   IProtocolDocxResponse,
   ITypesTYResponse,
   IUpdateTechnicalConditionParams,
-  IUpdateTechnicalConditionResponse
+  IUpdateTechnicalConditionResponse,
+  // act_ty
+  ICreateActTyParams,
+  IActTyResponse,
+  IPatchActTyParams
 } from './technicalCondition.requests';

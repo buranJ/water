@@ -1,4 +1,4 @@
-import { IPaginationMeta } from 'types/common';
+import { IActEnum, IPaginationMeta } from 'types/common';
 import { IGetTyById, IHistory, ILoadIncreases, ITechnicalCondition, ITyBody, ITyItem, ITyListQueryParams, ITypesTY } from 'types/entities';
 
 export type IGetAllTechnicalConditionResponse = IPaginationMeta & {
@@ -55,3 +55,26 @@ export type IDownloadTyPdfParams = { tyId: string };
 
 export type IProtocolDocxResponse = { blob: Blob; filename: string | null };
 export type IProtocolDocxParams = { tyId: string };
+
+export interface ICreateActTyParams {
+  ty: number | string;
+  status?: IActEnum;
+  file?: File | string;
+}
+
+export interface IActTyResponse {
+  id: number;
+  file: string;
+  status: IActEnum;
+  ty: number;
+}
+
+/**
+ * PATCH act_ty: id must be the ACT id (not TU id). Body includes ONLY status (no file).
+ */
+export interface IPatchActTyParams {
+  id: number | string; // ACT id
+  body: {
+    status: IActEnum;
+  };
+}
