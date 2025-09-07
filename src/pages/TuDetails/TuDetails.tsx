@@ -156,7 +156,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
         }
 
         return {
-          key: `dynamic-${index + 2}`,
+          key: category.title.toLowerCase() === 'бухгалтерия' ? 'accounting' : `dynamic-${index + 2}`,
           label: getCategoryLabel(category.title),
           children: content
         };

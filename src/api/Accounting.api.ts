@@ -1,6 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { getBaseQuery } from 'common/helpers';
 import {
+  IAccountingProtocol,
   IAccountingProtocolsListResponse,
   ICreatePaymentResponse,
   IGenerateInvoiceParams,
@@ -10,8 +11,10 @@ import {
   IGetAccountingProtocolsListParams,
   IGetInvoicesByProtocolParams,
   IGetInvoicesByProtocolResponse,
+  IGetInvoicesListParams,
   IGetPaymentsByInvoiceParams,
   IGetPaymentsByInvoiceResponse,
+  IPaginatedInvoicesList,
   IUpdateProtocolParams,
   IUpdateProtocolResponse
 } from 'types/entities/accounting';
@@ -34,6 +37,25 @@ export const accountingApi = createApi({
         url: '/buhgalteria/protocols/',
         method: 'GET',
         params
+      }),
+      providesTags: ['Protocol']
+    }),
+
+    // List invoices with filters, ordering and pagination
+    getInvoicesList: build.query<IPaginatedInvoicesList, IGetInvoicesListParams>({
+      query: (params = {}) => ({
+        url: '/buhgalteria/invoices/',
+        method: 'GET',
+        params
+      }),
+      providesTags: ['Invoice']
+    }),
+
+    // Fetch protocol by ID to resolve its technical_condition for navigation
+    getProtocolById: build.query<IAccountingProtocol, { protocolId: string }>({
+      query: ({ protocolId }) => ({
+        url: `/buhgalteria/protocols/${protocolId}/`,
+        method: 'GET'
       }),
       providesTags: ['Protocol']
     }),
@@ -114,14 +136,14 @@ export const accountingApi = createApi({
   })
 });
 
-export const {
-  useGetAccountingProtocolQuery,
-  useGetAllProtocolsQuery,
-  useGetInvoicesByProtocolQuery,
-  useGenerateInvoiceMutation,
-  useLazyDownloadInvoiceQuery,
-  useUpdateProtocolMutation,
-  useLazyDownloadProtocolQuery,
-  useGetPaymentsByInvoiceQuery,
-  useCreatePaymentMutation
-} = accountingApi;
+export const useGetAccountingProtocolQuery = accountingApi.useGetAccountingProtocolQuery;
+export const useGetAllProtocolsQuery = accountingApi.useGetAllProtocolsQuery;
+export const useGetInvoicesListQuery = accountingApi.useGetInvoicesListQuery;
+export const useGetInvoicesByProtocolQuery = accountingApi.useGetInvoicesByProtocolQuery;
+export const useGenerateInvoiceMutation = accountingApi.useGenerateInvoiceMutation;
+export const useLazyDownloadInvoiceQuery = accountingApi.useLazyDownloadInvoiceQuery;
+export const useUpdateProtocolMutation = accountingApi.useUpdateProtocolMutation;
+export const useLazyDownloadProtocolQuery = accountingApi.useLazyDownloadProtocolQuery;
+export const useGetPaymentsByInvoiceQuery = accountingApi.useGetPaymentsByInvoiceQuery;
+export const useCreatePaymentMutation = accountingApi.useCreatePaymentMutation;
+export const useLazyGetProtocolByIdQuery = accountingApi.useLazyGetProtocolByIdQuery;

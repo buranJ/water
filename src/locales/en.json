@@ -28,11 +28,12 @@
       "objects": "Objects",
       "applications": "Applications",
       "customers": "Customers",
-      "bills": "Bills and Payments",
+      "bills": "Payment invoices",
       "architecture": "Architecture",
       "export": "Export",
       "formulas": "Formulas",
-      "archive": "Archive TU"
+      "archive": "Archive TU",
+      "protocols": "Protocols"
     },
     "panel": "Dashboard"
   },
@@ -55,7 +56,9 @@
     "applicationDetails": "Application No.",
     "tuNumberPrefix": "TU No.",
       "changeHistory": "Change history",
-      "notifications": "Notifications"
+      "notifications": "Notifications",
+      "invoices": "Invoices",
+      "protocols": "Protocols"
   },
   "profile": {
     "title": "Settings",
@@ -176,7 +179,8 @@
     "comment": "Comment",
     "optionalComment": "Comment (optional)",
     "noData": "No data",
-    "error": "Error"
+    "error": "Error",
+    "reset": "Reset"
   },
   "geoportal": {
     "errorLoad": "Failed to load data",

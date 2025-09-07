@@ -33,6 +33,8 @@ const ChangeCustomerHistory = lazy(() => import('pages/ChangeCustomerHistory'));
 const ChangeObjectHistory = lazy(() => import('pages/ChangeObjectHistory'));
 const Notifications = lazy(() => import('pages/Notification'));
 const TyImport = lazy(() => import('pages/TyImport'));
+const Invoices = lazy(() => import('pages/Invoices'));
+const Protocols = lazy(() => import('pages/Protocols'));
 
 export const routerConfig: RouteObject[] = [
   {
@@ -159,6 +161,14 @@ export const routerConfig: RouteObject[] = [
   {
     path: '/dashboard/notifications',
     element: <Notifications title='routers.notifications' />
+  },
+  {
+    path: '/dashboard/protocols',
+    element: <Protocols title='routers.protocols' />
+  },
+  {
+    path: '/dashboard/invoices',
+    element: <Invoices title='routers.invoices' />
   },
   {
     path: '*',

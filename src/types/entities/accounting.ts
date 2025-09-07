@@ -47,10 +47,42 @@ export interface IAccountingProtocolsListResponse {
 }
 
 export interface IGetAccountingProtocolsListParams {
+  // Pagination and ordering
   page?: number;
   page_size?: number;
   ordering?: string;
   search?: string;
+
+  // Additional filters from API spec
+  created_start?: string; // ISO date-time
+  created_end?: string; // ISO date-time
+  customer_id?: number;
+  entity_id?: number;
+  has_invoice?: boolean;
+  request_number?: string;
+  technical_condition_id?: number;
+}
+
+export interface IGetInvoicesListParams {
+  customer_id?: number;
+  entity_id?: number;
+  invoice_date_end?: string; // YYYY-MM-DD
+  invoice_date_start?: string; // YYYY-MM-DD
+  invoice_number?: string;
+  invoice_type?: string; // 'main' | 'paper_tu'
+  is_paid?: boolean;
+  ordering?: string;
+  page?: number;
+  page_size?: number;
+  protocol_id?: number;
+  search?: string;
+}
+
+export interface IPaginatedInvoicesList {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: IAccountingInvoice[];
 }
 
 export interface IAccountingInvoice {

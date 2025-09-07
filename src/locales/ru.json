@@ -28,11 +28,12 @@
       "objects": "Объекты",
       "applications": "Заявки",
       "customers": "Заказчики",
-      "bills": "Счета и платежи",
+      "bills": "Счета на оплату",
       "architecture": "Архитектура",
       "export": "Экспорт",
       "formulas": "Формулы",
-      "archive": "Архив"
+      "archive": "Архив",
+      "protocols": "Протоколы"
     },
     "panel": "Панель управления"
   },
@@ -55,7 +56,9 @@
     "applicationDetails": "заявка №",
     "tuNumberPrefix": "ТУ №",
     "changeHistory": "История изменений",
-    "notifications": "Уведомления"
+    "notifications": "Уведомления",
+    "invoices": "Счета",
+    "protocols": "Протоколы"
   },
   "profile": {
     "title": "Настройки",
@@ -176,7 +179,8 @@
     "comment": "Комментарий",
     "optionalComment": "Комментарий (необязательно)",
     "noData": "Нет данных",
-    "error": "Ошибка"
+    "error": "Ошибка",
+    "reset": "Сбросить"
   },
   "geoportal": {
     "errorLoad": "Ошибка загрузки данных",
