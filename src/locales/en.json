@@ -841,6 +841,8 @@
         "pressureRequired": "Required pressure",
         "waterPurpose": "Purpose of water",
         "firefightingExpenses": "Water consumption for internal fire extinguishing",
+        "firefightingExpensesOuter": "Water consumption for external fire extinguishing",
+        "coordinates": "Object coordinates",
         "coordX": "Coordinate X",
         "coordY": "Coordinate Y"
       },
@@ -869,7 +871,11 @@
     "messages": {
       "created": "Application created successfully",
       "createError": "Error creating application",
-      "customerOrObjectError": "Error: failed to determine customer or object"
+      "customerOrObjectError": "Error: failed to determine customer or object",
+      "selectCoordinates": "Please select coordinates on the map",
+      "invalidCoordinates": "Invalid coordinates",
+      "invalidCoordinatesToSend": "Error: invalid coordinates for submission",
+      "coordinatesSelected": "Coordinates selected: {{lat}}, {{lng}}"
     }
   },
   "folderDetail": {

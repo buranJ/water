@@ -841,6 +841,8 @@
         "pressureRequired": "Требуемый напор",
         "waterPurpose": "Назначение воды",
         "firefightingExpenses": "Расходы воды на внутр. пожаротушение",
+        "firefightingExpensesOuter": "Расходы воды на наруж. пожаротушение",
+        "coordinates": "Координаты объекта",
         "coordX": "Координата X",
         "coordY": "Координата Y"
       },
@@ -869,7 +871,11 @@
     "messages": {
       "created": "Заявка успешно создана",
       "createError": "Ошибка при создании заявки",
-      "customerOrObjectError": "Ошибка: не удалось определить заказчика или объект"
+      "customerOrObjectError": "Ошибка: не удалось определить заказчика или объект",
+      "selectCoordinates": "Пожалуйста, выберите координаты на карте",
+      "invalidCoordinates": "Некорректные координаты",
+      "invalidCoordinatesToSend": "Ошибка: невалидные координаты для отправки",
+      "coordinatesSelected": "Координаты выбраны: {{lat}}, {{lng}}"
     }
   },
   "folderDetail": {

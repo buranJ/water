@@ -687,6 +687,8 @@
         "pressureRequired": "Талап кылынган басым",
         "waterPurpose": "Суунун максаты",
         "firefightingExpenses": "Ички өрт өчүрүүгө суу керектөөсү",
+        "firefightingExpensesOuter": "Сырткы өрт өчүрүүгө суу керектөөсү",
+        "coordinates": "Объекттин координаттары",
         "coordX": "X координатасы",
         "coordY": "Y координатасы"
       },
@@ -715,7 +717,11 @@
     "messages": {
       "created": "Арыз ийгиликтүү түзүлдү",
       "createError": "Арызды түзүүдө ката",
-      "customerOrObjectError": "Ката: кардарды же объектти аныктоого мүмкүн болбоду"
+      "customerOrObjectError": "Ката: кардарды же объектти аныктоого мүмкүн болбоду",
+      "selectCoordinates": "Сураныч, картадан координаттарды тандаңыз",
+      "invalidCoordinates": "Координаттар туура эмес",
+      "invalidCoordinatesToSend": "Ката: жөнөтүү үчүн жараксыз координаттар",
+      "coordinatesSelected": "Координаттар тандалды: {{lat}}, {{lng}}"
     }
   },
   "folderDetail": {
