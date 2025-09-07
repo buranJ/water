@@ -75,7 +75,7 @@ export const ActionsBar: FC<ActionsBarProps> = ({
               (Array.isArray(invoicesInfo.data) && invoicesInfo.data.length === 0)
             }
           >
-            Скачать договор
+            {t('tuDetails.actions.downloadContract')}
           </Button>
         </>
       )}

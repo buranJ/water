@@ -290,6 +290,26 @@
       "done": "Аякталды",
       "unknown": "Белгисиз"
     },
+    "act": {
+      "actions": {
+        "upload": "Акты жүктөө",
+        "toReview": "Кароо үчүн",
+        "approve": "Бекитүү",
+        "finish": "Аяктоо",
+        "download": "Акты жүктөп алуу"
+      },
+      "messages": {
+        "mustBeApproved": "Аракет ТУ бекитилгенден кийин гана жеткиликтүү",
+        "statusUpdated": "Акт статусы жаңыртылды",
+        "statusUpdateFailed": "Акт статусун өзгөртүү мүмкүн болгон жок",
+        "fileRequired": "Акт файлын тандаңыз",
+        "uploadSuccess": "Акт жүктөлдү"
+      },
+      "modal": {
+        "title": "Акты жүктөө",
+        "hint": "Статус үчүн файлды жүктөңүз: {{status}}"
+      }
+    },
     "titles": {
       "objectName": "Объекттин аталышы",
       "applicationInfo": "Арыз тууралуу маалымат",
@@ -337,7 +357,8 @@
       "changeTuData": "ТУ маалыматтарынын өзгөрүү тарыхы",
       "downloadTu": "ТУ жүктөп алуу",
       "rejectTu": "ТУдан баш тартуу",
-      "approveTu": "ТУдан бекитуу"
+      "approveTu": "ТУдан бекитуу",
+      "downloadContract": "Келишимди жүктөп алуу"
     },
     "autoLoaded": "Автоматтык түрдө жүктөлдү",
     "contentNotImplemented": "\"{{title}}\" үчүн контент али ишке ашырыла элек",

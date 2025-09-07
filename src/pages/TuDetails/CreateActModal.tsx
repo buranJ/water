@@ -5,6 +5,7 @@ import { UploadOutlined } from '@ant-design/icons';
 import { IActEnum } from 'types/common';
 
 import { useCreateActTyMutation } from 'api/Ty.api';
+import { t } from 'i18next';
 
 const { Text } = Typography;
 
@@ -30,7 +31,7 @@ const CreateActModal: FC<CreateActModalProps> = ({ open, tyId, status, onClose, 
   const handleOk = async () => {
     try {
       if (!hasFile) {
-        message.warning('Выберите файл акта');
+        message.warning(t('tuDetails.act.messages.fileRequired', 'Выберите файл акта'));
         return;
       }
       const raw = fileList[0].originFileObj as File;
@@ -42,7 +43,7 @@ const CreateActModal: FC<CreateActModalProps> = ({ open, tyId, status, onClose, 
 
       await createAct({ ty: tyId, status, file: raw }).unwrap();
 
-      message.success('Акт загружен');
+      message.success(t('tuDetails.act.messages.uploadSuccess', 'Акт загружен'));
       setFileList([]);
       onClose();
       onCreated?.();
@@ -59,18 +60,18 @@ const CreateActModal: FC<CreateActModalProps> = ({ open, tyId, status, onClose, 
   return (
     <Modal
       open={open}
-      title='Загрузить акт'
+      title={t('tuDetails.act.modal.title', 'Загрузить акт')}
       onOk={handleOk}
       onCancel={handleCancel}
-      okText='Загрузить'
-      cancelText='Отмена'
+      okText={t('common.upload')}
+      cancelText={t('common.cancel')}
       confirmLoading={isCreating}
       destroyOnClose
     >
       <Space direction='vertical' size={12} style={{ width: '100%' }}>
-        <Text type='secondary'>Загрузите файл для статуса: {status}</Text>
+        <Text type='secondary'>{t('tuDetails.act.modal.hint', { status })}</Text>
         <Upload multiple={false} beforeUpload={() => false} onChange={onUploadChange} fileList={fileList} maxCount={1}>
-          <Button icon={<UploadOutlined />}>Выбрать файл</Button>
+          <Button icon={<UploadOutlined />}>{t('common.uploadFile')}</Button>
         </Upload>
       </Space>
     </Modal>

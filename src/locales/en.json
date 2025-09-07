@@ -290,6 +290,26 @@
       "done": "Completed",
       "unknown": "Unknown"
     },
+    "act": {
+      "actions": {
+        "upload": "Upload act",
+        "toReview": "Send for review",
+        "approve": "Approve",
+        "finish": "Finish",
+        "download": "Download act"
+      },
+      "messages": {
+        "mustBeApproved": "Action is available only after TU is approved",
+        "statusUpdated": "Act status updated",
+        "statusUpdateFailed": "Failed to change act status",
+        "fileRequired": "Select an act file",
+        "uploadSuccess": "Act uploaded"
+      },
+      "modal": {
+        "title": "Upload act",
+        "hint": "Upload a file for status: {{status}}"
+      }
+    },
     "titles": {
       "objectName": "Object name",
       "applicationInfo": "Application information",
@@ -337,7 +357,8 @@
       "changeTuData": "History of changes to technical data",
       "downloadTu": "Download TU",
       "rejectTu": "Reject TU",
-      "approveTu": "Approve TU"
+      "approveTu": "Approve TU",
+      "downloadContract": "Download contract"
     },
     "autoLoaded": "Automatically loaded",
     "contentNotImplemented": "Content for \"{{title}}\" is not implemented yet",

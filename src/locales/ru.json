@@ -290,6 +290,26 @@
       "done": "Завершено",
       "unknown": "Неизвестно"
     },
+    "act": {
+      "actions": {
+        "upload": "Загрузить акт",
+        "toReview": "На рассмотрение",
+        "approve": "Утвердить",
+        "finish": "Завершить",
+        "download": "Скачать акт"
+      },
+      "messages": {
+        "mustBeApproved": "Действие доступно только после утверждения ТУ",
+        "statusUpdated": "Статус акта обновлён",
+        "statusUpdateFailed": "Не удалось изменить статус акта",
+        "fileRequired": "Выберите файл акта",
+        "uploadSuccess": "Акт загружен"
+      },
+      "modal": {
+        "title": "Загрузить акт",
+        "hint": "Загрузите файл для статуса: {{status}}"
+      }
+    },
     "titles": {
       "objectName": "Наименование объекта",
       "applicationInfo": "Информация о заявке",
@@ -337,7 +357,8 @@
       "changeTuData": "История изменений данных ТУ",
       "downloadTu": "Скачать ТУ",
       "rejectTu": "Отказать ТУ",
-      "approveTu": "Одобрить ТУ"
+      "approveTu": "Одобрить ТУ",
+      "downloadContract": "Скачать договор"
     },
     "autoLoaded": "Автоматически загружено",
     "contentNotImplemented": "Контент для \"{{title}}\" пока не реализован",

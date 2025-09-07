@@ -78,10 +78,10 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   // Act TY sequential statuses and labels
   const ACT_ORDER: IActEnum[] = ['draft', 'review', 'approved', 'done'];
   const actStatusLabels: Record<IActEnum, string> = {
-    draft: 'Загрузить акт',
-    review: 'На рассмотрение',
-    approved: 'Утвердить',
-    done: 'Завершить'
+    draft: t('tuDetails.act.actions.upload', 'Загрузить акт'),
+    review: t('tuDetails.act.actions.toReview', 'На рассмотрение'),
+    approved: t('tuDetails.act.actions.approve', 'Утвердить'),
+    done: t('tuDetails.act.actions.finish', 'Завершить')
   };
   const nextActStatus = useMemo(() => {
     if (!objectData?.act) return 'draft' as IActEnum;
@@ -94,17 +94,17 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const openActStatusModal = async (status: IActEnum) => {
     if (!id) return;
     if (objectData?.stage !== 'approved') {
-      message.warning('Действие доступно только после утверждения ТУ');
+      message.warning(t('tuDetails.act.messages.mustBeApproved', 'Действие доступно только после утверждения ТУ'));
       return;
     }
     if (objectData?.act) {
       try {
         console.log('[ACT] patch status', { actId: objectData.act.id, status });
         await patchActTy({ id: objectData.act.id, body: { status } }).unwrap();
-        message.success('Статус акта обновлён');
+        message.success(t('tuDetails.act.messages.statusUpdated', 'Статус акта обновлён'));
         refetch();
       } catch {
-        message.error('Не удалось изменить статус акта');
+        message.error(t('tuDetails.act.messages.statusUpdateFailed', 'Не удалось изменить статус акта'));
       }
     } else {
       setPendingActStatus(status);
@@ -331,7 +331,9 @@ export const TuDetails: FC<IProps> = ({ title }) => {
               </Row>
               <br />
               {objectData.act && objectData.act.file && (
-                <Button onClick={() => window.open(objectData.act!.file, '_blank')}>Скачать акт</Button>
+                <Button onClick={() => window.open(objectData.act!.file, '_blank')}>
+                  {t('tuDetails.act.actions.download', 'Скачать акт')}
+                </Button>
               )}
               {isTuApproved && nextActStatus && (
                 <Button
