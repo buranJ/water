@@ -143,7 +143,7 @@ export const ApplicationForm: FC<ApplicationFormProps> = ({
         <Input size='large' placeholder={t('applicationsCreate.form.placeholders.enterValue')} />
       </Form.Item>
       <Form.Item
-        label='Расходы на внешнее пожаротушение'
+        label='Расходы на наружное пожаротушение'
         name='firefightingExpensesOuter'
         rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
       >

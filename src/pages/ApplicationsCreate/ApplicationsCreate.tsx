@@ -246,7 +246,7 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
             <Input type='number' min={0} size='large' placeholder={t('applicationsCreate.form.placeholders.enterValue')} />
           </Form.Item>
           <Form.Item
-            label='Расходы воды на внеш. пожаротушение'
+            label='Расходы воды на наруж. пожаротушение'
             name='firefightingExpensesOuter'
             rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
           >
