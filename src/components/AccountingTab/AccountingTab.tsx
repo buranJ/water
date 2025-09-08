@@ -57,8 +57,6 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
   const [getInvoicesByProtocolTy] = useLazyGetInvoicesByProtocolTyQuery();
 
   const currency = t('tuDetails.currency');
-
-  // Проверяем, есть ли счета на оплату
   const hasInvoices = invoicesData && invoicesData.length > 0 && !invoiceError;
   const isEditDisabled = hasInvoices;
 
@@ -163,19 +161,14 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
 
   const protocolTableData: IProtocolTableData[] = [
     {
-      key: '1',
+      key: '0',
       item: t('protocolDoc.companyName'),
       price: ''
     },
     {
-      key: '2',
-      item: t('protocolDoc.vikCostLabel'),
-      price: `10080${currency}`
-    },
-    {
-      key: '3',
-      item: t('protocolDoc.tuWater'),
-      price: `${protocolData.water_price}${currency}`
+      key: '1',
+      item: 'нагрузка',
+      price: `${protocolData.load}`
     },
     {
       key: '4',
@@ -183,9 +176,14 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
       price: `${protocolData.kanal_price}${currency}`
     },
     {
-      key: '5',
-      item: t('accounting.protocol.nsp'),
-      price: `${protocolData.nsp || '0'}${currency}`
+      key: '3',
+      item: t('protocolDoc.tuWater'),
+      price: `${protocolData.water_price}${currency}`
+    },
+    {
+      key: '10',
+      item: 'Коффициент',
+      price: `${protocolData.coefficient}`
     },
     {
       key: '6',
@@ -193,19 +191,40 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
       price: protocolData.nds ? `${protocolData.nds}${currency}` : t('tuDetails.notSpecified')
     },
     {
-      key: '7',
-      item: t('accounting.protocol.paperWorkWater'),
-      price: `${protocolData.paper_water_sum || '0'}${currency}`
+      key: '5',
+      item: t('accounting.protocol.nsp'),
+      price: `${protocolData.nsp || '0'}${currency}`
     },
     {
-      key: '8',
-      item: t('accounting.protocol.paperWorkSewer'),
-      price: `${protocolData.paper_kanal_sum || '0'}${currency}`
+      key: '2',
+      item: 'Водопровод',
+      price: `${protocolData.water_sum}`
     },
+    {
+      key: '2',
+      item: 'Канализация',
+      price: `${protocolData.kanal_sum}`
+    },
+    {
+      key: '2',
+      item: t('protocolDoc.vikCostLabel'),
+      price: `10080${currency}`
+    },
+
+    // {
+    //   key: '7',
+    //   item: t('accounting.protocol.paperWorkWater'),
+    //   price: `${protocolData.paper_water_sum || '0'}${currency}`
+    // },
+    // {
+    //   key: '8',
+    //   item: t('accounting.protocol.paperWorkSewer'),
+    //   price: `${protocolData.paper_kanal_sum || '0'}${currency}`
+    // },
     {
       key: '9',
-      item: t('protocolDoc.totalWithoutVat'),
-      price: `${protocolData.total_water_sum}${currency}`,
+      item: 'Итог:',
+      price: `${protocolData.total_sum_main}${currency}`,
       badge: t('protocolDoc.takeaway')
     }
   ];
@@ -213,42 +232,42 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
   const paperWorkData: IProtocolTableData[] = [
     {
       key: 'paper-1',
-      item: 'Бумажные работы (водопровод)',
-      price: formatCurrency(protocolData.paper_water_sum)
+      item: t('accounting.protocol.paperWorkWater'),
+      price: `${protocolData.paper_water_sum || '0'}${currency}`
     },
     {
       key: 'paper-2',
-      item: 'Бумажные работы (канализация)',
-      price: formatCurrency(protocolData.paper_kanal_sum)
+      item: t('accounting.protocol.paperWorkSewer'),
+      price: `${protocolData.paper_kanal_sum || '0'}${currency}`
     },
     {
       key: 'paper-3',
-      item: 'НСП водопровод (бумаги)',
+      item: 'НСП водопровод',
       price: formatCurrency(protocolData.nsp_water_paper)
     },
     {
       key: 'paper-4',
-      item: 'НСП канализация (бумаги)',
+      item: 'НСП канализация',
       price: formatCurrency(protocolData.nsp_kanal_paper)
     },
     {
       key: 'paper-5',
-      item: 'НСП общий (бумаги)',
+      item: 'НСП общий',
       price: formatCurrency(protocolData.nsp_paper)
     },
     {
       key: 'paper-6',
-      item: 'НДС водопровод (бумаги)',
+      item: 'НДС водопровод',
       price: formatCurrency(protocolData.nds_water_paper)
     },
     {
       key: 'paper-7',
-      item: 'НДС канализация (бумаги)',
+      item: 'НДС канализация',
       price: formatCurrency(protocolData.nds_kanal_paper)
     },
     {
       key: 'paper-8',
-      item: 'НДС общий (бумаги)',
+      item: 'НДС общий',
       price: formatCurrency(protocolData.nds_paper)
     },
     {
