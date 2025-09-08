@@ -79,17 +79,18 @@ export const ObjectCard: FC<ObjectCardProps> = ({ object, onTitleChange, onCardC
     <Card
       hoverable
       style={{
-        borderRadius: 16,
-        border: '1px solid #f0f0f0',
+        borderRadius: 12,
+        border: '1px solid #e8e8e8',
         marginBottom: 16,
         cursor: 'pointer',
-        height: 220,
+        height: 200,
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        transition: 'all 0.2s ease'
       }}
       styles={{
         body: {
-          padding: 20,
+          padding: 16,
           height: '100%',
           display: 'flex',
           flexDirection: 'column'
@@ -97,15 +98,16 @@ export const ObjectCard: FC<ObjectCardProps> = ({ object, onTitleChange, onCardC
       }}
       onClick={handleCardClick}
     >
+      {/* Заголовок - строго 2 строки */}
       <div
         style={{
           marginBottom: 12,
-          minHeight: 50,
+          height: 44, // Фиксированная высота для 2 строк
           display: 'flex',
           alignItems: 'flex-start'
         }}
       >
-        <div style={{ flex: 1, paddingRight: 8 }}>
+        <div style={{ flex: 1, paddingRight: 8, height: '100%' }}>
           <EditableText
             initialValue={object.title}
             onChange={handleTitleChange}
@@ -114,15 +116,16 @@ export const ObjectCard: FC<ObjectCardProps> = ({ object, onTitleChange, onCardC
                 level={5}
                 style={{
                   margin: 0,
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: 600,
                   color: '#1d1d1f',
-                  lineHeight: '1.4',
+                  lineHeight: '1.57', // 22px line height
                   wordBreak: 'break-word',
                   overflow: 'hidden',
                   display: '-webkit-box',
                   WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical'
+                  WebkitBoxOrient: 'vertical',
+                  height: '44px' // Точно 2 строки
                 }}
               >
                 {value}
@@ -134,36 +137,49 @@ export const ObjectCard: FC<ObjectCardProps> = ({ object, onTitleChange, onCardC
           style={{
             color: '#007aff',
             textDecoration: 'none',
-            fontSize: 14,
-            flexShrink: 0
+            fontSize: 12,
+            flexShrink: 0,
+            fontWeight: 500
           }}
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (onCardClick) {
+              onCardClick(object.id);
+            }
+          }}
         >
           {t('objectCard.more')}
         </Link>
       </div>
 
+      {/* Контент */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-        <div>
-          <div style={{ marginBottom: 8 }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ marginBottom: 6 }}>
             <Text
               type='secondary'
               style={{
-                fontSize: 14,
-                color: '#8e8e93'
+                fontSize: 12,
+                color: '#8e8e93',
+                lineHeight: '1.4'
               }}
             >
               {t('objectCard.createdAt')}: {formatDate(object.created_at)}
             </Text>
           </div>
 
-          <div style={{ marginBottom: 8 }}>
+          <div style={{ marginBottom: 6 }}>
             <Text
               type='secondary'
               style={{
-                fontSize: 14,
+                fontSize: 12,
                 color: '#8e8e93',
-                wordBreak: 'break-word'
+                lineHeight: '1.4',
+                wordBreak: 'break-word',
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden'
               }}
             >
               {t('objectCard.address')}: {getFullAddress()}
@@ -171,13 +187,18 @@ export const ObjectCard: FC<ObjectCardProps> = ({ object, onTitleChange, onCardC
           </div>
 
           {object.kadastr_number && (
-            <div style={{ marginBottom: 8 }}>
+            <div style={{ marginBottom: 6 }}>
               <Text
                 type='secondary'
                 style={{
-                  fontSize: 14,
+                  fontSize: 12,
                   color: '#8e8e93',
-                  wordBreak: 'break-word'
+                  lineHeight: '1.4',
+                  wordBreak: 'break-word',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 1,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden'
                 }}
               >
                 {t('objectCard.cadastral')}: {object.kadastr_number}
@@ -185,11 +206,13 @@ export const ObjectCard: FC<ObjectCardProps> = ({ object, onTitleChange, onCardC
             </div>
           )}
         </div>
-        <div style={{ marginTop: 'auto', paddingTop: 8 }}>
+
+        {/* Статус внизу */}
+        <div style={{ marginTop: 'auto', paddingTop: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Text
             type='secondary'
             style={{
-              fontSize: 14,
+              fontSize: 12,
               color: '#8e8e93',
               marginRight: 8
             }}
@@ -199,9 +222,11 @@ export const ObjectCard: FC<ObjectCardProps> = ({ object, onTitleChange, onCardC
           <Tag
             color={getStatusColor(object.status)}
             style={{
-              borderRadius: 12,
+              borderRadius: 8,
               border: 'none',
-              fontSize: 12
+              fontSize: 11,
+              padding: '2px 8px',
+              margin: 0
             }}
           >
             {getStatusLabel(object.status)}

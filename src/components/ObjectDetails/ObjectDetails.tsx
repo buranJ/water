@@ -57,6 +57,28 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
     }
   };
 
+  const getStatusLabel = (status: string): string => {
+    const s = status?.toLowerCase();
+    switch (s) {
+      case 'active':
+      case 'активен':
+        return t('customers.status.active');
+      case 'inactive':
+      case 'не активен':
+      case 'неактивен':
+        return t('customers.status.inactive');
+      case 'pending':
+      case 'в ожидании':
+        return t('applicationDetails.status.pending');
+      case 'rejected':
+      case 'отклонен':
+      case 'отказано':
+        return t('applicationDetails.status.rejected');
+      default:
+        return status || t('customers.status.active');
+    }
+  };
+
   const formatCoordinates = (): string => {
     if (!object.latitude || !object.longitude) return '-';
     return `${object.latitude}° N, ${object.longitude}° E`;
@@ -296,7 +318,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                         fontWeight: 600
                       }}
                     >
-                      {object.type || t('objectForm.placeholders.usageType')}
+                      {object.type || '-'}
                     </Text>
                   )}
                 </div>
@@ -343,7 +365,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                           fontWeight: 500
                         }}
                       >
-                        {object.status || t('customers.status.active')}
+                        {getStatusLabel(object.status)}
                       </Tag>
                     </div>
                   )}
@@ -472,7 +494,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                         fontWeight: 600
                       }}
                     >
-                      {object.usage_type || t('objectForm.placeholders.usageType')}
+                      {object.usage_type || '-'}
                     </Text>
                   )}
                 </div>
@@ -509,7 +531,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                         fontWeight: 600
                       }}
                     >
-                      {object.tu_status || t('customers.details.contract.tuStatus')}
+                      {object.tu_status || '-'}
                     </Text>
                   )}
                 </div>
