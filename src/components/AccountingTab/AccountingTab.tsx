@@ -172,12 +172,12 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
     },
     {
       key: '4',
-      item: t('protocolDoc.tuSewer'),
+      item: 'Канализация',
       price: `${protocolData.kanal_price}${currency}`
     },
     {
       key: '3',
-      item: t('protocolDoc.tuWater'),
+      item: 'Водопровод',
       price: `${protocolData.water_price}${currency}`
     },
     {
@@ -197,19 +197,19 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
     },
     {
       key: '2',
-      item: 'Водопровод',
+      item: 'Ст‑ть подключ водопровода (без НДС и НСП)',
       price: `${protocolData.water_sum}`
     },
     {
       key: '2',
-      item: 'Канализация',
+      item: 'Ст‑ть подключ канализации (без НДС и НСП)',
       price: `${protocolData.kanal_sum}`
     },
-    {
-      key: '2',
-      item: t('protocolDoc.vikCostLabel'),
-      price: `10080${currency}`
-    },
+    // {
+    //   key: '2',
+    //   item: t('protocolDoc.vikCostLabel'),
+    //   price: `10080${currency}`
+    // },
 
     // {
     //   key: '7',
