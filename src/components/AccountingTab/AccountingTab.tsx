@@ -167,7 +167,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
     },
     {
       key: '1',
-      item: 'нагрузка',
+      item: 'Нагрузка',
       price: `${protocolData.load}`
     },
     {
