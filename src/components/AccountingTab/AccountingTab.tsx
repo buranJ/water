@@ -173,12 +173,12 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
     {
       key: '4',
       item: 'Канализация',
-      price: `${protocolData.kanal_price}${currency}`
+      price: `${protocolData.kanal_price} ${currency}`
     },
     {
       key: '3',
       item: 'Водопровод',
-      price: `${protocolData.water_price}${currency}`
+      price: `${protocolData.water_price} ${currency}`
     },
     {
       key: '10',
@@ -188,22 +188,22 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
     {
       key: '6',
       item: t('accounting.protocol.nds'),
-      price: protocolData.nds ? `${protocolData.nds}${currency}` : t('tuDetails.notSpecified')
+      price: protocolData.nds ? `${protocolData.nds} ${currency}` : t('tuDetails.notSpecified')
     },
     {
       key: '5',
       item: t('accounting.protocol.nsp'),
-      price: `${protocolData.nsp || '0'}${currency}`
+      price: `${protocolData.nsp || '0'} ${currency}`
     },
     {
       key: '2',
       item: 'Ст‑ть подключ водопровода (без НДС и НСП)',
-      price: `${protocolData.water_sum}`
+      price: `${protocolData.water_sum} ${currency}`
     },
     {
       key: '2',
       item: 'Ст‑ть подключ канализации (без НДС и НСП)',
-      price: `${protocolData.kanal_sum}`
+      price: `${protocolData.kanal_sum} ${currency}`
     },
     // {
     //   key: '2',
@@ -224,7 +224,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
     {
       key: '9',
       item: 'Итог:',
-      price: `${protocolData.total_sum_main}${currency}`,
+      price: `${protocolData.total_sum_main} ${currency}`,
       badge: t('protocolDoc.takeaway')
     }
   ];
@@ -233,12 +233,12 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
     {
       key: 'paper-1',
       item: t('accounting.protocol.paperWorkWater'),
-      price: `${protocolData.paper_water_sum || '0'}${currency}`
+      price: `${protocolData.paper_water_sum || '0'} ${currency}`
     },
     {
       key: 'paper-2',
       item: t('accounting.protocol.paperWorkSewer'),
-      price: `${protocolData.paper_kanal_sum || '0'}${currency}`
+      price: `${protocolData.paper_kanal_sum || '0'} ${currency}`
     },
     {
       key: 'paper-3',
