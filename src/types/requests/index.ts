@@ -27,9 +27,13 @@ export type {
   IUploadFileParams
 } from './fileFolder.requests';
 export type { IGetObjectChangeHistoryParams, IGetObjectChangeHistoryResponse } from './object.requests';
+export type { IFilterPreset, IFilterPresetRequest, IGetPresetsParams, IGetPresetsResponse, PresetTarget } from './presets.requests';
 export type { IExportReportsParams, IExportReportsResponse } from './reports.requests';
 export type {
+  IActTyResponse,
   IAddLoadParams,
+  // act_ty
+  ICreateActTyParams,
   ICreateTechnicalConditionParams,
   ICreateTechnicalConditionRequest,
   IDeleteTechnicalConditionParams,
@@ -45,15 +49,12 @@ export type {
   IGetTyHistoryParams,
   IGetTyHistoryResponse,
   IITypesTYParams,
+  IPatchActTyParams,
   IPatchTechnicalConditionParams,
   IPatchTechnicalConditionResponse,
   IProtocolDocxParams,
   IProtocolDocxResponse,
   ITypesTYResponse,
   IUpdateTechnicalConditionParams,
-  IUpdateTechnicalConditionResponse,
-  // act_ty
-  ICreateActTyParams,
-  IActTyResponse,
-  IPatchActTyParams
+  IUpdateTechnicalConditionResponse
 } from './technicalCondition.requests';

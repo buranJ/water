@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
+import { Form, Input, message, Modal } from 'antd';
 import { Table } from 'common/ui';
 import { Pagination } from 'common/ui';
 import { TUFilterBar } from '../components/TUFilterBar/TUFilterBar';
@@ -10,6 +11,7 @@ import { IGetAllTechnicalConditionParams } from 'types/requests';
 import { getColumns } from './TechnicalConditionsPage.helpers';
 import './styles.scss';
 
+import { useCreatePresetMutation, useDeletePresetMutation, useGetPresetsQuery } from 'api/Presets.api';
 import { useGetAllTyQuery, usePatchTyMutation } from 'api/Ty.api';
 import { t } from 'i18next';
 
@@ -86,6 +88,13 @@ export const TechnicalConditionsPage = () => {
   });
   const [patchTy] = usePatchTyMutation();
 
+  const { data: presetsData, isFetching: presetsLoading } = useGetPresetsQuery({ target: 'ty', page_size: 100 });
+  const [createPreset, { isLoading: creatingPreset }] = useCreatePresetMutation();
+  const [deletePreset] = useDeletePresetMutation();
+
+  const [saveModalOpen, setSaveModalOpen] = useState(false);
+  const [saveForm] = Form.useForm();
+
   const [tableData, setTableData] = useState<ITechnicalCondition[]>([]);
 
   useEffect(() => {
@@ -144,6 +153,40 @@ export const TechnicalConditionsPage = () => {
     navigate('/dashboard/export-data');
   };
 
+  const applyPreset = (preset: { query_string: string }) => {
+    const next = new URLSearchParams(preset.query_string);
+    next.set('page', '1');
+    next.set('page_size', String(pageSize));
+    setSearchParams(next, { replace: false });
+  };
+
+  const handleRequestSavePreset = () => setSaveModalOpen(true);
+
+  const handleSavePresetOk = async () => {
+    try {
+      const values = await saveForm.validateFields();
+      const next = new URLSearchParams(searchParams);
+      next.delete('page');
+      next.set('page_size', String(pageSize));
+      const qs = next.toString();
+      await createPreset({ name: values.name, description: values.description, target: 'ty', query_string: qs }).unwrap();
+      message.success(t('technicalConditions.presets.saved', 'Пресет сохранён'));
+      setSaveModalOpen(false);
+      saveForm.resetFields();
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleDeletePreset = async (id: number | string) => {
+    try {
+      await deletePreset(id).unwrap();
+      message.success(t('technicalConditions.presets.deleted', 'Пресет удалён'));
+    } catch {
+      // ignore
+    }
+  };
+
   const columns = useMemo(
     () =>
       getColumns({
@@ -194,7 +237,33 @@ export const TechnicalConditionsPage = () => {
           onFilterChange={handleFilterChange}
           onAddClick={handleAddClick}
           onDownloadClick={handleDownloadClick}
+          presets={presetsData?.results}
+          presetsLoading={presetsLoading}
+          onApplyPreset={applyPreset}
+          onRequestSavePreset={handleRequestSavePreset}
+          onDeletePreset={handleDeletePreset}
         />
+        <Modal
+          open={saveModalOpen}
+          title={t('technicalConditions.presets.saveTitle', 'Сохранить пресет')}
+          onOk={handleSavePresetOk}
+          onCancel={() => setSaveModalOpen(false)}
+          confirmLoading={creatingPreset}
+          destroyOnClose
+        >
+          <Form form={saveForm} layout='vertical'>
+            <Form.Item
+              name='name'
+              label={t('technicalConditions.presets.name', 'Название')}
+              rules={[{ required: true, message: t('technicalConditions.presets.nameReq', 'Введите название') }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item name='description' label={t('technicalConditions.presets.description', 'Описание')}>
+              <Input.TextArea rows={3} />
+            </Form.Item>
+          </Form>
+        </Modal>
         <Table
           tableLayout='fixed'
           pagination={false}

@@ -594,6 +594,17 @@
       "overdue": "Overdue",
       "dueInDays": "Days until payment due",
       "tuWithLoads": "TUs with load increases"
+    },
+    "presets": {
+      "select": "Select preset",
+      "save": "Save preset",
+      "saveTitle": "Save filter preset",
+      "name": "Name",
+      "nameReq": "Enter a name",
+      "description": "Description",
+      "saved": "Preset saved",
+      "deleted": "Preset deleted",
+      "deleteConfirm": "Delete preset?"
     }
   },
   "customers": {

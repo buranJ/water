@@ -13,6 +13,7 @@ import {
   geoportalApi,
   notificationsApi,
   objectApi,
+  presetsApi,
   refusalApi,
   reportsApi,
   tyApi,
@@ -36,7 +37,8 @@ const store = configureStore({
     [applicationsApi.reducerPath]: applicationsApi.reducer,
     [formulaApi.reducerPath]: formulaApi.reducer,
     [reportsApi.reducerPath]: reportsApi.reducer,
-    [notificationsApi.reducerPath]: notificationsApi.reducer
+    [notificationsApi.reducerPath]: notificationsApi.reducer,
+    [presetsApi.reducerPath]: presetsApi.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -59,7 +61,8 @@ const store = configureStore({
       formulaApi.middleware,
       reportsApi.middleware,
       notificationsApi.middleware,
-      tyImportApi.middleware
+      tyImportApi.middleware,
+      presetsApi.middleware
     )
 });
 
