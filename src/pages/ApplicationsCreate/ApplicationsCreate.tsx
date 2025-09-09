@@ -177,21 +177,30 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
     <DashboardLayout title={title}>
       <div className='applications-create'>
         <Form form={form} layout='vertical' variant='filled' requiredMark={false} onFinish={handleFinish} onKeyDown={handleEnterFocusNext}>
-          <Form.Item
-            name='customer'
-            label={t('applicationsCreate.form.labels.customer')}
-            rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
-          >
-            <Input size='large' placeholder={t('applicationsCreate.form.placeholders.fullName')} />
-          </Form.Item>
-          <Form.Item
-            name='object'
-            label={t('applicationsCreate.form.labels.object')}
-            rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
-          >
-            <Input size='large' placeholder={t('applicationsCreate.form.placeholders.companyName')} />
-          </Form.Item>
-          <Flex gap={16}>
+          {/* Клиент и объект */}
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name='customer'
+                label={t('applicationsCreate.form.labels.customer')}
+                rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+              >
+                <Input size='large' placeholder={t('applicationsCreate.form.placeholders.fullName')} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name='object'
+                label={t('applicationsCreate.form.labels.object')}
+                rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+              >
+                <Input size='large' placeholder={t('applicationsCreate.form.placeholders.companyName')} />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          {/* Адрес и дом */}
+          <Row gutter={16}>
             <Col span={18}>
               <Form.Item
                 name='address'
@@ -210,8 +219,10 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
                 <Input size='large' placeholder={t('applicationsCreate.form.placeholders.houseNumberShort')} />
               </Form.Item>
             </Col>
-          </Flex>
-          <Flex gap={16}>
+          </Row>
+
+          {/* Количество воды и давление */}
+          <Row gutter={16}>
             <Col span={12}>
               <Form.Item
                 name='quantity'
@@ -230,21 +241,31 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
                 <Input size='large' placeholder='16,93' type='number' min={0} maxLength={5} />
               </Form.Item>
             </Col>
-          </Flex>
-          <Form.Item
-            label={t('applicationsCreate.form.labels.waterPurpose')}
-            name='waterRequired'
-            rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
-          >
-            <Input size='large' placeholder={t('applicationsCreate.form.placeholders.waterPurpose')} />
-          </Form.Item>
-          <Form.Item
-            label={t('applicationsCreate.form.labels.firefightingExpenses')}
-            name='firefightingExpensesInner'
-            rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
-          >
-            <Input type='number' min={0} size='large' placeholder={t('applicationsCreate.form.placeholders.enterValue')} />
-          </Form.Item>
+          </Row>
+
+          {/* Назначение воды и расходы на внутреннее пожаротушение */}
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                label={t('applicationsCreate.form.labels.waterPurpose')}
+                name='waterRequired'
+                rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+              >
+                <Input size='large' placeholder={t('applicationsCreate.form.placeholders.waterPurpose')} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label={t('applicationsCreate.form.labels.firefightingExpenses')}
+                name='firefightingExpensesInner'
+                rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+              >
+                <Input type='number' min={0} size='large' placeholder={t('applicationsCreate.form.placeholders.enterValue')} />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          {/* Расходы на наружное пожаротушение */}
           <Form.Item
             label='Расходы воды на наруж. пожаротушение'
             name='firefightingExpensesOuter'
@@ -252,6 +273,8 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
           >
             <Input type='number' min={0} size='large' placeholder={t('applicationsCreate.form.placeholders.enterValue')} />
           </Form.Item>
+
+          {/* Координаты */}
           <Form.Item
             label={t('applicationsCreate.form.labels.coordinates', 'Координаты объекта')}
             required
