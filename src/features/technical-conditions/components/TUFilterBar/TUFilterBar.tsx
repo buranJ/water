@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Badge, Button, Col, Form, Input, InputNumber, Row, Select, Space } from 'antd';
-import { DownloadOutlined, FilterOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { Badge, Button, Col, Form, Input, InputNumber, Popconfirm, Row, Select, Space } from 'antd';
+import { DeleteOutlined, DownloadOutlined, FilterOutlined, PlusOutlined, SaveOutlined, SearchOutlined } from '@ant-design/icons';
 import { IStageEnum, IStatus6b3Enum } from 'types/common';
+import { IFilterPreset } from 'types/requests';
 import './styles.scss';
 
 import { useGetTypesTyQuery } from 'api/Ty.api';
@@ -31,13 +32,37 @@ interface Props {
   onFilterChange: (values: TUFilterValues) => void;
   onAddClick: () => void;
   onDownloadClick: () => void;
+
+  // Presets
+  presets?: IFilterPreset[];
+  presetsLoading?: boolean;
+  onApplyPreset?: (preset: IFilterPreset) => void;
+  onRequestSavePreset?: () => void;
+  onDeletePreset?: (id: number | string) => void;
 }
 
-export const TUFilterBar = ({ onFilterChange, onAddClick, onDownloadClick, initialValues }: Props) => {
+export const TUFilterBar = ({
+  onFilterChange,
+  onAddClick,
+  onDownloadClick,
+  initialValues,
+  presets,
+  presetsLoading,
+  onApplyPreset,
+  onRequestSavePreset,
+  onDeletePreset
+}: Props) => {
   const [form] = Form.useForm();
   const { data: typesTy } = useGetTypesTyQuery();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [activeCount, setActiveCount] = useState(0);
+  const [selectedPresetId, setSelectedPresetId] = useState<number | string | undefined>(undefined);
+
+  const handlePresetSelect = (id: number | string) => {
+    setSelectedPresetId(id);
+    const preset = (presets || []).find((p) => p.id === id);
+    if (preset && onApplyPreset) onApplyPreset(preset);
+  };
 
   useEffect(() => {
     if (initialValues) {
@@ -70,11 +95,6 @@ export const TUFilterBar = ({ onFilterChange, onAddClick, onDownloadClick, initi
     setActiveCount(computeActiveCount(allValues));
     onFilterChange(allValues);
   };
-
-  const handleAddClick = () => {
-    onAddClick();
-  };
-
   const filtersContent = (
     <div className='tu-filters-panel'>
       <div className='tu-filters-header'>
@@ -230,19 +250,42 @@ export const TUFilterBar = ({ onFilterChange, onAddClick, onDownloadClick, initi
       </Form>
 
       <Space>
-        <Button
-          type='primary'
-          icon={<PlusOutlined />}
-          onClick={() => {
-            handleAddClick();
-            onAddClick();
-          }}
-        >
+        <Button type='primary' icon={<PlusOutlined />} onClick={() => onAddClick()}>
           {t('filterBar.add')}
         </Button>
+
         <Button icon={<DownloadOutlined />} onClick={onDownloadClick}>
           {t('common.export')}
         </Button>
+
+        <Select
+          showSearch
+          allowClear
+          placeholder={t('technicalConditions.presets.select', 'Выберите пресет')}
+          style={{ minWidth: 240 }}
+          loading={presetsLoading}
+          value={selectedPresetId}
+          onChange={(val) => (val ? handlePresetSelect(val) : setSelectedPresetId(undefined))}
+          filterOption={(input, option) => ((option?.label as string) || '').toLowerCase().includes(input.toLowerCase())}
+          options={(presets || []).map((p) => ({ value: p.id, label: p.name }))}
+        />
+
+        <Button icon={<SaveOutlined />} onClick={() => onRequestSavePreset && onRequestSavePreset()}>
+          {t('technicalConditions.presets.save', 'Сохранить пресет')}
+        </Button>
+
+        <Popconfirm
+          title={t('technicalConditions.presets.deleteConfirm', 'Удалить пресет?')}
+          okText={t('common.yes', 'Да')}
+          cancelText={t('common.no', 'Нет')}
+          onConfirm={() => selectedPresetId && onDeletePreset && onDeletePreset(selectedPresetId)}
+          disabled={!selectedPresetId}
+        >
+          <Button icon={<DeleteOutlined />} disabled={!selectedPresetId} danger>
+            {t('common.delete', 'Удалить')}
+          </Button>
+        </Popconfirm>
+
         <Badge count={activeCount} size='small' offset={[6, 0]} showZero={false}>
           <Button
             className={filtersOpen ? 'filters-btn filters-btn--active' : 'filters-btn'}
