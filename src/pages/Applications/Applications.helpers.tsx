@@ -132,14 +132,7 @@ export const getColumns: IGetColumnsFn = ({ onClick, hasPermission }) => {
       key: 'customer',
       align: 'center',
       render: (text: string, record: ApplicationData) => (
-        <span
-          style={{ color: '#1677ff', cursor: 'pointer', textDecoration: 'underline' }}
-          onClick={() => {
-            if (record.customer) {
-              window.location.href = `/dashboard/customers/${record.customer}`;
-            }
-          }}
-        >
+        <span style={{ color: '#1677ff', cursor: 'pointer', textDecoration: 'underline' }} onClick={() => onClick(record, 'customerView')}>
           {text}
         </span>
       ),
