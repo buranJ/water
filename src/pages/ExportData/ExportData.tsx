@@ -266,37 +266,48 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
           include_pending: false
         }}
       >
-        <Title level={4} style={{ marginBottom: 12 }}>
-          {t('exportData.title') || 'Экспорт данных (PDF/XLSX)'}
-        </Title>
-
-        <Space wrap style={{ marginBottom: 12 }}>
-          <Select
-            allowClear
-            placeholder={t('exportData.presets.select', 'Выберите пресет')}
-            style={{ minWidth: 260 }}
-            loading={presetsLoading}
-            disabled={!presetTarget}
-            value={selectedPresetId}
-            onChange={(val) => handleApplyPresetById(val)}
-            options={(presetsData?.results || []).map((p) => ({ value: p.id, label: p.name }))}
-            showSearch
-            filterOption={(input, option) => ((option?.label as string) || '').toLowerCase().includes(input.toLowerCase())}
-          />
-          <Button icon={<SaveOutlined />} onClick={handleRequestSavePreset}>
-            {t('exportData.presets.save', 'Сохранить пресет')}
-          </Button>
-          {selectedPresetId && (
-            <Popconfirm
-              title={t('exportData.presets.deleteConfirm', 'Удалить пресет?')}
-              okText={t('common.yes', 'Да')}
-              cancelText={t('common.no', 'Нет')}
-              onConfirm={handleDeletePreset}
-            >
-              <Button danger>{t('common.delete') || 'Удалить'}</Button>
-            </Popconfirm>
-          )}
-        </Space>
+        <Row align='middle' justify='space-between' style={{ marginBottom: 12 }}>
+          <Col>
+            <Title level={4} style={{ margin: 0 }}>
+              {t('exportData.title') || 'Экспорт данных (PDF/XLSX)'}
+            </Title>
+          </Col>
+          <Col>
+            <Space size={8} align='center' wrap>
+              <Typography.Text type='secondary' style={{ marginRight: 4 }}>
+                {t('exportData.presets.label', 'Пресеты')}
+              </Typography.Text>
+              <Select
+                size='middle'
+                allowClear
+                placeholder={t('exportData.presets.select', 'Выберите пресет')}
+                style={{ minWidth: 280 }}
+                loading={presetsLoading}
+                disabled={!presetTarget}
+                value={selectedPresetId}
+                onChange={(val) => handleApplyPresetById(val)}
+                options={(presetsData?.results || []).map((p) => ({ value: p.id, label: p.name }))}
+                showSearch
+                filterOption={(input, option) => ((option?.label as string) || '').toLowerCase().includes(input.toLowerCase())}
+              />
+              <Button size='middle' icon={<SaveOutlined />} onClick={handleRequestSavePreset}>
+                {t('exportData.presets.save', 'Сохранить пресет')}
+              </Button>
+              {selectedPresetId && (
+                <Popconfirm
+                  title={t('exportData.presets.deleteConfirm', 'Удалить пресет?')}
+                  okText={t('common.yes', 'Да')}
+                  cancelText={t('common.no', 'Нет')}
+                  onConfirm={handleDeletePreset}
+                >
+                  <Button size='middle' danger>
+                    {t('common.delete') || 'Удалить'}
+                  </Button>
+                </Popconfirm>
+              )}
+            </Space>
+          </Col>
+        </Row>
 
         <Row gutter={16}>
           <Col span={12}>
