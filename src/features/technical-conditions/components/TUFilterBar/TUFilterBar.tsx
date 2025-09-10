@@ -222,6 +222,11 @@ export const TUFilterBar = ({
           </Col>
         </Row>
       </Form>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
+        <Button icon={<SaveOutlined />} onClick={() => onRequestSavePreset && onRequestSavePreset()}>
+          {t('technicalConditions.presets.save', 'Сохранить пресет')}
+        </Button>
+      </div>
     </div>
   );
 
@@ -269,11 +274,6 @@ export const TUFilterBar = ({
           filterOption={(input, option) => ((option?.label as string) || '').toLowerCase().includes(input.toLowerCase())}
           options={(presets || []).map((p) => ({ value: p.id, label: p.name }))}
         />
-
-        <Button icon={<SaveOutlined />} onClick={() => onRequestSavePreset && onRequestSavePreset()}>
-          {t('technicalConditions.presets.save', 'Сохранить пресет')}
-        </Button>
-
         <Popconfirm
           title={t('technicalConditions.presets.deleteConfirm', 'Удалить пресет?')}
           okText={t('common.yes', 'Да')}

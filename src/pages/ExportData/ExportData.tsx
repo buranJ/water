@@ -1,7 +1,7 @@
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Button, Checkbox, Col, Divider, Form, Input, message, Row, Select, Space, Typography } from 'antd';
-import { DownloadOutlined } from '@ant-design/icons';
+import { Button, Checkbox, Col, Divider, Form, Input, message, Modal, Popconfirm, Row, Select, Space, Typography } from 'antd';
+import { DownloadOutlined, SaveOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 import type { ExportEntity } from 'types/entities/reports.entities';
 import {
@@ -16,11 +16,127 @@ import {
 } from './ExportData.config';
 import { FiltersGrid } from './ExportData.helpers';
 
+import { useCreatePresetMutation, useDeletePresetMutation, useGetPresetsQuery } from 'api/Presets.api';
 import { useExportReportsMutation } from 'api/Reports.api';
 import { usePermissions } from 'hooks/useAuth';
 import { t } from 'i18next';
 
 const { Title } = Typography;
+
+// Helpers to serialize/deserialize Export form values into a query-string (for presets)
+const encodeFormToQS = (values: FormValues): string => {
+  try {
+    const qs = new URLSearchParams();
+
+    if (values?.export) qs.set('export', String(values.export));
+    if (values?.entity) qs.set('entity', String(values.entity));
+    if (values?.filename) qs.set('filename', String(values.filename).trim());
+    if (values?.include_pending !== undefined) qs.set('include_pending', String(Boolean(values.include_pending)));
+
+    // include object (booleans)
+    if (values?.include && typeof values.include === 'object') {
+      Object.entries(values.include).forEach(([k, v]) => {
+        if (v !== undefined) qs.set(`include.${k}`, String(Boolean(v)));
+      });
+    }
+
+    // fields and ids as comma-separated
+    if (Array.isArray(values?.fields) && values.fields.length) {
+      qs.set('fields', values.fields.join(','));
+    }
+    if (Array.isArray(values?.ids) && values.ids.length) {
+      qs.set('ids', values.ids.join(','));
+    }
+
+    // filters.* flatten
+    if (values?.filters && typeof values.filters === 'object') {
+      Object.entries(values.filters).forEach(([k, v]) => {
+        if (v === undefined || v === null || String(v).trim?.() === '') return;
+        if (Array.isArray(v)) qs.set(`filters.${k}`, v.join(','));
+        else qs.set(`filters.${k}`, String(v));
+      });
+    }
+
+    return qs.toString();
+  } catch {
+    // fallback: store full JSON if something goes wrong
+    return new URLSearchParams({ form: JSON.stringify(values || {}) }).toString();
+  }
+};
+
+const parseBoolean = (s: string | null) => (s === 'true' ? true : s === 'false' ? false : undefined);
+const parseList = (s: string | null) => (s ? s.split(',').filter((x) => x !== '') : undefined);
+
+const decodeQSToFormValues = (qs: string): Partial<FormValues> => {
+  const sp = new URLSearchParams(qs);
+
+  // JSON fallback
+  const formJson = sp.get('form');
+  if (formJson) {
+    try {
+      return JSON.parse(formJson) as Partial<FormValues>;
+    } catch {
+      // ignore
+    }
+  }
+
+  const out: Partial<FormValues> = {};
+
+  // Simple typed keys
+  const exportVal = sp.get('export');
+  if (exportVal) out.export = exportVal as 'pdf' | 'xlsx';
+
+  const entityVal = sp.get('entity');
+  if (entityVal) out.entity = entityVal as ExportEntity;
+
+  const filenameVal = sp.get('filename');
+  if (filenameVal) out.filename = filenameVal;
+
+  const includePendingVal = parseBoolean(sp.get('include_pending'));
+  if (includePendingVal !== undefined) out.include_pending = includePendingVal;
+
+  const fieldsVal = parseList(sp.get('fields'));
+  if (fieldsVal) out.fields = fieldsVal;
+
+  const idsVal = parseList(sp.get('ids'));
+  if (idsVal) out.ids = idsVal;
+
+  // include.*
+  const includeKeys: (keyof NonNullable<FormValues['include']>)[] = ['customer', 'entity', 'protocol', 'invoices', 'payments'];
+  const includeObj: NonNullable<FormValues['include']> = {};
+  let includeSet = false;
+  includeKeys.forEach((key) => {
+    const v = parseBoolean(sp.get(`include.${key}`));
+    if (v !== undefined) {
+      includeObj[key] = v;
+      includeSet = true;
+    }
+  });
+  if (includeSet) out.include = includeObj;
+
+  // filters.*
+  const filtersObj: Record<string, unknown> = {};
+  let filtersSet = false;
+  Array.from(sp.keys())
+    .filter((k) => k.startsWith('filters.'))
+    .forEach((k) => {
+      const name = k.slice('filters.'.length);
+      const raw = sp.get(k);
+      if (raw && raw.includes(',')) {
+        filtersObj[name] = raw.split(',');
+        filtersSet = true;
+      } else if (raw && !Number.isNaN(Number(raw))) {
+        filtersObj[name] = Number(raw);
+        filtersSet = true;
+      } else if (raw !== null) {
+        filtersObj[name] = raw;
+        filtersSet = true;
+      }
+    });
+  if (filtersSet) out.filters = filtersObj;
+
+  return out;
+};
 
 const ExportData: FC<{ title: string }> = ({ title }) => {
   const [form] = Form.useForm<FormValues>();
@@ -28,7 +144,81 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
   const [exportReports, { isLoading }] = useExportReportsMutation();
   const { hasPermission } = usePermissions();
 
+  // Watch selected entity to drive presets target
   const selectedEntity = Form.useWatch('entity', form) as ExportEntity | undefined;
+  const presetTarget = useMemo(() => {
+    if (!selectedEntity) return undefined;
+    return selectedEntity === 'technical_conditions' ? 'ty' : selectedEntity;
+  }, [selectedEntity]);
+
+  useEffect(() => {
+    setSelectedPresetId(undefined);
+  }, [presetTarget]);
+  // Presets hooks/state
+  const { data: presetsData, isFetching: presetsLoading } = useGetPresetsQuery(
+    presetTarget ? { target: presetTarget, page_size: 100 } : { page_size: 100 }
+  );
+  const [createPreset, { isLoading: creatingPreset }] = useCreatePresetMutation();
+  const [deletePreset] = useDeletePresetMutation();
+  const [selectedPresetId, setSelectedPresetId] = useState<number | string | undefined>(undefined);
+  const [saveModalOpen, setSaveModalOpen] = useState(false);
+  const [saveForm] = Form.useForm();
+
+  const handleApplyPresetById = (id?: number | string) => {
+    setSelectedPresetId(id);
+    if (!id) return;
+    const preset = (presetsData?.results || []).find((p) => String(p.id) === String(id));
+    if (!preset) return;
+    const values = decodeQSToFormValues(preset.query_string);
+    // Safely apply only known fields (set non-nested first to satisfy Form typing)
+    const { filters, ...rest } = values;
+    form.setFieldsValue(rest as Partial<Omit<FormValues, 'filters'>>);
+    // Then set nested filters field-by-field to avoid typing mismatch
+    if (filters && typeof filters === 'object') {
+      const fieldsArr = Object.entries(filters).map(([k, v]) => ({
+        name: ['filters', k],
+        value: v
+      }));
+      if (fieldsArr.length) form.setFields(fieldsArr);
+    }
+    message.success(t('exportData.presets.applied', 'Пресет применён'));
+  };
+
+  const handleRequestSavePreset = () => setSaveModalOpen(true);
+
+  const handleSavePresetOk = async () => {
+    try {
+      const modalValues = await saveForm.validateFields();
+      const currentValues = form.getFieldsValue(true) as FormValues;
+      const qs = encodeFormToQS(currentValues);
+      if (!currentValues.entity) {
+        message.error(t('exportData.presets.entityRequired', 'Сначала выберите сущность'));
+        return;
+      }
+      await createPreset({
+        name: modalValues.name,
+        description: modalValues.description,
+        target: currentValues.entity === 'technical_conditions' ? 'ty' : (currentValues.entity as string),
+        query_string: qs
+      }).unwrap();
+      message.success(t('exportData.presets.saved', 'Пресет сохранён'));
+      setSaveModalOpen(false);
+      saveForm.resetFields();
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleDeletePreset = async () => {
+    if (!selectedPresetId) return;
+    try {
+      await deletePreset(selectedPresetId).unwrap();
+      message.success(t('exportData.presets.deleted', 'Пресет удалён'));
+      setSelectedPresetId(undefined);
+    } catch {
+      // ignore
+    }
+  };
 
   const fieldsForEntity = useMemo(() => {
     if (!selectedEntity) return [];
@@ -76,9 +266,37 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
           include_pending: false
         }}
       >
-        <Title level={4} style={{ marginBottom: 24 }}>
+        <Title level={4} style={{ marginBottom: 12 }}>
           {t('exportData.title') || 'Экспорт данных (PDF/XLSX)'}
         </Title>
+
+        <Space wrap style={{ marginBottom: 12 }}>
+          <Select
+            allowClear
+            placeholder={t('exportData.presets.select', 'Выберите пресет')}
+            style={{ minWidth: 260 }}
+            loading={presetsLoading}
+            disabled={!presetTarget}
+            value={selectedPresetId}
+            onChange={(val) => handleApplyPresetById(val)}
+            options={(presetsData?.results || []).map((p) => ({ value: p.id, label: p.name }))}
+            showSearch
+            filterOption={(input, option) => ((option?.label as string) || '').toLowerCase().includes(input.toLowerCase())}
+          />
+          <Button icon={<SaveOutlined />} onClick={handleRequestSavePreset}>
+            {t('exportData.presets.save', 'Сохранить пресет')}
+          </Button>
+          {selectedPresetId && (
+            <Popconfirm
+              title={t('exportData.presets.deleteConfirm', 'Удалить пресет?')}
+              okText={t('common.yes', 'Да')}
+              cancelText={t('common.no', 'Нет')}
+              onConfirm={handleDeletePreset}
+            >
+              <Button danger>{t('common.delete') || 'Удалить'}</Button>
+            </Popconfirm>
+          )}
+        </Space>
 
         <Row gutter={16}>
           <Col span={12}>
@@ -210,6 +428,27 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
             </Button>
           </Col>
         </Row>
+        <Modal
+          open={saveModalOpen}
+          title={t('exportData.presets.saveTitle', 'Сохранить пресет')}
+          onOk={handleSavePresetOk}
+          onCancel={() => setSaveModalOpen(false)}
+          confirmLoading={creatingPreset}
+          destroyOnClose
+        >
+          <Form form={saveForm} layout='vertical'>
+            <Form.Item
+              name='name'
+              label={t('exportData.presets.name', 'Название')}
+              rules={[{ required: true, message: t('exportData.presets.nameReq', 'Введите название') }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item name='description' label={t('exportData.presets.description', 'Описание')}>
+              <Input.TextArea rows={3} />
+            </Form.Item>
+          </Form>
+        </Modal>
       </Form>
     </DashboardLayout>
   );
