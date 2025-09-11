@@ -11,7 +11,7 @@ import { IGetAllTechnicalConditionParams } from 'types/requests';
 import { getColumns } from './TechnicalConditionsPage.helpers';
 import './styles.scss';
 
-import { useCreatePresetMutation, useDeletePresetMutation, useGetPresetsQuery } from 'api/Presets.api';
+import { useCreatePresetMutation, useGetPresetsQuery } from 'api/Presets.api';
 import { useGetAllTyQuery, usePatchTyMutation } from 'api/Ty.api';
 import { t } from 'i18next';
 
@@ -90,7 +90,6 @@ export const TechnicalConditionsPage = () => {
 
   const { data: presetsData, isFetching: presetsLoading } = useGetPresetsQuery({ target: 'ty', page_size: 100 });
   const [createPreset, { isLoading: creatingPreset }] = useCreatePresetMutation();
-  const [deletePreset] = useDeletePresetMutation();
 
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const [saveForm] = Form.useForm();
@@ -177,16 +176,6 @@ export const TechnicalConditionsPage = () => {
       // ignore
     }
   };
-
-  const handleDeletePreset = async (id: number | string) => {
-    try {
-      await deletePreset(id).unwrap();
-      message.success(t('technicalConditions.presets.deleted', 'Пресет удалён'));
-    } catch {
-      // ignore
-    }
-  };
-
   const columns = useMemo(
     () =>
       getColumns({
@@ -241,7 +230,6 @@ export const TechnicalConditionsPage = () => {
           presetsLoading={presetsLoading}
           onApplyPreset={applyPreset}
           onRequestSavePreset={handleRequestSavePreset}
-          onDeletePreset={handleDeletePreset}
         />
         <Modal
           open={saveModalOpen}

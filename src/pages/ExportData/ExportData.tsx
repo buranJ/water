@@ -1,6 +1,6 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Button, Checkbox, Col, Divider, Form, Input, message, Modal, Popconfirm, Row, Select, Space, Typography } from 'antd';
+import { Button, Checkbox, Col, Divider, Form, Input, message, Modal, Row, Select, Space, Typography } from 'antd';
 import { DownloadOutlined, SaveOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 import type { ExportEntity } from 'types/entities/reports.entities';
@@ -16,7 +16,7 @@ import {
 } from './ExportData.config';
 import { FiltersGrid } from './ExportData.helpers';
 
-import { useCreatePresetMutation, useDeletePresetMutation, useGetPresetsQuery } from 'api/Presets.api';
+import { useCreatePresetMutation, useGetPresetsQuery } from 'api/Presets.api';
 import { useExportReportsMutation } from 'api/Reports.api';
 import { usePermissions } from 'hooks/useAuth';
 import { t } from 'i18next';
@@ -159,7 +159,6 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
     presetTarget ? { target: presetTarget, page_size: 100 } : { page_size: 100 }
   );
   const [createPreset, { isLoading: creatingPreset }] = useCreatePresetMutation();
-  const [deletePreset] = useDeletePresetMutation();
   const [selectedPresetId, setSelectedPresetId] = useState<number | string | undefined>(undefined);
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const [saveForm] = Form.useForm();
@@ -208,18 +207,6 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
       // ignore
     }
   };
-
-  const handleDeletePreset = async () => {
-    if (!selectedPresetId) return;
-    try {
-      await deletePreset(selectedPresetId).unwrap();
-      message.success(t('exportData.presets.deleted', 'Пресет удалён'));
-      setSelectedPresetId(undefined);
-    } catch {
-      // ignore
-    }
-  };
-
   const fieldsForEntity = useMemo(() => {
     if (!selectedEntity) return [];
     return FILTER_CONFIG[selectedEntity];
@@ -293,18 +280,6 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
               <Button size='middle' icon={<SaveOutlined />} onClick={handleRequestSavePreset}>
                 {t('exportData.presets.save', 'Сохранить пресет')}
               </Button>
-              {selectedPresetId && (
-                <Popconfirm
-                  title={t('exportData.presets.deleteConfirm', 'Удалить пресет?')}
-                  okText={t('common.yes', 'Да')}
-                  cancelText={t('common.no', 'Нет')}
-                  onConfirm={handleDeletePreset}
-                >
-                  <Button size='middle' danger>
-                    {t('common.delete') || 'Удалить'}
-                  </Button>
-                </Popconfirm>
-              )}
             </Space>
           </Col>
         </Row>

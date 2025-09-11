@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Badge, Button, Col, Form, Input, InputNumber, Popconfirm, Row, Select, Space } from 'antd';
-import { DeleteOutlined, DownloadOutlined, FilterOutlined, PlusOutlined, SaveOutlined, SearchOutlined } from '@ant-design/icons';
+import { Badge, Button, Col, Form, Input, InputNumber, Row, Select, Space } from 'antd';
+import { DownloadOutlined, FilterOutlined, PlusOutlined, SaveOutlined, SearchOutlined } from '@ant-design/icons';
 import { IStageEnum, IStatus6b3Enum } from 'types/common';
 import { IFilterPreset } from 'types/requests';
 import './styles.scss';
@@ -38,7 +38,6 @@ interface Props {
   presetsLoading?: boolean;
   onApplyPreset?: (preset: IFilterPreset) => void;
   onRequestSavePreset?: () => void;
-  onDeletePreset?: (id: number | string) => void;
 }
 
 export const TUFilterBar = ({
@@ -49,8 +48,7 @@ export const TUFilterBar = ({
   presets,
   presetsLoading,
   onApplyPreset,
-  onRequestSavePreset,
-  onDeletePreset
+  onRequestSavePreset
 }: Props) => {
   const [form] = Form.useForm();
   const { data: typesTy } = useGetTypesTyQuery();
@@ -274,17 +272,6 @@ export const TUFilterBar = ({
           filterOption={(input, option) => ((option?.label as string) || '').toLowerCase().includes(input.toLowerCase())}
           options={(presets || []).map((p) => ({ value: p.id, label: p.name }))}
         />
-        <Popconfirm
-          title={t('technicalConditions.presets.deleteConfirm', 'Удалить пресет?')}
-          okText={t('common.yes', 'Да')}
-          cancelText={t('common.no', 'Нет')}
-          onConfirm={() => selectedPresetId && onDeletePreset && onDeletePreset(selectedPresetId)}
-          disabled={!selectedPresetId}
-        >
-          <Button icon={<DeleteOutlined />} disabled={!selectedPresetId} danger>
-            {t('common.delete', 'Удалить')}
-          </Button>
-        </Popconfirm>
 
         <Badge count={activeCount} size='small' offset={[6, 0]} showZero={false}>
           <Button
