@@ -1,6 +1,6 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router';
-import { Alert, Button, Card, Col, Flex, message, Row, Spin, Tabs, TabsProps, Typography } from 'antd';
+import { Alert, Button, Card, Col, Flex, message, Modal, Row, Spin, Tabs, TabsProps, Typography } from 'antd';
 import { ClockCircleTwoTone } from '@ant-design/icons';
 import { ActionsBar } from './components/ActionsBar';
 import { DataSection } from './components/DataSection';
@@ -11,14 +11,20 @@ import { RejectApplicationModal } from 'components/Modal/RejectApplicationModal'
 import { IActEnum } from 'types/common';
 import type { ITyBody } from 'types/entities';
 import AddLoadModal from './AddLoadModal';
-import CreateActModal from './CreateActModal';
 import { Architecture } from './Tabs';
 
 import { useGetUserInfoQuery } from 'api/Auth.api';
 import { useLazyDownloadContractDocxQuery } from 'api/Buhgalteria.api';
 import { useGetFoldersQuery } from 'api/FileFolder.api';
 import { type RefusalBody, useCreateRefusalMutation } from 'api/Refusal.api';
-import { useGetTyByIdQuery, useLazyDownloadProtocolDocxQuery, usePatchActTyMutation, useUpdateTyMutation } from 'api/Ty.api';
+import {
+  useCreateActTyMutation,
+  useGetTyByIdQuery,
+  useLazyDownloadProtocolDocxQuery,
+  useLazyGetActTyByIdQuery,
+  usePatchActTyMutation,
+  useUpdateTyMutation
+} from 'api/Ty.api';
 import { usePermissions } from 'hooks/useAuth';
 import { t } from 'i18next';
 
@@ -67,12 +73,12 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>(searchParams.get('tab') || '1');
   const [isAddLoadVisible, setIsAddLoadVisible] = useState<boolean>(false);
-  const [isActModalVisible, setIsActModalVisible] = useState<boolean>(false);
-  const [pendingActStatus, setPendingActStatus] = useState<IActEnum | null>(null);
   const [triggerDownload, { isFetching: isDownloading }] = useLazyDownloadProtocolDocxQuery();
   const [triggerContractDownload, { isFetching: isContractDownloading }] = useLazyDownloadContractDocxQuery();
   const [updateTy] = useUpdateTyMutation();
   const [patchActTy] = usePatchActTyMutation();
+  const [createAct] = useCreateActTyMutation();
+  const [triggerGetAct, { isFetching: isActFetching }] = useLazyGetActTyByIdQuery();
   const [createRefusal] = useCreateRefusalMutation();
 
   // Act TY sequential statuses and labels
@@ -91,24 +97,44 @@ export const TuDetails: FC<IProps> = ({ title }) => {
 
   const isTuApproved = objectData?.stage === 'approved';
 
-  const openActStatusModal = async (status: IActEnum) => {
+  const openActStatusModal = (status: IActEnum) => {
     if (!id) return;
     if (objectData?.stage !== 'approved') {
       message.warning(t('tuDetails.act.messages.mustBeApproved', 'Действие доступно только после утверждения ТУ'));
       return;
     }
     if (objectData?.act) {
-      try {
-        console.log('[ACT] patch status', { actId: objectData.act.id, status });
-        await patchActTy({ id: objectData.act.id, body: { status } }).unwrap();
-        message.success(t('tuDetails.act.messages.statusUpdated', 'Статус акта обновлён'));
-        refetch();
-      } catch {
-        message.error(t('tuDetails.act.messages.statusUpdateFailed', 'Не удалось изменить статус акта'));
-      }
+      Modal.confirm({
+        title: t('tuDetails.act.confirm.changeTitle', 'Изменить статус акта?'),
+        content: t('tuDetails.act.confirm.changeContent', 'Вы действительно хотите изменить статус акта?'),
+        okText: t('common.yes', 'Да'),
+        cancelText: t('common.cancel', 'Отмена'),
+        onOk: async () => {
+          try {
+            await patchActTy({ id: objectData.act!.id, body: { status } }).unwrap();
+            message.success(t('tuDetails.act.messages.statusUpdated', 'Статус акта обновлён'));
+            refetch();
+          } catch {
+            message.error(t('tuDetails.act.messages.statusUpdateFailed', 'Не удалось изменить статус акта'));
+          }
+        }
+      });
     } else {
-      setPendingActStatus(status);
-      setIsActModalVisible(true);
+      Modal.confirm({
+        title: t('tuDetails.act.confirm.createTitle', 'Создать акт подтверждения?'),
+        content: t('tuDetails.act.confirm.createContent', 'Будет создан акт. Продолжить?'),
+        okText: t('common.yes', 'Да'),
+        cancelText: t('common.cancel', 'Отмена'),
+        onOk: async () => {
+          try {
+            await createAct({ ty: id, status }).unwrap();
+            message.success(t('tuDetails.act.messages.uploadSuccess', 'Акт загружен'));
+            refetch();
+          } catch {
+            message.error(t('tuDetails.act.messages.statusUpdateFailed', 'Не удалось изменить статус акта'));
+          }
+        }
+      });
     }
   };
 
@@ -330,8 +356,43 @@ export const TuDetails: FC<IProps> = ({ title }) => {
                 <ClockCircleTwoTone twoToneColor='#327BE8' />
               </Row>
               <br />
-              {objectData.act && objectData.act.file && (
-                <Button onClick={() => window.open(objectData.act!.file, '_blank')}>
+              {objectData.act && (
+                <Button
+                  loading={isActFetching}
+                  onClick={async () => {
+                    try {
+                      const res = (await triggerGetAct({ id: objectData.act!.id }).unwrap()) as import('types/requests').IActTyResponse;
+                      const fileUrl = res?.file || undefined;
+                      if (!fileUrl) {
+                        message.warning(t('tuDetails.act.messages.fileRequired', 'Выберите файл акта'));
+                        return;
+                      }
+                      try {
+                        const response = await fetch(fileUrl, { credentials: 'include' });
+                        if (!response.ok) throw new Error('download failed');
+                        const blob = await response.blob();
+                        const nameFromUrl = fileUrl.split('/').pop() || `act_${objectData.act!.id}`;
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = nameFromUrl;
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                        window.URL.revokeObjectURL(url);
+                      } catch (err) {
+                        // eslint-disable-next-line no-console
+                        console.error('[ACT GET] download file failed', err);
+                        // Fallback — открыть в новой вкладке
+                        window.open(fileUrl, '_blank');
+                      }
+                    } catch (e) {
+                      // eslint-disable-next-line no-console
+                      console.error('[ACT GET] failed', e);
+                      message.error(t('tuDetails.act.messages.statusUpdateFailed', 'Не удалось изменить статус акта'));
+                    }
+                  }}
+                >
                   {t('tuDetails.act.actions.download', 'Скачать акт')}
                 </Button>
               )}
@@ -351,18 +412,6 @@ export const TuDetails: FC<IProps> = ({ title }) => {
 
       <RejectApplicationModal open={isModalVisible} onCancel={handleModalCancel} onReject={handleRejectSubmit} />
       <AddLoadModal visible={isAddLoadVisible} onClose={() => setIsAddLoadVisible(false)} tyId={id || ''} />
-      {pendingActStatus && (
-        <CreateActModal
-          open={isActModalVisible}
-          tyId={id || ''}
-          status={pendingActStatus}
-          onClose={() => {
-            setIsActModalVisible(false);
-            setPendingActStatus(null);
-          }}
-          onCreated={() => refetch()}
-        />
-      )}
     </DashboardLayout>
   );
 };

@@ -197,6 +197,12 @@ export const tyApi = createApi({
       }),
       keepUnusedDataFor: 0
     }),
+    getActTyById: build.query<IActTyResponse, { id: string | number }>({
+      query: ({ id }) => ({
+        url: `/ty/act_ty/${id}`,
+        method: 'GET'
+      })
+    }),
     // ACT TY: create (POST) and patch (PATCH)
     createActTy: build.mutation<IActTyResponse, ICreateActTyParams>({
       query: (body) => {
@@ -250,5 +256,6 @@ export const {
   useLazyDownloadTyPdfQuery,
   useLazyDownloadProtocolDocxQuery,
   useCreateActTyMutation,
-  usePatchActTyMutation
+  usePatchActTyMutation,
+  useLazyGetActTyByIdQuery
 } = tyApi;
