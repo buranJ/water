@@ -86,7 +86,7 @@ export const CustomerDetails: FC<{ title?: string }> = ({ title }) => {
   const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'data');
 
   // Используем существующий хук, но типизируем как расширенный ответ
-  const { data, isLoading, isError } = useGetCustomerByIdQuery(customerId || '') as {
+  const { data, isLoading, isError } = useGetCustomerByIdQuery(customerId || '', { refetchOnMountOrArgChange: true }) as {
     data: ICustomerFullResponse | undefined;
     isLoading: boolean;
     isError: boolean;

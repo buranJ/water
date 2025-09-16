@@ -70,16 +70,39 @@ export const customerApi = createApi({
       query: (id) => ({
         url: `customer/${id}`,
         method: 'GET'
-      })
+      }),
+      providesTags: (_result, _error, id) => [{ type: 'Customer', id }, 'Customer']
     }),
 
-    updateCustomer: build.mutation({
+    updateCustomer: build.mutation<ICustomer, { id: number | string; body: Partial<ICustomer> }>({
       query: ({ id, body }) => ({
         url: `customer/${id}`,
         method: 'PUT',
         body
       }),
-      invalidatesTags: ['Customer']
+      async onQueryStarted({ id, body }, { dispatch, queryFulfilled }) {
+        // Optimistically update the cached customer details
+        const patchResult = dispatch(
+          customerApi.util.updateQueryData('getCustomerById', id, (draft) => {
+            if (draft && body) {
+              Object.assign(draft as unknown as ICustomer, body);
+            }
+          })
+        );
+        try {
+          const { data } = await queryFulfilled;
+          // Ensure cache is aligned with server response
+          dispatch(
+            customerApi.util.updateQueryData('getCustomerById', id, (draft) => {
+              Object.assign(draft as unknown as ICustomer, data);
+            })
+          );
+        } catch {
+          // Revert optimistic update on error
+          patchResult.undo();
+        }
+      },
+      invalidatesTags: (_result, _error, { id }) => [{ type: 'Customer', id }, 'Customer']
     }),
 
     patchCustomer: build.mutation({
