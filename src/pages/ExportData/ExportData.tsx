@@ -1,5 +1,6 @@
+/* eslint-disable simple-import-sort/imports */
 import { FC, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { Button, Checkbox, Col, Divider, Form, Input, message, Modal, Row, Select, Space, Typography } from 'antd';
 import { DownloadOutlined, SaveOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
@@ -22,6 +23,19 @@ import { usePermissions } from 'hooks/useAuth';
 import { t } from 'i18next';
 
 const { Title } = Typography;
+
+type AutoExportPayload = {
+  preset_id: number;
+  entity?: ExportEntity;
+  export?: 'pdf' | 'xlsx';
+  include?: FormValues['include'];
+  filename?: string;
+  include_pending?: boolean;
+};
+
+type ExportLocationState = {
+  autoExport?: AutoExportPayload;
+};
 
 // Helpers to serialize/deserialize Export form values into a query-string (for presets)
 const encodeFormToQS = (values: FormValues): string => {
@@ -143,6 +157,8 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
   const navigate = useNavigate();
   const [exportReports, { isLoading }] = useExportReportsMutation();
   const { hasPermission } = usePermissions();
+  const location = useLocation() as { state?: ExportLocationState };
+  const [autoExportDone, setAutoExportDone] = useState(false);
 
   // Watch selected entity to drive presets target
   const selectedEntity = Form.useWatch('entity', form) as ExportEntity | undefined;
@@ -162,6 +178,34 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
   const [selectedPresetId, setSelectedPresetId] = useState<number | string | undefined>(undefined);
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const [saveForm] = Form.useForm();
+
+  useEffect(() => {
+    const auto = location.state?.autoExport;
+
+    if (!autoExportDone && auto && typeof auto.preset_id === 'number') {
+      const body: import('types/requests').IExportReportsParams = {
+        export: auto.export || 'xlsx',
+        entity: auto.entity || 'technical_conditions',
+        preset_id: auto.preset_id,
+        include: auto.include,
+        filename: auto.filename,
+        include_pending: auto.include_pending
+      };
+
+      (async () => {
+        try {
+          const res = await exportReports(body).unwrap();
+          handleDownload(res.blob, res.filename, body.entity, body.export, body.filename);
+          message.success(t('exportData.messages.downloaded') || 'Файл сформирован и скачан');
+        } catch {
+          message.error(t('exportData.messages.failed') || 'Не удалось сформировать файл экспорта');
+        } finally {
+          setAutoExportDone(true);
+          navigate('/dashboard/export-data', { replace: true });
+        }
+      })();
+    }
+  }, [location, autoExportDone, exportReports, navigate]);
 
   const handleApplyPresetById = (id?: number | string) => {
     setSelectedPresetId(id);
