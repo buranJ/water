@@ -266,7 +266,13 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
                   <ul style={{ margin: '4px 0 0', paddingLeft: 18 }}>
                     {tuCustomerItems.map((item, idx) => (
                       <li key={idx}>
-                        {item.id != null ? <a href={`/dashboard/technical-conditions/tu-details/${item.id}`}>{item.label}</a> : item.label}
+                        {item.id != null ? (
+                          <a href={`/dashboard/technical-conditions/tu-details/${item.id}`} target='_blank'>
+                            {item.label}
+                          </a>
+                        ) : (
+                          item.label
+                        )}
                       </li>
                     ))}
                   </ul>
@@ -279,7 +285,13 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
                   <ul style={{ margin: '4px 0 0', paddingLeft: 18 }}>
                     {tuEntityItems.map((item, idx) => (
                       <li key={idx}>
-                        {item.id != null ? <a href={`/dashboard/technical-conditions/tu-details/${item.id}`}>{item.label}</a> : item.label}
+                        {item.id != null ? (
+                          <a href={`/dashboard/technical-conditions/tu-details/${item.id}`} target='_blank'>
+                            {item.label}
+                          </a>
+                        ) : (
+                          item.label
+                        )}
                       </li>
                     ))}
                   </ul>
