@@ -863,7 +863,7 @@
     "payment": {
       "columns": {
         "paymentNum": "Төлөм №",
-        "date": "Күнү",
+        "date": "Төлөө күнү",
         "amount": "Сумма",
         "source": "Булак",
         "status": "Статус"
