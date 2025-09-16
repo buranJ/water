@@ -151,11 +151,7 @@ export const ApplicationForm: FC<ApplicationFormProps> = ({
       </Form.Item>
       <Flex gap={16}>
         <Col span={12}>
-          <Form.Item
-            name='latitude'
-            label={t('applicationsCreate.form.labels.coordX')}
-            rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
-          >
+          <Form.Item name='latitude' label={t('applicationsCreate.form.labels.coordX')} rules={[]}>
             <Input
               variant='filled'
               size='large'
@@ -166,11 +162,7 @@ export const ApplicationForm: FC<ApplicationFormProps> = ({
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item
-            name='longitude'
-            label={t('applicationsCreate.form.labels.coordY')}
-            rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
-          >
+          <Form.Item name='longitude' label={t('applicationsCreate.form.labels.coordY')} rules={[]}>
             <Input
               variant='filled'
               size='large'
