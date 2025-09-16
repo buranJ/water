@@ -299,7 +299,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item label={t('addTuForms.form.labels.stage')} name='stage' rules={[{ required: false }]}>
-              <Select disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.stage')}>
+              <Select size='large' placeholder={t('addTuForms.form.placeholders.stage')}>
                 {stageOptions.map((option) => (
                   <Option key={option.value} value={option.value}>
                     {option.label}
@@ -310,7 +310,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Col>
           <Col span={12}>
             <Form.Item label={t('addTuForms.form.labels.formula')} name='formula' rules={[{ required: false }]}>
-              <Select disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.formula')}>
+              <Select size='large' placeholder={t('addTuForms.form.placeholders.formula')}>
                 {formulasQuery.data?.results.map((formula) => (
                   <Option key={formula.id} value={formula.id}>
                     {formula.title}
@@ -324,7 +324,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item label={t('addTuForms.form.labels.status')} name='status' rules={[{ required: true }]}>
-              <Select disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.status')}>
+              <Select size='large' placeholder={t('addTuForms.form.placeholders.status')}>
                 {statusOptions.map((option) => (
                   <Option key={option.value} value={option.value}>
                     {option.label}
