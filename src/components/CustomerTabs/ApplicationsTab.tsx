@@ -100,7 +100,7 @@ export const ApplicationsTab: FC<IProps> = ({ applications }) => {
       key: 'ty_id',
       render: (tyId: number | null) =>
         tyId ? (
-          <Button size='small' type='link' onClick={() => navigate(`/dashboard/technical-conditions/${tyId}`)}>
+          <Button size='small' type='link' onClick={() => navigate(`/dashboard/technical-conditions/tu-details/${tyId}`)}>
             {t('routers.tuNumberPrefix')} {tyId}
           </Button>
         ) : (

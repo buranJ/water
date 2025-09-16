@@ -181,7 +181,7 @@ export const TechnicalConditionsPage = () => {
       next.set('page_size', String(pageSize));
       const qs = next.toString();
       await createPreset({ name: values.name, description: values.description, target: 'ty', query_string: qs }).unwrap();
-      message.success(t('technicalConditions.presets.saved', 'Пресет сохранён'));
+      message.success(t('technicalConditions.presets.saved', 'Шаблон сохранён'));
       setSaveModalOpen(false);
       saveForm.resetFields();
     } catch {
@@ -245,7 +245,7 @@ export const TechnicalConditionsPage = () => {
         />
         <Modal
           open={saveModalOpen}
-          title={t('technicalConditions.presets.saveTitle', 'Сохранить пресет')}
+          title={t('technicalConditions.presets.saveTitle', 'Сохранить шаблон')}
           onOk={handleSavePresetOk}
           onCancel={() => setSaveModalOpen(false)}
           confirmLoading={creatingPreset}
