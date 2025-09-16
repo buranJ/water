@@ -50,6 +50,50 @@ export interface IAddLoadParams {
 export type IGetLoadIncreasesResponse = ILoadIncreases[];
 export type IGetLoadIncreasesParams = { tyId: string };
 
+export interface IForkMinimalParams {
+  id: string;
+  water_required?: string;
+  pressure_required?: number;
+  sewage_amount?: string;
+
+  // Optional extras supported by TechnicalConditionBaseRequest
+  fire_fighting_inner?: string;
+  fire_fighting_outer?: string;
+
+  fire_input_1?: string;
+  street_pass_input_1?: string;
+  free_pressure_required_input_1?: number;
+  collector_diametr_fire_1?: string;
+
+  fire_input_2?: string;
+  street_pass_input_2?: string;
+  free_pressure_required_input_2?: number;
+  collector_diametr_fire_2?: string;
+
+  connection_target?: string;
+
+  // Water connection
+  collector_diametr_water?: string;
+  water_pipe?: string;
+  street_pass_water?: string;
+  provide_water?: string;
+
+  // Sewer connection
+  collector_diametr_sewer?: string;
+  sewer_pipe?: string;
+  street_pass_sewer?: string;
+  provide_sewer?: string;
+
+  // Flags
+  is_water?: boolean;
+  is_kanal?: boolean;
+
+  // Meta
+  comment?: string;
+  files?: File[];
+}
+export type IForkMinimalResponse = ITechnicalCondition;
+
 export type IDownloadTyPdfResponse = { blob: Blob; filename: string | null };
 export type IDownloadTyPdfParams = { tyId: string };
 

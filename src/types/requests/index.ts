@@ -40,6 +40,8 @@ export type {
   IDeleteTechnicalConditionResponse,
   IDownloadTyPdfParams,
   IDownloadTyPdfResponse,
+  IForkMinimalParams,
+  IForkMinimalResponse,
   IGetAllTechnicalConditionParams,
   IGetAllTechnicalConditionResponse,
   IGetLoadIncreasesParams,
