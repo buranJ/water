@@ -31,7 +31,7 @@ interface Props {
   initialValues?: TUFilterValues;
   onFilterChange: (values: TUFilterValues) => void;
   onAddClick: () => void;
-  onDownloadClick: () => void;
+  onDownloadClick: (presetId?: number | string) => void;
 
   // Presets
   presets?: IFilterPreset[];
@@ -257,7 +257,7 @@ export const TUFilterBar = ({
           {t('filterBar.add')}
         </Button>
 
-        <Button icon={<DownloadOutlined />} onClick={onDownloadClick}>
+        <Button icon={<DownloadOutlined />} onClick={() => onDownloadClick(selectedPresetId)}>
           {t('common.export')}
         </Button>
 

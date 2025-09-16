@@ -5,6 +5,7 @@ export interface IExportReportsParams {
   entity: ExportEntity;
   filters?: ExportFilters;
   ids?: number[];
+  preset_id?: number;
   include?: ExportInclude;
   fields?: string[];
   filename?: string;

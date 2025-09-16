@@ -148,8 +148,20 @@ export const TechnicalConditionsPage = () => {
     navigate('/dashboard/applications/create');
   };
 
-  const handleDownloadClick = () => {
-    navigate('/dashboard/export-data');
+  const handleDownloadClick = (presetId?: number | string) => {
+    if (presetId) {
+      navigate('/dashboard/export-data', {
+        state: {
+          autoExport: {
+            preset_id: Number(presetId),
+            entity: 'technical_conditions',
+            export: 'xlsx'
+          }
+        }
+      });
+    } else {
+      navigate('/dashboard/export-data');
+    }
   };
 
   const applyPreset = (preset: { query_string: string }) => {
