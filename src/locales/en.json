@@ -184,7 +184,8 @@
     "optionalComment": "Comment (optional)",
     "noData": "No data",
     "error": "Error",
-    "reset": "Reset"
+    "reset": "Reset",
+    "advanced": "Advanced"
   },
   "geoportal": {
     "errorLoad": "Failed to load data",
@@ -1063,6 +1064,8 @@
         "fireFighting": "Firefighting (internal/external)",
         "stage": "Stage",
         "formula": "Formulas",
+        "isWater": "Water connection",
+        "isKanal": "Sewer connection",
         "connectionTarget": "What the object connects to",
         "streetPass": "Street pass",
         "collector": "Collector",

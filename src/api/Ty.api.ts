@@ -3,7 +3,6 @@ import { getBaseQuery } from 'common/helpers';
 import type {
   IActTyResponse,
   IAddLoadParams,
-  // act_ty
   ICreateActTyParams,
   ICreateTechnicalConditionParams,
   ICreateTechnicalConditionRequest,
@@ -11,6 +10,8 @@ import type {
   IDeleteTechnicalConditionResponse,
   IDownloadTyPdfParams,
   IDownloadTyPdfResponse,
+  IForkMinimalParams,
+  IForkMinimalResponse,
   IGetAllTechnicalConditionParams,
   IGetAllTechnicalConditionResponse,
   IGetLoadIncreasesParams,
@@ -122,6 +123,47 @@ export const tyApi = createApi({
         };
       },
       invalidatesTags: (_result, _error, { ty_id }) => [{ type: 'Ty', id: ty_id }]
+    }),
+
+    forkMinimal: build.mutation<IForkMinimalResponse, IForkMinimalParams>({
+      query: ({ id, water_required, pressure_required, sewage_amount, comment, files, ...rest }) => {
+        if (files && files.length) {
+          const formData = new FormData();
+          formData.append('water_required', String(water_required));
+          formData.append('pressure_required', String(pressure_required));
+          formData.append('sewage_amount', String(sewage_amount));
+          if (comment) formData.append('comment', comment);
+
+          // Append optional extras supported by TechnicalConditionBaseRequest
+          Object.entries(rest).forEach(([key, value]) => {
+            if (value === undefined || value === null) return;
+            formData.append(key, typeof value === 'number' || typeof value === 'boolean' ? String(value) : (value as string));
+          });
+
+          files.forEach((file) => formData.append('files', file));
+          return {
+            url: `/ty/technical-conditions/${id}/fork_minimal/`,
+            method: 'POST',
+            body: formData,
+            formData: true
+          };
+        }
+        return {
+          url: `/ty/technical-conditions/${id}/fork_minimal/`,
+          method: 'POST',
+          body: {
+            water_required,
+            pressure_required,
+            sewage_amount,
+            ...(comment ? { comment } : {}),
+            ...rest
+          }
+        };
+      },
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Ty', id },
+        { type: 'TyLoads', id }
+      ]
     }),
 
     getLoadIncreases: build.query<IGetLoadIncreasesResponse, IGetLoadIncreasesParams>({
@@ -252,6 +294,7 @@ export const {
   useGetHistoryTyQuery,
   useCreateTyFromApplicationMutation,
   useAddLoadMutation,
+  useForkMinimalMutation,
   useGetLoadIncreasesQuery,
   useLazyDownloadTyPdfQuery,
   useLazyDownloadProtocolDocxQuery,
