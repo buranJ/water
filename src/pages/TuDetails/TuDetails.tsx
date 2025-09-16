@@ -1,7 +1,7 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router';
 import { Alert, Button, Card, Col, Flex, message, Modal, Row, Spin, Tabs, TabsProps, Typography } from 'antd';
-import { ClockCircleTwoTone } from '@ant-design/icons';
+import { CheckCircleTwoTone, ClockCircleTwoTone, EditTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
 import { ActionsBar } from './components/ActionsBar';
 import { DataSection } from './components/DataSection';
 import { DocumentsProgress } from './components/DocumentsProgress';
@@ -96,6 +96,31 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   }, [objectData?.act]);
 
   const isTuApproved = objectData?.stage === 'approved';
+
+  const getActStatusLabel = (st?: IActEnum) => {
+    const map: Record<IActEnum, string> = {
+      draft: t('tuDetails.act.status.draft', 'Черновик'),
+      review: t('tuDetails.act.status.review', 'На рассмотрении'),
+      approved: t('tuDetails.act.status.approved', 'Утвержден'),
+      done: t('tuDetails.act.status.done', 'Завершен')
+    };
+    return st ? map[st] : t('tuDetails.act.status.none', 'Нет акта');
+  };
+
+  const getActStatusIcon = (st?: IActEnum) => {
+    switch (st) {
+      case 'draft':
+        return <EditTwoTone twoToneColor='#fa8c16' />;
+      case 'review':
+        return <ClockCircleTwoTone twoToneColor='#327BE8' />;
+      case 'approved':
+        return <CheckCircleTwoTone twoToneColor='#52c41a' />;
+      case 'done':
+        return <CheckCircleTwoTone twoToneColor='#389e0d' />;
+      default:
+        return <QuestionCircleTwoTone twoToneColor='#8c8c8c' />;
+    }
+  };
 
   const openActStatusModal = (status: IActEnum) => {
     if (!id) return;
@@ -352,8 +377,8 @@ export const TuDetails: FC<IProps> = ({ title }) => {
             <Card>
               <Title level={4}>{t('tuDetails.titles.confirmationAct')}</Title>
               <Row justify='space-between' align='middle'>
-                <Text>{t('common.pending')}</Text>
-                <ClockCircleTwoTone twoToneColor='#327BE8' />
+                <Text>{getActStatusLabel(objectData.act?.status as IActEnum | undefined)}</Text>
+                {getActStatusIcon(objectData.act?.status as IActEnum | undefined)}
               </Row>
               <br />
               {objectData.act && (
