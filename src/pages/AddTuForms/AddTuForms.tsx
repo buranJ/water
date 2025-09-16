@@ -127,6 +127,9 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
     }
   ];
 
+  // All fields inside "ТЕХНИЧЕСКИЕ ПАРАМЕТРЫ" should be read-only while editing TU
+  const techParamsReadOnly = Boolean(tuQuery.data?.id);
+
   const onCustomerEdit = useCallback(() => {
     navigate(`/dashboard/customers/${tuQuery.data?.customer.id}/edit`);
   }, [navigate, tuQuery.data?.customer.id]);
@@ -266,12 +269,12 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               name='sewage_amount'
               rules={[{ required: true, message: t('addTuForms.form.validation.required') }]}
             >
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.sewageAmount')} />
+              <Input disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.sewageAmount')} />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item label={t('addTuForms.form.labels.waterRequired')} name='water_required' rules={[{ required: false }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.waterRequired')} />
+              <Input disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.waterRequired')} />
             </Form.Item>
           </Col>
         </Row>
@@ -279,24 +282,24 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item label={t('addTuForms.form.labels.pressureRequired')} name='pressure_required' rules={[{ required: false }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.pressureRequired')} />
+              <Input disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.pressureRequired')} />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item label={t('addTuForms.form.labels.fireFightingOuter')} name='fire_fighting_inner' rules={[{ required: false }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.fireFighting')} />
+              <Input disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.fireFighting')} />
             </Form.Item>
           </Col>
         </Row>
 
         <Form.Item label={t('addTuForms.form.labels.fireFightingInner')} name='fire_fighting_outer' rules={[{ required: false }]}>
-          <Input size='large' placeholder={t('addTuForms.form.placeholders.fireFighting')} />
+          <Input disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.fireFighting')} />
         </Form.Item>
 
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item label={t('addTuForms.form.labels.stage')} name='stage' rules={[{ required: false }]}>
-              <Select size='large' placeholder={t('addTuForms.form.placeholders.stage')}>
+              <Select disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.stage')}>
                 {stageOptions.map((option) => (
                   <Option key={option.value} value={option.value}>
                     {option.label}
@@ -307,7 +310,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Col>
           <Col span={12}>
             <Form.Item label={t('addTuForms.form.labels.formula')} name='formula' rules={[{ required: false }]}>
-              <Select size='large' placeholder={t('addTuForms.form.placeholders.formula')}>
+              <Select disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.formula')}>
                 {formulasQuery.data?.results.map((formula) => (
                   <Option key={formula.id} value={formula.id}>
                     {formula.title}
@@ -321,7 +324,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item label={t('addTuForms.form.labels.status')} name='status' rules={[{ required: true }]}>
-              <Select size='large' placeholder={t('addTuForms.form.placeholders.status')}>
+              <Select disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.status')}>
                 {statusOptions.map((option) => (
                   <Option key={option.value} value={option.value}>
                     {option.label}
