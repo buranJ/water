@@ -177,6 +177,7 @@
     "save": "Save",
     "edit": "Edit",
     "cancel": "Cancel",
+    "continue": "Continue",
     "latitude": "Latitude",
     "longitude": "Longitude",
     "comment": "Comment",
@@ -860,6 +861,21 @@
       "delete": "Delete"
     },
     "dragHint": "Drag files here to upload"
+  },
+  "refusal": {
+    "confirmTitle": "Are you sure you want to continue?",
+    "confirmContent": "Refusals were found for the customer or object. Continue submitting the application?",
+    "confirmContentCustomer": "Refusals were found for the customer. Continue submitting the application?",
+    "confirmContentEntity": "Refusals were found for the object. Continue submitting the application?",
+    "confirmContentBoth": "Refusals were found for both the customer and the object. Continue submitting the application?",
+    "customerTitle": "Customer refusals",
+    "entityTitle": "Object refusals",
+    "noCauses": "No reasons specified",
+    "tuCustomerTitle": "Related TUs found for the customer",
+    "tuEntityTitle": "Related TUs found for the object",
+    "confirmContentTuCustomer": "Related TUs were found for the customer. Continue submitting the application?",
+    "confirmContentTuEntity": "Related TUs were found for the object. Continue submitting the application?",
+    "confirmContentTuBoth": "Related TUs were found for both the customer and the object. Continue submitting the application?"
   },
   "applicationsCreate": {
     "uploadModal": {

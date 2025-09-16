@@ -116,6 +116,22 @@ export const refusalApi = createApi({
       })
     }),
 
+    // Check TU by customer
+    checkTuByCustomer: build.query<unknown, number>({
+      query: (customerId) => ({
+        url: `refusal/check-tu/customer/${customerId}/`,
+        method: 'GET'
+      })
+    }),
+
+    // Check TU by entity (object)
+    checkTuByEntity: build.query<unknown, number>({
+      query: (entityId) => ({
+        url: `refusal/check-tu/entity/${entityId}/`,
+        method: 'GET'
+      })
+    }),
+
     searchRefusal: build.query<unknown, { application?: number | string; ty?: number | string }>({
       query: ({ application, ty }) => ({
         url: 'refusal/search/',
@@ -178,6 +194,8 @@ export const {
   useLazyCheckRefuseByCustomerQuery,
   useCheckRefuseByEntityQuery,
   useLazyCheckRefuseByEntityQuery,
+  useLazyCheckTuByCustomerQuery,
+  useLazyCheckTuByEntityQuery,
   useSearchRefusalQuery,
   useLazySearchRefusalQuery,
   useCreateRefusalMutation

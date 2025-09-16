@@ -381,13 +381,11 @@ export const TuDetails: FC<IProps> = ({ title }) => {
                         a.remove();
                         window.URL.revokeObjectURL(url);
                       } catch (err) {
-                        // eslint-disable-next-line no-console
                         console.error('[ACT GET] download file failed', err);
                         // Fallback — открыть в новой вкладке
                         window.open(fileUrl, '_blank');
                       }
                     } catch (e) {
-                      // eslint-disable-next-line no-console
                       console.error('[ACT GET] failed', e);
                       message.error(t('tuDetails.act.messages.statusUpdateFailed', 'Не удалось изменить статус акта'));
                     }
