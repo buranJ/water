@@ -157,7 +157,8 @@ export const ApplicationForm: FC<ApplicationFormProps> = ({
               size='large'
               placeholder={t('applicationsCreate.form.placeholders.xPlaceholder')}
               type='number'
-              min={0}
+              step='any'
+              inputMode='decimal'
             />
           </Form.Item>
         </Col>
@@ -168,7 +169,8 @@ export const ApplicationForm: FC<ApplicationFormProps> = ({
               size='large'
               placeholder={t('applicationsCreate.form.placeholders.yPlaceholder')}
               type='number'
-              min={0}
+              step='any'
+              inputMode='decimal'
             />
           </Form.Item>
         </Col>
