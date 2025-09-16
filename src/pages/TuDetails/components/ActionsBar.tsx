@@ -15,6 +15,7 @@ interface ActionsBarProps {
   onAddLoad: () => void;
   onReject: () => void;
   onApprove: () => void;
+  onRejectTu?: () => void;
   isDownloading: boolean;
   // New props for contract download
   onDownloadContract?: (protocol_id: string) => void;
@@ -30,6 +31,7 @@ export const ActionsBar: FC<ActionsBarProps> = ({
   onAddLoad,
   onReject,
   onApprove,
+  onRejectTu,
   isDownloading,
   onDownloadContract,
   isContractDownloading,
@@ -82,6 +84,11 @@ export const ActionsBar: FC<ActionsBarProps> = ({
       {hasPermission('add_actty') && (
         <Button onClick={onAddLoad} icon={<PlusOutlined />} disabled={data.status === 'inactive'}>
           {t('historyOfLoads.addLoad')}
+        </Button>
+      )}
+      {hasPermission('change_technicalcondition') && data.status !== 'inactive' && data.status !== 'archived' && (
+        <Button danger onClick={onRejectTu}>
+          {t('tuDetails.actions.rejectTuFinal', 'Отказать ТУ')}
         </Button>
       )}
       {data.stage !== 'approved' && data.status !== 'inactive' && data.status !== 'archived' && (

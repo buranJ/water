@@ -179,6 +179,18 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     }
   };
 
+  const handleRejectTu = async () => {
+    if (!id) return;
+    try {
+      await updateTy({ id, body: { ...objectData, status: 'rejected' } as unknown as ITyBody }).unwrap();
+      message.success(t('tuDetails.messages.tuRejected', 'ТУ отклонено'));
+      refetch();
+    } catch (e) {
+      console.error('Failed to reject TU', e);
+      message.error(t('tuDetails.messages.tuRejectFailed', 'Не удалось отказать ТУ'));
+    }
+  };
+
   const handleRejectSubmit = async (data: RefusalBody) => {
     if (!id) return;
     try {
@@ -360,6 +372,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
         onAddLoad={handleAddLoad}
         onReject={handleRejectClick}
         onApprove={handleApproveClick}
+        onRejectTu={handleRejectTu}
         isDownloading={isDownloading}
         onDownloadContract={handleDownloadContract}
         isContractDownloading={isContractDownloading}
