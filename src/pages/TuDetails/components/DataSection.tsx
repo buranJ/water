@@ -1,6 +1,8 @@
+/* eslint-disable simple-import-sort/imports */
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, Space, Typography } from 'antd';
+import { useNavigate } from 'react-router';
+import { Button, Card, Space, Typography } from 'antd';
 import { IStageEnum, IStatus6b3Enum } from 'types/common';
 import type { IGetTyById } from 'types/entities/tu';
 
@@ -12,6 +14,7 @@ interface DataSectionProps {
 
 export const DataSection: FC<DataSectionProps> = ({ objectData }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const statusRender = (status: IStatus6b3Enum) => {
     switch (status) {
@@ -48,12 +51,7 @@ export const DataSection: FC<DataSectionProps> = ({ objectData }) => {
 
       <Card style={{ marginBottom: 24 }}>
         <Title level={4}>{t('tuDetails.titles.applicationInfo')}</Title>
-        <Text strong>{t('tuDetails.labels.requestNumber')}</Text> <Text>{objectData?.request_number || '—'}</Text>
-        <br />
         <Text strong>{t('tuDetails.labels.requestDate')}</Text> <Text>{(objectData?.request_date as string) || '—'}</Text>
-        <br />
-        <Text strong>{t('tuDetails.labels.requestSource')}</Text> <Text>{objectData?.request_source || '—'}</Text>
-        <br />
         <br />
         {objectData?.status && (
           <Space>
@@ -67,6 +65,18 @@ export const DataSection: FC<DataSectionProps> = ({ objectData }) => {
             <Text strong>{t('tuDetails.labels.stage')}</Text>
             <Text>{stageRender(objectData?.stage) || '—'}</Text>
           </Space>
+        )}
+        <br />
+        <br />
+        {objectData?.application ? (
+          <>
+            <Button type='primary' onClick={() => navigate(`/dashboard/applications/${objectData.application?.id}`)}>
+              {t('tuDetails.buttons.goToApplication', 'Перейти к заявке')}
+            </Button>
+            <br />
+          </>
+        ) : (
+          <br />
         )}
       </Card>
 
