@@ -222,7 +222,7 @@ export const TUFilterBar = ({
       </Form>
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
         <Button icon={<SaveOutlined />} onClick={() => onRequestSavePreset && onRequestSavePreset()}>
-          {t('technicalConditions.presets.save', 'Сохранить пресет')}
+          {t('technicalConditions.presets.save', 'Сохранить шаблон')}
         </Button>
       </div>
     </div>
@@ -264,7 +264,7 @@ export const TUFilterBar = ({
         <Select
           showSearch
           allowClear
-          placeholder={t('technicalConditions.presets.select', 'Выберите пресет')}
+          placeholder={t('technicalConditions.presets.select', 'Выберите шаблон')}
           style={{ minWidth: 240 }}
           loading={presetsLoading}
           value={selectedPresetId}

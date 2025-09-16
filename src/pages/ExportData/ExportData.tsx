@@ -180,7 +180,7 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
       }));
       if (fieldsArr.length) form.setFields(fieldsArr);
     }
-    message.success(t('exportData.presets.applied', 'Пресет применён'));
+    message.success(t('exportData.presets.applied', 'Шаблон применён'));
   };
 
   const handleRequestSavePreset = () => setSaveModalOpen(true);
@@ -200,7 +200,7 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
         target: currentValues.entity === 'technical_conditions' ? 'ty' : (currentValues.entity as string),
         query_string: qs
       }).unwrap();
-      message.success(t('exportData.presets.saved', 'Пресет сохранён'));
+      message.success(t('exportData.presets.saved', 'Шаблон сохранён'));
       setSaveModalOpen(false);
       saveForm.resetFields();
     } catch {
@@ -262,12 +262,12 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
           <Col>
             <Space size={8} align='center' wrap>
               <Typography.Text type='secondary' style={{ marginRight: 4 }}>
-                {t('exportData.presets.label', 'Пресеты')}
+                {t('exportData.presets.label', 'Шаблоны')}
               </Typography.Text>
               <Select
                 size='middle'
                 allowClear
-                placeholder={t('exportData.presets.select', 'Выберите пресет')}
+                placeholder={t('exportData.presets.select', 'Выберите шаблон')}
                 style={{ minWidth: 280 }}
                 loading={presetsLoading}
                 disabled={!presetTarget}
@@ -278,7 +278,7 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
                 filterOption={(input, option) => ((option?.label as string) || '').toLowerCase().includes(input.toLowerCase())}
               />
               <Button size='middle' icon={<SaveOutlined />} onClick={handleRequestSavePreset}>
-                {t('exportData.presets.save', 'Сохранить пресет')}
+                {t('exportData.presets.save', 'Сохранить шаблон')}
               </Button>
             </Space>
           </Col>
@@ -416,7 +416,7 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
         </Row>
         <Modal
           open={saveModalOpen}
-          title={t('exportData.presets.saveTitle', 'Сохранить пресет')}
+          title={t('exportData.presets.saveTitle', 'Сохранить шаблон')}
           onOk={handleSavePresetOk}
           onCancel={() => setSaveModalOpen(false)}
           confirmLoading={creatingPreset}
