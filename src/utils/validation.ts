@@ -19,7 +19,11 @@ export const cadastralSchema = z.string().regex(/^\d{2}-\d{3}-\d{3}-\d{3}$/, 'Н
 export const zodRule =
   <T extends z.ZodTypeAny>(schema: T) =>
   async (_: unknown, value: unknown) => {
-    const result = schema.safeParse(value ?? '');
+    // Allow empty/undefined values to pass; use a separate { required: true } rule for required fields
+    if (value === undefined || value === null || (typeof value === 'string' && value.trim() === '')) {
+      return Promise.resolve();
+    }
+    const result = schema.safeParse(value);
     if (result.success) return Promise.resolve();
     const first = result.error.issues[0];
     return Promise.reject(new Error(first?.message || 'Неверный формат'));
