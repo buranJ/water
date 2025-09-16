@@ -58,7 +58,10 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
 
   const currency = t('tuDetails.currency');
   const hasInvoices = invoicesData && invoicesData.length > 0 && !invoiceError;
-  const isEditDisabled = hasInvoices;
+
+  // Убираем блокировку редактирования - теперь можно редактировать всегда
+  // const isEditDisabled = hasInvoices; // Старая логика
+  const isEditDisabled = false; // Разрешаем редактирование всегда
 
   useEffect(() => {
     if (onOpenPaymentModal) {
@@ -73,16 +76,42 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
   };
 
   const handleEditClick = () => {
-    if (isEditDisabled) {
-      message.warning(t('accounting.warnings.cannotEditWithInvoices') || 'Нельзя редактировать протокол при наличии счетов на оплату');
-      return;
-    }
+    // Убираем предупреждение о невозможности редактирования
     setIsEditModalVisible(true);
   };
 
   const handleEditModalClose = () => {
     setIsEditModalVisible(false);
     refetchProtocol();
+  };
+
+  // Обновленная функция для обработки успешного редактирования
+  const handleEditSuccess = async () => {
+    try {
+      // Обновляем данные протокола
+      await refetchProtocol();
+
+      // Если есть счета, регенерируем их с новыми данными
+      if (hasInvoices && protocolData?.id) {
+        message.info('Обновляем счета с новыми данными...');
+
+        try {
+          await generateInvoice({ protocolId: protocolData.id.toString() }).unwrap();
+          await refetchInvoice();
+          await getInvoicesByProtocolTy({ protocol_id: protocolData.id.toString() });
+
+          message.success('Протокол обновлен и счета перегенерированы с новыми данными');
+        } catch (invoiceError) {
+          console.error('Error regenerating invoices:', invoiceError);
+          message.warning('Протокол обновлен, но возникла ошибка при обновлении счетов');
+        }
+      } else {
+        message.success('Протокол успешно обновлен');
+      }
+    } catch (error) {
+      console.error('Error in handleEditSuccess:', error);
+      message.error('Ошибка при обновлении протокола');
+    }
   };
 
   const handleGenerateInvoice = async () => {
@@ -205,22 +234,6 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
       item: 'Ст‑ть подключ канализации (без НДС и НСП)',
       price: `${protocolData.kanal_sum} ${currency}`
     },
-    // {
-    //   key: '2',
-    //   item: t('protocolDoc.vikCostLabel'),
-    //   price: `10080${currency}`
-    // },
-
-    // {
-    //   key: '7',
-    //   item: t('accounting.protocol.paperWorkWater'),
-    //   price: `${protocolData.paper_water_sum || '0'}${currency}`
-    // },
-    // {
-    //   key: '8',
-    //   item: t('accounting.protocol.paperWorkSewer'),
-    //   price: `${protocolData.paper_kanal_sum || '0'}${currency}`
-    // },
     {
       key: '9',
       item: 'Итог:',
@@ -310,18 +323,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
               {technicalConditionId}-472
             </Title>
             <Space wrap size={[12, 8]} style={{ flex: '0 0 auto' }}>
-              <Button
-                icon={<EditOutlined />}
-                type='primary'
-                onClick={handleEditClick}
-                size='middle'
-                disabled={isEditDisabled}
-                title={
-                  isEditDisabled
-                    ? t('accounting.warnings.cannotEditWithInvoices') || 'Нельзя редактировать протокол при наличии счетов на оплату'
-                    : ''
-                }
-              >
+              <Button icon={<EditOutlined />} type='primary' onClick={handleEditClick} size='middle' disabled={isEditDisabled}>
                 {t('common.edit')}
               </Button>
               <Button icon={<DownloadOutlined />} type='default' onClick={handleDownloadProtocol} loading={isDownloading} size='middle'>
@@ -398,14 +400,11 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
 
   return (
     <Space direction='vertical' size={24} style={{ width: '100%' }}>
-      {/* Основная область с вкладками - растянута на всю ширину */}
       <div style={{ width: '100%' }}>
         <Tabs activeKey={activeAccountingTab} items={accountingTabItems} onChange={setActiveAccountingTab} tabPosition='top' size='large' />
       </div>
 
-      {/* Секция со счетами и загрузкой - располагается снизу */}
       <Row gutter={[24, 24]}>
-        {/* Карточка со счетами */}
         <Col xs={24} sm={24} md={12} lg={12} xl={12} xxl={12}>
           <Card style={{ height: '100%' }} bodyStyle={{ padding: '20px' }}>
             {invoiceLoading && (
@@ -456,7 +455,6 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
           </Card>
         </Col>
 
-        {/* Карточка загрузки квитанции */}
         <Col xs={24} sm={24} md={12} lg={12} xl={12} xxl={12}>
           <Card style={{ height: '100%' }} bodyStyle={{ padding: '20px' }}>
             <Title level={4} style={{ fontSize: '18px', marginBottom: 20 }}>
@@ -502,7 +500,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
         visible={isEditModalVisible}
         onClose={handleEditModalClose}
         protocolData={protocolData || null}
-        onSuccess={refetchProtocol}
+        onSuccess={handleEditSuccess} // Передаем новый обработчик
       />
     </Space>
   );
