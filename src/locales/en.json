@@ -565,6 +565,15 @@
         "contracted": "Contracted"
       }
     },
+    "presets": {
+      "label": "Templates",
+      "select": "Select template",
+      "save": "Save template",
+      "saveTitle": "Save filter template",
+      "saved": "Template saved",
+      "applied": "Template applied",
+      "entityRequired": "Please select an entity first"
+    },
     "exportHistory": "Export history"
   },
   "notFound": {
@@ -598,15 +607,15 @@
       "tuWithLoads": "TUs with load increases"
     },
     "presets": {
-      "select": "Select preset",
-      "save": "Save preset",
-      "saveTitle": "Save filter preset",
+      "select": "Select template",
+      "save": "Save template",
+      "saveTitle": "Save filter template",
       "name": "Name",
       "nameReq": "Enter a name",
       "description": "Description",
-      "saved": "Preset saved",
-      "deleted": "Preset deleted",
-      "deleteConfirm": "Delete preset?"
+      "saved": "Template saved",
+      "deleted": "Template deleted",
+      "deleteConfirm": "Delete template?"
     }
   },
   "customers": {
