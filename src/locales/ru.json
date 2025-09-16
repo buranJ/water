@@ -1029,7 +1029,7 @@
     "payment": {
       "columns": {
         "paymentNum": "№ платежа",
-        "date": "Дата",
+        "date": "Дата оплаты",
         "amount": "Сумма",
         "source": "Источник",
         "status": "Статус"

@@ -1029,7 +1029,7 @@
     "payment": {
       "columns": {
         "paymentNum": "Payment No.",
-        "date": "Date",
+        "date": "Payment date",
         "amount": "Amount",
         "source": "Source",
         "status": "Status"
