@@ -1,7 +1,7 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router';
 import { Alert, Button, Card, Col, Flex, message, Modal, Row, Spin, Tabs, TabsProps, Typography } from 'antd';
-import { CheckCircleTwoTone, ClockCircleTwoTone, EditTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
+import { CheckCircleTwoTone, ClockCircleTwoTone, EditTwoTone, FileOutlined, QuestionCircleTwoTone } from '@ant-design/icons';
 import { ActionsBar } from './components/ActionsBar';
 import { DataSection } from './components/DataSection';
 import { DocumentsProgress } from './components/DocumentsProgress';
@@ -376,6 +376,18 @@ export const TuDetails: FC<IProps> = ({ title }) => {
 
             <Card>
               <Title level={4}>{t('tuDetails.titles.confirmationAct')}</Title>
+              {objectData.act?.file && (
+                <Row justify='start' align='middle' gutter={8}>
+                  <Col>
+                    <FileOutlined style={{ color: '#1677ff' }} />
+                  </Col>
+                  <Col>
+                    <Typography.Link onClick={() => window.open(objectData.act!.file!, '_blank')}>
+                      {decodeURIComponent(objectData.act!.file!.split('/').pop() || 'act.docx')}
+                    </Typography.Link>
+                  </Col>
+                </Row>
+              )}
               <Row justify='space-between' align='middle'>
                 <Text>{getActStatusLabel(objectData.act?.status as IActEnum | undefined)}</Text>
                 {getActStatusIcon(objectData.act?.status as IActEnum | undefined)}
