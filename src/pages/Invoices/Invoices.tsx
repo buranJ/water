@@ -40,7 +40,7 @@ function toNumber(v?: string): number | undefined {
   return Number.isFinite(n) ? n : undefined;
 }
 
-export default function InvoicesPage({ title = 'Счета' }: { title?: string }) {
+export default function InvoicesPage({ title = 'routers.invoices' }: { title?: string }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [sp, setSp] = useSearchParams();
@@ -124,7 +124,7 @@ export default function InvoicesPage({ title = 'Счета' }: { title?: string 
 
   const columns: ColumnsType<IAccountingInvoice> = [
     {
-      title: t('changeHistory.columns.id') || 'ID',
+      title: t('changeHistory.columns.id'),
       dataIndex: 'id',
       key: 'id',
       sorter: true,
@@ -136,19 +136,19 @@ export default function InvoicesPage({ title = 'Счета' }: { title?: string 
       width: 90
     },
     {
-      title: t('protocolDetail.invoice.number') || 'Номер',
+      title: t('protocolDetail.invoice.number'),
       dataIndex: 'invoice_number',
       key: 'invoice_number'
     },
     {
-      title: t('common.dateLabel') || 'Дата',
+      title: t('common.dateLabel'),
       dataIndex: 'invoice_date',
       key: 'invoice_date',
       sorter: true,
       render: (v: string) => (v ? new Date(v).toLocaleDateString('ru-RU') : '')
     },
     {
-      title: t('accounting.labels.type') || 'Тип',
+      title: t('accounting.labels.type'),
       dataIndex: 'invoice_type',
       key: 'invoice_type',
       render: (v: string) => {
@@ -156,30 +156,26 @@ export default function InvoicesPage({ title = 'Счета' }: { title?: string 
         let label = v;
         if (v === 'main') {
           color = 'blue';
-          label = t('accounting.invoiceTypeLabels.main') || 'Основной';
+          label = t('accounting.invoiceTypeLabels.main');
         } else if (v === 'paper_tu') {
           color = 'orange';
-          label = t('accounting.invoiceTypeLabels.paper_tu') || 'Бумажные работы';
+          label = t('accounting.invoiceTypeLabels.paper_tu');
         }
         return <Tag color={color}>{label}</Tag>;
       }
     },
     {
-      title: t('accounting.labels.total') || 'Итого',
+      title: t('accounting.labels.total'),
       dataIndex: 'total_sum',
       key: 'total_sum',
       align: 'right'
     },
     {
-      title: t('accounting.labels.status') || 'Статус',
+      title: t('accounting.labels.status'),
       dataIndex: 'is_paid',
       key: 'is_paid',
       render: (v: boolean) =>
-        v ? (
-          <Tag color='green'>{t('accounting.messages.paidTag') || 'Оплачен'}</Tag>
-        ) : (
-          <Tag color='blue'>{t('accounting.labels.pending') || 'Ожидает оплаты'}</Tag>
-        )
+        v ? <Tag color='green'>{t('accounting.messages.paidTag')}</Tag> : <Tag color='blue'>{t('accounting.labels.pending')}</Tag>
     }
   ];
 
@@ -194,13 +190,13 @@ export default function InvoicesPage({ title = 'Счета' }: { title?: string 
   const [searchInput, setSearchInput] = useState(searchState.search || '');
 
   return (
-    <DashboardLayout title={title.includes('.') ? title : t('routers.invoices') || title}>
+    <DashboardLayout title={title.includes('.') ? title : t('routers.invoices')}>
       <Space direction='vertical' style={{ width: '100%' }} size={16}>
         <Card>
           <Flex wrap='wrap' gap={12} align='center'>
             <Input
               style={{ width: 200 }}
-              placeholder={t('filterBar.search') || 'Поиск'}
+              placeholder={t('filterBar.search')}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               onPressEnter={() => setParams({ search: searchInput })}
@@ -208,78 +204,78 @@ export default function InvoicesPage({ title = 'Счета' }: { title?: string 
             />
             <Input
               style={{ width: 160 }}
-              placeholder={t('accounting.labels.invoiceNumber') || 'Номер счета'}
+              placeholder={t('accounting.labels.invoiceNumber')}
               value={searchState.invoice_number || ''}
               onChange={(e) => setParams({ invoice_number: e.target.value })}
               allowClear
             />
             <Input
               style={{ width: 140 }}
-              placeholder={t('exportData.filters.customer_id') || 'Customer (ID)'}
+              placeholder={t('exportData.filters.customer_id')}
               value={searchState.customer_id || ''}
               onChange={(e) => setParams({ customer_id: e.target.value })}
               allowClear
             />
             <Input
               style={{ width: 120 }}
-              placeholder={t('exportData.filters.entity_id') || 'Entity (ID)'}
+              placeholder={t('exportData.filters.entity_id')}
               value={searchState.entity_id || ''}
               onChange={(e) => setParams({ entity_id: e.target.value })}
               allowClear
             />
             <Input
               style={{ width: 140 }}
-              placeholder={t('exportData.filters.protocol_id') || 'Protocol (ID)'}
+              placeholder={t('exportData.filters.protocol_id')}
               value={searchState.protocol_id || ''}
               onChange={(e) => setParams({ protocol_id: e.target.value })}
               allowClear
             />
             <Select
-              placeholder={t('accounting.labels.type') || 'Тип'}
+              placeholder={t('accounting.labels.type')}
               style={{ width: 160 }}
               allowClear
               value={searchState.invoice_type || undefined}
               onChange={(v) => setParams({ invoice_type: v || '' })}
               options={[
-                { value: 'main', label: t('accounting.invoiceTypeLabels.main') || 'Основной' },
-                { value: 'paper_tu', label: t('accounting.invoiceTypeLabels.paper_tu') || 'Бумажные работы' }
+                { value: 'main', label: t('accounting.invoiceTypeLabels.main') },
+                { value: 'paper_tu', label: t('accounting.invoiceTypeLabels.paper_tu') }
               ]}
             />
             <Select
-              placeholder={t('accounting.labels.status') || 'Статус'}
+              placeholder={t('accounting.labels.status')}
               style={{ width: 140 }}
               allowClear
               value={searchState.is_paid || undefined}
               onChange={(v) => setParams({ is_paid: v || '' })}
               options={[
-                { value: 'true', label: t('accounting.messages.paidTag') || 'Оплачен' },
-                { value: 'false', label: t('accounting.labels.pending') || 'Ожидает оплаты' }
+                { value: 'true', label: t('accounting.messages.paidTag') },
+                { value: 'false', label: t('accounting.labels.pending') }
               ]}
             />
             <Select
-              placeholder={t('filterBar.byDate') || 'Сортировка'}
+              placeholder={t('filterBar.byDate')}
               style={{ width: 160 }}
               allowClear
               value={searchState.ordering || undefined}
               onChange={(v) => setParams({ ordering: v || '' })}
               options={[
-                { value: '-created_at', label: t('filterBar.newOnesfirst') || 'Новые сверху' },
-                { value: 'created_at', label: t('filterBar.newOldFirst') || 'Старые сверху' },
-                { value: '-invoice_date', label: (t('common.dateLabel') || 'Дата') + ' ↓' },
-                { value: 'invoice_date', label: (t('common.dateLabel') || 'Дата') + ' ↑' }
+                { value: '-created_at', label: t('filterBar.newOnesfirst') },
+                { value: 'created_at', label: t('filterBar.newOldFirst') },
+                { value: '-invoice_date', label: t('common.dateLabel') + ' ↓' },
+                { value: 'invoice_date', label: t('common.dateLabel') + ' ↑' }
               ]}
             />
-            <RangePicker onChange={handleDateChange} placeholder={[t('common.dateStart') || 'Дата с', t('common.dateEnd') || 'Дата по']} />
+            <RangePicker onChange={handleDateChange} placeholder={[t('common.dateStart'), t('common.dateEnd')]} />
 
             <Button type='primary' onClick={() => setParams({ search: searchInput })}>
-              {t('filterBar.searchButton') || 'Искать'}
+              {t('filterBar.searchButton')}
             </Button>
             <Button
               onClick={() => {
                 setSp(new URLSearchParams(), { replace: true });
               }}
             >
-              {t('common.reset') || 'Сбросить'}
+              {t('common.reset')}
             </Button>
           </Flex>
         </Card>
@@ -288,7 +284,7 @@ export default function InvoicesPage({ title = 'Счета' }: { title?: string 
           <Row justify='space-between' align='middle' style={{ marginBottom: 12 }}>
             <Col>
               <Title level={4} style={{ margin: 0 }}>
-                {`${t('protocolDetail.invoice.title') || 'Счета на оплату'} (${total})`}
+                {`${t('protocolDetail.invoice.title')} (${total})`}
               </Title>
             </Col>
           </Row>
@@ -313,7 +309,7 @@ export default function InvoicesPage({ title = 'Счета' }: { title?: string 
 
           {query.isError && (
             <div style={{ marginTop: 12 }}>
-              <Text type='danger'>{t('accounting.errors.invoicesLoadDesc') || 'Ошибка загрузки списка счетов'}</Text>
+              <Text type='danger'>{t('accounting.errors.invoicesLoadDesc')}</Text>
             </div>
           )}
         </Card>

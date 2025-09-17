@@ -93,24 +93,24 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
 
       // Если есть счета, регенерируем их с новыми данными
       if (hasInvoices && protocolData?.id) {
-        message.info('Обновляем счета с новыми данными...');
+        message.info(t('accounting.messages.updatingInvoices'));
 
         try {
           await generateInvoice({ protocolId: protocolData.id.toString() }).unwrap();
           await refetchInvoice();
           await getInvoicesByProtocolTy({ protocol_id: protocolData.id.toString() });
 
-          message.success('Протокол обновлен и счета перегенерированы с новыми данными');
+          message.success(t('accounting.messages.protocolRegeneratedInvoices'));
         } catch (invoiceError) {
           console.error('Error regenerating invoices:', invoiceError);
-          message.warning('Протокол обновлен, но возникла ошибка при обновлении счетов');
+          message.warning(t('accounting.messages.invoicesUpdateWarning'));
         }
       } else {
-        message.success('Протокол успешно обновлен');
+        message.success(t('accounting.messages.protocolUpdated'));
       }
     } catch (error) {
       console.error('Error in handleEditSuccess:', error);
-      message.error('Ошибка при обновлении протокола');
+      message.error(t('accounting.errors.protocolUpdateError'));
     }
   };
 
@@ -196,22 +196,22 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
     },
     {
       key: '1',
-      item: 'Нагрузка',
+      item: t('protocolEdit.fields.load'),
       price: `${protocolData.load}`
     },
     {
       key: '4',
-      item: 'Канализация',
+      item: t('accounting.labels.sewer'),
       price: `${protocolData.kanal_price} ${currency}`
     },
     {
       key: '3',
-      item: 'Водопровод',
+      item: t('accounting.labels.waterSupply'),
       price: `${protocolData.water_price} ${currency}`
     },
     {
       key: '10',
-      item: 'Коффициент',
+      item: t('protocolEdit.fields.coefficient'),
       price: `${protocolData.coefficient}`
     },
     {
@@ -226,17 +226,17 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
     },
     {
       key: '2',
-      item: 'Ст‑ть подключ водопровода (без НДС и НСП)',
+      item: t('accounting.protocol.waterConnectNoTaxes'),
       price: `${protocolData.water_sum} ${currency}`
     },
     {
       key: '2',
-      item: 'Ст‑ть подключ канализации (без НДС и НСП)',
+      item: t('accounting.protocol.sewerConnectNoTaxes'),
       price: `${protocolData.kanal_sum} ${currency}`
     },
     {
       key: '9',
-      item: 'Итог:',
+      item: t('accounting.labels.total') + ':',
       price: `${protocolData.total_sum_main} ${currency}`,
       badge: t('protocolDoc.takeaway')
     }
@@ -255,39 +255,39 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
     },
     {
       key: 'paper-3',
-      item: 'НСП водопровод',
+      item: t('accounting.protocol.nspWaterPaper'),
       price: formatCurrency(protocolData.nsp_water_paper)
     },
     {
       key: 'paper-4',
-      item: 'НСП канализация',
+      item: t('accounting.protocol.nspSewerPaper'),
       price: formatCurrency(protocolData.nsp_kanal_paper)
     },
     {
       key: 'paper-5',
-      item: 'НСП общий',
+      item: t('accounting.protocol.nspTotalPaper'),
       price: formatCurrency(protocolData.nsp_paper)
     },
     {
       key: 'paper-6',
-      item: 'НДС водопровод',
+      item: t('accounting.protocol.ndsWaterPaper'),
       price: formatCurrency(protocolData.nds_water_paper)
     },
     {
       key: 'paper-7',
-      item: 'НДС канализация',
+      item: t('accounting.protocol.ndsSewerPaper'),
       price: formatCurrency(protocolData.nds_kanal_paper)
     },
     {
       key: 'paper-8',
-      item: 'НДС общий',
+      item: t('accounting.protocol.ndsTotalPaper'),
       price: formatCurrency(protocolData.nds_paper)
     },
     {
       key: 'paper-9',
-      item: 'Итог:',
+      item: t('accounting.labels.total') + ':',
       price: formatCurrency(protocolData.total_sum_paper),
-      badge: 'На вынос'
+      badge: t('protocolDoc.takeaway')
     }
   ];
 
@@ -334,7 +334,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
 
           <div style={{ marginBottom: 24 }}>
             <Title level={5} style={{ marginBottom: 16 }}>
-              Основные расчеты
+              {t('accounting.sections.mainCalculations')}
             </Title>
             <div style={{ overflowX: 'auto' }}>
               <Table
@@ -351,7 +351,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
 
           <div>
             <Title level={5} style={{ marginBottom: 16 }}>
-              Выдача технических условий
+              {t('accounting.sections.issueTu')}
             </Title>
             <div style={{ overflowX: 'auto' }}>
               <Table

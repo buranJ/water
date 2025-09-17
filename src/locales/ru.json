@@ -185,7 +185,9 @@
     "noData": "Нет данных",
     "error": "Ошибка",
     "reset": "Сбросить",
-    "advanced": "Дополнительно"
+    "advanced": "Дополнительно",
+    "yes": "Да",
+    "no": "Нет"
   },
   "geoportal": {
     "errorLoad": "Ошибка загрузки данных",
@@ -310,6 +312,19 @@
       "modal": {
         "title": "Загрузить акт",
         "hint": "Загрузите файл для статуса: {{status}}"
+      },
+      "status": {
+        "draft": "Черновик",
+        "review": "На рассмотрении",
+        "approved": "Утвержден",
+        "done": "Завершен",
+        "none": "Нет акта"
+      },
+      "confirm": {
+        "changeTitle": "Изменить статус акта?",
+        "changeContent": "Вы действительно хотите изменить статус акта?",
+        "createTitle": "Создать акт подтверждения?",
+        "createContent": "Будет создан акт. Продолжить?"
       }
     },
     "titles": {
@@ -376,7 +391,18 @@
     "notSpecified": "Не указано",
     "loadError": "Ошибка загрузки",
     "loadErrorDescription": "Не удалось загрузить данные технических условий",
-    "archivedMessage": "ТУ находится в архиве"
+    "archivedMessage": "ТУ находится в архиве",
+    "messages": {
+      "approved": "ТУ одобрены",
+      "approveFailed": "Не удалось одобрить ТУ",
+      "tuRejected": "ТУ отклонено",
+      "tuRejectFailed": "Не удалось отказать ТУ",
+      "rejected": "Отказ создан",
+      "rejectFailed": "Не удалось создать отказ"
+    },
+    "buttons": {
+      "goToApplication": "Перейти к заявке"
+    }
   },
   "exportData": {
     "formSubmitted": "Форма отправлена:",
@@ -572,7 +598,10 @@
       "saveTitle": "Сохранить шаблон фильтров",
       "saved": "Шаблон сохранён",
       "applied": "Шаблон применён",
-      "entityRequired": "Сначала выберите сущность"
+      "entityRequired": "Сначала выберите сущность",
+      "name": "Название",
+      "nameReq": "Введите название",
+      "description": "Описание"
     },
     "exportHistory": "История экспорта"
   },
@@ -1379,7 +1408,8 @@
       "invoicesLoadTitle": "Ошибка загрузки счетов",
       "invoicesLoadDesc": "Возможно, счета еще не созданы или неверный URL API",
       "invoicesWarnTitle": "Проблема с загрузкой счетов",
-      "invoicesWarnDesc": "Проверьте правильность API endpoint'а"
+      "invoicesWarnDesc": "Проверьте правильность API endpoint'а",
+      "protocolUpdateError": "Ошибка при обновлении протокола"
     },
     "labels": {
       "paid": "Оплачен",
@@ -1400,7 +1430,19 @@
       "nsp": "НСП",
       "nds": "НДС",
       "paperWorkWater": "Выдача тех условия (водопровод)",
-      "paperWorkSewer": "Выдача тех условия (канализация)"
+      "paperWorkSewer": "Выдача тех условия (канализация)",
+      "waterConnectNoTaxes": "Ст‑ть подключ. водопровода (без НДС и НСП)",
+      "sewerConnectNoTaxes": "Ст‑ть подключ. канализации (без НДС и НСП)",
+      "nspWaterPaper": "НСП водопровод",
+      "nspSewerPaper": "НСП канализация",
+      "nspTotalPaper": "НСП общий",
+      "ndsWaterPaper": "НДС водопровод",
+      "ndsSewerPaper": "НДС канализация",
+      "ndsTotalPaper": "НДС общий"
+    },
+    "sections": {
+      "mainCalculations": "Основные расчеты",
+      "issueTu": "Выдача технических условий"
     },
     "messages": {
       "generateInvoiceSuccess": "Счет успешно сгенерирован",
@@ -1409,6 +1451,9 @@
       "needCreateInvoiceFirst": "Для просмотра платежей необходимо сначала создать счет",
       "paidTag": "(Оплачено)",
       "protocolUpdated": "Протокол успешно обновлен",
+      "updatingInvoices": "Обновляем счета с новыми данными...",
+      "protocolRegeneratedInvoices": "Протокол обновлен и счета перегенерированы с новыми данными",
+      "invoicesUpdateWarning": "Протокол обновлен, но возникла ошибка при обновлении счетов",
       "generateInvoiceError": "Ошибка при генерации счета"
     }
   },

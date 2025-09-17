@@ -185,7 +185,9 @@
     "noData": "Маалымат жок",
     "error": "Ката",
     "reset": "Тазалоо",
-    "advanced": "Кошумча"
+    "advanced": "Кошумча",
+    "yes": "Ооба",
+    "no": "Жок"
   },
 
 
@@ -314,6 +316,19 @@
       "modal": {
         "title": "Акты жүктөө",
         "hint": "Статус үчүн файлды жүктөңүз: {{status}}"
+      },
+      "status": {
+        "draft": "Долбоор",
+        "review": "Каралууда",
+        "approved": "Бекитилди",
+        "done": "Аякталды",
+        "none": "Акт жок"
+      },
+      "confirm": {
+        "changeTitle": "Акттын статусун өзгөртүү?",
+        "changeContent": "Акттын статусун өзгөртүүнү чындап каалайсызбы?",
+        "createTitle": "Ырастоо актысын түзүү?",
+        "createContent": "Акт түзүлөт. Улантууну каалайсызбы?"
       }
     },
     "titles": {
@@ -380,7 +395,18 @@
     "notSpecified": "Көрсөтүлгөн эмес",
     "loadError": "Жүктөө катасы",
     "loadErrorDescription": "Техникалык шарттар боюнча маалыматты жүктөө мүмкүн болгон жок",
-    "archivedMessage": "ТУ архивде"
+    "archivedMessage": "ТУ архивде",
+    "messages": {
+      "approved": "ТУ бекитилди",
+      "approveFailed": "ТУну бекитүү мүмкүн болгон жок",
+      "tuRejected": "ТУ четке кагылды",
+      "tuRejectFailed": "ТУну четке кагуу мүмкүн болгон жок",
+      "rejected": "Баш тартуу түзүлдү",
+      "rejectFailed": "Баш тартууну түзүү мүмкүн болгон жок"
+    },
+    "buttons": {
+      "goToApplication": "Арызга өтүү"
+    }
   },
   "notFound": {
     "subtitle": "Мындай барак жок",
@@ -618,7 +644,10 @@
       "saveTitle": "Фильтр үлгүсүн сактоо",
       "saved": "Үлгү сакталды",
       "applied": "Үлгү колдонулду",
-      "entityRequired": "Алгач маалымат түрүн тандаңыз"
+      "entityRequired": "Алгач маалымат түрүн тандаңыз",
+      "name": "Аталышы",
+      "nameReq": "Аталышын киргизиңиз",
+      "description": "Сүрөттөмө"
     },
     "exportHistory": "Экспорт тарыхы"
   },
@@ -1383,7 +1412,8 @@
       "invoicesLoadTitle": "Эсептерди жүктөөдө ката",
       "invoicesLoadDesc": "Балким, эсептер али түзүлө элек же API URL туура эмес",
       "invoicesWarnTitle": "Эсептерди жүктөөдө көйгөй",
-      "invoicesWarnDesc": "API endpoint туура экенин текшериңиз"
+      "invoicesWarnDesc": "API endpoint туура экенин текшериңиз",
+      "protocolUpdateError": "Протоколду жаңыртууда ката"
     },
     "labels": {
       "paid": "Төлөндү",
@@ -1404,7 +1434,19 @@
       "nsp": "НСП",
       "nds": "КНС",
       "paperWorkWater": "Кагаз иштери (суу түтүгү)",
-      "paperWorkSewer": "Кагаз иштери (канализация)"
+      "paperWorkSewer": "Кагаз иштери (канализация)",
+      "waterConnectNoTaxes": "Суу түтүгүнө туташуу баасы (КНС жана НСПсиз)",
+      "sewerConnectNoTaxes": "Канализацияга туташуу баасы (КНС жана НСПсиз)",
+      "nspWaterPaper": "НСП суу түтүгү",
+      "nspSewerPaper": "НСП канализация",
+      "nspTotalPaper": "НСП жалпы",
+      "ndsWaterPaper": "КНС суу түтүгү",
+      "ndsSewerPaper": "КНС канализация",
+      "ndsTotalPaper": "КНС жалпы"
+    },
+    "sections": {
+      "mainCalculations": "Негизги эсептөөлөр",
+      "issueTu": "Техникалык шарттарды берүү"
     },
     "messages": {
       "generateInvoiceSuccess": "Эсеп ийгиликтүү түзүлдү",
@@ -1413,6 +1455,9 @@
       "needCreateInvoiceFirst": "Төлөмдөрдү көрүү үчүн адегенде эсеп түзүү керек",
       "paidTag": "(Төлөндү)",
       "protocolUpdated": "Протокол ийгиликтүү жаңыртылды",
+      "updatingInvoices": "Эсептер жаңы маалыматтар менен жаңыртылууда...",
+      "protocolRegeneratedInvoices": "Протокол жаңыртылды жана эсептер жаңы маалыматтар менен кайра түзүлдү",
+      "invoicesUpdateWarning": "Протокол жаңыртылды, бирок эсептерди жаңыртууда ката кетти",
       "generateInvoiceError": "Эсеп түзүүдө ката кетти"
     }
   },

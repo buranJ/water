@@ -1,5 +1,7 @@
 import type { ExportEntity } from 'types/entities/reports.entities';
 
+import { t } from 'i18next';
+
 export type FieldType = 'number' | 'string' | 'date' | 'boolean' | 'select';
 
 export interface FieldConfig {
@@ -54,116 +56,116 @@ export type FormValues = {
 };
 
 export const EXPORT_FORMAT_OPTIONS: { value: 'pdf' | 'xlsx'; label: string }[] = [
-  { value: 'pdf', label: 'PDF' },
-  { value: 'xlsx', label: 'Excel (XLSX)' }
+  { value: 'pdf', label: t('exportData.config.formatOptions.pdf') },
+  { value: 'xlsx', label: t('exportData.config.formatOptions.xlsx') }
 ];
 
 export const EXPORT_ENTITY_OPTIONS: { value: ExportEntity; label: string }[] = [
-  { value: 'technical_conditions', label: 'ТУ' },
-  { value: 'entities', label: 'Объекты' },
-  { value: 'protocols', label: 'Протоколы' },
-  { value: 'customers', label: 'Заказчики' },
-  { value: 'payments', label: 'Платежи' },
-  { value: 'invoices', label: 'Счета' },
-  { value: 'applications', label: 'Заявки' }
+  { value: 'technical_conditions', label: t('exportData.config.entityOptions.technical_conditions') },
+  { value: 'entities', label: t('exportData.config.entityOptions.entities') },
+  { value: 'protocols', label: t('exportData.config.entityOptions.protocols') },
+  { value: 'customers', label: t('exportData.config.entityOptions.customers') },
+  { value: 'payments', label: t('exportData.config.entityOptions.payments') },
+  { value: 'invoices', label: t('exportData.config.entityOptions.invoices') },
+  { value: 'applications', label: t('exportData.config.entityOptions.applications') }
 ];
 
 const STATUS6B3_OPTIONS = [
-  { value: 'active', label: 'Активен' },
-  { value: 'inactive', label: 'Неактивен' },
-  { value: 'archived', label: 'Архив' }
+  { value: 'active', label: t('exportData.config.statusOptions.active') },
+  { value: 'inactive', label: t('exportData.config.statusOptions.inactive') },
+  { value: 'archived', label: t('exportData.config.statusOptions.archived') }
 ];
 
 const STAGE_OPTIONS = [
-  { value: 'draft', label: 'Draft' },
-  { value: 'review', label: 'In Review' },
-  { value: 'approved', label: 'Approved' },
-  { value: 'done', label: 'Completed' }
+  { value: 'draft', label: t('exportData.config.stageOptions.draft') },
+  { value: 'review', label: t('exportData.config.stageOptions.review') },
+  { value: 'approved', label: t('exportData.config.stageOptions.approved') },
+  { value: 'done', label: t('exportData.config.stageOptions.done') }
 ];
 
 const CUSTOMER_STATUS_OPTIONS = [
-  { value: 'active', label: 'Active' },
-  { value: 'rejected', label: 'Rejected' }
+  { value: 'active', label: t('exportData.config.customerStatusOptions.active') },
+  { value: 'rejected', label: t('exportData.config.customerStatusOptions.rejected') }
 ];
 
 const PAYMENT_STATUS_OPTIONS = [
-  { value: 'pending', label: 'В ожидании' },
-  { value: 'received', label: 'Поступили' }
+  { value: 'pending', label: t('exportData.config.paymentStatusOptions.pending') },
+  { value: 'received', label: t('exportData.config.paymentStatusOptions.received') }
 ];
 
 const INVOICE_TYPE_OPTIONS = [
-  { value: 'main', label: 'Основной' },
-  { value: 'paper_tu', label: 'Оплата за бумагу ТУ' }
+  { value: 'main', label: t('exportData.config.invoiceTypeOptions.main') },
+  { value: 'paper_tu', label: t('exportData.config.invoiceTypeOptions.paper_tu') }
 ];
 
 const APPLICATION_STATUS_OPTIONS = [
-  { value: 'pending', label: 'Pending' },
-  { value: 'rejected', label: 'Rejected' },
-  { value: 'approved', label: 'Approved' },
-  { value: 'contracted', label: 'Contracted TU' }
+  { value: 'pending', label: t('exportData.config.applicationStatusOptions.pending') },
+  { value: 'rejected', label: t('exportData.config.applicationStatusOptions.rejected') },
+  { value: 'approved', label: t('exportData.config.applicationStatusOptions.approved') },
+  { value: 'contracted', label: t('exportData.config.applicationStatusOptions.contracted') }
 ];
 
 // Полный перечень фильтров по сущностям (из OpenAPI)
 export const FILTER_CONFIG: Record<ExportEntity, FieldConfig[]> = {
   technical_conditions: [
-    { name: 'id', label: 'ID', type: 'number' },
-    { name: 'request_number', label: 'Номер запроса', type: 'string' },
-    { name: 'status', label: 'Статус', type: 'select', options: STATUS6B3_OPTIONS },
-    { name: 'stage', label: 'Стадия', type: 'select', options: STAGE_OPTIONS },
-    { name: 'type_ty', label: 'Тип ТУ (ID)', type: 'number' },
-    { name: 'customer_id', label: 'Заказчик (ID)', type: 'number' },
-    { name: 'entity_id', label: 'Объект (ID)', type: 'number' },
-    { name: 'formula_id', label: 'Формула (ID)', type: 'number' },
-    { name: 'request_date_start', label: 'Дата запроса с', type: 'date' },
-    { name: 'request_date_end', label: 'Дата запроса по', type: 'date' },
-    { name: 'is_water', label: 'Подключение к воде', type: 'boolean' },
-    { name: 'is_kanal', label: 'Подключение к канализации', type: 'boolean' }
+    { name: 'id', label: t('exportData.filters.id'), type: 'number' },
+    { name: 'request_number', label: t('exportData.filters.request_number'), type: 'string' },
+    { name: 'status', label: t('exportData.filters.status'), type: 'select', options: STATUS6B3_OPTIONS },
+    { name: 'stage', label: t('exportData.filters.stage'), type: 'select', options: STAGE_OPTIONS },
+    { name: 'type_ty', label: t('exportData.filters.type_ty'), type: 'number' },
+    { name: 'customer_id', label: t('exportData.filters.customer_id'), type: 'number' },
+    { name: 'entity_id', label: t('exportData.filters.entity_id'), type: 'number' },
+    { name: 'formula_id', label: t('exportData.filters.formula_id'), type: 'number' },
+    { name: 'request_date_start', label: t('exportData.filters.request_date_start'), type: 'date' },
+    { name: 'request_date_end', label: t('exportData.filters.request_date_end'), type: 'date' },
+    { name: 'is_water', label: t('exportData.filters.is_water'), type: 'boolean' },
+    { name: 'is_kanal', label: t('exportData.filters.is_kanal'), type: 'boolean' }
   ],
   entities: [
-    { name: 'id', label: 'ID', type: 'number' },
-    { name: 'status', label: 'Статус', type: 'select', options: STATUS6B3_OPTIONS },
-    { name: 'customer_id', label: 'Заказчик (ID)', type: 'number' },
-    { name: 'created_start', label: 'Создано с', type: 'date' },
-    { name: 'created_end', label: 'Создано по', type: 'date' }
+    { name: 'id', label: t('exportData.filters.id'), type: 'number' },
+    { name: 'status', label: t('exportData.filters.status'), type: 'select', options: STATUS6B3_OPTIONS },
+    { name: 'customer_id', label: t('exportData.filters.customer_id'), type: 'number' },
+    { name: 'created_start', label: t('exportData.filters.created_start'), type: 'date' },
+    { name: 'created_end', label: t('exportData.filters.created_end'), type: 'date' }
   ],
   protocols: [
-    { name: 'id', label: 'ID', type: 'number' },
-    { name: 'technical_condition_id', label: 'ТУ (ID)', type: 'number' },
-    { name: 'created_start', label: 'Создано с', type: 'date' },
-    { name: 'created_end', label: 'Создано по', type: 'date' }
+    { name: 'id', label: t('exportData.filters.id'), type: 'number' },
+    { name: 'technical_condition_id', label: t('exportData.filters.technical_condition_id'), type: 'number' },
+    { name: 'created_start', label: t('exportData.filters.created_start'), type: 'date' },
+    { name: 'created_end', label: t('exportData.filters.created_end'), type: 'date' }
   ],
   customers: [
-    { name: 'id', label: 'ID', type: 'number' },
-    { name: 'inn', label: 'ИНН', type: 'string' },
-    { name: 'full_name', label: 'ФИО/Название', type: 'string' },
-    { name: 'status', label: 'Статус', type: 'select', options: CUSTOMER_STATUS_OPTIONS },
-    { name: 'created_start', label: 'Создано с', type: 'date' },
-    { name: 'created_end', label: 'Создано по', type: 'date' }
+    { name: 'id', label: t('exportData.filters.id'), type: 'number' },
+    { name: 'inn', label: t('exportData.filters.inn'), type: 'string' },
+    { name: 'full_name', label: t('exportData.filters.full_name'), type: 'string' },
+    { name: 'status', label: t('exportData.filters.status'), type: 'select', options: CUSTOMER_STATUS_OPTIONS },
+    { name: 'created_start', label: t('exportData.filters.created_start'), type: 'date' },
+    { name: 'created_end', label: t('exportData.filters.created_end'), type: 'date' }
   ],
   payments: [
-    { name: 'id', label: 'ID', type: 'number' },
-    { name: 'status', label: 'Статус', type: 'select', options: PAYMENT_STATUS_OPTIONS },
-    { name: 'invoice_id', label: 'Счёт (ID)', type: 'number' },
-    { name: 'payment_number', label: 'Номер платежа', type: 'string' },
-    { name: 'payment_date_start', label: 'Дата платежа с', type: 'date' },
-    { name: 'payment_date_end', label: 'Дата платежа по', type: 'date' }
+    { name: 'id', label: t('exportData.filters.id'), type: 'number' },
+    { name: 'status', label: t('exportData.filters.status'), type: 'select', options: PAYMENT_STATUS_OPTIONS },
+    { name: 'invoice_id', label: t('exportData.filters.invoice_id'), type: 'number' },
+    { name: 'payment_number', label: t('exportData.filters.payment_number'), type: 'string' },
+    { name: 'payment_date_start', label: t('exportData.filters.payment_date_start'), type: 'date' },
+    { name: 'payment_date_end', label: t('exportData.filters.payment_date_end'), type: 'date' }
   ],
   invoices: [
-    { name: 'id', label: 'ID', type: 'number' },
-    { name: 'invoice_number', label: 'Номер счёта', type: 'string' },
-    { name: 'is_paid', label: 'Оплачен', type: 'boolean' },
-    { name: 'protocol_id', label: 'Протокол (ID)', type: 'number' },
-    { name: 'invoice_type', label: 'Тип счёта', type: 'select', options: INVOICE_TYPE_OPTIONS },
-    { name: 'invoice_date_start', label: 'Дата счёта с', type: 'date' },
-    { name: 'invoice_date_end', label: 'Дата счёта по', type: 'date' }
+    { name: 'id', label: t('exportData.filters.id'), type: 'number' },
+    { name: 'invoice_number', label: t('exportData.filters.invoice_number'), type: 'string' },
+    { name: 'is_paid', label: t('exportData.filters.is_paid'), type: 'boolean' },
+    { name: 'protocol_id', label: t('exportData.filters.protocol_id'), type: 'number' },
+    { name: 'invoice_type', label: t('exportData.filters.invoice_type'), type: 'select', options: INVOICE_TYPE_OPTIONS },
+    { name: 'invoice_date_start', label: t('exportData.filters.invoice_date_start'), type: 'date' },
+    { name: 'invoice_date_end', label: t('exportData.filters.invoice_date_end'), type: 'date' }
   ],
   applications: [
-    { name: 'id', label: 'ID', type: 'number' },
-    { name: 'status', label: 'Статус', type: 'select', options: APPLICATION_STATUS_OPTIONS },
-    { name: 'customer_id', label: 'Заказчик (ID)', type: 'number' },
-    { name: 'entity_id', label: 'Объект (ID)', type: 'number' },
-    { name: 'created_start', label: 'Создано с', type: 'date' },
-    { name: 'created_end', label: 'Создано по', type: 'date' }
+    { name: 'id', label: t('exportData.filters.id'), type: 'number' },
+    { name: 'status', label: t('exportData.filters.status'), type: 'select', options: APPLICATION_STATUS_OPTIONS },
+    { name: 'customer_id', label: t('exportData.filters.customer_id'), type: 'number' },
+    { name: 'entity_id', label: t('exportData.filters.entity_id'), type: 'number' },
+    { name: 'created_start', label: t('exportData.filters.created_start'), type: 'date' },
+    { name: 'created_end', label: t('exportData.filters.created_end'), type: 'date' }
   ]
 };
 

@@ -185,7 +185,9 @@
     "noData": "No data",
     "error": "Error",
     "reset": "Reset",
-    "advanced": "Advanced"
+    "advanced": "Advanced",
+    "yes": "Yes",
+    "no": "No"
   },
   "geoportal": {
     "errorLoad": "Failed to load data",
@@ -310,6 +312,19 @@
       "modal": {
         "title": "Upload act",
         "hint": "Upload a file for status: {{status}}"
+      },
+      "status": {
+        "draft": "Draft",
+        "review": "In review",
+        "approved": "Approved",
+        "done": "Completed",
+        "none": "No act"
+      },
+      "confirm": {
+        "changeTitle": "Change act status?",
+        "changeContent": "Are you sure you want to change the act status?",
+        "createTitle": "Create confirmation act?",
+        "createContent": "An act will be created. Continue?"
       }
     },
     "titles": {
@@ -376,7 +391,18 @@
     "notSpecified": "Not specified",
     "loadError": "Loading error",
     "loadErrorDescription": "Failed to load technical conditions data",
-    "archivedMessage": "TU is archived"
+    "archivedMessage": "TU is archived",
+    "messages": {
+      "approved": "TU approved",
+      "approveFailed": "Failed to approve TU",
+      "tuRejected": "TU rejected",
+      "tuRejectFailed": "Failed to reject TU",
+      "rejected": "Refusal created",
+      "rejectFailed": "Failed to create refusal"
+    },
+    "buttons": {
+      "goToApplication": "Go to application"
+    }
   },
   "exportData": {
     "formSubmitted": "Form submitted:",
@@ -572,7 +598,10 @@
       "saveTitle": "Save filter template",
       "saved": "Template saved",
       "applied": "Template applied",
-      "entityRequired": "Please select an entity first"
+      "entityRequired": "Please select an entity first",
+      "name": "Name",
+      "nameReq": "Enter a name",
+      "description": "Description"
     },
     "exportHistory": "Export history"
   },
@@ -1379,7 +1408,8 @@
       "invoicesLoadTitle": "Error loading invoices",
       "invoicesLoadDesc": "Invoices may not have been created yet or the API URL is incorrect",
       "invoicesWarnTitle": "Problem loading invoices",
-      "invoicesWarnDesc": "Check the correctness of the API endpoint"
+      "invoicesWarnDesc": "Check the correctness of the API endpoint",
+      "protocolUpdateError": "Error updating protocol"
     },
     "labels": {
       "paid": "Paid",
@@ -1400,7 +1430,19 @@
       "nsp": "NSP",
       "nds": "VAT",
       "paperWorkWater": "Paperwork (water supply)",
-      "paperWorkSewer": "Paperwork (sewer)"
+      "paperWorkSewer": "Paperwork (sewer)",
+      "waterConnectNoTaxes": "Cost of water connection (excl. VAT and NSP)",
+      "sewerConnectNoTaxes": "Cost of sewer connection (excl. VAT and NSP)",
+      "nspWaterPaper": "NSP water supply",
+      "nspSewerPaper": "NSP sewer",
+      "nspTotalPaper": "NSP total",
+      "ndsWaterPaper": "VAT water supply",
+      "ndsSewerPaper": "VAT sewer",
+      "ndsTotalPaper": "VAT total"
+    },
+    "sections": {
+      "mainCalculations": "Main calculations",
+      "issueTu": "Issuance of technical conditions"
     },
     "messages": {
       "generateInvoiceSuccess": "Invoice generated successfully",
@@ -1409,6 +1451,9 @@
       "needCreateInvoiceFirst": "To view payments, you must first create an invoice",
       "paidTag": "(Paid)",
       "protocolUpdated": "Protocol updated successfully",
+      "updatingInvoices": "Updating invoices with new data...",
+      "protocolRegeneratedInvoices": "Protocol updated and invoices regenerated with new data",
+      "invoicesUpdateWarning": "Protocol updated, but an error occurred when updating invoices",
       "generateInvoiceError": "Error generating invoice"
     }
   },

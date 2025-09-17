@@ -136,14 +136,14 @@ export const ApplicationForm: FC<ApplicationFormProps> = ({
         <Input size='large' placeholder={t('applicationsCreate.form.placeholders.waterPurpose')} />
       </Form.Item>
       <Form.Item
-        label='Расходы на внутреннее пожаротушение'
+        label={t('applicationsCreate.form.labels.firefightingExpenses')}
         name='firefightingExpensesInner'
         rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
       >
         <Input size='large' placeholder={t('applicationsCreate.form.placeholders.enterValue')} />
       </Form.Item>
       <Form.Item
-        label='Расходы на наружное пожаротушение'
+        label={t('applicationsCreate.form.labels.firefightingExpensesOuter')}
         name='firefightingExpensesOuter'
         rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
       >

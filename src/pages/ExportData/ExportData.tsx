@@ -196,9 +196,9 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
         try {
           const res = await exportReports(body).unwrap();
           handleDownload(res.blob, res.filename, body.entity, body.export, body.filename);
-          message.success(t('exportData.messages.downloaded') || 'Файл сформирован и скачан');
+          message.success(t('exportData.messages.downloaded'));
         } catch {
-          message.error(t('exportData.messages.failed') || 'Не удалось сформировать файл экспорта');
+          message.error(t('exportData.messages.failed'));
         } finally {
           setAutoExportDone(true);
           navigate('/dashboard/export-data', { replace: true });
@@ -224,7 +224,7 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
       }));
       if (fieldsArr.length) form.setFields(fieldsArr);
     }
-    message.success(t('exportData.presets.applied', 'Шаблон применён'));
+    message.success(t('exportData.presets.applied'));
   };
 
   const handleRequestSavePreset = () => setSaveModalOpen(true);
@@ -235,7 +235,7 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
       const currentValues = form.getFieldsValue(true) as FormValues;
       const qs = encodeFormToQS(currentValues);
       if (!currentValues.entity) {
-        message.error(t('exportData.presets.entityRequired', 'Сначала выберите сущность'));
+        message.error(t('exportData.presets.entityRequired'));
         return;
       }
       await createPreset({
@@ -244,7 +244,7 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
         target: currentValues.entity === 'technical_conditions' ? 'ty' : (currentValues.entity as string),
         query_string: qs
       }).unwrap();
-      message.success(t('exportData.presets.saved', 'Шаблон сохранён'));
+      message.success(t('exportData.presets.saved'));
       setSaveModalOpen(false);
       saveForm.resetFields();
     } catch {
@@ -261,7 +261,7 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
     const preparedIds = prepareIds(values.ids);
 
     if (!preparedFilters && (!preparedIds || preparedIds.length === 0)) {
-      message.error(t('exportData.messages.filtersOrIdsRequired') || 'Нужно указать либо фильтры, либо список ID (или оба).');
+      message.error(t('exportData.messages.filtersOrIdsRequired'));
       return;
     }
 
@@ -278,9 +278,9 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
       }).unwrap();
 
       handleDownload(res.blob, res.filename, values.entity!, values.export!, values.filename);
-      message.success(t('exportData.messages.downloaded') || 'Файл сформирован и скачан');
+      message.success(t('exportData.messages.downloaded'));
     } catch {
-      message.error(t('exportData.messages.failed') || 'Не удалось сформировать файл экспорта');
+      message.error(t('exportData.messages.failed'));
     }
   };
 
@@ -300,18 +300,18 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
         <Row align='middle' justify='space-between' style={{ marginBottom: 12 }}>
           <Col>
             <Title level={4} style={{ margin: 0 }}>
-              {t('exportData.title') || 'Экспорт данных (PDF/XLSX)'}
+              {t('exportData.title')}
             </Title>
           </Col>
           <Col>
             <Space size={8} align='center' wrap>
               <Typography.Text type='secondary' style={{ marginRight: 4 }}>
-                {t('exportData.presets.label', 'Шаблоны')}
+                {t('exportData.presets.label')}
               </Typography.Text>
               <Select
                 size='middle'
                 allowClear
-                placeholder={t('exportData.presets.select', 'Выберите шаблон')}
+                placeholder={t('exportData.presets.select')}
                 style={{ minWidth: 280 }}
                 loading={presetsLoading}
                 disabled={!presetTarget}
@@ -322,7 +322,7 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
                 filterOption={(input, option) => ((option?.label as string) || '').toLowerCase().includes(input.toLowerCase())}
               />
               <Button size='middle' icon={<SaveOutlined />} onClick={handleRequestSavePreset}>
-                {t('exportData.presets.save', 'Сохранить шаблон')}
+                {t('exportData.presets.save')}
               </Button>
             </Space>
           </Col>
@@ -331,15 +331,15 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
-              label={t('exportData.ui.formatLabel') || 'Формат'}
+              label={t('exportData.ui.formatLabel')}
               name='export'
-              rules={[{ required: true, message: t('exportData.ui.formatRequired') || 'Выберите формат' }]}
+              rules={[{ required: true, message: t('exportData.ui.formatRequired') }]}
             >
               <Select
-                placeholder={t('exportData.ui.formatPlaceholder') || 'Выберите формат'}
+                placeholder={t('exportData.ui.formatPlaceholder')}
                 options={EXPORT_FORMAT_OPTIONS.map((o) => ({
                   ...o,
-                  label: o.value === 'xlsx' ? t('exportData.formats.excel') || o.label : t('exportData.formats.pdf') || o.label
+                  label: o.value === 'xlsx' ? t('exportData.formats.excel') : t('exportData.formats.pdf')
                 }))}
                 size='large'
               />
@@ -347,15 +347,15 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
           </Col>
           <Col span={12}>
             <Form.Item
-              label={t('exportData.ui.entityLabel') || 'Сущность'}
+              label={t('exportData.ui.entityLabel')}
               name='entity'
-              rules={[{ required: true, message: t('exportData.ui.entityRequired') || 'Выберите сущность' }]}
+              rules={[{ required: true, message: t('exportData.ui.entityRequired') }]}
             >
               <Select
-                placeholder={t('exportData.ui.entityPlaceholder') || 'Что экспортируем'}
+                placeholder={t('exportData.ui.entityPlaceholder')}
                 options={EXPORT_ENTITY_OPTIONS.map((o) => ({
                   ...o,
-                  label: t(`exportData.entities.${o.value}`) || o.label
+                  label: t(`exportData.entities.${o.value}`)
                 }))}
                 size='large'
               />
@@ -366,46 +366,42 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
         <Divider />
 
         <Title level={5} style={{ marginTop: 0 }}>
-          {t('exportData.ui.filtersTitle') || 'Фильтры'}
+          {t('exportData.ui.filtersTitle')}
         </Title>
         <Typography.Paragraph type='secondary' style={{ marginTop: -8 }}>
-          {t('exportData.ui.filtersHint') || 'Укажите один или несколько фильтров, либо заполните список ID ниже'}
+          {t('exportData.ui.filtersHint')}
         </Typography.Paragraph>
 
         <FiltersGrid fields={fieldsForEntity} />
 
         <Row gutter={16}>
           <Col span={24}>
-            <Form.Item
-              label={t('exportData.ui.idsLabel') || 'ID записей (через пробел или запятую)'}
-              name='ids'
-              tooltip={t('exportData.ui.idsTooltip') || 'Можно указать один или несколько ID'}
-            >
-              <Select mode='tags' placeholder={t('exportData.ui.idsPlaceholder') || 'Например: 1, 2, 3'} open={false} />
+            <Form.Item label={t('exportData.ui.idsLabel')} name='ids' tooltip={t('exportData.ui.idsTooltip')}>
+              <Select mode='tags' placeholder={t('exportData.ui.idsPlaceholder')} open={false} />
             </Form.Item>
           </Col>
         </Row>
 
         <Divider />
 
-        <Title level={5}>{t('exportData.ui.includeTitle') || 'Склейка связанных сущностей'}</Title>
+        <Title level={5}>{t('exportData.ui.includeTitle')}</Title>
         <Row gutter={16}>
           <Col span={24}>
             <Space wrap>
               <Form.Item name={['include', 'customer']} valuePropName='checked' noStyle>
-                <Checkbox>{t('exportData.ui.include.customer') || 'customer'}</Checkbox>
+                <Checkbox>{t('exportData.ui.include.customer')}</Checkbox>
               </Form.Item>
               <Form.Item name={['include', 'entity']} valuePropName='checked' noStyle>
-                <Checkbox>{t('exportData.ui.include.entity') || 'entity'}</Checkbox>
+                <Checkbox>{t('exportData.ui.include.entity')}</Checkbox>
               </Form.Item>
               <Form.Item name={['include', 'protocol']} valuePropName='checked' noStyle>
-                <Checkbox>{t('exportData.ui.include.protocol') || 'protocol'}</Checkbox>
+                <Checkbox>{t('exportData.ui.include.protocol')}</Checkbox>
               </Form.Item>
               <Form.Item name={['include', 'invoices']} valuePropName='checked' noStyle>
-                <Checkbox>{t('exportData.ui.include.invoices') || 'invoices'}</Checkbox>
+                <Checkbox>{t('exportData.ui.include.invoices')}</Checkbox>
               </Form.Item>
               <Form.Item name={['include', 'payments']} valuePropName='checked' noStyle>
-                <Checkbox>{t('exportData.ui.include.payments') || 'payments'}</Checkbox>
+                <Checkbox>{t('exportData.ui.include.payments')}</Checkbox>
               </Form.Item>
             </Space>
           </Col>
@@ -415,7 +411,7 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
           <Row gutter={16} style={{ marginTop: 8 }}>
             <Col span={24}>
               <Form.Item name='include_pending' valuePropName='checked'>
-                <Checkbox>{t('exportData.ui.include.pending') || 'Учитывать платежи в статусе pending'}</Checkbox>
+                <Checkbox>{t('exportData.ui.include.pending')}</Checkbox>
               </Form.Item>
             </Col>
           </Row>
@@ -425,17 +421,13 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
         {/* get заказчика(поиск по фамилии), обьекты, формулы(селект), тип ту, стадия, статусы */}
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item
-              label={t('exportData.ui.fieldsLabel') || 'Колонки (опционально)'}
-              name='fields'
-              tooltip={t('exportData.ui.fieldsTooltip') || 'Список ключей данных. Оставьте пустым для дефолта сервера'}
-            >
-              <Select mode='tags' placeholder={t('exportData.ui.fieldsPlaceholder') || 'Например: invoice_number, total_sum'} />
+            <Form.Item label={t('exportData.ui.fieldsLabel')} name='fields' tooltip={t('exportData.ui.fieldsTooltip')}>
+              <Select mode='tags' placeholder={t('exportData.ui.fieldsPlaceholder')} />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label={t('exportData.ui.filenameLabel') || 'Имя файла (без расширения)'} name='filename'>
-              <Input placeholder={t('exportData.ui.filenamePlaceholder') || 'unpaid_invoices'} />
+            <Form.Item label={t('exportData.ui.filenameLabel')} name='filename'>
+              <Input placeholder={t('exportData.ui.filenamePlaceholder')} />
             </Form.Item>
           </Col>
         </Row>
@@ -443,7 +435,7 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
         <Row justify='end' gutter={16} style={{ marginTop: 24 }}>
           <Col>
             <Button type='default' onClick={() => navigate('/dashboard/export-data/history')}>
-              {t('exportData.exportHistory') || 'История экспортов'}
+              {t('exportData.exportHistory')}
             </Button>
           </Col>
           <Col>
@@ -454,13 +446,13 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
               loading={isLoading}
               disabled={!hasPermission('add_report')}
             >
-              {t('common.export') || 'Экспорт'}
+              {t('common.export')}
             </Button>
           </Col>
         </Row>
         <Modal
           open={saveModalOpen}
-          title={t('exportData.presets.saveTitle', 'Сохранить шаблон')}
+          title={t('exportData.presets.saveTitle')}
           onOk={handleSavePresetOk}
           onCancel={() => setSaveModalOpen(false)}
           confirmLoading={creatingPreset}
@@ -469,12 +461,12 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
           <Form form={saveForm} layout='vertical'>
             <Form.Item
               name='name'
-              label={t('exportData.presets.name', 'Название')}
-              rules={[{ required: true, message: t('exportData.presets.nameReq', 'Введите название') }]}
+              label={t('exportData.presets.name')}
+              rules={[{ required: true, message: t('exportData.presets.nameReq') }]}
             >
               <Input />
             </Form.Item>
-            <Form.Item name='description' label={t('exportData.presets.description', 'Описание')}>
+            <Form.Item name='description' label={t('exportData.presets.description')}>
               <Input.TextArea rows={3} />
             </Form.Item>
           </Form>

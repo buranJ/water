@@ -41,7 +41,7 @@ function toNumber(v?: string): number | undefined {
   return Number.isFinite(n) ? n : undefined;
 }
 
-export default function ProtocolsPage({ title = 'Протоколы' }: { title?: string }) {
+export default function ProtocolsPage({ title = 'routers.protocols' }: { title?: string }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [sp, setSp] = useSearchParams();
@@ -114,21 +114,21 @@ export default function ProtocolsPage({ title = 'Протоколы' }: { title?
 
   const columns: ColumnsType<IAccountingProtocol> = [
     {
-      title: t('changeHistory.columns.id') || 'ID',
+      title: t('changeHistory.columns.id'),
       dataIndex: 'id',
       key: 'id',
       sorter: true,
       width: 90
     },
     {
-      title: t('common.dateLabel') || 'Дата:',
+      title: t('common.dateLabel'),
       dataIndex: 'created_at',
       key: 'created_at',
       sorter: true,
       render: (v: string) => (v ? new Date(v).toLocaleString('ru-RU') : '')
     },
     {
-      title: t('routers.tuNumberPrefix') || 'ТУ №',
+      title: t('routers.tuNumberPrefix'),
       dataIndex: 'technical_condition',
       key: 'technical_condition',
       render: (v: number) => (
@@ -138,19 +138,19 @@ export default function ProtocolsPage({ title = 'Протоколы' }: { title?
       )
     },
     {
-      title: t('protocolDoc.tuWater') || 'ТУ водопровод',
+      title: t('protocolDoc.tuWater'),
       dataIndex: 'water_sum',
       key: 'water_sum',
       align: 'right'
     },
     {
-      title: t('protocolDoc.tuSewer') || 'ТУ канализация',
+      title: t('protocolDoc.tuSewer'),
       dataIndex: 'kanal_sum',
       key: 'kanal_sum',
       align: 'right'
     },
     {
-      title: t('common.totalLabel') || 'Итого:',
+      title: t('common.totalLabel'),
       key: 'total',
       align: 'right',
       render: (_: unknown, record) => {
@@ -170,13 +170,13 @@ export default function ProtocolsPage({ title = 'Протоколы' }: { title?
   const [searchInput, setSearchInput] = useState(searchState.search || '');
 
   return (
-    <DashboardLayout title={title.includes('.') ? title : t('routers.protocols') || title}>
+    <DashboardLayout title={title.includes('.') ? title : t('routers.protocols')}>
       <Space direction='vertical' style={{ width: '100%' }} size={16}>
         <Card>
           <Flex wrap='wrap' gap={12} align='center'>
             <Input
               style={{ width: 200 }}
-              placeholder={t('filterBar.search') || 'Найти'}
+              placeholder={t('filterBar.search')}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               onPressEnter={() => setParams({ search: searchInput })}
@@ -184,55 +184,51 @@ export default function ProtocolsPage({ title = 'Протоколы' }: { title?
             />
             <Input
               style={{ width: 160 }}
-              placeholder={t('tuDetails.labels.requestNumber') || 'Номер запроса'}
+              placeholder={t('tuDetails.labels.requestNumber')}
               value={searchState.request_number || ''}
               onChange={(e) => setParams({ request_number: e.target.value })}
               allowClear
             />
             <Input
               style={{ width: 160 }}
-              placeholder={t('exportData.filters.technical_condition_id') || 'TU (ID)'}
+              placeholder={t('exportData.filters.technical_condition_id')}
               value={searchState.technical_condition_id || ''}
               onChange={(e) => setParams({ technical_condition_id: e.target.value })}
               allowClear
             />
             <Select
-              placeholder={t('technicalConditions.filter.hasInvoice') || 'Счёт'}
+              placeholder={t('technicalConditions.filter.hasInvoice')}
               style={{ width: 140 }}
               allowClear
               value={searchState.has_invoice || undefined}
               onChange={(v) => setParams({ has_invoice: v || '' })}
               options={[
-                { value: 'true', label: t('technicalConditions.filter.hasInvoice') || 'Счёт' },
-                { value: 'false', label: t('common.noData') || 'Нет' }
+                { value: 'true', label: t('technicalConditions.filter.hasInvoice') },
+                { value: 'false', label: t('common.noData') }
               ]}
             />
             <Select
-              placeholder={t('filterBar.byDate') || 'Сортировка'}
+              placeholder={t('filterBar.byDate')}
               style={{ width: 160 }}
               allowClear
               value={searchState.ordering || undefined}
               onChange={(v) => setParams({ ordering: v || '' })}
               options={[
-                { value: '-created_at', label: t('filterBar.newOnesfirst') || 'Новые сверху' },
-                { value: 'created_at', label: t('filterBar.newOldFirst') || 'Старые сверху' }
+                { value: '-created_at', label: t('filterBar.newOnesfirst') },
+                { value: 'created_at', label: t('filterBar.newOldFirst') }
               ]}
             />
-            <RangePicker
-              showTime
-              onChange={handleDateChange}
-              placeholder={[t('common.dateStart') || 'Дата с', t('common.dateEnd') || 'Дата по']}
-            />
+            <RangePicker showTime onChange={handleDateChange} placeholder={[t('common.dateStart'), t('common.dateEnd')]} />
 
             <Button type='primary' onClick={() => setParams({ search: searchInput })}>
-              {t('filterBar.search') || 'Найти'}
+              {t('filterBar.search')}
             </Button>
             <Button
               onClick={() => {
                 setSp(new URLSearchParams(), { replace: true });
               }}
             >
-              {t('common.reset') || 'Сбросить'}
+              {t('common.reset')}
             </Button>
           </Flex>
         </Card>
@@ -241,7 +237,7 @@ export default function ProtocolsPage({ title = 'Протоколы' }: { title?
           <Row justify='space-between' align='middle' style={{ marginBottom: 12 }}>
             <Col>
               <Title level={4} style={{ margin: 0 }}>
-                {t('routers.protocols') || 'Протоколы'} ({total})
+                {t('routers.protocols')} ({total})
               </Title>
             </Col>
           </Row>
@@ -266,7 +262,7 @@ export default function ProtocolsPage({ title = 'Протоколы' }: { title?
 
           {query.isError && (
             <div style={{ marginTop: 12 }}>
-              <Text type='danger'>{t('accounting.errors.loadDesc') || 'Ошибка загрузки протоколов'}</Text>
+              <Text type='danger'>{t('accounting.errors.loadDesc')}</Text>
             </div>
           )}
         </Card>
