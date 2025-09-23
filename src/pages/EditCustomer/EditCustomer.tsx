@@ -58,15 +58,23 @@ export const EditCustomer: FC<IProps> = ({ title }) => {
       }).unwrap();
       message.success(t('customers.messages.updated'));
       navigate('/dashboard/customers');
-    } catch (error: any) {
-      if (error?.data && typeof error.data === 'object') {
-        const messages = Object.entries(error.data)
-          .map(([field, msg]) => `${field}: ${Array.isArray(msg) ? msg.join(', ') : msg}`)
+    } catch (error: unknown) {
+      const err = error as { data?: unknown };
+      const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null;
+
+      if (isRecord(err.data)) {
+        const entries = Object.entries(err.data as Record<string, unknown>);
+        const messages = entries
+          .map(([field, msg]) => {
+            if (Array.isArray(msg)) return `${field}: ${msg.join(', ')}`;
+            return `${field}: ${String(msg)}`;
+          })
           .join('; ');
         message.error(`${t('common.errorPrefix')}${messages}`);
       } else {
         message.error(t('customers.messages.updateError'));
       }
+      // eslint-disable-next-line no-console
       console.error('Ошибка при обновлении заказчика:', error);
     }
   };

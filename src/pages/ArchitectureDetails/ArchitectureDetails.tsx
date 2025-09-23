@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 import { useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { Button, Col, Dropdown, Input, List, Menu, Modal, Row, Space, Table, Tooltip, Typography, Upload } from 'antd';
+import { Button, Col, Dropdown, Input, List, Menu, Modal, Row, Space, Tooltip, Typography, Upload } from 'antd';
 import { UploadChangeParam, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import {
   CloseCircleTwoTone,
@@ -14,6 +14,7 @@ import {
   PlusOutlined,
   SearchOutlined
 } from '@ant-design/icons';
+import { Table } from 'common/ui';
 import { DashboardLayout } from 'components/DashboardLayout';
 
 const { Dragger } = Upload;

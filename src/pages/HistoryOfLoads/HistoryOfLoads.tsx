@@ -1,8 +1,9 @@
 import { FC, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { Col, Input, Row, Table, Typography } from 'antd';
+import { Col, Input, Row, Typography } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import { Table } from 'common/ui';
 import { DashboardLayout } from 'components/DashboardLayout';
 
 import { useGetCustomerByIdQuery } from 'api/Customer.api';

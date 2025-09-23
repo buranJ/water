@@ -2,9 +2,10 @@
 import { FC } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { Button, Space, Table, Tag, Typography } from 'antd';
+import { Button, Space, Tag, Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { EnvironmentOutlined, EyeOutlined } from '@ant-design/icons';
+import { Table } from 'common/ui';
 
 const { Text } = Typography;
 

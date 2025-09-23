@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { UploadFile, UploadProps } from 'antd';
-import { Alert, Button, Card, Col, Divider, List, message, Row, Space, Spin, Steps, Table, Tag, Typography, Upload } from 'antd';
+import { Alert, Button, Card, Col, Divider, List, message, Row, Space, Spin, Steps, Tag, Typography, Upload } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import {
   CheckCircleOutlined,
@@ -11,6 +11,7 @@ import {
   InfoCircleOutlined,
   UploadOutlined
 } from '@ant-design/icons';
+import { Table } from 'common/ui';
 
 import {
   downloadErrorReport,

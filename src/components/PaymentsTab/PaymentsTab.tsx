@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from 'react';
-import { Alert, Button, Card, Flex, Space, Spin, Table, TableColumnsType, Tag, Typography } from 'antd';
+import { Alert, Button, Card, Flex, Space, Spin, TableColumnsType, Tag, Typography } from 'antd';
 import { FileTextOutlined, PlusOutlined } from '@ant-design/icons';
+import { Table } from 'common/ui';
 import type { IPayment } from 'types/entities/accounting';
 import { AddPaymentModal } from './AddPaymentModal';
 

@@ -1,0 +1,43 @@
+/* Resizable table header styles */
+.resizable-th-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.resizable-th-content {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.resizable-handle {
+  position: absolute;
+  top: 0;
+  right: -6px;
+  height: 100%;
+  width: 12px;
+  cursor: col-resize;
+  z-index: 1;
+  /* Visual cue on hover */
+  background: transparent;
+}
+
+.resizable-handle:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+body.resizing-col {
+  cursor: col-resize !important;
+  user-select: none !important;
+}
+
+/* Prevent header content selection while resizing */
+body.resizing-col * {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+}

@@ -1,6 +1,6 @@
 import { FC, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
-import { Table } from 'antd';
+import { Table } from 'common/ui';
 import CustomPagination from 'common/ui/Pagination/CustomPagination';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { getColumns } from './ChangesHistory.helpers';

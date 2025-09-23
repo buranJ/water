@@ -1,9 +1,10 @@
 // src/components/CustomerTabs/PaymentsTab.tsx
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Table, Tag, Typography } from 'antd';
+import { Button, Tag, Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FileTextOutlined } from '@ant-design/icons';
+import { Table } from 'common/ui';
 
 const { Text } = Typography;
 

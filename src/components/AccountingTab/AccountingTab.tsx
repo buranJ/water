@@ -1,7 +1,8 @@
 import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Button, Card, Col, Flex, message, Row, Space, Spin, Table, TableColumnsType, Tabs, TabsProps, Typography } from 'antd';
+import { Alert, Button, Card, Col, Flex, message, Row, Space, Spin, TableColumnsType, Tabs, TabsProps, Typography } from 'antd';
 import { ClockCircleOutlined, DownloadOutlined, EditOutlined, UploadOutlined } from '@ant-design/icons';
+import { Table } from 'common/ui';
 import { EditProtocolModal } from 'components/EditProtocolModal/EditProtocolModal';
 import { InvoicesList } from 'components/InvoicesList/InvoicesList';
 import { EnhancedPaymentsTab } from 'components/PaymentsTab/EnhancedPaymentsTab';

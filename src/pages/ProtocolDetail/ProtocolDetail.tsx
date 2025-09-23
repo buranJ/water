@@ -1,7 +1,8 @@
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Card, Col, List, Row, Space, Table, Tabs, Tag, Typography, Upload, UploadFile, UploadProps } from 'antd';
+import { Button, Card, Col, List, Row, Space, Tabs, Tag, Typography, Upload, UploadFile, UploadProps } from 'antd';
 import { ClockCircleTwoTone, CloseCircleTwoTone, DownloadOutlined, EditOutlined, FileOutlined, UploadOutlined } from '@ant-design/icons';
+import { Table } from 'common/ui';
 import { DashboardLayout } from 'components/DashboardLayout';
 
 const { Title, Text } = Typography;

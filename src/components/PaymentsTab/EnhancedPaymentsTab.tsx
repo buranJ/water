@@ -1,7 +1,8 @@
 import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Button, Card, Collapse, Flex, Progress, Space, Spin, Table, TableColumnsType, Tag, Typography } from 'antd';
+import { Alert, Button, Card, Collapse, Flex, Progress, Space, Spin, TableColumnsType, Tag, Typography } from 'antd';
 import { FileTextOutlined, PlusOutlined } from '@ant-design/icons';
+import { Table } from 'common/ui';
 import type { IAccountingInvoice, IPayment } from 'types/entities/accounting';
 import { AddPaymentModal } from './AddPaymentModal';
 
