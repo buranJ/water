@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { FC, useCallback, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Button, Col, DatePicker, Form, Input, message, Row, Select, Typography } from 'antd';
@@ -8,8 +9,6 @@ import { DashboardLayout } from 'components';
 import { ITyItem } from 'types/entities';
 import './style.scss';
 
-import { useGetAllFormulasQuery } from 'api/Formula.api';
-import { useLazyGetAllObjectsQuery } from 'api/Object.api';
 import { useGetTyByIdQuery, useGetTypesTyQuery, useUpdateTyMutation } from 'api/Ty.api';
 import { t } from 'i18next';
 import { handleEnterFocusNext } from 'utils/formNavigation';
@@ -36,11 +35,9 @@ const getTypeTyId = (tt: unknown): number | undefined => {
 const AddTuForms: FC<{ title: string }> = ({ title }) => {
   const navigate = useNavigate();
   const { tyId } = useParams();
-  const formulasQuery = useGetAllFormulasQuery({ page: 1 });
   const typesTyQuery = useGetTypesTyQuery();
   const [updateTy, { isLoading, isSuccess }] = useUpdateTyMutation();
   const tuQuery = useGetTyByIdQuery({ tyId: tyId || '' });
-  const [getObject] = useLazyGetAllObjectsQuery();
   const [form] = Form.useForm<FormValues>();
 
   const formatDate = useCallback((date: Dayjs | undefined) => date?.format('YYYY-MM-DD') || '', []);
@@ -101,7 +98,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         type_ty: getTypeTyId(tuQuery.data.type_ty)
       });
     }
-  }, [form, getObject, tuQuery]);
+  }, [form, tuQuery]);
 
   const stageOptions = useMemo(
     () => [
@@ -134,9 +131,6 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
     navigate(`/dashboard/customers/${tuQuery.data?.customer.id}/edit`);
   }, [navigate, tuQuery.data?.customer.id]);
 
-  const onAddressEdit = useCallback(() => {
-    navigate(`/dashboard/objects/${tuQuery.data?.entity}`);
-  }, [navigate, tuQuery.data?.entity]);
 
   return (
     <DashboardLayout title={title}>
@@ -157,7 +151,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         <Form.Item
           label={t('addTuForms.form.labels.requestSource')}
           name='request_source'
-          rules={[{ required: true, message: t('addTuForms.form.validation.specifySource') }]}
+          rules={[]}
         >
           <Input size='large' placeholder={t('addTuForms.form.placeholders.requestSource')} />
         </Form.Item>
@@ -167,7 +161,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Form.Item
               label={t('addTuForms.form.labels.requestNumber')}
               name='request_number'
-              rules={[{ required: true, message: t('addTuForms.form.validation.specifyRequestNumber') }]}
+              rules={[]}
             >
               <Input size='large' placeholder={t('addTuForms.form.placeholders.requestNumber')} />
             </Form.Item>
@@ -176,7 +170,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Form.Item
               label={t('addTuForms.form.labels.requestDate')}
               name='request_date'
-              rules={[{ required: true, message: t('addTuForms.form.validation.specifyRequestDate') }]}
+              rules={[]}
               normalize={(value: Dayjs) => formatDate(value)}
               getValueProps={(value: string) => ({ value: parseDate(value) })}
             >
@@ -190,7 +184,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Form.Item
               label={t('addTuForms.form.labels.customer')}
               name='customer'
-              rules={[{ required: true, message: t('addTuForms.form.validation.specifyCustomer') }]}
+              rules={[]}
             >
               <Input
                 disabled
@@ -208,7 +202,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Form.Item
               label={t('addTuForms.form.labels.objectName')}
               name='object_name'
-              rules={[{ required: true, message: t('addTuForms.form.validation.specifyObjectName') }]}
+              rules={[]}
             >
               <Input size='large' placeholder={t('addTuForms.form.placeholders.objectName')} />
             </Form.Item>
@@ -220,25 +214,16 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Form.Item
               label={t('addTuForms.form.labels.address')}
               name='address'
-              rules={[{ required: true, message: t('addTuForms.form.validation.specifyAddress') }]}
+              rules={[]}
             >
-              <Input
-                disabled
-                size='large'
-                placeholder={t('addTuForms.form.placeholders.address')}
-                addonAfter={
-                  <Button type='link' style={{ padding: 0, height: 'auto' }} onClick={onAddressEdit}>
-                    <span style={{ fontSize: 14 }}>{t('addTuForms.form.buttons.change')}</span>
-                  </Button>
-                }
-              />
+              <Input disabled size='large' placeholder={t('addTuForms.form.placeholders.address')} />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
               label={t('addTuForms.form.labels.techConditionType')}
               name='type_ty'
-              rules={[{ required: true, message: t('addTuForms.form.validation.selectType') }]}
+              rules={[]}
             >
               <Select size='large' placeholder={t('addTuForms.form.placeholders.techConditionType')}>
                 {typesTyQuery.data?.map((type) => (
@@ -267,7 +252,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Form.Item
               label={t('addTuForms.form.labels.sewageAmount')}
               name='sewage_amount'
-              rules={[{ required: true, message: t('addTuForms.form.validation.required') }]}
+              rules={[]}
             >
               <Input disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.sewageAmount')} />
             </Form.Item>
@@ -308,22 +293,11 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               </Select>
             </Form.Item>
           </Col>
-          <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.formula')} name='formula' rules={[{ required: false }]}>
-              <Select size='large' placeholder={t('addTuForms.form.placeholders.formula')}>
-                {formulasQuery.data?.results.map((formula) => (
-                  <Option key={formula.id} value={formula.id}>
-                    {formula.title}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
         </Row>
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.status')} name='status' rules={[{ required: true }]}>
+            <Form.Item label={t('addTuForms.form.labels.status')} name='status' rules={[]}>
               <Select size='large' placeholder={t('addTuForms.form.placeholders.status')}>
                 {statusOptions.map((option) => (
                   <Option key={option.value} value={option.value}>

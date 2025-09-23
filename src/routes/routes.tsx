@@ -4,9 +4,6 @@ import { DashboardLayout } from 'components/DashboardLayout';
 
 const Login = lazy(() => import('features/auth/pages'));
 const Geoportal = lazy(() => import('pages/Geoportal'));
-const Formulas = lazy(() => import('pages/Formulas'));
-const Objects = lazy(() => import('pages/Objects'));
-const ObjectDetail = lazy(() => import('pages/ObjectDetail'));
 const TechnicalConditions = lazy(() => import('features/technical-conditions'));
 const AddTuForms = lazy(() => import('pages/AddTuForms'));
 const ExportData = lazy(() => import('pages/ExportData'));
@@ -30,7 +27,6 @@ const Profile = lazy(() => import('pages/Profile'));
 const ChangeHistory = lazy(() => import('pages/ChangeHistory'));
 const ChangeApplicationHistory = lazy(() => import('pages/ChangeApplicationHistory'));
 const ChangeCustomerHistory = lazy(() => import('pages/ChangeCustomerHistory'));
-const ChangeObjectHistory = lazy(() => import('pages/ChangeObjectHistory'));
 const Notifications = lazy(() => import('pages/Notification'));
 const TyImport = lazy(() => import('pages/TyImport'));
 const Invoices = lazy(() => import('pages/Invoices'));
@@ -45,22 +41,6 @@ export const routerConfig: RouteObject[] = [
   {
     path: '/dashboard/geo',
     element: <Geoportal title='dashboard.pages.geoportal' />
-  },
-  {
-    path: '/dashboard/formulas',
-    element: <Formulas title='dashboard.pages.formulas' />
-  },
-  {
-    path: '/dashboard/objects',
-    element: <Objects title='dashboard.pages.objects' />
-  },
-  {
-    path: '/dashboard/objects/:id',
-    element: <ObjectDetail />
-  },
-  {
-    path: '/dashboard/objects/:id/change-history',
-    element: <ChangeObjectHistory title='routers.changeHistory' />
   },
   {
     path: '/dashboard/technical-conditions',

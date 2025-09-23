@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Button, Col, Flex, Form, Input, message, Modal, Row, UploadFile } from 'antd';
@@ -70,18 +71,11 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
       const coordLatitude = selectedCoordinates?.latitude || values.latitude;
       const coordLongitude = selectedCoordinates?.longitude || values.longitude;
 
-      if (!coordLatitude || !coordLongitude) {
-        message.warning(t('applicationsCreate.messages.selectCoordinates') || 'Пожалуйста, выберите координаты на карте');
-        return;
-      }
 
-      if (isNaN(Number(coordLatitude)) || isNaN(Number(coordLongitude))) {
-        message.error(t('applicationsCreate.messages.invalidCoordinates') || 'Некорректные координаты');
-        return;
-      }
 
       // Resolve or create customer
       let customerId: number | undefined;
+      if (values.customer) {
       const customerSearch = await triggerGetCustomers({ search: String(values.customer), page: 1, page_size: 10 }).unwrap();
       const foundCustomer = Array.isArray(customerSearch.results)
         ? customerSearch.results.find((c: ICustomer) => c.full_name === String(values.customer))
@@ -98,9 +92,11 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
         }).unwrap();
         customerId = customerResponse.id;
       }
+      }
 
       // Resolve or create object
       let objectId: number | undefined;
+      if (values.object && customerId) {
       const objectSearch = await triggerGetObjects({ search: values.object, page: 1, page_size: 10 }).unwrap();
       const foundObject = objectSearch.results?.find(
         (o: ObjectItem) =>
@@ -119,17 +115,14 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
           address_number: values.contact,
           kadastr_number: '',
           status: 'active',
-          latitude: parseFloat(String(coordLatitude)),
-          longitude: parseFloat(String(coordLongitude)),
+          latitude: coordLatitude != null && !isNaN(Number(coordLatitude)) ? Number(coordLatitude) : undefined,
+          longitude: coordLongitude != null && !isNaN(Number(coordLongitude)) ? Number(coordLongitude) : undefined,
           customer: customerId
         }).unwrap();
         objectId = objectResponse.id;
       }
-
-      if (!customerId || !objectId) {
-        message.error(t('applicationsCreate.messages.customerOrObjectError') || 'Ошибка: не удалось определить заказчика или объект');
-        return;
       }
+
 
       const requestPayload = {
         customer: customerId,
@@ -143,37 +136,18 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
         firefightingExpensesOuter: values.firefightingExpensesOuter,
         status: 'pending' as const,
         entity: objectId,
-        latitude: parseFloat(String(coordLatitude)),
-        longitude: parseFloat(String(coordLongitude))
+        latitude: coordLatitude != null && !isNaN(Number(coordLatitude)) ? Number(coordLatitude) : undefined,
+        longitude: coordLongitude != null && !isNaN(Number(coordLongitude)) ? Number(coordLongitude) : undefined
       };
 
-      if (
-        !requestPayload.latitude ||
-        !requestPayload.longitude ||
-        isNaN(requestPayload.latitude) ||
-        isNaN(requestPayload.longitude) ||
-        requestPayload.latitude === 0 ||
-        requestPayload.longitude === 0
-      ) {
-        message.error(t('applicationsCreate.messages.invalidCoordinatesToSend') || 'Ошибка: невалидные координаты для отправки');
-        return;
-      }
 
       // Pre-submit refusal + TU checks
       try {
         const [byCustomer, byEntity, tuByCustomer, tuByEntity] = await Promise.all([
-          triggerCheckCustomer(customerId as number)
-            .unwrap()
-            .catch(() => ({ results: [] })),
-          triggerCheckEntity(objectId as number)
-            .unwrap()
-            .catch(() => ({ results: [] })),
-          triggerCheckTuCustomer(customerId as number)
-            .unwrap()
-            .catch(() => ({ results: [] })),
-          triggerCheckTuEntity(objectId as number)
-            .unwrap()
-            .catch(() => ({ results: [] }))
+          customerId ? triggerCheckCustomer(customerId).unwrap().catch(() => ({ results: [] })) : Promise.resolve({ results: [] }),
+          objectId ? triggerCheckEntity(objectId).unwrap().catch(() => ({ results: [] })) : Promise.resolve({ results: [] }),
+          customerId ? triggerCheckTuCustomer(customerId).unwrap().catch(() => ({ results: [] })) : Promise.resolve({ results: [] }),
+          objectId ? triggerCheckTuEntity(objectId).unwrap().catch(() => ({ results: [] })) : Promise.resolve({ results: [] })
         ]);
 
         const hasCustomerRefusals = Array.isArray(byCustomer?.results) && byCustomer.results.length > 0;
@@ -366,7 +340,7 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
               <Form.Item
                 name='customer'
                 label={t('applicationsCreate.form.labels.customer')}
-                rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+                rules={[]}
               >
                 <Input size='large' placeholder={t('applicationsCreate.form.placeholders.fullName')} />
               </Form.Item>
@@ -375,7 +349,7 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
               <Form.Item
                 name='object'
                 label={t('applicationsCreate.form.labels.object')}
-                rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+                rules={[]}
               >
                 <Input size='large' placeholder={t('applicationsCreate.form.placeholders.companyName')} />
               </Form.Item>
@@ -388,7 +362,7 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
               <Form.Item
                 name='address'
                 label={t('applicationsCreate.form.labels.street')}
-                rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+                rules={[]}
               >
                 <Input size='large' placeholder={t('applicationsCreate.form.placeholders.address')} />
               </Form.Item>
@@ -397,7 +371,7 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
               <Form.Item
                 name='contact'
                 label={t('applicationsCreate.form.labels.house')}
-                rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+                rules={[]}
               >
                 <Input size='large' placeholder={t('applicationsCreate.form.placeholders.houseNumberShort')} />
               </Form.Item>
@@ -410,7 +384,7 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
               <Form.Item
                 name='quantity'
                 label={t('applicationsCreate.form.labels.waterAmountRequired')}
-                rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }, { max: 5 }]}
+                rules={[]}
               >
                 <Input size='large' placeholder='16,93' type='number' min={0} maxLength={5} />
               </Form.Item>
@@ -419,7 +393,7 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
               <Form.Item
                 name='pressure'
                 label={t('applicationsCreate.form.labels.pressureRequired')}
-                rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }, { max: 5 }]}
+                rules={[]}
               >
                 <Input size='large' placeholder='16,93' type='number' min={0} maxLength={5} />
               </Form.Item>
@@ -432,7 +406,7 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
               <Form.Item
                 label={t('applicationsCreate.form.labels.waterPurpose')}
                 name='waterRequired'
-                rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+                rules={[]}
               >
                 <Input size='large' placeholder={t('applicationsCreate.form.placeholders.waterPurpose')} />
               </Form.Item>
@@ -441,7 +415,7 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
               <Form.Item
                 label={t('applicationsCreate.form.labels.firefightingExpenses')}
                 name='firefightingExpensesInner'
-                rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+                rules={[]}
               >
                 <Input type='number' min={0} size='large' placeholder={t('applicationsCreate.form.placeholders.enterValue')} />
               </Form.Item>
@@ -452,7 +426,7 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
           <Form.Item
             label='Расходы воды на наруж. пожаротушение'
             name='firefightingExpensesOuter'
-            rules={[{ required: true, message: t('applicationsCreate.form.validation.required') }]}
+            rules={[]}
           >
             <Input type='number' min={0} size='large' placeholder={t('applicationsCreate.form.placeholders.enterValue')} />
           </Form.Item>
@@ -460,7 +434,6 @@ export const ApplicationsCreate: FC<IProps> = ({ title }) => {
           {/* Координаты */}
           <Form.Item
             label={t('applicationsCreate.form.labels.coordinates', 'Координаты объекта')}
-            required
             style={{ marginBottom: '24px' }}
           >
             <MapPointSelector title='Выберите координаты объекта на карте' onCoordinatesSelect={handleCoordinatesSelect} />

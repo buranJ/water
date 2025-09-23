@@ -7,8 +7,6 @@ import { NotificationsBell } from 'components/NotificationsBell';
 import arrow from 'assets/icons/arrow.svg';
 import logo from 'assets/icons/logo.svg';
 import ApplicationIcon from 'assets/icons/sidebar/applications.svg?react';
-import BuildingIcon from 'assets/icons/sidebar/building.svg?react';
-import ComputingIcon from 'assets/icons/sidebar/computing.svg?react';
 import ExportIcon from 'assets/icons/sidebar/export.svg?react';
 import GeoportalIcon from 'assets/icons/sidebar/geoportal.svg?react';
 import TuIcon from 'assets/icons/sidebar/tu.svg?react';
@@ -88,11 +86,6 @@ export const DashboardLayout = ({ children, title }: Props) => {
       icon: <TuIcon />,
       label: t('dashboard.pages.ty')
     },
-    hasPermission('view_entity') && {
-      key: '/dashboard/objects',
-      icon: <BuildingIcon />,
-      label: t('dashboard.pages.objects')
-    },
     hasPermission('view_application') && {
       key: '/dashboard/applications',
       icon: <ApplicationIcon />,
@@ -117,11 +110,6 @@ export const DashboardLayout = ({ children, title }: Props) => {
       key: '/dashboard/export-data',
       icon: <ExportIcon />,
       label: t('dashboard.pages.export')
-    },
-    hasPermission('view_formula') && {
-      key: '/dashboard/formulas',
-      icon: <ComputingIcon />,
-      label: t('dashboard.pages.formulas')
     },
     hasPermission('view_technicalcondition') && {
       key: '/dashboard/archive',

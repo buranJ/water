@@ -4,30 +4,28 @@ import type { IApplicationResponse, IApplicationsListResponse, ICreateApplicatio
 import type { IGetApplicationHistoryParams, IGetApplicationHistoryResponse, IGetApplicationsParams } from 'types/requests';
 
 interface CreateApplicationRequest {
-  customer: number;
-  object: string;
-  address: string;
-  contact: string;
-  quantity: string;
-  pressure: string;
-  waterRequired: string;
-  firefightingExpensesInner: string;
-  firefightingExpensesOuter: string;
-  status: 'pending' | 'rejected' | 'approved' | 'contracted';
-  entity: number;
-  latitude: number;
-  longitude: number;
+  customer?: number;
+  object?: string;
+  address?: string;
+  contact?: string;
+  quantity?: string;
+  pressure?: string;
+  waterRequired?: string;
+  firefightingExpensesInner?: string;
+  firefightingExpensesOuter?: string;
+  status?: 'pending' | 'rejected' | 'approved' | 'contracted';
+  entity?: number;
+  latitude?: number;
+  longitude?: number;
 }
 
-interface UpdateApplicationRequest extends Omit<CreateApplicationRequest, 'customer'> {
-  customer: number;
-}
+type UpdateApplicationRequest = CreateApplicationRequest;
 
 export const applicationsApi = createApi({
   reducerPath: 'applicationsApi',
   baseQuery: getBaseQuery(),
   endpoints: (build) => ({
-    createApplication: build.mutation<ICreateApplicationResponse, CreateApplicationRequest>({
+    createApplication: build.mutation<ICreateApplicationResponse, Partial<CreateApplicationRequest>>({
       query: (data) => {
         console.log('API: Отправляемые данные на сервер:', data);
         console.log('API: JSON строка:', JSON.stringify(data));
