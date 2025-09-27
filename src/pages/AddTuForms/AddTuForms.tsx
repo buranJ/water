@@ -13,6 +13,7 @@ import './style.scss';
 import { useCreateTyMutation, useGetTyByIdQuery, useGetTypesTyQuery, usePatchTyMutation } from 'api/Ty.api';
 import { useCreateCustomerMutation, useLazyGetCustomerQuery } from 'api/Customer.api';
 import { useCreateObjectMutation, useLazyGetAllObjectsQuery } from 'api/Object.api';
+import { useGetAllFormulasQuery } from 'api/Formula.api';
 import { t } from 'i18next';
 import { handleEnterFocusNext } from 'utils/formNavigation';
 import { eniSchema, zodRule } from 'utils/validation';
@@ -33,6 +34,9 @@ type FormValues = Omit<ITyItem, 'type_ty' | 'customer' | 'application' | 'reques
   firefightingExpensesOuter?: number;
   latitude?: number;
   longitude?: number;
+  formula?: number;
+  fire_fighting_inner?: string;
+  fire_fighting_outer?: string;
 };
 
 const getTypeTyId = (tt: unknown): number | undefined => {
@@ -48,6 +52,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
   const navigate = useNavigate();
   const { tyId } = useParams();
   const typesTyQuery = useGetTypesTyQuery();
+  const { data: formulas } = useGetAllFormulasQuery({ page: 1, page_size: 100 });
   const [patchTy, { isLoading, isSuccess }] = usePatchTyMutation();
   const [createTy, { isLoading: createLoading }] = useCreateTyMutation();
   const isCreateMode = !tyId;
@@ -124,7 +129,6 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               objectId = objectResponse.id;
             }
           }
-
           // Build TU create payload (map migrated fields)
           const payloadCreate: any = {
             // Core TU fields from existing form
@@ -135,15 +139,24 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             address: values.address,
             // Mapping from ApplicationsCreate fields to TU fields
             water_required: values.quantity != null ? String(values.quantity) : values.water_required,
-            pressure_required: values.pressure != null ? String(values.pressure) : values.pressure_required,
+            pressure_required:
+              values.pressure != null && !Number.isNaN(Number(values.pressure))
+                ? Number(values.pressure)
+                : Number(values.pressure_required),
             fire_fighting_inner:
               values.firefightingExpensesInner != null ? String(values.firefightingExpensesInner) : values.fire_fighting_inner,
             fire_fighting_outer:
-              values.firefightingExpensesOuter != null ? String(values.firefightingExpensesOuter) : values.fire_fighting_outer
+              values.firefightingExpensesOuter != null ? String(values.firefightingExpensesOuter) : values.fire_fighting_outer,
+            // дата в формате 2025-09-27
+            request_date: dayjs(Date.now()).format('YYYY-MM-DD'),
+            // сгенерированный номер запроса (т.к. поля на форме нет)
+            request_number: `REQ-${dayjs().format('YYYYMMDD-HHmmss')}`,
+            sewage_amount: values.sewage_amount
           };
           if (objectId != null) payloadCreate.entity = objectId;
           if (coordLatitude != null) payloadCreate.latitude = coordLatitude;
           if (coordLongitude != null) payloadCreate.longitude = coordLongitude;
+          if (values.formula != null) payloadCreate.formula = values.formula;
 
           const created = await createTy(payloadCreate).unwrap();
           message.success(t('addTuForms.messages.createTuSuccess'));
@@ -243,10 +256,21 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         className='add-tu-forms'
       >
         {/* Источник запроса: Select (БГА, Тест) */}
-        <Form.Item label={t('addTuForms.form.labels.requestSource')} name='request_source' rules={[]}>
+        <Form.Item label={t('addTuForms.form.labels.requestSource')} name='request_source' rules={[{ required: true }]}>
           <Select size='large' placeholder={t('addTuForms.form.placeholders.requestSource')}>
             <Option value='БГА'>БГА</Option>
             <Option value='Тест'>Тест</Option>
+          </Select>
+        </Form.Item>
+
+        {/* Формула */}
+        <Form.Item label={t('addTuForms.form.labels.formula', 'Формула')} name='formula' rules={[{ required: true }]}>
+          <Select size='large' placeholder={t('addTuForms.form.placeholders.formula', 'Выберите формулу')}>
+            {formulas?.results?.map((f: any) => (
+              <Option key={f.id} value={f.id}>
+                {f.title}
+              </Option>
+            ))}
           </Select>
         </Form.Item>
 
@@ -321,15 +345,15 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Form.Item>
 
         {/* Технические параметры (без заголовков секций). Все фулл-вайд. */}
-        <Form.Item label={t('addTuForms.form.labels.sewageAmount')} name='sewage_amount' rules={[]}>
+        <Form.Item label={t('addTuForms.form.labels.sewageAmount')} name='sewage_amount' rules={[{ required: true }]}>
           <Input disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.sewageAmount')} />
         </Form.Item>
 
-        <Form.Item label={t('addTuForms.form.labels.waterRequired')} name='water_required' rules={[{ required: false }]}>
+        <Form.Item label={t('addTuForms.form.labels.waterRequired')} name='water_required' rules={[{ required: true }]}>
           <Input disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.waterRequired')} />
         </Form.Item>
 
-        <Form.Item label={t('addTuForms.form.labels.pressureRequired')} name='pressure_required' rules={[{ required: false }]}>
+        <Form.Item label={t('addTuForms.form.labels.pressureRequired')} name='pressure_required' rules={[{ required: true }]}>
           <Input disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.pressureRequired')} />
         </Form.Item>
 
