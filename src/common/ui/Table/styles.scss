@@ -11,6 +11,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  word-break: break-all;
 }
 
 .resizable-handle {
@@ -18,15 +19,15 @@
   top: 0;
   right: -6px;
   height: 100%;
-  width: 12px;
+  width: 6px;
   cursor: col-resize;
   z-index: 1;
   /* Visual cue on hover */
-  background: transparent;
+  background: #dfdfdf;
 }
 
 .resizable-handle:hover {
-  background: rgba(0, 0, 0, 0.05);
+  background: #ccc;
 }
 
 body.resizing-col {
@@ -40,4 +41,101 @@ body.resizing-col * {
   -moz-user-select: none !important;
   -ms-user-select: none !important;
   user-select: none !important;
+}
+
+/* Scoped rules for our resizable tables to allow very small columns */
+.resizable-table .ant-table {
+  table-layout: fixed;
+}
+
+.resizable-table .ant-table-thead > tr > th,
+.resizable-table .ant-table-tbody > tr > td {
+  /* Allow columns to shrink to very small sizes */
+  min-width: 0;
+
+  /* Truncate content instead of breaking words */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  /* Tighten horizontal padding so 15px widths are possible */
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+/* Collapse/Expand control in header */
+.resizable-table .collapse-toggle {
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+  font-size: 12px;
+  color: #888;
+  text-align: center;
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+  z-index: 2;
+}
+
+.resizable-table .collapse-toggle:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #555;
+}
+
+/* Collapsed header look: vertical label and no resize handle */
+.resizable-table th.collapsed-col {
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+}
+
+.resizable-table th.collapsed-col .resizable-handle {
+  display: none;
+}
+
+.resizable-table th.collapsed-col .resizable-th-content {
+  display: none;
+}
+
+.resizable-table th.collapsed-col .collapsed-label {
+  /* Vertical text similar to tab-like label */
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Collapsed body cells: hide content and compress padding */
+.resizable-table td.collapsed-col-body {
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: clip;
+  font-size: 0; /* hide inline text and most child content */
+}
+
+.resizable-table td.collapsed-col-body * {
+  display: none !important; /* ensure buttons/links also hidden */
+}
+
+/* Also ensure header content can collapse */
+.resizable-th-inner {
+  min-width: 0;
+}
+
+.resizable-th-content {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }

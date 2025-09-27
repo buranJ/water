@@ -22,6 +22,23 @@ type ExtraTableProps<T = any> = Omit<TableProps<T>, 'components'> & {
 };
 
 type WidthMap = Record<string, number>;
+type CollapsedMap = Record<string, boolean>;
+
+const readCollapsedLS = (key: string): CollapsedMap => {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as CollapsedMap) : {};
+  } catch {
+    return {};
+  }
+};
+const writeCollapsedLS = (key: string, value: CollapsedMap) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // ignore quota/security errors
+  }
+};
 
 type ResizableHeaderProps = React.ThHTMLAttributes<HTMLTableCellElement> & {
   width?: number;
@@ -52,7 +69,7 @@ export function Table<T = any>(props: ExtraTableProps<T>) {
     columns,
     resizable = true,
     tableId,
-    minColWidth = 80,
+    minColWidth = 15,
     maxColWidth = 1000,
     persist = true,
     components: userComponents,
@@ -70,11 +87,17 @@ export function Table<T = any>(props: ExtraTableProps<T>) {
     (tableId || (columns ? columns.map((c: any, i: number) => String(c.key ?? (c as any).dataIndex ?? i)).join('|') : 'default'));
 
   const [widths, setWidths] = useState<WidthMap>(() => (persist ? readLS(`tableWidths:${storageKey}`) : {}));
+  const [collapsed, setCollapsed] = useState<CollapsedMap>(() => (persist ? readCollapsedLS(`tableCollapsed:${storageKey}`) : {}));
 
   useEffect(() => {
     if (!persist) return;
     writeLS(`tableWidths:${storageKey}`, widths);
   }, [persist, storageKey, widths]);
+
+  useEffect(() => {
+    if (!persist) return;
+    writeCollapsedLS(`tableCollapsed:${storageKey}`, collapsed);
+  }, [persist, storageKey, collapsed]);
 
   const updateWidth = (colKey: string, w: number) => {
     setWidths((prev) => {
@@ -84,9 +107,21 @@ export function Table<T = any>(props: ExtraTableProps<T>) {
     });
   };
 
+  const collapsedWidth = 26;
+  const toggleCollapsed = (colKey: string) => {
+    setCollapsed((prev) => ({ ...prev, [colKey]: !prev[colKey] }));
+  };
+
   // Resizable header cell component (created inside to capture min/max/updateWidth)
   const ResizableHeaderCell: React.FC<ResizableHeaderProps> = (cellProps) => {
     const { width, onResize, children, style, ...restProps } = cellProps;
+    const colKey = (restProps as any)['data-col-key'] as string | undefined;
+    const isCollapsed = Boolean((restProps as any)['data-collapsed']);
+    const titleStr = (restProps as any)['data-col-title'] as string | undefined;
+    const handleToggle = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (colKey) toggleCollapsed(colKey);
+    };
     const thRef = useRef<HTMLTableCellElement>(null);
     const startX = useRef(0);
     const startW = useRef<number>(width ?? 0);
@@ -124,8 +159,19 @@ export function Table<T = any>(props: ExtraTableProps<T>) {
     return (
       <th {...restProps} ref={thRef} style={{ ...(style as React.CSSProperties), width }}>
         <div className='resizable-th-inner'>
-          <div className='resizable-th-content'>{children}</div>
-          <span className='resizable-handle' onMouseDown={onMouseDown} />
+          <span className='collapse-toggle' onClick={handleToggle} title={isCollapsed ? 'Expand' : 'Collapse'}>
+            {isCollapsed ? '⮞' : '⮜'}
+          </span>
+          {isCollapsed ? (
+            <div className='collapsed-label' title={titleStr || ''}>
+              {titleStr || ''}
+            </div>
+          ) : (
+            <>
+              <div className='resizable-th-content'>{children}</div>
+              <span className='resizable-handle' onMouseDown={onMouseDown} />
+            </>
+          )}
         </div>
       </th>
     );
@@ -134,24 +180,36 @@ export function Table<T = any>(props: ExtraTableProps<T>) {
   // Enhance columns with onHeaderCell + width from state
   const enhancedColumns: ColumnsType<T> | undefined = useMemo(() => {
     if (!resizable || !columns) return columns;
+
+    const titleToString = (t: unknown, fallback: string) => (typeof t === 'string' ? t : fallback);
+
     return columns.map((col: any, index: number) => {
       const colKey = String((col as ColumnType<T>).key ?? (col as ColumnType<T>).dataIndex ?? index);
       const userOnHeaderCell = (col as ColumnType<T>).onHeaderCell;
       const initialWidth =
         widths[colKey] ?? (typeof (col as ColumnType<T>).width === 'number' ? ((col as ColumnType<T>).width as number) : undefined);
 
-      return {
+      const isCollapsed = !!collapsed[colKey];
+      const computedWidth = isCollapsed ? collapsedWidth : initialWidth;
+
+      const nextCol: any = {
         ...col,
-        width: initialWidth,
+        width: computedWidth,
+        className: [col.className, isCollapsed ? 'collapsed-col-body' : ''].filter(Boolean).join(' '),
         onHeaderCell: (column: any) => ({
           ...(userOnHeaderCell ? userOnHeaderCell(column) : {}),
-          width: initialWidth,
+          width: computedWidth,
+          className: isCollapsed ? 'collapsed-col' : undefined,
           'data-col-key': colKey,
-          onResize: (w: number) => updateWidth(colKey, w)
+          'data-collapsed': isCollapsed,
+          'data-col-title': titleToString((col as any).title, colKey),
+          onResize: isCollapsed ? undefined : (w: number) => updateWidth(colKey, w)
         })
-      } as ColumnType<T>;
+      };
+
+      return nextCol as ColumnType<T>;
     });
-  }, [columns, resizable, widths]);
+  }, [columns, resizable, widths, collapsed]);
 
   // Merge components to use our header cell
   const mergedComponents = useMemo(() => {
@@ -168,5 +226,15 @@ export function Table<T = any>(props: ExtraTableProps<T>) {
   // If resizable and widths exist but table has no horizontal scroll, consider keeping as-is.
   // Consumers can still pass scroll prop if needed.
 
-  return <AntdTable {...(rest as TableProps<T>)} columns={enhancedColumns} components={mergedComponents} locale={mergedLocale} />;
+  return (
+    <AntdTable
+      {...(rest as TableProps<T>)}
+      tableLayout='fixed'
+      className={['resizable-table', (rest as TableProps<T>).className].filter(Boolean).join(' ')}
+      style={{ ...((rest as TableProps<T>).style as React.CSSProperties) }}
+      columns={enhancedColumns}
+      components={mergedComponents}
+      locale={mergedLocale}
+    />
+  );
 }
