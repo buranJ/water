@@ -11,7 +11,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  word-break: break-all;
 }
 
 .resizable-handle {
@@ -48,6 +47,7 @@ body.resizing-col * {
   table-layout: fixed;
 }
 
+.resizable-table .ant-table-thead > tr > th.thin-header,
 .resizable-table .ant-table-thead > tr > th,
 .resizable-table .ant-table-tbody > tr > td {
   /* Allow columns to shrink to very small sizes */
@@ -61,6 +61,30 @@ body.resizing-col * {
   /* Tighten horizontal padding so 15px widths are possible */
   padding-left: 4px;
   padding-right: 4px;
+}
+
+/* Important: allow inner wrappers to shrink below intrinsic word width */
+.resizable-table .ant-table-tbody > tr > td > * {
+  min-width: 0 !important;
+  max-width: 100%;
+}
+
+/* Typography and layout helpers inside cells shouldn't force min-content width */
+.resizable-table .ant-table-tbody .ant-typography,
+.resizable-table .ant-table-tbody .ant-space,
+.resizable-table .ant-table-tbody .ant-flex,
+.resizable-table .ant-table-tbody .ant-row,
+.resizable-table .ant-table-tbody .ant-col {
+  min-width: 0 !important;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* Thin header visual (shorter height, subtle divider) */
+.resizable-table .thin-header .ant-table-thead > tr > th {
+  padding-top: 4px;
+  padding-bottom: 4px;
+  font-size: 12px;
 }
 
 /* Collapse/Expand control in header */
