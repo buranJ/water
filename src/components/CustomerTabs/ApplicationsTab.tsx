@@ -120,7 +120,13 @@ export const ApplicationsTab: FC<IProps> = ({ applications }) => {
       width: 120,
       render: (_, record) => (
         <Space>
-          <Button size='small' icon={<EyeOutlined />} onClick={() => navigate(`/dashboard/applications/${record.id}`)}>
+          <Button
+            size='small'
+            icon={<EyeOutlined />}
+            onClick={() =>
+              navigate(record.ty_id ? `/dashboard/technical-conditions/tu-details/${record.ty_id}` : '/dashboard/add-tu-forms')
+            }
+          >
             {t('customers.details.details')}
           </Button>
           {record.x && record.y && (

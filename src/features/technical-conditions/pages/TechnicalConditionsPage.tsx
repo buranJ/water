@@ -145,7 +145,7 @@ export const TechnicalConditionsPage = () => {
   };
 
   const handleAddClick = () => {
-    navigate('/dashboard/applications/create');
+    navigate('/dashboard/add-tu-forms');
   };
 
   const handleDownloadClick = (presetId?: number | string) => {
