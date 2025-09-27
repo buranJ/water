@@ -1,8 +1,7 @@
 /* eslint-disable simple-import-sort/imports */
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
-import { Button, Card, Space, Typography } from 'antd';
+import { Card, Space, Typography } from 'antd';
 import { IStageEnum, IStatus6b3Enum } from 'types/common';
 import type { IGetTyById } from 'types/entities/tu';
 
@@ -14,7 +13,6 @@ interface DataSectionProps {
 
 export const DataSection: FC<DataSectionProps> = ({ objectData }) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const statusRender = (status: IStatus6b3Enum) => {
     switch (status) {
@@ -68,16 +66,7 @@ export const DataSection: FC<DataSectionProps> = ({ objectData }) => {
         )}
         <br />
         <br />
-        {objectData?.application ? (
-          <>
-            <Button type='primary' onClick={() => navigate(`/dashboard/applications/${objectData.application?.id}`)}>
-              {t('tuDetails.buttons.goToApplication', 'Перейти к заявке')}
-            </Button>
-            <br />
-          </>
-        ) : (
-          <br />
-        )}
+        <br />
       </Card>
 
       <Card style={{ marginBottom: 24 }}>

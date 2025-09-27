@@ -92,7 +92,7 @@ export const Notification: FC<IProps> = ({ title }) => {
       return;
     }
     if (n.application_id) {
-      navigate(`/dashboard/applications/${n.application_id}`);
+      navigate('/dashboard/add-tu-forms');
       return;
     }
   };

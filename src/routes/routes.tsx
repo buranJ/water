@@ -18,14 +18,9 @@ const ArchitectureDetails = lazy(() => import('pages/ArchitectureDetails'));
 const FolderDetail = lazy(() => import('pages/FolderDetail'));
 const ProtocolDetail = lazy(() => import('pages/ProtocolDetail'));
 const AddCustomer = lazy(() => import('pages/AddCustomer'));
-const Applications = lazy(() => import('pages/Applications'));
 const NotFound = lazy(() => import('pages/NotFound'));
-const ApplicationsCreate = lazy(() => import('pages/ApplicationsCreate'));
-const ApplicationDetails = lazy(() => import('pages/ApplicationDetails'));
-const EditApplication = lazy(() => import('pages/EditApplication'));
 const Profile = lazy(() => import('pages/Profile'));
 const ChangeHistory = lazy(() => import('pages/ChangeHistory'));
-const ChangeApplicationHistory = lazy(() => import('pages/ChangeApplicationHistory'));
 const ChangeCustomerHistory = lazy(() => import('pages/ChangeCustomerHistory'));
 const Notifications = lazy(() => import('pages/Notification'));
 const TyImport = lazy(() => import('pages/TyImport'));
@@ -64,6 +59,10 @@ export const routerConfig: RouteObject[] = [
   },
   {
     path: '/dashboard/add-tu-forms/:tyId',
+    element: <AddTuForms title='routers.addTu' />
+  },
+  {
+    path: '/dashboard/add-tu-forms',
     element: <AddTuForms title='routers.addTu' />
   },
   {
@@ -111,32 +110,12 @@ export const routerConfig: RouteObject[] = [
     element: <ProtocolDetail title='routers.protocol' />
   },
   {
-    path: '/dashboard/applications',
-    element: <Applications title='dashboard.pages.applications' />
-  },
-  {
-    path: '/dashboard/applications/:id',
-    element: <ApplicationDetails title='routers.applicationDetails' />
-  },
-  {
-    path: '/dashboard/applications/:id/edit',
-    element: <EditApplication title='routers.editApplication' />
-  },
-  {
-    path: '/dashboard/applications/create',
-    element: <ApplicationsCreate title='routers.applicationCreate' />
-  },
-  {
     path: '/dashboard/Profile',
     element: <Profile title='routers.profile' />
   },
   {
     path: '/dashboard/ty/:tyId/change-history',
     element: <ChangeHistory title='routers.changeHistory' />
-  },
-  {
-    path: '/dashboard/applications/:id/change-history',
-    element: <ChangeApplicationHistory title='routers.changeHistory' />
   },
   {
     path: '/dashboard/notifications',

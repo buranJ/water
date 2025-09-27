@@ -6,7 +6,6 @@ import { FileTextOutlined, LeftOutlined, TeamOutlined, UploadOutlined, UserOutli
 import { NotificationsBell } from 'components/NotificationsBell';
 import arrow from 'assets/icons/arrow.svg';
 import logo from 'assets/icons/logo.svg';
-import ApplicationIcon from 'assets/icons/sidebar/applications.svg?react';
 import ExportIcon from 'assets/icons/sidebar/export.svg?react';
 import GeoportalIcon from 'assets/icons/sidebar/geoportal.svg?react';
 import TuIcon from 'assets/icons/sidebar/tu.svg?react';
@@ -85,11 +84,6 @@ export const DashboardLayout = ({ children, title }: Props) => {
       key: '/dashboard/technical-conditions',
       icon: <TuIcon />,
       label: t('dashboard.pages.ty')
-    },
-    hasPermission('view_application') && {
-      key: '/dashboard/applications',
-      icon: <ApplicationIcon />,
-      label: t('dashboard.pages.applications')
     },
     {
       key: '/dashboard/invoices',

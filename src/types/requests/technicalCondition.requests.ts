@@ -7,9 +7,9 @@ export type IGetAllTechnicalConditionResponse = IPaginationMeta & {
 export type IGetAllTechnicalConditionParams = ITyListQueryParams;
 
 export type ICreateTechnicalConditionRequest = ITyItem;
-export type ICreateTechnicalConditionParams = Omit<ITyBody, 'request_date' | 'payment_deadline'> & {
-  request_date: string;
-  payment_deadline: string;
+export type ICreateTechnicalConditionParams = Omit<Partial<ITyBody>, 'request_date' | 'payment_deadline'> & {
+  request_date?: string;
+  payment_deadline?: string;
 };
 
 export type IGetTechnicalConditionByIdParams = { tyId: string };
