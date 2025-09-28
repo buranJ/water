@@ -53,12 +53,6 @@ export const ActionsBar: FC<ActionsBarProps> = ({
         ) : (
           <Link to={'/dashboard/add-tu-forms/' + id}>{t('routers.editTy')}</Link>
         ))}
-      {hasPermission('view_actty') && (
-        <Link to={`/dashboard/technical-conditions/history-of-loads/${id}`}>{t('routers.historyOfLoads')}</Link>
-      )}
-      {hasPermission('view_historicaltechnicalcondition') && (
-        <Link to={`/dashboard/ty/${id}/change-history`}>{t('tuDetails.actions.changeTuData')}</Link>
-      )}
       {hasPermission('view_technicalcondition') && (
         <>
           <Button icon={<DownloadOutlined />} onClick={onDownloadTu} loading={isDownloading} disabled={!id}>

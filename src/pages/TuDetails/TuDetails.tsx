@@ -400,7 +400,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
                     </Typography.Link>
                   </Col>
                 </Row>
-              )}dsa
+              )}
               <Row justify='space-between' align='middle'>
                 <Text>{getActStatusLabel(objectData.act?.status as IActEnum | undefined)}</Text>
                 {getActStatusIcon(objectData.act?.status as IActEnum | undefined)}
