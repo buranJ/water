@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { Button, Col, DatePicker, Form, Input, message, Row, Select } from 'antd';
+import { Button, Col, DatePicker, Form, Input, message, Row, Select, AutoComplete } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import dayjs, { Dayjs } from 'dayjs';
 import { MaskedInput } from 'common/ui';
@@ -15,6 +15,7 @@ import { useCreateCustomerMutation, useLazyGetCustomerQuery } from 'api/Customer
 import { useCreateObjectMutation, useLazyGetAllObjectsQuery } from 'api/Object.api';
 import { useGetAllFormulasQuery } from 'api/Formula.api';
 import { useGetRequestSourcesQuery } from 'api/RequestSource.api';
+import { useLazyGetStreetsQuery } from 'api/Street.api';
 import { t } from 'i18next';
 import { handleEnterFocusNext } from 'utils/formNavigation';
 import { eniSchema, zodRule } from 'utils/validation';
@@ -73,6 +74,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
   const [createObject] = useCreateObjectMutation();
   const [triggerGetCustomers] = useLazyGetCustomerQuery();
   const [triggerGetObjects] = useLazyGetAllObjectsQuery();
+  const [triggerStreetSearch, { data: streetsData, isFetching: streetsLoading }] = useLazyGetStreetsQuery();
+  const [addressSearch, setAddressSearch] = useState('');
 
   const tuQuery = useGetTyByIdQuery({ tyId: tyId || '' }, { skip: !tyId });
   const [form] = Form.useForm<FormValues>();
@@ -160,7 +163,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               values.firefightingExpensesOuter != null ? String(values.firefightingExpensesOuter) : values.fire_fighting_outer,
             request_date: dayjs(Date.now()).format('YYYY-MM-DD'),
             sewage_amount: values.sewage_amount,
-            request_number: `REQ-${dayjs().format('YYYYMMDD-HHmmss')}`
+            customer: customerId
           };
           if (objectId != null) payloadCreate.entity = objectId;
           if (coordLatitude != null) payloadCreate.latitude = coordLatitude;
@@ -223,6 +226,19 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
     }
   }, [form, tuQuery]);
 
+  useEffect(() => {
+    if (addressSearch && addressSearch.length >= 2) {
+      const h = setTimeout(() => {
+        try {
+          triggerStreetSearch({ search: addressSearch, page: 1, page_size: 10 });
+        } catch (e) {
+          // no-op
+        }
+      }, 350);
+      return () => clearTimeout(h);
+    }
+  }, [addressSearch, triggerStreetSearch]);
+
   const stageOptions = useMemo(
     () => [
       { value: 'draft', label: t('addTuForms.form.options.stages.draft') },
@@ -232,6 +248,11 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
     ],
     []
   );
+  const streetOptions = useMemo(() => {
+    const list = (streetsData as any)?.results ?? streetsData ?? [];
+    return Array.isArray(list) ? list.map((s: any) => ({ value: s.name, label: s.name })) : [];
+  }, [streetsData]);
+
   const statusOptions = [
     {
       value: 'active',
@@ -341,7 +362,16 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
         {/* Адрес */}
         <Form.Item label={t('addTuForms.form.labels.address')} name='address' rules={[]}>
-          <Input disabled={!isCreateMode} size='large' placeholder={t('addTuForms.form.placeholders.address')} />
+          <AutoComplete
+            size='large'
+            style={{ width: '100%' }}
+            disabled={!isCreateMode}
+            options={streetOptions}
+            onSearch={setAddressSearch}
+            onSelect={(v) => form.setFieldsValue({ address: v as string })}
+            filterOption={false}
+            placeholder={t('addTuForms.form.placeholders.address')}
+          />
         </Form.Item>
 
         {/* Координаты */}
@@ -417,9 +447,9 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Select>
         </Form.Item>
 
-        <Form.Item label={t('addTuForms.form.labels.provideWater')} name='provide_water' rules={[{ required: false }]}>
+        {/* <Form.Item label={t('addTuForms.form.labels.provideWater')} name='provide_water' rules={[{ required: false }]}>
           <TextArea size='large' placeholder={t('addTuForms.form.placeholders.provideWater')} />
-        </Form.Item>
+        </Form.Item> */}
 
         <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_sewer' rules={[{ required: false }]}>
           <Input size='large' placeholder={t('addTuForms.form.placeholders.streetPass')} />
@@ -436,9 +466,9 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Select>
         </Form.Item>
 
-        <Form.Item label={t('addTuForms.form.labels.provideSewer')} name='provide_sewer' rules={[{ required: false }]}>
+        {/* <Form.Item label={t('addTuForms.form.labels.provideSewer')} name='provide_sewer' rules={[{ required: false }]}>
           <TextArea size='large' placeholder={t('addTuForms.form.placeholders.provideSewer')} />
-        </Form.Item>
+        </Form.Item> */}
 
         {/* Пожаротушение */}
         <Form.Item label={t('addTuForms.form.labels.fireInput1')} name='fire_input_1' rules={[{ required: false }]}>
