@@ -319,16 +319,7 @@ export const TechnicalConditionsPage = () => {
             </Form.Item>
           </Form>
         </Modal>
-        <Table
-          tableLayout='fixed'
-          pagination={false}
-          loading={isLoading}
-          columns={columns}
-          dataSource={tableData}
-          rowKey='id'
-          bordered
-          scroll={{ x: 'max-content' }}
-        />
+        <Table pagination={false} loading={isLoading} columns={columns} dataSource={tableData} rowKey='id' bordered />
         <Pagination total={tuData?.count || 0} current={page} pageSize={pageSize} onChange={handlePageChange} />
       </div>
     </DashboardLayout>

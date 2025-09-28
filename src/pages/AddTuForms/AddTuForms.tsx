@@ -2,7 +2,6 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Button, Col, DatePicker, Form, Input, message, Row, Select, AutoComplete } from 'antd';
-import TextArea from 'antd/es/input/TextArea';
 import dayjs, { Dayjs } from 'dayjs';
 import { MaskedInput } from 'common/ui';
 import { DashboardLayout } from 'components';
@@ -74,7 +73,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
   const [createObject] = useCreateObjectMutation();
   const [triggerGetCustomers] = useLazyGetCustomerQuery();
   const [triggerGetObjects] = useLazyGetAllObjectsQuery();
-  const [triggerStreetSearch, { data: streetsData, isFetching: streetsLoading }] = useLazyGetStreetsQuery();
+  const [triggerStreetSearch, { data: streetsData }] = useLazyGetStreetsQuery();
   const [addressSearch, setAddressSearch] = useState('');
 
   const tuQuery = useGetTyByIdQuery({ tyId: tyId || '' }, { skip: !tyId });
