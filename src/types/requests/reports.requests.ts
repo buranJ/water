@@ -3,6 +3,8 @@ import type { ExportEntity, ExportFilters, ExportFormat, ExportInclude } from 't
 export interface IExportReportsParams {
   export: ExportFormat;
   entity: ExportEntity;
+  // New: when exporting by query string (instead of preset_id/filters)
+  query_string?: string;
   filters?: ExportFilters;
   ids?: number[];
   preset_id?: number;
