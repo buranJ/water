@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
-import { Form, Input, message, Modal } from 'antd';
+import { Button, DatePicker, Form, Input, message, Modal, Space } from 'antd';
 import { Table } from 'common/ui';
 import { Pagination } from 'common/ui';
 import { TUFilterBar } from '../components/TUFilterBar/TUFilterBar';
@@ -12,6 +12,7 @@ import { getColumns } from './TechnicalConditionsPage.helpers';
 import './styles.scss';
 
 import { useCreatePresetMutation, useGetPresetsQuery } from 'api/Presets.api';
+import { useExportReportsMutation } from 'api/Reports.api';
 import { useGetAllTyQuery, usePatchTyMutation } from 'api/Ty.api';
 import { t } from 'i18next';
 
@@ -92,7 +93,10 @@ export const TechnicalConditionsPage = () => {
   const [createPreset, { isLoading: creatingPreset }] = useCreatePresetMutation();
 
   const [saveModalOpen, setSaveModalOpen] = useState(false);
+  const [exportModal, setExportModal] = useState(false);
   const [saveForm] = Form.useForm();
+  const [exportForm] = Form.useForm();
+  const [exportReports, { isLoading: exporting }] = useExportReportsMutation();
 
   const [tableData, setTableData] = useState<ITechnicalCondition[]>([]);
 
@@ -148,20 +152,8 @@ export const TechnicalConditionsPage = () => {
     navigate('/dashboard/add-tu-forms');
   };
 
-  const handleDownloadClick = (presetId?: number | string) => {
-    if (presetId) {
-      navigate('/dashboard/export-data', {
-        state: {
-          autoExport: {
-            preset_id: Number(presetId),
-            entity: 'technical_conditions',
-            export: 'xlsx'
-          }
-        }
-      });
-    } else {
-      navigate('/dashboard/export-data');
-    }
+  const handleDownloadClick = () => {
+    setExportModal(true);
   };
 
   const applyPreset = (preset: { query_string: string }) => {
@@ -188,6 +180,45 @@ export const TechnicalConditionsPage = () => {
       // ignore
     }
   };
+
+  const downloadFile = (blob: Blob, filename?: string) => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename || 'tu_export_by_query.xlsx';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExportSubmit = async () => {
+    try {
+      const vals = await exportForm.validateFields();
+      const sp = new URLSearchParams(searchParams);
+      sp.delete('page');
+      sp.delete('page_size');
+      if (vals?.date_from) sp.set('request_date_start', (vals.date_from as unknown as import('dayjs').Dayjs).format('YYYY-MM-DD'));
+      if (vals?.date_to) sp.set('request_date_end', (vals.date_to as unknown as import('dayjs').Dayjs).format('YYYY-MM-DD'));
+
+      const body: import('types/requests').IExportReportsParams = {
+        export: 'xlsx',
+        entity: 'technical_conditions',
+        query_string: sp.toString(),
+        include: { customer: true, entity: true, protocol: true },
+        filename: 'tu_export_by_query'
+      };
+
+      const res = await exportReports(body).unwrap();
+      downloadFile(res.blob, res.filename || body.filename);
+      message.success(t('technicalConditions.export.success', 'Экспорт начат'));
+      setExportModal(false);
+      exportForm.resetFields();
+    } catch {
+      // ignore validation/cancel
+    }
+  };
+
   const columns = useMemo(
     () =>
       getColumns({
@@ -261,6 +292,30 @@ export const TechnicalConditionsPage = () => {
             </Form.Item>
             <Form.Item name='description' label={t('technicalConditions.presets.description', 'Описание')}>
               <Input.TextArea rows={3} />
+            </Form.Item>
+          </Form>
+        </Modal>
+        {/* export modal */}
+        <Modal
+          open={exportModal}
+          title={t('technicalConditions.export.title', 'Экспорт данных')}
+          onCancel={() => setExportModal(false)}
+          destroyOnClose
+          footer={
+            <Space>
+              <Button onClick={() => setExportModal(false)}>{t('common.cancel')}</Button>
+              <Button type='primary' onClick={handleExportSubmit} loading={exporting}>
+                {t('common.export')}
+              </Button>
+            </Space>
+          }
+        >
+          <Form layout='vertical' form={exportForm}>
+            <Form.Item name='date_from' label={t('technicalConditions.export.from', 'Дата от')}>
+              <DatePicker format='YYYY-MM-DD' style={{ width: '100%' }} />
+            </Form.Item>
+            <Form.Item name='date_to' label={t('technicalConditions.export.to', 'Дата до')}>
+              <DatePicker format='YYYY-MM-DD' style={{ width: '100%' }} />
             </Form.Item>
           </Form>
         </Modal>

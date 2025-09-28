@@ -16,6 +16,8 @@ import {
   presetsApi,
   refusalApi,
   reportsApi,
+  requestSourceApi,
+  streetApi,
   tyApi,
   tyImportApi
 } from 'api/index';
@@ -38,7 +40,9 @@ const store = configureStore({
     [formulaApi.reducerPath]: formulaApi.reducer,
     [reportsApi.reducerPath]: reportsApi.reducer,
     [notificationsApi.reducerPath]: notificationsApi.reducer,
-    [presetsApi.reducerPath]: presetsApi.reducer
+    [presetsApi.reducerPath]: presetsApi.reducer,
+    [requestSourceApi.reducerPath]: requestSourceApi.reducer,
+    [streetApi.reducerPath]: streetApi.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -62,6 +66,8 @@ const store = configureStore({
       reportsApi.middleware,
       notificationsApi.middleware,
       tyImportApi.middleware,
+      requestSourceApi.middleware,
+      streetApi.middleware,
       presetsApi.middleware
     )
 });

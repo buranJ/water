@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { Button, Col, DatePicker, Form, Input, message, Row, Select } from 'antd';
+import { Button, Col, DatePicker, Form, Input, message, Row, Select, AutoComplete } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import dayjs, { Dayjs } from 'dayjs';
 import { MaskedInput } from 'common/ui';
@@ -14,6 +14,8 @@ import { useCreateTyMutation, useGetTyByIdQuery, useGetTypesTyQuery, usePatchTyM
 import { useCreateCustomerMutation, useLazyGetCustomerQuery } from 'api/Customer.api';
 import { useCreateObjectMutation, useLazyGetAllObjectsQuery } from 'api/Object.api';
 import { useGetAllFormulasQuery } from 'api/Formula.api';
+import { useGetRequestSourcesQuery } from 'api/RequestSource.api';
+import { useLazyGetStreetsQuery } from 'api/Street.api';
 import { t } from 'i18next';
 import { handleEnterFocusNext } from 'utils/formNavigation';
 import { eniSchema, zodRule } from 'utils/validation';
@@ -48,11 +50,21 @@ const getTypeTyId = (tt: unknown): number | undefined => {
   return undefined;
 };
 
+const getRequestSourceTitle = (rs: unknown): string | undefined => {
+  if (typeof rs === 'string') return rs;
+  if (rs && typeof rs === 'object' && 'title' in (rs as Record<string, unknown>)) {
+    const title = (rs as { title?: unknown }).title;
+    return typeof title === 'string' ? title : String(title ?? '');
+  }
+  return undefined;
+};
+
 const AddTuForms: FC<{ title: string }> = ({ title }) => {
   const navigate = useNavigate();
   const { tyId } = useParams();
   const typesTyQuery = useGetTypesTyQuery();
   const { data: formulas } = useGetAllFormulasQuery({ page: 1, page_size: 100 });
+  const { data: requestSources } = useGetRequestSourcesQuery({ page: 1, page_size: 100 });
   const [patchTy, { isLoading, isSuccess }] = usePatchTyMutation();
   const [createTy, { isLoading: createLoading }] = useCreateTyMutation();
   const isCreateMode = !tyId;
@@ -62,6 +74,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
   const [createObject] = useCreateObjectMutation();
   const [triggerGetCustomers] = useLazyGetCustomerQuery();
   const [triggerGetObjects] = useLazyGetAllObjectsQuery();
+  const [triggerStreetSearch, { data: streetsData, isFetching: streetsLoading }] = useLazyGetStreetsQuery();
+  const [addressSearch, setAddressSearch] = useState('');
 
   const tuQuery = useGetTyByIdQuery({ tyId: tyId || '' }, { skip: !tyId });
   const [form] = Form.useForm<FormValues>();
@@ -147,11 +161,9 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               values.firefightingExpensesInner != null ? String(values.firefightingExpensesInner) : values.fire_fighting_inner,
             fire_fighting_outer:
               values.firefightingExpensesOuter != null ? String(values.firefightingExpensesOuter) : values.fire_fighting_outer,
-            // дата в формате 2025-09-27
             request_date: dayjs(Date.now()).format('YYYY-MM-DD'),
-            // сгенерированный номер запроса (т.к. поля на форме нет)
-            request_number: `REQ-${dayjs().format('YYYYMMDD-HHmmss')}`,
-            sewage_amount: values.sewage_amount
+            sewage_amount: values.sewage_amount,
+            customer: customerId
           };
           if (objectId != null) payloadCreate.entity = objectId;
           if (coordLatitude != null) payloadCreate.latitude = coordLatitude;
@@ -207,10 +219,25 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         request_date: toStr(tuQuery.data.request_date as unknown as string | Date | undefined),
         payment_deadline: toStr(tuQuery.data.payment_deadline as unknown as string | Date | undefined),
         // Для Select поле ожидает id. Бэк может вернуть либо объект, либо число.
-        type_ty: getTypeTyId(tuQuery.data.type_ty)
+        type_ty: getTypeTyId(tuQuery.data.type_ty),
+        // request_source может прийти строкой или объектом {id,title}
+        request_source: getRequestSourceTitle((tuQuery.data as any).request_source)
       });
     }
   }, [form, tuQuery]);
+
+  useEffect(() => {
+    if (addressSearch && addressSearch.length >= 2) {
+      const h = setTimeout(() => {
+        try {
+          triggerStreetSearch({ search: addressSearch, page: 1, page_size: 10 });
+        } catch (e) {
+          // no-op
+        }
+      }, 350);
+      return () => clearTimeout(h);
+    }
+  }, [addressSearch, triggerStreetSearch]);
 
   const stageOptions = useMemo(
     () => [
@@ -221,6 +248,11 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
     ],
     []
   );
+  const streetOptions = useMemo(() => {
+    const list = (streetsData as any)?.results ?? streetsData ?? [];
+    return Array.isArray(list) ? list.map((s: any) => ({ value: s.name, label: s.name })) : [];
+  }, [streetsData]);
+
   const statusOptions = [
     {
       value: 'active',
@@ -257,9 +289,17 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
       >
         {/* Источник запроса: Select (БГА, Тест) */}
         <Form.Item label={t('addTuForms.form.labels.requestSource')} name='request_source' rules={[{ required: true }]}>
-          <Select size='large' placeholder={t('addTuForms.form.placeholders.requestSource')}>
-            <Option value='БГА'>БГА</Option>
-            <Option value='Тест'>Тест</Option>
+          <Select
+            size='large'
+            placeholder={t('addTuForms.form.placeholders.requestSource')}
+            showSearch
+            optionFilterProp='children'
+          >
+            {requestSources?.results?.map((rs) => (
+              <Option key={rs.id} value={rs.title}>
+                {rs.title}
+              </Option>
+            ))}
           </Select>
         </Form.Item>
 
@@ -322,7 +362,16 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
         {/* Адрес */}
         <Form.Item label={t('addTuForms.form.labels.address')} name='address' rules={[]}>
-          <Input disabled={!isCreateMode} size='large' placeholder={t('addTuForms.form.placeholders.address')} />
+          <AutoComplete
+            size='large'
+            style={{ width: '100%' }}
+            disabled={!isCreateMode}
+            options={streetOptions}
+            onSearch={setAddressSearch}
+            onSelect={(v) => form.setFieldsValue({ address: v as string })}
+            filterOption={false}
+            placeholder={t('addTuForms.form.placeholders.address')}
+          />
         </Form.Item>
 
         {/* Координаты */}
@@ -398,9 +447,9 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Select>
         </Form.Item>
 
-        <Form.Item label={t('addTuForms.form.labels.provideWater')} name='provide_water' rules={[{ required: false }]}>
+        {/* <Form.Item label={t('addTuForms.form.labels.provideWater')} name='provide_water' rules={[{ required: false }]}>
           <TextArea size='large' placeholder={t('addTuForms.form.placeholders.provideWater')} />
-        </Form.Item>
+        </Form.Item> */}
 
         <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_sewer' rules={[{ required: false }]}>
           <Input size='large' placeholder={t('addTuForms.form.placeholders.streetPass')} />
@@ -417,9 +466,9 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Select>
         </Form.Item>
 
-        <Form.Item label={t('addTuForms.form.labels.provideSewer')} name='provide_sewer' rules={[{ required: false }]}>
+        {/* <Form.Item label={t('addTuForms.form.labels.provideSewer')} name='provide_sewer' rules={[{ required: false }]}>
           <TextArea size='large' placeholder={t('addTuForms.form.placeholders.provideSewer')} />
-        </Form.Item>
+        </Form.Item> */}
 
         {/* Пожаротушение */}
         <Form.Item label={t('addTuForms.form.labels.fireInput1')} name='fire_input_1' rules={[{ required: false }]}>
