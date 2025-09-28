@@ -319,7 +319,7 @@ export const TechnicalConditionsPage = () => {
             </Form.Item>
           </Form>
         </Modal>
-        <Table pagination={false} loading={isLoading} columns={columns} dataSource={tableData} rowKey='id' bordered />
+        <Table resizable pagination={false} loading={isLoading} columns={columns} dataSource={tableData} rowKey='id' bordered />
         <Pagination total={tuData?.count || 0} current={page} pageSize={pageSize} onChange={handlePageChange} />
       </div>
     </DashboardLayout>

@@ -339,12 +339,14 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
             </Title>
             <div style={{ overflowX: 'auto' }}>
               <Table
+                resizable
                 dataSource={protocolTableData}
                 columns={columns}
                 pagination={false}
-                showHeader={false}
+                showHeader
                 size='middle'
                 bordered
+                scroll={{ x: 'max-content' }}
                 style={{ marginBottom: 16, minWidth: 500 }}
               />
             </div>
@@ -356,12 +358,14 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
             </Title>
             <div style={{ overflowX: 'auto' }}>
               <Table
+                resizable
                 dataSource={paperWorkData}
                 columns={columns}
                 pagination={false}
-                showHeader={false}
+                showHeader
                 size='middle'
                 bordered
+                scroll={{ x: 'max-content' }}
                 style={{ marginBottom: 0, minWidth: 500 }}
               />
             </div>

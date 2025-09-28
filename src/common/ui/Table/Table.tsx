@@ -23,7 +23,6 @@ type ExtraTableProps<T = any> = Omit<TableProps<T>, 'components'> & {
 
 type WidthMap = Record<string, number>;
 
-
 type ResizableHeaderProps = React.ThHTMLAttributes<HTMLTableCellElement> & {
   width?: number;
   onResize?: (w: number) => void;
@@ -51,7 +50,7 @@ export function Table<T = any>(props: ExtraTableProps<T>) {
   const {
     locale,
     columns,
-    resizable = true,
+    resizable = false,
     tableId,
     minColWidth = 15,
     maxColWidth = 1000,
@@ -77,7 +76,6 @@ export function Table<T = any>(props: ExtraTableProps<T>) {
     writeLS(`tableWidths:${storageKey}`, widths);
   }, [persist, storageKey, widths]);
 
-
   const updateWidth = (colKey: string, w: number) => {
     setWidths((prev) => {
       if (prev[colKey] === w) return prev;
@@ -85,7 +83,6 @@ export function Table<T = any>(props: ExtraTableProps<T>) {
       return next;
     });
   };
-
 
   // Resizable header cell component (created inside to capture min/max/updateWidth)
   const ResizableHeaderCell: React.FC<ResizableHeaderProps> = (cellProps) => {
@@ -181,7 +178,7 @@ export function Table<T = any>(props: ExtraTableProps<T>) {
     <AntdTable
       {...(rest as TableProps<T>)}
       tableLayout='fixed'
-      className={['resizable-table', (rest as TableProps<T>).className].filter(Boolean).join(' ')}
+      className={[resizable ? 'resizable-table' : undefined, (rest as TableProps<T>).className].filter(Boolean).join(' ')}
       style={{ ...((rest as TableProps<T>).style as React.CSSProperties) }}
       columns={enhancedColumns}
       components={mergedComponents}
