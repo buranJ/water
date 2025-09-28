@@ -1,6 +1,6 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router';
-import { Alert, Button, Card, Col, Flex, message, Modal, Row, Spin, Tabs, TabsProps, Typography } from 'antd';
+import { Alert, Button, Card, Col, Flex, message, Row, Spin, Tabs, TabsProps, Typography } from 'antd';
 import { CheckCircleTwoTone, ClockCircleTwoTone, EditTwoTone, FileOutlined, QuestionCircleTwoTone } from '@ant-design/icons';
 import { ActionsBar } from './components/ActionsBar';
 import { DataSection } from './components/DataSection';
@@ -81,19 +81,6 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const [triggerGetAct, { isFetching: isActFetching }] = useLazyGetActTyByIdQuery();
   const [createRefusal] = useCreateRefusalMutation();
 
-  // Act TY sequential statuses and labels
-  const ACT_ORDER: IActEnum[] = ['draft', 'review', 'approved', 'done'];
-  const actStatusLabels: Record<IActEnum, string> = {
-    draft: t('tuDetails.act.actions.upload', 'Загрузить акт'),
-    review: t('tuDetails.act.actions.toReview', 'На рассмотрение'),
-    approved: t('tuDetails.act.actions.approve', 'Утвердить'),
-    done: t('tuDetails.act.actions.finish', 'Завершить')
-  };
-  const nextActStatus = useMemo(() => {
-    if (!objectData?.act) return 'draft' as IActEnum;
-    const idx = ACT_ORDER.indexOf(objectData.act.status as IActEnum);
-    return idx >= 0 && idx < ACT_ORDER.length - 1 ? (ACT_ORDER[idx + 1] as IActEnum) : null;
-  }, [objectData?.act]);
 
   const isTuApproved = objectData?.stage === 'approved';
 
@@ -122,46 +109,6 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     }
   };
 
-  const openActStatusModal = (status: IActEnum) => {
-    if (!id) return;
-    if (objectData?.stage !== 'approved') {
-      message.warning(t('tuDetails.act.messages.mustBeApproved', 'Действие доступно только после утверждения ТУ'));
-      return;
-    }
-    if (objectData?.act) {
-      Modal.confirm({
-        title: t('tuDetails.act.confirm.changeTitle', 'Изменить статус акта?'),
-        content: t('tuDetails.act.confirm.changeContent', 'Вы действительно хотите изменить статус акта?'),
-        okText: t('common.yes', 'Да'),
-        cancelText: t('common.cancel', 'Отмена'),
-        onOk: async () => {
-          try {
-            await patchActTy({ id: objectData.act!.id, body: { status } }).unwrap();
-            message.success(t('tuDetails.act.messages.statusUpdated', 'Статус акта обновлён'));
-            refetch();
-          } catch {
-            message.error(t('tuDetails.act.messages.statusUpdateFailed', 'Не удалось изменить статус акта'));
-          }
-        }
-      });
-    } else {
-      Modal.confirm({
-        title: t('tuDetails.act.confirm.createTitle', 'Создать акт подтверждения?'),
-        content: t('tuDetails.act.confirm.createContent', 'Будет создан акт. Продолжить?'),
-        okText: t('common.yes', 'Да'),
-        cancelText: t('common.cancel', 'Отмена'),
-        onOk: async () => {
-          try {
-            await createAct({ ty: id, status }).unwrap();
-            message.success(t('tuDetails.act.messages.uploadSuccess', 'Акт загружен'));
-            refetch();
-          } catch {
-            message.error(t('tuDetails.act.messages.statusUpdateFailed', 'Не удалось изменить статус акта'));
-          }
-        }
-      });
-    }
-  };
 
   const handleRejectClick = (): void => {
     setIsModalVisible(true);
@@ -333,6 +280,45 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     }
   };
 
+  // Create-and-finish act in one click
+  const handleCreateAndFinishAct = async () => {
+    if (!id) return;
+    if (objectData?.stage !== 'approved') {
+      message.warning(t('tuDetails.act.messages.mustBeApproved', 'Действие доступно только после утверждения ТУ'));
+      return;
+    }
+    try {
+      const created = await createAct({ ty: id, status: 'draft' }).unwrap();
+      const actId = created?.id;
+      if (!actId) {
+        message.error(t('tuDetails.act.messages.createFailed', 'Не удалось создать акт'));
+        return;
+      }
+      await patchActTy({ id: actId, body: { status: 'done' } }).unwrap();
+      message.success(t('tuDetails.act.messages.statusUpdated', 'Статус акта обновлён'));
+      refetch();
+    } catch (e) {
+      console.error('[ACT CREATE+FINISH] failed', e);
+      message.error(t('tuDetails.act.messages.statusUpdateFailed', 'Не удалось изменить статус акта'));
+    }
+  };
+
+  // Fallback: finish existing act to "done"
+  const handleFinishAct = async () => {
+    if (!objectData?.act?.id) {
+      message.error(t('tuDetails.act.messages.statusUpdateFailed', 'Не удалось изменить статус акта'));
+      return;
+    }
+    try {
+      await patchActTy({ id: objectData.act.id, body: { status: 'done' } }).unwrap();
+      message.success(t('tuDetails.act.messages.statusUpdated', 'Статус акта обновлён'));
+      refetch();
+    } catch (e) {
+      console.error('[ACT FINISH] failed', e);
+      message.error(t('tuDetails.act.messages.statusUpdateFailed', 'Не удалось изменить статус акта'));
+    }
+  };
+
   if (isLoading) {
     return (
       <DashboardLayout title={`${t(title)} ${id}`}>
@@ -444,15 +430,16 @@ export const TuDetails: FC<IProps> = ({ title }) => {
                   {t('tuDetails.act.actions.download', 'Скачать акт')}
                 </Button>
               )}
-              {isTuApproved && nextActStatus && (
-                <Button
-                  type='primary'
-                  style={{ marginTop: 8, marginLeft: objectData.act ? 8 : 0 }}
-                  onClick={() => openActStatusModal(nextActStatus)}
-                >
-                  {actStatusLabels[nextActStatus]}
-                </Button>
-              )}
+              {isTuApproved &&
+                (!objectData.act ? (
+                  <Button type='primary' style={{ marginTop: 8, marginLeft: 0 }} onClick={handleCreateAndFinishAct}>
+                    {t('tuDetails.act.actions.create', 'Создать акт')}
+                  </Button>
+                ) : objectData.act.status !== 'done' ? (
+                  <Button type='primary' style={{ marginTop: 8, marginLeft: 8 }} onClick={handleFinishAct}>
+                    {t('tuDetails.act.actions.finish', 'Завершить')}
+                  </Button>
+                ) : null)}
             </Card>
           </Col>
         )}
