@@ -153,15 +153,17 @@ export const Customers: FC<IProps> = ({ title }) => {
             </>
           }
         />
-        <Table
-          resizable
-          style={{ width: '100%' }}
-          pagination={false}
-          columns={columns}
-          dataSource={tableData}
-          bordered
-          loading={isLoading}
-        />
+        <div style={{ width: '100%', overflowX: 'auto' }}>
+          <Table
+            resizable
+            style={{ width: '100%' }}
+            pagination={false}
+            columns={columns}
+            dataSource={tableData}
+            bordered
+            loading={isLoading}
+          />
+        </div>
         <CustomPagination current={page} pageSize={pageSize} total={data?.count || 0} onChange={handlePaginationChange} />
       </div>
     </DashboardLayout>
