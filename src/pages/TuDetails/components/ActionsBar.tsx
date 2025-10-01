@@ -62,13 +62,6 @@ export const ActionsBar: FC<ActionsBarProps> = ({
             onClick={() => onDownloadContract && protocolId && onDownloadContract(protocolId)}
             icon={<DownloadOutlined />}
             loading={isContractDownloading}
-            disabled={
-              data.stage === 'review' ||
-              !protocolId ||
-              invoicesInfo.isLoading ||
-              invoicesInfo.isFetching ||
-              (Array.isArray(invoicesInfo.data) && invoicesInfo.data.length === 0)
-            }
           >
             {t('tuDetails.actions.downloadContract')}
           </Button>
