@@ -6,7 +6,6 @@ import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
 import { IGetTyById } from 'types/entities';
 
 import { useGetAccountingProtocolQuery } from 'api/Accounting.api';
-import { useGetInvoicesByProtocolTyQuery } from 'api/Buhgalteria.api';
 
 interface ActionsBarProps {
   id: string;

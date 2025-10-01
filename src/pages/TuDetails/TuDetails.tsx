@@ -81,7 +81,6 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const [triggerGetAct, { isFetching: isActFetching }] = useLazyGetActTyByIdQuery();
   const [createRefusal] = useCreateRefusalMutation();
 
-
   const isTuApproved = objectData?.stage === 'approved';
 
   const getActStatusLabel = (st?: IActEnum) => {
@@ -108,7 +107,6 @@ export const TuDetails: FC<IProps> = ({ title }) => {
         return <QuestionCircleTwoTone twoToneColor='#8c8c8c' />;
     }
   };
-
 
   const handleRejectClick = (): void => {
     setIsModalVisible(true);
