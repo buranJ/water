@@ -40,7 +40,6 @@ export const ActionsBar: FC<ActionsBarProps> = ({
   const { t } = useTranslation();
   const { data: protocolData } = useGetAccountingProtocolQuery({ technicalConditionId: id }, { skip: !id });
   const protocolId = protocolData?.id ? String(protocolData.id) : '';
-  const invoicesInfo = useGetInvoicesByProtocolTyQuery({ protocol_id: protocolId }, { skip: !protocolId });
   if (!visible) return null;
 
   return (
