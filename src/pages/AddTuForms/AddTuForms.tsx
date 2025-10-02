@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { Button, Col, DatePicker, Form, Input, message, Row, Select, AutoComplete } from 'antd';
+import { Button, Col, DatePicker, Form, Input, message, Row, Select, AutoComplete, Modal } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { MaskedInput } from 'common/ui';
 import { DashboardLayout } from 'components';
@@ -14,6 +14,12 @@ import { useCreateCustomerMutation, useLazyGetCustomerQuery } from 'api/Customer
 import { useCreateObjectMutation, useLazyGetAllObjectsQuery } from 'api/Object.api';
 import { useGetAllFormulasQuery } from 'api/Formula.api';
 import { useGetRequestSourcesQuery } from 'api/RequestSource.api';
+import {
+  useLazyCheckRefuseByCustomerQuery,
+  useLazyCheckRefuseByEntityQuery,
+  useLazyCheckTuByCustomerQuery,
+  useLazyCheckTuByEntityQuery
+} from 'api/Refusal.api';
 import { useLazyGetStreetsQuery } from 'api/Street.api';
 import { t } from 'i18next';
 import { handleEnterFocusNext } from 'utils/formNavigation';
@@ -74,6 +80,10 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
   const [triggerGetCustomers] = useLazyGetCustomerQuery();
   const [triggerGetObjects] = useLazyGetAllObjectsQuery();
   const [triggerStreetSearch, { data: streetsData }] = useLazyGetStreetsQuery();
+  const [triggerCheckCustomer] = useLazyCheckRefuseByCustomerQuery();
+  const [triggerCheckEntity] = useLazyCheckRefuseByEntityQuery();
+  const [triggerCheckTuCustomer] = useLazyCheckTuByCustomerQuery();
+  const [triggerCheckTuEntity] = useLazyCheckTuByEntityQuery();
   const [addressSearch, setAddressSearch] = useState('');
 
   const tuQuery = useGetTyByIdQuery({ tyId: tyId || '' }, { skip: !tyId });
@@ -168,6 +178,154 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           if (coordLatitude != null) payloadCreate.latitude = coordLatitude;
           if (coordLongitude != null) payloadCreate.longitude = coordLongitude;
           if (values.formula != null) payloadCreate.formula = values.formula;
+
+          // Pre-submit refusal + TU checks
+          try {
+            const [byCustomer, byEntity, tuByCustomer, tuByEntity] = await Promise.all([
+              customerId ? triggerCheckCustomer(customerId).unwrap().catch(() => ({ results: [] })) : Promise.resolve({ results: [] }),
+              objectId ? triggerCheckEntity(objectId).unwrap().catch(() => ({ results: [] })) : Promise.resolve({ results: [] }),
+              customerId ? triggerCheckTuCustomer(customerId).unwrap().catch(() => ({ results: [] })) : Promise.resolve({ results: [] }),
+              objectId ? triggerCheckTuEntity(objectId).unwrap().catch(() => ({ results: [] })) : Promise.resolve({ results: [] })
+            ]);
+
+            const hasCustomerRefusals = Array.isArray(byCustomer?.results) && byCustomer.results.length > 0;
+            const hasEntityRefusals = Array.isArray(byEntity?.results) && byEntity.results.length > 0;
+            const hasRefusals = hasCustomerRefusals || hasEntityRefusals;
+
+            // Build TU lists (labels)
+            type TuShort = { request_number?: string; number?: string; tu_number?: string; title?: string; id?: number };
+            const tuCustomerList = (tuByCustomer as { results?: TuShort[] } | undefined)?.results ?? [];
+            const tuEntityList = (tuByEntity as { results?: TuShort[] } | undefined)?.results ?? [];
+            const labelOf = (item: TuShort): string =>
+              item.request_number ?? item.number ?? item.tu_number ?? item.title ?? (item.id != null ? `ID: ${item.id}` : '');
+
+            const tuCustomerItems = (Array.isArray(tuCustomerList) ? tuCustomerList : [])
+              .map((item) => ({ id: item?.id, label: labelOf(item) }))
+              .filter((v) => !!v.label);
+            const tuEntityItems = (Array.isArray(tuEntityList) ? tuEntityList : [])
+              .map((item) => ({ id: item?.id, label: labelOf(item) }))
+              .filter((v) => !!v.label);
+
+            const hasTuCustomer = tuCustomerItems.length > 0;
+            const hasTuEntity = tuEntityItems.length > 0;
+
+            const showModal = hasRefusals || hasTuCustomer || hasTuEntity;
+
+            if (showModal) {
+              const confirmContent = hasRefusals
+                ? hasCustomerRefusals && hasEntityRefusals
+                  ? t('refusal.confirmContentBoth', 'Найдены отказы по заказчику и объекту. Продолжить отправку заявки?')
+                  : hasCustomerRefusals
+                    ? t('refusal.confirmContentCustomer', 'Найдены отказы по заказчику. Продолжить отправку заявки?')
+                    : t('refusal.confirmContentEntity', 'Найдены отказы по объекту. Продолжить отправку заявки?')
+                : hasTuCustomer && hasTuEntity
+                  ? t('refusal.confirmContentTuBoth', 'Найдены связанные ТУ по заказчику и объекту. Продолжить отправку заявки?')
+                  : hasTuCustomer
+                    ? t('refusal.confirmContentTuCustomer', 'Найдены связанные ТУ по заказчику. Продолжить отправку заявки?')
+                    : t('refusal.confirmContentTuEntity', 'Найдены связанные ТУ по объекту. Продолжить отправку заявки?');
+
+              const customerCauseTitles = ((byCustomer?.results ?? []) as Array<{ causes?: Array<{ title?: string }> }>)
+                .flatMap((r) => r.causes ?? [])
+                .map((c) => c.title)
+                .filter((v): v is string => Boolean(v))
+                .filter((v, i, a) => a.indexOf(v) === i);
+
+              const entityCauseTitles = ((byEntity?.results ?? []) as Array<{ causes?: Array<{ title?: string }> }>)
+                .flatMap((r) => r.causes ?? [])
+                .map((c) => c.title)
+                .filter((v): v is string => Boolean(v))
+                .filter((v, i, a) => a.indexOf(v) === i);
+
+              const detailsContent = (
+                <div>
+                  <div style={{ marginBottom: 8 }}>{confirmContent}</div>
+
+                  {hasCustomerRefusals && (
+                    <div style={{ marginTop: 8 }}>
+                      <strong>{t('refusal.customerTitle', 'Отказы по заказчику')}</strong>
+                      {customerCauseTitles.length > 0 ? (
+                        <ul style={{ margin: '4px 0 0', paddingLeft: 18 }}>
+                          {customerCauseTitles.map((title, idx) => (
+                            <li key={idx}>{title}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <div>- {t('refusal.noCauses', 'Причины не указаны')}</div>
+                      )}
+                    </div>
+                  )}
+
+                  {hasEntityRefusals && (
+                    <div style={{ marginTop: 8 }}>
+                      <strong>{t('refusal.entityTitle', 'Отказы по объекту')}</strong>
+                      {entityCauseTitles.length > 0 ? (
+                        <ul style={{ margin: '4px 0 0', paddingLeft: 18 }}>
+                          {entityCauseTitles.map((title, idx) => (
+                            <li key={idx}>{title}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <div>- {t('refusal.noCauses', 'Причины не указаны')}</div>
+                      )}
+                    </div>
+                  )}
+
+                  {hasTuCustomer && (
+                    <div style={{ marginTop: 8 }}>
+                      <strong>{t('refusal.tuCustomerTitle', 'Найдены ТУ по заказчику')}</strong>
+                      <ul style={{ margin: '4px 0 0', paddingLeft: 18 }}>
+                        {tuCustomerItems.map((item, idx) => (
+                          <li key={idx}>
+                            {item.id != null ? (
+                              <a href={`/dashboard/technical-conditions/tu-details/${item.id}`} target='_blank'>
+                                {item.label}
+                              </a>
+                            ) : (
+                              item.label
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {hasTuEntity && (
+                    <div style={{ marginTop: 8 }}>
+                      <strong>{t('refusal.tuEntityTitle', 'Найдены ТУ по объекту')}</strong>
+                      <ul style={{ margin: '4px 0 0', paddingLeft: 18 }}>
+                        {tuEntityItems.map((item, idx) => (
+                          <li key={idx}>
+                            {item.id != null ? (
+                              <a href={`/dashboard/technical-conditions/tu-details/${item.id}`} target='_blank'>
+                                {item.label}
+                              </a>
+                            ) : (
+                              item.label
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              );
+
+              const confirmed = await new Promise<boolean>((resolve) => {
+                Modal.confirm({
+                  title: t('refusal.confirmTitle', 'Вы уверены, что хотите продолжить?'),
+                  content: detailsContent,
+                  okText: t('common.continue', 'Продолжить'),
+                  cancelText: t('common.cancel', 'Отмена'),
+                  onOk: () => resolve(true),
+                  onCancel: () => resolve(false)
+                });
+              });
+              if (!confirmed) return;
+            }
+          } catch (e) {
+            // In case of unexpected error during checks, proceed but log it
+            console.warn('Refusal/TU checks failed', e);
+          }
 
           const created = await createTy(payloadCreate).unwrap();
           message.success(t('addTuForms.messages.createTuSuccess'));
