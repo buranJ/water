@@ -398,7 +398,8 @@
       "tuRejected": "TU rejected",
       "tuRejectFailed": "Failed to reject TU",
       "rejected": "Refusal created",
-      "rejectFailed": "Failed to create refusal"
+      "rejectFailed": "Failed to create refusal",
+      "customerRequiredForContract": "Please specify a customer to download the contract"
     },
     "buttons": {
       "goToApplication": "Go to application"

@@ -260,8 +260,8 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     if (!id) return;
     const customerType = objectData?.customer?.type;
     if (!customerType) {
-      console.log(objectData);
       console.error('Cannot download contract: missing customer type');
+      message.warning(t('tuDetails.messages.customerRequiredForContract', 'Для скачивания договора укажите заказчика'));
       return;
     }
     try {

@@ -402,7 +402,8 @@
       "tuRejected": "ТУ четке кагылды",
       "tuRejectFailed": "ТУну четке кагуу мүмкүн болгон жок",
       "rejected": "Баш тартуу түзүлдү",
-      "rejectFailed": "Баш тартууну түзүү мүмкүн болгон жок"
+      "rejectFailed": "Баш тартууну түзүү мүмкүн болгон жок",
+      "customerRequiredForContract": "Келишимди жүктөп алуу үчүн кардарды көрсөтүңүз"
     },
     "buttons": {
       "goToApplication": "Арызга өтүү"

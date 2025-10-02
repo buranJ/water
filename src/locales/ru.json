@@ -398,7 +398,8 @@
       "tuRejected": "ТУ отклонено",
       "tuRejectFailed": "Не удалось отказать ТУ",
       "rejected": "Отказ создан",
-      "rejectFailed": "Не удалось создать отказ"
+      "rejectFailed": "Не удалось создать отказ",
+      "customerRequiredForContract": "Для скачивания договора укажите заказчика"
     },
     "buttons": {
       "goToApplication": "Перейти к заявке"
