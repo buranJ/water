@@ -488,9 +488,9 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Form.Item>
 
         {/* Наименование объекта */}
-        <Form.Item label={t('addTuForms.form.labels.objectName')} name='object_name' rules={[]}>
+        {/* <Form.Item label={t('addTuForms.form.labels.objectName')} name='object_name' rules={[]}>
           <Input size='large' placeholder={t('addTuForms.form.placeholders.objectName')} />
-        </Form.Item>
+        </Form.Item> */}
 
         {/* Объект (для резолва entity) */}
         <Form.Item name='object' label={t('applicationsCreate.form.labels.object', 'Объект')} rules={[]}>
@@ -572,7 +572,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Form.Item>
 
         {/* Этап и статус (full width) */}
-        <Form.Item label={t('addTuForms.form.labels.stage')} name='stage' rules={[{ required: false }]}>
+        {/* <Form.Item label={t('addTuForms.form.labels.stage')} name='stage' rules={[{ required: false }]}>
           <Select size='large' placeholder={t('addTuForms.form.placeholders.stage')}>
             {stageOptions.map((option) => (
               <Option key={option.value} value={option.value}>
@@ -580,7 +580,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               </Option>
             ))}
           </Select>
-        </Form.Item>
+        </Form.Item> */}
 
         <Form.Item label={t('addTuForms.form.labels.status')} name='status' rules={[]}>
           <Select size='large' placeholder={t('addTuForms.form.placeholders.status')}>
@@ -641,7 +641,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           name='free_pressure_required_input_1'
           rules={[{ required: false }]}
         >
-          <Input type='number' min={0} size='large' placeholder={t('addTuForms.form.placeholders.freePressureInput1')} />
+          <Input type='tel' min={0} size='large' placeholder={t('addTuForms.form.placeholders.freePressureInput1')} />
         </Form.Item>
 
         <Form.Item label={t('addTuForms.form.labels.waterPipeDiameter1')} name='collector_diametr_fire_1' rules={[{ required: false }]}>
@@ -661,7 +661,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           name='free_pressure_required_input_2'
           rules={[{ required: false }]}
         >
-          <Input type='number' min={0} size='large' placeholder={t('addTuForms.form.placeholders.freePressureInput2')} />
+          <Input type='tel' min={0} size='large' placeholder={t('addTuForms.form.placeholders.freePressureInput2')} />
         </Form.Item>
 
         <Form.Item label={t('addTuForms.form.labels.waterPipeDiameter2')} name='collector_diametr_fire_2' rules={[{ required: false }]}>
