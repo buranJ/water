@@ -508,14 +508,14 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Select>
         </Form.Item>
 
-        {/* Кол-во/Напор */}
-        <Form.Item name='quantity' label={t('applicationsCreate.form.labels.waterAmountRequired', 'Требуемое количество воды')} rules={[]}>
+        {/* Кол-во/Напор 1 */}
+        {/* <Form.Item name='quantity' label={t('applicationsCreate.form.labels.waterAmountRequired', 'Требуемое количество воды')} rules={[]}>
           <Input disabled={!isCreateMode} size='large' type='number' min={0} />
         </Form.Item>
 
         <Form.Item name='pressure' label={t('applicationsCreate.form.labels.pressureRequired', 'Требуемый напор')} rules={[]}>
           <Input disabled={!isCreateMode} size='large' type='number' min={0} />
-        </Form.Item>
+        </Form.Item> */}
 
         {/* Адрес */}
         <Form.Item label={t('addTuForms.form.labels.address')} name='address' rules={[]}>
@@ -554,13 +554,13 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         <Form.Item label={t('addTuForms.form.labels.sewageAmount')} name='sewage_amount' rules={[{ required: true }]}>
           <Input disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.sewageAmount')} />
         </Form.Item>
-
+        {/* кол-во воды/ напор 2*/}
         <Form.Item label={t('addTuForms.form.labels.waterRequired')} name='water_required' rules={[{ required: true }]}>
-          <Input disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.waterRequired')} />
+          <Input type='tel' disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.waterRequired')} />
         </Form.Item>
 
         <Form.Item label={t('addTuForms.form.labels.pressureRequired')} name='pressure_required' rules={[{ required: true }]}>
-          <Input disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.pressureRequired')} />
+          <Input type='tel' disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.pressureRequired')} />
         </Form.Item>
 
         <Form.Item label={t('addTuForms.form.labels.fireFightingOuter')} name='fire_fighting_inner' rules={[{ required: false }]}>
