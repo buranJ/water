@@ -728,13 +728,13 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_sewer' rules={[{ required: false }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.streetPass')} />
+            <Form.Item label={t('addTuForms.form.labels.collector')} name='collector_diametr_sewer' rules={[{ required: false }]}>
+              <Input type='number' min={0} size='large' placeholder={t('addTuForms.form.placeholders.diameter')} />
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item label={t('addTuForms.form.labels.collector')} name='collector_diametr_sewer' rules={[{ required: false }]}>
-              <Input type='number' min={0} size='large' placeholder={t('addTuForms.form.placeholders.diameter')} />
+            <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_sewer' rules={[{ required: false }]}>
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.streetPass')} />
             </Form.Item>
           </Col>
         </Row>
