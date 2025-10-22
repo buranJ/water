@@ -448,6 +448,22 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         <Title level={4} style={{ borderBottom: '1px solid #D9D9D9', paddingBottom: '4px' }}>
           {t('addTuForms.titles.main')}
         </Title>
+        <Form.Item
+          label={'Номер тех условия'}
+          name='request_source'
+          rules={[{ required: true, message: t('addTuForms.form.validation.specifySource') }]}
+        >
+          <Input size='large' />
+        </Form.Item>
+            <Form.Item
+              label={'Дата тех совета'}
+              name='request_date'
+              rules={[{ required: true, message: t('addTuForms.form.validation.specifyRequestDate') }]}
+              normalize={(value: Dayjs) => formatDate(value)}
+              getValueProps={(value: string) => ({ value: parseDate(value) })}
+            >
+              <DatePicker format='YYYY-MM-DD' size='large' placeholder={t('addTuForms.form.placeholders.requestDate')} />
+            </Form.Item>
 
         {/* Источник запроса: Input (как в water-2) */}
         <Form.Item
