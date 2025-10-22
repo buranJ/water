@@ -624,21 +624,24 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Title>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_water' rules={[{ required: false }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.streetPass')} />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.waterPipe')} name='water_pipe' rules={[{ required: false }]}>
+            <Form.Item label={'Подключение выполнить к водопроводной линии Д'} name='water_pipe' rules={[{ required: false }]}>
               <Select size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
-                <Option value='существующий'>{t('addTuForms.form.options.connectionType.existing')}</Option>
-                <Option value='построенный'>{t('addTuForms.form.options.connectionType.built')}</Option>
+                <Option value='существующий'>существующий</Option>
+                <Option value='проектируемый'>проектируемый</Option>
               </Select>
             </Form.Item>
           </Col>
+          <Col span={12}>
+            <Form.Item label={'Коллектор Диаметром'} name='street_pass_water' rules={[{ required: false }]}>
+              <Input size='large' />
+            </Form.Item>
+          </Col>
         </Row>
-        <Form.Item label={t('addTuForms.form.labels.provideWater')} name='provide_water' rules={[{ required: false }]}>
-          <TextArea size='large' placeholder={t('addTuForms.form.placeholders.provideWater')} />
+        <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_water' rules={[{ required: false }]}>
+          <Input size='large' />
+        </Form.Item>
+        <Form.Item label={'Предусмотреть'} name='provide_water' rules={[{ required: false }]}>
+          <TextArea size='large' />
         </Form.Item>
 
         {/* Канализация */}
