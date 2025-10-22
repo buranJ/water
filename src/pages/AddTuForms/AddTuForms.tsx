@@ -738,14 +738,14 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Form.Item>
           </Col>
         </Row>
-        <Form.Item label={t('addTuForms.form.labels.provideSewer')} name='provide_sewer' rules={[{ required: false }]}>
-          <TextArea size='large' placeholder={t('addTuForms.form.placeholders.provideSewer')} />
+        <Form.Item label={'Предусмотреть'} name='provide_sewer' rules={[{ required: false }]}>
+          <TextArea size='large' />
         </Form.Item>
 
         {/* Примечания */}
-        <Form.Item label={t('addTuForms.form.labels.notes')} name='notes' rules={[{ required: false }]}>
+        {/* <Form.Item label={t('addTuForms.form.labels.notes')} name='notes' rules={[{ required: false }]}>
           <Input.TextArea placeholder={t('addTuForms.form.placeholders.notes')} rows={3} />
-        </Form.Item>
+        </Form.Item> */}
 
         {/* =========================
             ФИНАНСЫ
