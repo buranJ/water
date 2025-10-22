@@ -656,12 +656,12 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Select>
         </Form.Item>
         <Form.Item label={t('addTuForms.form.labels.fireInput1')} name='fire_input_1' rules={[{ required: false }]}>
-          <Input size='large' placeholder={t('addTuForms.form.placeholders.fireInput1')} />
+          <Input size='large' />
         </Form.Item>
         <Row gutter={16}>
           <Col span={8}>
             <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_input_1' rules={[{ required: false }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.streetPass')} />
+              <Input size='large' />
             </Form.Item>
           </Col>
           {/* <Col span={8}>
@@ -675,7 +675,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Col> */}
           <Col span={8}>
             <Form.Item label={t('addTuForms.form.labels.waterPipeDiameter1')} name='collector_diametr_fire_1' rules={[{ required: false }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.waterPipeDiameter1')} />
+              <Input size='large' />
             </Form.Item>
           </Col>
         </Row>
@@ -690,12 +690,12 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Select>
         </Form.Item>
         <Form.Item label={t('addTuForms.form.labels.fireInput2')} name='fire_input_2' rules={[{ required: false }]}>
-          <Input size='large' placeholder={t('addTuForms.form.placeholders.fireInput2')} />
+          <Input size='large' />
         </Form.Item>
         <Row gutter={16}>
           <Col span={8}>
             <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_input_2' rules={[{ required: false }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.streetPass')} />
+              <Input size='large' />
             </Form.Item>
           </Col>
           {/* <Col span={8}>
@@ -709,7 +709,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Col> */}
           <Col span={8}>
             <Form.Item label={t('addTuForms.form.labels.waterPipeDiameter2')} name='collector_diametr_fire_2' rules={[{ required: false }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.waterPipeDiameter2')} />
+              <Input size='large' />
             </Form.Item>
           </Col>
         </Row>
@@ -720,6 +720,14 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Title>
         <Row gutter={16}>
           <Col span={8}>
+            <Form.Item label={t('addTuForms.form.labels.sewer')} name='sewer_pipe' rules={[{ required: false }]}>
+              <Select size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
+                <Option value='существующий'>существующий</Option>
+                <Option value='проектируемый'>проектируемый</Option>
+              </Select>
+            </Form.Item>
+          </Col>
+          <Col span={8}>
             <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_sewer' rules={[{ required: false }]}>
               <Input size='large' placeholder={t('addTuForms.form.placeholders.streetPass')} />
             </Form.Item>
@@ -727,14 +735,6 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           <Col span={8}>
             <Form.Item label={t('addTuForms.form.labels.collector')} name='collector_diametr_sewer' rules={[{ required: false }]}>
               <Input type='number' min={0} size='large' placeholder={t('addTuForms.form.placeholders.diameter')} />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item label={t('addTuForms.form.labels.sewer')} name='sewer_pipe' rules={[{ required: false }]}>
-              <Select size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
-                <Option value='существующий'>{t('addTuForms.form.options.connectionType.existing')}</Option>
-                <Option value='построенный'>{t('addTuForms.form.options.connectionType.built')}</Option>
-              </Select>
             </Form.Item>
           </Col>
         </Row>
