@@ -13,6 +13,7 @@ import { useCreateTyMutation, useGetTyByIdQuery, useGetTypesTyQuery, usePatchTyM
 import { useCreateCustomerMutation, useLazyGetCustomerQuery } from 'api/Customer.api';
 import { useCreateObjectMutation, useLazyGetAllObjectsQuery } from 'api/Object.api';
 import { useGetAllFormulasQuery } from 'api/Formula.api';
+import { useGetRequestSourcesQuery } from 'api/RequestSource.api';
 import {
   useLazyCheckRefuseByCustomerQuery,
   useLazyCheckRefuseByEntityQuery,
@@ -66,6 +67,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
   const { tyId } = useParams();
   const typesTyQuery = useGetTypesTyQuery();
   const { data: formulas } = useGetAllFormulasQuery({ page: 1, page_size: 100 });
+  const { data: requestSources } = useGetRequestSourcesQuery({ page: 1, page_size: 100 });
   const [patchTy, { isLoading, isSuccess }] = usePatchTyMutation();
   const [createTy, { isLoading: createLoading }] = useCreateTyMutation();
   const isCreateMode = !tyId;
@@ -466,13 +468,24 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Col>
         </Row>
 
-        {/* Источник запроса: Input (как в water-2) */}
+        {/* Источник запроса: Select (из сервера) */}
         <Form.Item
           label={t('addTuForms.form.labels.requestSource')}
           name='request_source'
           rules={[{ required: true, message: t('addTuForms.form.validation.specifySource') }]}
         >
-          <Input size='large' />
+          <Select
+            size='large'
+            placeholder={t('addTuForms.form.placeholders.requestSource')}
+            showSearch
+            optionFilterProp='children'
+          >
+            {requestSources?.results?.map((rs: any) => (
+              <Option key={rs.id} value={rs.title}>
+                {rs.title}
+              </Option>
+            ))}
+          </Select>
         </Form.Item>
 
         <Row gutter={16}>
