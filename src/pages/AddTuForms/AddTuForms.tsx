@@ -644,34 +644,6 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           <TextArea size='large' />
         </Form.Item>
 
-        {/* Канализация */}
-        <Title level={5} style={{ marginTop: '12px' }}>
-          {t('tuDetails.titles.sewer')}
-        </Title>
-        <Row gutter={16}>
-          <Col span={8}>
-            <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_sewer' rules={[{ required: false }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.streetPass')} />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item label={t('addTuForms.form.labels.collector')} name='collector_diametr_sewer' rules={[{ required: false }]}>
-              <Input type='number' min={0} size='large' placeholder={t('addTuForms.form.placeholders.diameter')} />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item label={t('addTuForms.form.labels.sewer')} name='sewer_pipe' rules={[{ required: false }]}>
-              <Select size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
-                <Option value='существующий'>{t('addTuForms.form.options.connectionType.existing')}</Option>
-                <Option value='построенный'>{t('addTuForms.form.options.connectionType.built')}</Option>
-              </Select>
-            </Form.Item>
-          </Col>
-        </Row>
-        <Form.Item label={t('addTuForms.form.labels.provideSewer')} name='provide_sewer' rules={[{ required: false }]}>
-          <TextArea size='large' placeholder={t('addTuForms.form.placeholders.provideSewer')} />
-        </Form.Item>
-
         {/* Пожаротушение */}
         <Title level={5} style={{ marginTop: '12px' }}>
           {t('addTuForms.form.labels.fireInput1')}
@@ -728,6 +700,34 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Form.Item>
           </Col>
         </Row>
+
+        {/* Канализация */}
+        <Title level={5} style={{ marginTop: '12px' }}>
+          {t('tuDetails.titles.sewer')}
+        </Title>
+        <Row gutter={16}>
+          <Col span={8}>
+            <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_sewer' rules={[{ required: false }]}>
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.streetPass')} />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item label={t('addTuForms.form.labels.collector')} name='collector_diametr_sewer' rules={[{ required: false }]}>
+              <Input type='number' min={0} size='large' placeholder={t('addTuForms.form.placeholders.diameter')} />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item label={t('addTuForms.form.labels.sewer')} name='sewer_pipe' rules={[{ required: false }]}>
+              <Select size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
+                <Option value='существующий'>{t('addTuForms.form.options.connectionType.existing')}</Option>
+                <Option value='построенный'>{t('addTuForms.form.options.connectionType.built')}</Option>
+              </Select>
+            </Form.Item>
+          </Col>
+        </Row>
+        <Form.Item label={t('addTuForms.form.labels.provideSewer')} name='provide_sewer' rules={[{ required: false }]}>
+          <TextArea size='large' placeholder={t('addTuForms.form.placeholders.provideSewer')} />
+        </Form.Item>
 
         {/* Примечания */}
         <Form.Item label={t('addTuForms.form.labels.notes')} name='notes' rules={[{ required: false }]}>
