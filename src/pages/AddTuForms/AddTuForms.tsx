@@ -450,18 +450,13 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Title>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item
-              label={'Номер тех условия'}
-              name='request_source'
-              rules={[{ required: true, message: t('addTuForms.form.validation.specifySource') }]}
-            >
+            <Form.Item label={'Номер тех условия'} rules={[{ required: true, message: t('addTuForms.form.validation.specifySource') }]}>
               <Input size='large' />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
               label={'Дата тех совета'}
-              name='request_date'
               rules={[{ required: true, message: t('addTuForms.form.validation.specifyRequestDate') }]}
               normalize={(value: Dayjs) => formatDate(value)}
               getValueProps={(value: string) => ({ value: parseDate(value) })}
