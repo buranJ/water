@@ -448,13 +448,17 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         <Title level={4} style={{ borderBottom: '1px solid #D9D9D9', paddingBottom: '4px' }}>
           {t('addTuForms.titles.main')}
         </Title>
-        <Form.Item
-          label={'Номер тех условия'}
-          name='request_source'
-          rules={[{ required: true, message: t('addTuForms.form.validation.specifySource') }]}
-        >
-          <Input size='large' />
-        </Form.Item>
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item
+              label={'Номер тех условия'}
+              name='request_source'
+              rules={[{ required: true, message: t('addTuForms.form.validation.specifySource') }]}
+            >
+              <Input size='large' />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
             <Form.Item
               label={'Дата тех совета'}
               name='request_date'
@@ -464,6 +468,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             >
               <DatePicker format='YYYY-MM-DD' size='large' placeholder={t('addTuForms.form.placeholders.requestDate')} />
             </Form.Item>
+          </Col>
+        </Row>
 
         {/* Источник запроса: Input (как в water-2) */}
         <Form.Item
