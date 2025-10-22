@@ -545,10 +545,10 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           <Input />
         </Form.Item>
 
-        {/* ENI */}
-        <Form.Item label={t('addTuForms.form.labels.eni')} name='eni' rules={[{ required: false }, { validator: zodRule(eniSchema) }]}>
+        {/* ENI - ЕНИ */}
+        {/* <Form.Item label={t('addTuForms.form.labels.eni')} name='eni' rules={[{ required: false }, { validator: zodRule(eniSchema) }]}>
           <MaskedInput size='large' mask='000-000-000-000' placeholder={t('addTuForms.form.placeholders.eni')} inputMode='numeric' />
-        </Form.Item>
+        </Form.Item> */}
 
         {/* Технические параметры (без заголовков секций). Все фулл-вайд. */}
         <Form.Item label={t('addTuForms.form.labels.sewageAmount')} name='sewage_amount' rules={[{ required: true }]}>
