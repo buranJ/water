@@ -87,7 +87,7 @@ export default function InvoicesPage({ title = 'routers.invoices' }: { title?: s
     [sp, setSp]
   );
 
-  const handleDateChange = (dates: [Dayjs | null, Dayjs | null] | null, _dateStrings: [string, string]) => {
+  const handleDateChange = (dates: [Dayjs | null, Dayjs | null] | null) => {
     const [startD, endD] = dates || [];
     if (!startD || !endD) {
       setParams({ invoice_date_start: '', invoice_date_end: '' });
