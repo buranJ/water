@@ -683,9 +683,9 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Option value='проектируемый'>проектируемый</Option>
           </Select>
         </Form.Item>
-        <Form.Item label={t('addTuForms.form.labels.fireInput1')} name='fire_input_1' rules={[{ required: false }]}>
+        {/* <Form.Item label={t('addTuForms.form.labels.fireInput1')} name='fire_input_1' rules={[{ required: false }]}>
           <Input size='large' />
-        </Form.Item>
+        </Form.Item> */}
         <Row gutter={16}>
           <Col span={8}>
             <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_input_1' rules={[{ required: false }]}>
@@ -717,9 +717,9 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Option value='проектируемый'>проектируемый</Option>
           </Select>
         </Form.Item>
-        <Form.Item label={t('addTuForms.form.labels.fireInput2')} name='fire_input_2' rules={[{ required: false }]}>
+        {/* <Form.Item label={t('addTuForms.form.labels.fireInput2')} name='fire_input_2' rules={[{ required: false }]}>
           <Input size='large' />
-        </Form.Item>
+        </Form.Item> */}
         <Row gutter={16}>
           <Col span={8}>
             <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_input_2' rules={[{ required: false }]}>
