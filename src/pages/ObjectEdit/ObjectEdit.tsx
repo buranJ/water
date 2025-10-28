@@ -313,7 +313,7 @@ export const ObjectEdit: FC<ObjectEditProps> = ({ title }) => {
                               backgroundColor: '#f5f5f7',
                               border: 'none'
                             }}
-                            format='YYYY-MM-DD'
+                            format='DD.MM.YYYY'
                             placeholder={t('objectEdit.placeholders.pickDate')}
                           />
                         </Form.Item>

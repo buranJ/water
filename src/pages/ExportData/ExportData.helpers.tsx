@@ -128,7 +128,7 @@ export const FiltersGrid: FC<{ fields: FieldConfig[] }> = ({ fields }) => {
         return (
           <Col span={12} key={`${fc.name}_${idx}`}>
             <Form.Item {...commonProps}>
-              <DatePicker style={{ width: '100%' }} placeholder={t('exportData.placeholders.date') || 'YYYY-MM-DD'} />
+              <DatePicker style={{ width: '100%' }} format='DD.MM.YYYY' placeholder={t('exportData.placeholders.date') || 'DD.MM.YYYY'} />
             </Form.Item>
           </Col>
         );

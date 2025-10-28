@@ -270,6 +270,7 @@ export const ObjectDetails: FC<ObjectDetailsProps> = ({ object, onTitleChange })
                           backgroundColor: '#f5f5f7',
                           border: 'none'
                         }}
+                        format='DD.MM.YYYY'
                         placeholder={t('paymentsModal.placeholders.date')}
                       />
                     </Form.Item>

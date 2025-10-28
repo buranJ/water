@@ -463,7 +463,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               normalize={(value: Dayjs) => formatDate(value)}
               getValueProps={(value: string) => ({ value: parseDate(value) })}
             >
-              <DatePicker format='YYYY-MM-DD' size='large' placeholder={t('addTuForms.form.placeholders.requestDate')} />
+              <DatePicker format='DD.MM.YYYY' size='large' placeholder={t('addTuForms.form.placeholders.requestDate')} />
             </Form.Item>
           </Col>
         </Row>
@@ -506,7 +506,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               normalize={(value: Dayjs) => formatDate(value)}
               getValueProps={(value: string) => ({ value: parseDate(value) })}
             >
-              <DatePicker format='YYYY-MM-DD' size='large' placeholder={t('addTuForms.form.placeholders.requestDate')} />
+              <DatePicker format='DD.MM.YYYY' size='large' placeholder={t('addTuForms.form.placeholders.requestDate')} />
             </Form.Item>
           </Col>
         </Row>
@@ -791,7 +791,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           normalize={(value: Dayjs) => formatDate(value)}
           getValueProps={(value: string) => ({ value: parseDate(value) })}
         >
-          <DatePicker size='large' placeholder={t('addTuForms.form.placeholders.paymentDeadline')} format='YYYY-MM-DD' />
+          <DatePicker size='large' placeholder={t('addTuForms.form.placeholders.paymentDeadline')} format='DD.MM.YYYY' />
         </Form.Item>
 
         <Row justify='end'>

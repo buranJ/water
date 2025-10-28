@@ -312,10 +312,10 @@ export const TechnicalConditionsPage = () => {
         >
           <Form layout='vertical' form={exportForm}>
             <Form.Item name='date_from' label={t('technicalConditions.export.from', 'Дата от')}>
-              <DatePicker format='YYYY-MM-DD' style={{ width: '100%' }} />
+              <DatePicker format='DD.MM.YYYY' style={{ width: '100%' }} />
             </Form.Item>
             <Form.Item name='date_to' label={t('technicalConditions.export.to', 'Дата до')}>
-              <DatePicker format='YYYY-MM-DD' style={{ width: '100%' }} />
+              <DatePicker format='DD.MM.YYYY' style={{ width: '100%' }} />
             </Form.Item>
           </Form>
         </Modal>

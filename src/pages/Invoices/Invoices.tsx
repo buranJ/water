@@ -87,15 +87,15 @@ export default function InvoicesPage({ title = 'routers.invoices' }: { title?: s
     [sp, setSp]
   );
 
-  const handleDateChange = (_dates: [Dayjs | null, Dayjs | null] | null, dateStrings: [string, string]) => {
-    const [start, end] = dateStrings;
-    if (!start || !end) {
+  const handleDateChange = (dates: [Dayjs | null, Dayjs | null] | null, _dateStrings: [string, string]) => {
+    const [startD, endD] = dates || [];
+    if (!startD || !endD) {
       setParams({ invoice_date_start: '', invoice_date_end: '' });
       return;
     }
     setParams({
-      invoice_date_start: start,
-      invoice_date_end: end
+      invoice_date_start: startD.format('YYYY-MM-DD'),
+      invoice_date_end: endD.format('YYYY-MM-DD')
     });
   };
 
@@ -265,7 +265,7 @@ export default function InvoicesPage({ title = 'routers.invoices' }: { title?: s
                 { value: 'invoice_date', label: t('common.dateLabel') + ' ↑' }
               ]}
             />
-            <RangePicker onChange={handleDateChange} placeholder={[t('common.dateStart'), t('common.dateEnd')]} />
+            <RangePicker format='DD.MM.YYYY' onChange={handleDateChange} placeholder={[t('common.dateStart'), t('common.dateEnd')]} />
 
             <Button type='primary' onClick={() => setParams({ search: searchInput })}>
               {t('filterBar.searchButton')}

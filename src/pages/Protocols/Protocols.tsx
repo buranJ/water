@@ -87,15 +87,15 @@ export default function ProtocolsPage({ title = 'routers.protocols' }: { title?:
     [sp, setSp]
   );
 
-  const handleDateChange = (_dates: [Dayjs | null, Dayjs | null] | null, dateStrings: [string, string]) => {
-    const [start, end] = dateStrings;
-    if (!start || !end) {
+  const handleDateChange = (dates: [Dayjs | null, Dayjs | null] | null, _dateStrings: [string, string]) => {
+    const [startD, endD] = dates || [];
+    if (!startD || !endD) {
       setParams({ created_start: '', created_end: '' });
       return;
     }
     setParams({
-      created_start: start,
-      created_end: end
+      created_start: startD.format('YYYY-MM-DD HH:mm:ss'),
+      created_end: endD.format('YYYY-MM-DD HH:mm:ss')
     });
   };
 
@@ -218,7 +218,7 @@ export default function ProtocolsPage({ title = 'routers.protocols' }: { title?:
                 { value: 'created_at', label: t('filterBar.newOldFirst') }
               ]}
             />
-            <RangePicker showTime onChange={handleDateChange} placeholder={[t('common.dateStart'), t('common.dateEnd')]} />
+            <RangePicker showTime format='DD.MM.YYYY HH:mm' onChange={handleDateChange} placeholder={[t('common.dateStart'), t('common.dateEnd')]} />
 
             <Button type='primary' onClick={() => setParams({ search: searchInput })}>
               {t('filterBar.search')}
