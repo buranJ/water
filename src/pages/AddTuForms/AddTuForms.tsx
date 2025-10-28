@@ -1,10 +1,9 @@
 /* eslint-disable */
-import { FC, useCallback, useEffect, useMemo } from 'react';
+import { FC, useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Button, Col, DatePicker, Form, Input, message, Row, Select, Modal, Typography } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import dayjs, { Dayjs } from 'dayjs';
-import { MaskedInput } from 'common/ui';
 import { DashboardLayout } from 'components';
 import { ITyItem } from 'types/entities';
 import './style.scss';
@@ -22,7 +21,6 @@ import {
 } from 'api/Refusal.api';
 import { t } from 'i18next';
 import { handleEnterFocusNext } from 'utils/formNavigation';
-import { eniSchema, zodRule } from 'utils/validation';
 
 const { Option } = Select;
 const { Title } = Typography;
@@ -399,30 +397,30 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
     }
   }, [form, tuQuery]);
 
-  const stageOptions = useMemo(
-    () => [
-      { value: 'draft', label: t('addTuForms.form.options.stages.draft') },
-      { value: 'review', label: t('addTuForms.form.options.stages.review') },
-      { value: 'approved', label: t('addTuForms.form.options.stages.approved') },
-      { value: 'done', label: t('addTuForms.form.options.stages.done') }
-    ],
-    []
-  );
+  // const stageOptions = useMemo(
+  //   () => [
+  //     { value: 'draft', label: t('addTuForms.form.options.stages.draft') },
+  //     { value: 'review', label: t('addTuForms.form.options.stages.review') },
+  //     { value: 'approved', label: t('addTuForms.form.options.stages.approved') },
+  //     { value: 'done', label: t('addTuForms.form.options.stages.done') }
+  //   ],
+  //   []
+  // );
 
-  const statusOptions = [
-    {
-      value: 'active',
-      label: t('addTuForms.form.options.status.active')
-    },
-    {
-      value: 'inactive',
-      label: t('addTuForms.form.options.status.inactive')
-    },
-    {
-      value: 'archived',
-      label: t('addTuForms.form.options.status.archived')
-    }
-  ];
+  // const statusOptions = [
+  //   {
+  //     value: 'active',
+  //     label: t('addTuForms.form.options.status.active')
+  //   },
+  //   {
+  //     value: 'inactive',
+  //     label: t('addTuForms.form.options.status.inactive')
+  //   },
+  //   {
+  //     value: 'archived',
+  //     label: t('addTuForms.form.options.status.archived')
+  //   }
+  // ];
 
   // All fields inside "ТЕХНИЧЕСКИЕ ПАРАМЕТРЫ" should be read-only while editing TU (match water-2)
   const techParamsReadOnly = Boolean(tuQuery.data?.id);
