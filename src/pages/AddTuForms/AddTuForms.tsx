@@ -660,7 +660,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label={'Коллектор Диаметром'} name='street_pass_water' rules={[{ required: false }]}>
+            <Form.Item label={'Диаметром'} name='street_pass_water' rules={[{ required: false }]}>
               <Input size='large' />
             </Form.Item>
           </Col>
