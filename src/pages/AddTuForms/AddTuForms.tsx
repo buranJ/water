@@ -647,8 +647,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Title>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label={'Подключение выполнить к водопроводной линии Д'} name='water_pipe' rules={[{ required: false }]}>
-              <Select size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
+            <Form.Item label={'Подключение выполнить к водопроводной линии Д'} name='water_pipe' rules={[{ required: false }]} normalize={(v) => (Array.isArray(v) ? v.slice(-1)[0] : v)} getValueProps={(value: string | undefined) => ({ value: value ? [value] : [] })}>
+              <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
                 <Option value='существующий'>существующий</Option>
                 <Option value='проектируемый'>проектируемый</Option>
               </Select>
@@ -673,7 +673,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Title>
 
         <Form.Item label={'На пожаротушение объекта подключение выполнить'} rules={[{ required: false }]}>
-          <Select size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
+          <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
             <Option value='существующий'>существующий</Option>
             <Option value='проектируемый'>проектируемый</Option>
           </Select>
@@ -707,7 +707,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           {t('addTuForms.form.labels.fireInput2')}
         </Title>
         <Form.Item label={'На пожаротушение объекта подключение выполнить'} rules={[{ required: false }]}>
-          <Select size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
+          <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
             <Option value='существующий'>существующий</Option>
             <Option value='проектируемый'>проектируемый</Option>
           </Select>
@@ -743,8 +743,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Title>
         <Row gutter={16}>
           <Col span={8}>
-            <Form.Item label={t('addTuForms.form.labels.sewer')} name='sewer_pipe' rules={[{ required: false }]}>
-              <Select size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
+            <Form.Item label={t('addTuForms.form.labels.sewer')} name='sewer_pipe' rules={[{ required: false }]} normalize={(v) => (Array.isArray(v) ? v.slice(-1)[0] : v)} getValueProps={(value: string | undefined) => ({ value: value ? [value] : [] })}>
+              <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
                 <Option value='существующий'>существующий</Option>
                 <Option value='проектируемый'>проектируемый</Option>
               </Select>
