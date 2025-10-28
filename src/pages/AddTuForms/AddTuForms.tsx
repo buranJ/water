@@ -472,12 +472,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           name='request_source'
           rules={[{ required: true, message: t('addTuForms.form.validation.specifySource') }]}
         >
-          <Select
-            size='large'
-            placeholder={t('addTuForms.form.placeholders.requestSource')}
-            showSearch
-            optionFilterProp='children'
-          >
+          <Select size='large' placeholder={t('addTuForms.form.placeholders.requestSource')} showSearch optionFilterProp='children'>
             {requestSources?.results?.map((rs: any) => (
               <Option key={rs.id} value={rs.title}>
                 {rs.title}
@@ -688,7 +683,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Form.Item> */}
         <Row gutter={16}>
           <Col span={8}>
-            <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_input_1' rules={[{ required: false }]}>
+            <Form.Item label={t('addTuForms.form.labels.waterPipeDiameter1')} name='collector_diametr_fire_1' rules={[{ required: false }]}>
               <Input size='large' />
             </Form.Item>
           </Col>
@@ -702,7 +697,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Form.Item>
           </Col> */}
           <Col span={8}>
-            <Form.Item label={t('addTuForms.form.labels.waterPipeDiameter1')} name='collector_diametr_fire_1' rules={[{ required: false }]}>
+            <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_input_1' rules={[{ required: false }]}>
               <Input size='large' />
             </Form.Item>
           </Col>
@@ -722,7 +717,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Form.Item> */}
         <Row gutter={16}>
           <Col span={8}>
-            <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_input_2' rules={[{ required: false }]}>
+            <Form.Item label={t('addTuForms.form.labels.waterPipeDiameter2')} name='collector_diametr_fire_2' rules={[{ required: false }]}>
               <Input size='large' />
             </Form.Item>
           </Col>
@@ -736,7 +731,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Form.Item>
           </Col> */}
           <Col span={8}>
-            <Form.Item label={t('addTuForms.form.labels.waterPipeDiameter2')} name='collector_diametr_fire_2' rules={[{ required: false }]}>
+            <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_input_2' rules={[{ required: false }]}>
               <Input size='large' />
             </Form.Item>
           </Col>
