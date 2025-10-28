@@ -40,6 +40,12 @@ type FormValues = Omit<ITyItem, 'type_ty' | 'customer' | 'application'> & {
   formula?: number;
   fire_fighting_inner?: string;
   fire_fighting_outer?: string;
+
+  // Newly added fields mapped to payloadCreate
+  tu_number?: string;
+  tech_council_date?: string;
+  fire_input_1?: string | string[];
+  fire_input_2?: string | string[];
 };
 
 const getTypeTyId = (tt: unknown): number | undefined => {
@@ -154,6 +160,10 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             fire_fighting_outer:
               values.firefightingExpensesOuter != null ? String(values.firefightingExpensesOuter) : values.fire_fighting_outer,
             sewage_amount: values.sewage_amount,
+            tu_number: values.tu_number,
+            tech_council_date: values.tech_council_date,
+            fire_input_1: Array.isArray(values.fire_input_1) ? values.fire_input_1.join(', ') : values.fire_input_1,
+            fire_input_2: Array.isArray(values.fire_input_2) ? values.fire_input_2.join(', ') : values.fire_input_2,
             customer: customerId
           };
           if (objectId != null) payloadCreate.entity = objectId;
@@ -450,12 +460,13 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Title>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label={'Номер тех условия'} rules={[{ required: true, message: t('addTuForms.form.validation.specifySource') }]}>
+            <Form.Item name='tu_number' label={'Номер тех условия'} rules={[{ required: true, message: t('addTuForms.form.validation.specifySource') }]}>
               <Input size='large' defaultValue={'04-'} />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
+              name='tech_council_date'
               label={'Дата тех совета'}
               rules={[{ required: true, message: t('addTuForms.form.validation.specifyRequestDate') }]}
               normalize={(value: Dayjs) => formatDate(value)}
@@ -672,7 +683,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           {t('addTuForms.form.labels.fireInput1')}
         </Title>
 
-        <Form.Item label={'На пожаротушение объекта подключение выполнить'} rules={[{ required: false }]}>
+        <Form.Item name='fire_input_1' label={'На пожаротушение объекта подключение выполнить'} rules={[{ required: false }]}>
           <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
             <Option value='существующий'>существующий</Option>
             <Option value='проектируемый'>проектируемый</Option>
@@ -706,7 +717,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         <Title level={5} style={{ marginTop: '12px' }}>
           {t('addTuForms.form.labels.fireInput2')}
         </Title>
-        <Form.Item label={'На пожаротушение объекта подключение выполнить'} rules={[{ required: false }]}>
+        <Form.Item name='fire_input_2' label={'На пожаротушение объекта подключение выполнить'} rules={[{ required: false }]}>
           <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
             <Option value='существующий'>существующий</Option>
             <Option value='проектируемый'>проектируемый</Option>
