@@ -46,6 +46,19 @@ type FormValues = Omit<ITyItem, 'type_ty' | 'customer' | 'application'> & {
   tech_council_date?: string;
   fire_input_1?: string | string[];
   fire_input_2?: string | string[];
+
+  // Connection and sewer fields
+  water_pipe?: string;
+  street_pass_water?: string;
+  provide_water?: string;
+  collector_diametr_fire_1?: string;
+  street_pass_input_1?: string;
+  collector_diametr_fire_2?: string;
+  street_pass_input_2?: string;
+  sewer_pipe?: string;
+  collector_diametr_sewer?: number | string;
+  street_pass_sewer?: string;
+  provide_sewer?: string;
 };
 
 const getTypeTyId = (tt: unknown): number | undefined => {
@@ -164,7 +177,18 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             tech_council_date: values.tech_council_date,
             fire_input_1: Array.isArray(values.fire_input_1) ? values.fire_input_1.join(', ') : values.fire_input_1,
             fire_input_2: Array.isArray(values.fire_input_2) ? values.fire_input_2.join(', ') : values.fire_input_2,
-            customer: customerId
+            customer: customerId,
+            water_pipe: values.water_pipe,
+            street_pass_water: values.street_pass_water,
+            provide_water: values.provide_water,
+            collector_diametr_fire_1: values.collector_diametr_fire_1,
+            street_pass_input_1: values.street_pass_input_1,
+            collector_diametr_fire_2: values.collector_diametr_fire_2,
+            street_pass_input_2: values.street_pass_input_2,
+            sewer_pipe: values.sewer_pipe,
+            collector_diametr_sewer: values.collector_diametr_sewer,
+            street_pass_sewer: values.street_pass_sewer,
+            provide_sewer: values.provide_sewer
           };
           if (objectId != null) payloadCreate.entity = objectId;
           if (values.formula != null) payloadCreate.formula = values.formula;
@@ -460,7 +484,11 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Title>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item name='tu_number' label={'Номер тех условия'} rules={[{ required: true, message: t('addTuForms.form.validation.specifySource') }]}>
+            <Form.Item
+              name='tu_number'
+              label={'Номер тех условия'}
+              rules={[{ required: true, message: t('addTuForms.form.validation.specifySource') }]}
+            >
               <Input size='large' defaultValue={'04-'} />
             </Form.Item>
           </Col>
@@ -658,7 +686,13 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Title>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label={'Подключение выполнить к водопроводной линии Д'} name='water_pipe' rules={[{ required: false }]} normalize={(v) => (Array.isArray(v) ? v.slice(-1)[0] : v)} getValueProps={(value: string | undefined) => ({ value: value ? [value] : [] })}>
+            <Form.Item
+              label={'Подключение выполнить к водопроводной линии Д'}
+              name='water_pipe'
+              rules={[{ required: false }]}
+              normalize={(v) => (Array.isArray(v) ? v.slice(-1)[0] : v)}
+              getValueProps={(value: string | undefined) => ({ value: value ? [value] : [] })}
+            >
               <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
                 <Option value='существующий'>существующий</Option>
                 <Option value='проектируемый'>проектируемый</Option>
@@ -754,7 +788,13 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Title>
         <Row gutter={16}>
           <Col span={8}>
-            <Form.Item label={t('addTuForms.form.labels.sewer')} name='sewer_pipe' rules={[{ required: false }]} normalize={(v) => (Array.isArray(v) ? v.slice(-1)[0] : v)} getValueProps={(value: string | undefined) => ({ value: value ? [value] : [] })}>
+            <Form.Item
+              label={t('addTuForms.form.labels.sewer')}
+              name='sewer_pipe'
+              rules={[{ required: false }]}
+              normalize={(v) => (Array.isArray(v) ? v.slice(-1)[0] : v)}
+              getValueProps={(value: string | undefined) => ({ value: value ? [value] : [] })}
+            >
               <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
                 <Option value='существующий'>существующий</Option>
                 <Option value='проектируемый'>проектируемый</Option>
