@@ -200,7 +200,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             increase_sewage: values.increase_sewage,
             additional_cold_water_required: values.additional_cold_water_required,
             additional_sewage_amount: values.additional_sewage_amount,
-            tech_council_date: values.tech_council_date
+            tech_council_date: values.tech_council_date,
+            collector_diametr_water: values.collector_diametr_water
           };
           if (objectId != null) payloadCreate.entity = objectId;
           if (values.formula != null) payloadCreate.formula = values.formula;
@@ -757,7 +758,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label={'Диаметром'} name='street_pass_water' rules={[{ required: false }]}>
+            <Form.Item label={'Диаметром'} name='collector_diametr_water' rules={[{ required: false }]}>
               <Input size='large' />
             </Form.Item>
           </Col>
