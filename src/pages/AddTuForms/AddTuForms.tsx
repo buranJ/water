@@ -173,11 +173,9 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             fire_fighting_outer:
               values.firefightingExpensesOuter != null ? String(values.firefightingExpensesOuter) : values.fire_fighting_outer,
             sewage_amount: values.sewage_amount,
-            tu_number: values.tu_number,
-            council_date: values.council_date,
             fire_input_1: Array.isArray(values.fire_input_1) ? values.fire_input_1.join(', ') : values.fire_input_1,
             fire_input_2: Array.isArray(values.fire_input_2) ? values.fire_input_2.join(', ') : values.fire_input_2,
-            customer: customerId,
+            customer: customerId != null ? String(customerId) : undefined,
             water_pipe: values.water_pipe,
             street_pass_water: values.street_pass_water,
             provide_water: values.provide_water,
@@ -186,11 +184,10 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             collector_diametr_fire_2: values.collector_diametr_fire_2,
             street_pass_input_2: values.street_pass_input_2,
             sewer_pipe: values.sewer_pipe,
-            collector_diametr_sewer: values.collector_diametr_sewer,
+            collector_diametr_sewer:
+              values.collector_diametr_sewer != null ? String(values.collector_diametr_sewer) : undefined,
             street_pass_sewer: values.street_pass_sewer,
-            provide_sewer: values.provide_sewer,
-            tech_council_date: values.tech_council_date,
-            free_pressure_connection_point: values.free_pressure_connection_point
+            provide_sewer: values.provide_sewer
           };
           if (objectId != null) payloadCreate.entity = objectId;
           if (values.formula != null) payloadCreate.formula = values.formula;
