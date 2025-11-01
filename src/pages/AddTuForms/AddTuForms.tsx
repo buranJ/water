@@ -188,7 +188,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             sewer_pipe: values.sewer_pipe,
             collector_diametr_sewer: values.collector_diametr_sewer,
             street_pass_sewer: values.street_pass_sewer,
-            provide_sewer: values.provide_sewer
+            provide_sewer: values.provide_sewer,
+            tuApprovalDate: values.tuApprovalDate
           };
           if (objectId != null) payloadCreate.entity = objectId;
           if (values.formula != null) payloadCreate.formula = values.formula;
@@ -504,6 +505,14 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Form.Item>
           </Col>
         </Row>
+        <Form.Item
+          name='tuApprovalDate'
+          label={t('addTuForms.form.labels.tuApprovalDate')}
+          normalize={(value: Dayjs) => formatDate(value)}
+          getValueProps={(value: string) => ({ value: parseDate(value) })}
+        >
+          <DatePicker format='DD.MM.YYYY' size='large' placeholder={t('addTuForms.form.placeholders.tuApprovalDate')} />
+        </Form.Item>
 
         {/* Источник запроса: Select (из сервера) */}
         <Form.Item

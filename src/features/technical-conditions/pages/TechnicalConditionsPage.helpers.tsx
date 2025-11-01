@@ -16,8 +16,8 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
   return [
     {
       title: t('historyOfLoads.columns.tu'),
-      dataIndex: 'id',
-      key: 'id',
+      dataIndex: 'tu_number',
+      key: 'tu_number',
       render: (text, record) => (
         <Typography.Link onClick={() => onClick(record, 'view')} strong>
           {text}
@@ -27,11 +27,14 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
       width: 90
     },
     {
-      title: t('objectCard.createdAt'),
-      dataIndex: 'created_at',
-      key: 'created_at',
+      title: t('addTuForms.form.labels.tuApprovalDate'),
+      dataIndex: 'tuApprovalDate',
+      key: 'tuApprovalDate',
       width: 150,
-      render: (date) => dayjs(date).format('DD-MM-YYYY-HH:mm')
+      render: (date) => {
+        if (!date) return '-';
+        return dayjs(date).format('DD-MM-YYYY-HH:mm');
+      }
     },
     { title: t('customers.columns.customer'), dataIndex: ['customer', 'full_name'], key: 'customer', width: 170 },
     { title: t('applicationDetails.labels.address'), dataIndex: 'address', key: 'address', width: 170 },
