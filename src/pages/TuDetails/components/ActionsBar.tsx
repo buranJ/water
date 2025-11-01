@@ -63,6 +63,7 @@ export const ActionsBar: FC<ActionsBarProps> = ({
           >
             {t('tuDetails.actions.downloadContract')}
           </Button>
+          <Button icon={<DownloadOutlined />}>Скачать ТУ на увелечение нагрузок</Button>
         </>
       )}
       {hasPermission('add_actty') && (
