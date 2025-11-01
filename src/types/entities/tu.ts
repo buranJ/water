@@ -160,7 +160,7 @@ export interface IGetTyById {
 
 export interface ITyItem {
   id: number;
-  tuApprovalDate: Date;
+  council_date: Date;
   status_display: string;
   stage_display: string;
   request_source: string;

@@ -189,7 +189,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             collector_diametr_sewer: values.collector_diametr_sewer,
             street_pass_sewer: values.street_pass_sewer,
             provide_sewer: values.provide_sewer,
-            tuApprovalDate: values.tuApprovalDate
+            council_date: values.council_date,
           };
           if (objectId != null) payloadCreate.entity = objectId;
           if (values.formula != null) payloadCreate.formula = values.formula;
@@ -506,12 +506,12 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Col>
         </Row>
         <Form.Item
-          name='tuApprovalDate'
-          label={t('addTuForms.form.labels.tuApprovalDate')}
+          name='council_date'
+          label={t('addTuForms.form.labels.council_date')}
           normalize={(value: Dayjs) => formatDate(value)}
           getValueProps={(value: string) => ({ value: parseDate(value) })}
         >
-          <DatePicker format='DD.MM.YYYY' size='large' placeholder={t('addTuForms.form.placeholders.tuApprovalDate')} />
+          <DatePicker format='DD.MM.YYYY' size='large' placeholder={t('addTuForms.form.placeholders.council_date')} />
         </Form.Item>
 
         {/* Источник запроса: Select (из сервера) */}
@@ -558,18 +558,18 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               label={t('addTuForms.form.labels.customer')}
               name='customer'
               rules={[{ required: true, message: t('addTuForms.form.validation.specifyCustomer') }]}
+              extra={
+                !isCreateMode ? (
+                  <Button type='link' style={{ padding: 0, height: 'auto' }} onClick={onCustomerEdit}>
+                    <span style={{ fontSize: 14 }}>{t('addTuForms.form.buttons.change')}</span>
+                  </Button>
+                ) : undefined
+              }
             >
-              <Input
+              <TextArea
                 disabled={!isCreateMode}
                 size='large'
                 placeholder={t('addTuForms.form.placeholders.customer')}
-                addonAfter={
-                  !isCreateMode ? (
-                    <Button type='link' style={{ padding: 0, height: 'auto' }} onClick={onCustomerEdit}>
-                      <span style={{ fontSize: 14 }}>{t('addTuForms.form.buttons.change')}</span>
-                    </Button>
-                  ) : undefined
-                }
               />
             </Form.Item>
           </Col>
@@ -579,7 +579,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               name='object_name'
               rules={[{ required: true, message: t('addTuForms.form.validation.specifyObjectName') }]}
             >
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.objectName')} />
+              <TextArea size='large' placeholder={t('addTuForms.form.placeholders.objectName')} />
             </Form.Item>
           </Col>
         </Row>
@@ -696,7 +696,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
-              label={'Подключение выполнить к водопроводной линии Д'}
+              label={'Подключение выполнить от водопроводной линии'}
               name='water_pipe'
               rules={[{ required: false }]}
               normalize={(v) => (Array.isArray(v) ? v.slice(-1)[0] : v)}

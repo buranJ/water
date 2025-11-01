@@ -100,13 +100,13 @@
     "filters": "Фильтрлер",
     "searchButton": "Издөө",
     "byDate": "Күнү боюнча",
-      "alphabetAsc": "А-Я",
-      "alphabetDesc": "Я-А",
-      "paymentDeadlineAsc": "Төлөө мөөнөтү: адегенде эрте",
-      "paymentDeadlineDesc": "Төлөө мөөнөтү: адегенде кеч",
-      "paymentDateAsc": "Төлөө датасы: адегенде эрте",
-      "paymentDateDesc": "Төлөө датасы: адегенде кеч",
-      "filter": {
+    "alphabetAsc": "А-Я",
+    "alphabetDesc": "Я-А",
+    "paymentDeadlineAsc": "Төлөө мөөнөтү: адегенде эрте",
+    "paymentDeadlineDesc": "Төлөө мөөнөтү: адегенде кеч",
+    "paymentDateAsc": "Төлөө датасы: адегенде эрте",
+    "paymentDateDesc": "Төлөө датасы: адегенде кеч",
+    "filter": {
       "alphabet": "Алфавит боюнча",
       "type": "Түрү боюнча",
       "status": "Статус",
@@ -189,10 +189,6 @@
     "yes": "Ооба",
     "no": "Жок"
   },
-
-
-
-
   "geoportal": {
     "errorLoad": "Маалыматтарды жүктөөдө ката",
     "dataRefreshed": "Маалыматтар жаңыртылды",
@@ -366,7 +362,7 @@
       "paymentAmount": "Жалпы сумма:",
       "paymentDeadline": "Төлөөнүн акыркы мөөнөтү:",
       "stage": "Баскыч:",
-      "address":"Дарек:"
+      "address": "Дарек:"
     },
     "units": {
       "m3PerDay": "м³/сут",
@@ -1132,7 +1128,7 @@
         "waterPipeDiameter1": "Суу түтүгү D 1",
         "freePressureInput2": "Эркин басым киргизүү 2",
         "waterPipeDiameter2": "Суу түтүгү D 2",
-        "tuApprovalDate": "ТУ бекитилген күнү"
+        "council_date": "ТУ бекитилген күнү"
       },
       "placeholders": {
         "requestSource": "Объекттин аталышы",
@@ -1171,7 +1167,7 @@
         "waterPipeDiameter1": "Суу түтүгү D 1",
         "freePressureInput2": "Эркин басым киргизүү 2",
         "waterPipeDiameter2": "Суу түтүгү D 2",
-        "tuApprovalDate": "YYYY-MM-DD"
+        "council_date": "YYYY-MM-DD"
       },
       "validation": {
         "specifySource": "Булакты көрсөтүңүз",

@@ -27,9 +27,9 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
       width: 90
     },
     {
-      title: t('addTuForms.form.labels.tuApprovalDate'),
-      dataIndex: 'tuApprovalDate',
-      key: 'tuApprovalDate',
+      title: t('addTuForms.form.labels.council_date'),
+      dataIndex: 'council_date',
+      key: 'council_date',
       width: 150,
       render: (date) => {
         if (!date) return '-';
