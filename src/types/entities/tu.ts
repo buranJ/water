@@ -3,6 +3,7 @@ import { IContractCustomerType } from 'types/requests';
 
 export interface ITechnicalCondition {
   id: number;
+  tu_number: string;
   status_display: IStatus6b3Enum;
   stage_display: IStageEnum;
   type?: ITyTypeEnum;
@@ -159,6 +160,7 @@ export interface IGetTyById {
 
 export interface ITyItem {
   id: number;
+  tech_council_date: Date;
   status_display: string;
   stage_display: string;
   request_source: string;
@@ -221,6 +223,7 @@ export interface ITyItem {
     id: number;
     title: string;
   };
+  free_pressure_connection_point?: number;
 }
 
 export interface ITyBody {

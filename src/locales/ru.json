@@ -1095,7 +1095,7 @@
         "customer": "Заказчик",
         "objectName": "Наименование объекта",
         "address": "Место нахождения объекта",
-        "techConditionType": "Тип технического условия",
+        "techConditionType": "Тип технических условий",
         "eni": "ЕНИ",
         "sewageAmount": "Количество стоков",
         "waterRequired": "Требуемое количество воды",
@@ -1127,7 +1127,9 @@
         "freePressureInput1": "Свободный напор ввод 1",
         "waterPipeDiameter1": "Водопр Д 1",
         "freePressureInput2": "Свободный напор ввод 2",
-        "waterPipeDiameter2": "Водопр Д 2"
+        "waterPipeDiameter2": "Водопр Д 2",
+        "council_date": "Дата одобрения ТУ",
+        "freePressureAtConnectionPoint": "Свободный напор в точке подключения"
       },
       "placeholders": {
         "requestSource": "Название объекта",
@@ -1165,7 +1167,9 @@
         "freePressureInput1": "Свободный напор ввод 1",
         "waterPipeDiameter1": "Водопр Д 1",
         "freePressureInput2": "Свободный напор ввод 2",
-        "waterPipeDiameter2": "Водопр Д 2"
+        "waterPipeDiameter2": "Водопр Д 2",
+        "council_date": "ДД-ММ-ГГГГ",
+        "freePressureAtConnectionPoint": "Свободный напор в точке подключения"
       },
       "validation": {
         "specifySource": "Укажите источник",

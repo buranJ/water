@@ -55,10 +55,10 @@
     "technicalSpecificatio": "Technical Conditions",
     "applicationDetails": "Application No.",
     "tuNumberPrefix": "TU No.",
-      "changeHistory": "Change history",
-      "notifications": "Notifications",
-      "invoices": "Invoices",
-      "protocols": "Protocols"
+    "changeHistory": "Change history",
+    "notifications": "Notifications",
+    "invoices": "Invoices",
+    "protocols": "Protocols"
   },
   "profile": {
     "title": "Settings",
@@ -97,8 +97,8 @@
     "newOnesfirst": "Newest First",
     "newOldFirst": "Oldest First",
     "add": "Add",
-      "filters": "Filters",
-      "searchButton": "Search",
+    "filters": "Filters",
+    "searchButton": "Search",
     "byDate": "By Date",
     "alphabetAsc": "A-Z",
     "alphabetDesc": "Z-A",
@@ -1127,7 +1127,9 @@
         "freePressureInput1": "Free pressure input 1",
         "waterPipeDiameter1": "Water pipe D 1",
         "freePressureInput2": "Free pressure input 2",
-        "waterPipeDiameter2": "Water pipe D 2"
+        "waterPipeDiameter2": "Water pipe D 2",
+        "council_date": "TU approval date",
+        "freePressureAtConnectionPoint": "Free pressure at connection point"
       },
       "placeholders": {
         "requestSource": "Object name",
@@ -1165,7 +1167,9 @@
         "freePressureInput1": "Free pressure input 1",
         "waterPipeDiameter1": "Water pipe D 1",
         "freePressureInput2": "Free pressure input 2",
-        "waterPipeDiameter2": "Water pipe D 2"
+        "waterPipeDiameter2": "Water pipe D 2",
+        "council_date": "YYYY-MM-DD",
+        "freePressureAtConnectionPoint": "Free pressure at connection point"
       },
       "validation": {
         "specifySource": "Specify source",
