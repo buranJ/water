@@ -312,7 +312,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
       return;
     }
     try {
-      await patchActTy({ id: objectData.act.id, body: { status: 'done' } }).unwrap();
+      await patchActTy({ id: objectData.id, body: { status: 'done' } }).unwrap();
       message.success(t('tuDetails.act.messages.statusUpdated', 'Статус акта обновлён'));
       refetch();
     } catch (e) {
@@ -331,7 +331,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     if (!id) return;
     try {
       if (objectData?.act?.id) {
-        await updateActTy({ id: objectData.act.id, file, status: 'done' }).unwrap();
+        await updateActTy({ id: objectData.act.id, file, status: 'done', ty: id }).unwrap();
       } else {
         await createAct({ ty: id, file, status: 'done' }).unwrap();
       }

@@ -272,10 +272,11 @@ export const tyApi = createApi({
       },
       invalidatesTags: (_result, _error, body) => [{ type: 'Ty', id: String(body.ty) }, 'Ty']
     }),
-    updateActTy: build.mutation<IActTyResponse, { id: number | string; file: File; status?: import('types/common').IActEnum }>({
-      query: ({ id, file, status }) => {
+    updateActTy: build.mutation<IActTyResponse, { id: number | string; ty: string; file: File; status?: import('types/common').IActEnum }>({
+      query: ({ id, file, status, ty }) => {
         const formData = new FormData();
         if (status) formData.append('status', status);
+        if (ty) formData.append('ty', ty + '');
         formData.append('file', file);
         return {
           url: `/ty/act_ty/${id}`,
