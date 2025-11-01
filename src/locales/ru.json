@@ -1128,7 +1128,8 @@
         "waterPipeDiameter1": "Водопр Д 1",
         "freePressureInput2": "Свободный напор ввод 2",
         "waterPipeDiameter2": "Водопр Д 2",
-        "council_date": "Дата одобрения ТУ"
+        "council_date": "Дата одобрения ТУ",
+        "freePressureAtConnectionPoint": "Свободный напор в точке подключения"
       },
       "placeholders": {
         "requestSource": "Название объекта",
@@ -1167,7 +1168,8 @@
         "waterPipeDiameter1": "Водопр Д 1",
         "freePressureInput2": "Свободный напор ввод 2",
         "waterPipeDiameter2": "Водопр Д 2",
-        "council_date": "ДД-ММ-ГГГГ"
+        "council_date": "ДД-ММ-ГГГГ",
+        "freePressureAtConnectionPoint": "Свободный напор в точке подключения"
       },
       "validation": {
         "specifySource": "Укажите источник",

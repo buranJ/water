@@ -190,6 +190,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             street_pass_sewer: values.street_pass_sewer,
             provide_sewer: values.provide_sewer,
             council_date: values.council_date,
+            free_pressure_connection_point: values.free_pressure_connection_point
           };
           if (objectId != null) payloadCreate.entity = objectId;
           if (values.formula != null) payloadCreate.formula = values.formula;
@@ -505,29 +506,33 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Form.Item>
           </Col>
         </Row>
-        <Form.Item
-          name='council_date'
-          label={t('addTuForms.form.labels.council_date')}
-          normalize={(value: Dayjs) => formatDate(value)}
-          getValueProps={(value: string) => ({ value: parseDate(value) })}
-        >
-          <DatePicker format='DD.MM.YYYY' size='large' placeholder={t('addTuForms.form.placeholders.council_date')} />
-        </Form.Item>
-
-        {/* Источник запроса: Select (из сервера) */}
-        <Form.Item
-          label={t('addTuForms.form.labels.requestSource')}
-          name='request_source'
-          rules={[{ required: true, message: t('addTuForms.form.validation.specifySource') }]}
-        >
-          <Select size='large' placeholder={t('addTuForms.form.placeholders.requestSource')} showSearch optionFilterProp='children'>
-            {requestSources?.results?.map((rs: any) => (
-              <Option key={rs.id} value={rs.title}>
-                {rs.title}
-              </Option>
-            ))}
-          </Select>
-        </Form.Item>
+        <Row gutter={24}>
+          <Col span={12}>
+            <Form.Item
+              label={t('addTuForms.form.labels.requestSource')}
+              name='request_source'
+              rules={[{ required: true, message: t('addTuForms.form.validation.specifySource') }]}
+            >
+              <Select size='large' placeholder={t('addTuForms.form.placeholders.requestSource')} showSearch optionFilterProp='children'>
+                {requestSources?.results?.map((rs: any) => (
+                  <Option key={rs.id} value={rs.title}>
+                    {rs.title}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name='council_date'
+              label={t('addTuForms.form.labels.council_date')}
+              normalize={(value: Dayjs) => formatDate(value)}
+              getValueProps={(value: string) => ({ value: parseDate(value) })}
+            >
+              <DatePicker format='DD.MM.YYYY' size='large' placeholder={t('addTuForms.form.placeholders.council_date')} />
+            </Form.Item>
+          </Col>
+        </Row>
 
         <Row gutter={16}>
           <Col span={12}>
@@ -566,11 +571,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
                 ) : undefined
               }
             >
-              <TextArea
-                disabled={!isCreateMode}
-                size='large'
-                placeholder={t('addTuForms.form.placeholders.customer')}
-              />
+              <TextArea disabled={!isCreateMode} size='large' placeholder={t('addTuForms.form.placeholders.customer')} />
             </Form.Item>
           </Col>
           <Col span={12}>
@@ -735,8 +736,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         {/* <Form.Item label={t('addTuForms.form.labels.fireInput1')} name='fire_input_1' rules={[{ required: false }]}>
           <Input size='large' />
         </Form.Item> */}
-        <Row gutter={16}>
-          <Col span={8}>
+        <Row gutter={24}>
+          <Col span={12}>
             <Form.Item label={t('addTuForms.form.labels.waterPipeDiameter1')} name='collector_diametr_fire_1' rules={[{ required: false }]}>
               <Input size='large' />
             </Form.Item>
@@ -750,7 +751,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               <Input type='number' min={0} size='large' placeholder={t('addTuForms.form.placeholders.freePressureInput1')} />
             </Form.Item>
           </Col> */}
-          <Col span={8}>
+          <Col span={12}>
             <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_input_1' rules={[{ required: false }]}>
               <Input size='large' />
             </Form.Item>
@@ -769,8 +770,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         {/* <Form.Item label={t('addTuForms.form.labels.fireInput2')} name='fire_input_2' rules={[{ required: false }]}>
           <Input size='large' />
         </Form.Item> */}
-        <Row gutter={16}>
-          <Col span={8}>
+        <Row gutter={24}>
+          <Col span={12}>
             <Form.Item label={t('addTuForms.form.labels.waterPipeDiameter2')} name='collector_diametr_fire_2' rules={[{ required: false }]}>
               <Input size='large' />
             </Form.Item>
@@ -784,12 +785,19 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               <Input type='number' min={0} size='large' placeholder={t('addTuForms.form.placeholders.freePressureInput2')} />
             </Form.Item>
           </Col> */}
-          <Col span={8}>
+          <Col span={12}>
             <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_input_2' rules={[{ required: false }]}>
               <Input size='large' />
             </Form.Item>
           </Col>
         </Row>
+        <Form.Item
+          label={t('addTuForms.form.labels.freePressureAtConnectionPoint')}
+          name='free_pressure_connection_point'
+          rules={[{ required: false }]}
+        >
+          <Input size='large' placeholder='10' type='number' />
+        </Form.Item>
 
         {/* Канализация */}
         <Title level={5} style={{ marginTop: '12px' }}>

@@ -1128,7 +1128,8 @@
         "waterPipeDiameter1": "Water pipe D 1",
         "freePressureInput2": "Free pressure input 2",
         "waterPipeDiameter2": "Water pipe D 2",
-        "council_date": "TU approval date"
+        "council_date": "TU approval date",
+        "freePressureAtConnectionPoint": "Free pressure at connection point"
       },
       "placeholders": {
         "requestSource": "Object name",
@@ -1167,7 +1168,8 @@
         "waterPipeDiameter1": "Water pipe D 1",
         "freePressureInput2": "Free pressure input 2",
         "waterPipeDiameter2": "Water pipe D 2",
-        "council_date": "YYYY-MM-DD"
+        "council_date": "YYYY-MM-DD",
+        "freePressureAtConnectionPoint": "Free pressure at connection point"
       },
       "validation": {
         "specifySource": "Specify source",

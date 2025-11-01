@@ -1128,7 +1128,8 @@
         "waterPipeDiameter1": "Суу түтүгү D 1",
         "freePressureInput2": "Эркин басым киргизүү 2",
         "waterPipeDiameter2": "Суу түтүгү D 2",
-        "council_date": "ТУ бекитилген күнү"
+        "council_date": "ТУ бекитилген күнү",
+        "freePressureAtConnectionPoint": "Туташуу чекитинде эркин баш"
       },
       "placeholders": {
         "requestSource": "Объекттин аталышы",
@@ -1167,7 +1168,8 @@
         "waterPipeDiameter1": "Суу түтүгү D 1",
         "freePressureInput2": "Эркин басым киргизүү 2",
         "waterPipeDiameter2": "Суу түтүгү D 2",
-        "council_date": "YYYY-MM-DD"
+        "council_date": "YYYY-MM-DD",
+        "freePressureAtConnectionPoint": "Туташуу чекитинде эркин баш"
       },
       "validation": {
         "specifySource": "Булакты көрсөтүңүз",

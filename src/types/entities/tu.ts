@@ -223,6 +223,7 @@ export interface ITyItem {
     id: number;
     title: string;
   };
+  free_pressure_connection_point?: number;
 }
 
 export interface ITyBody {
