@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router';
 import { Alert, Button, Card, Col, Flex, message, Row, Spin, Tabs, TabsProps, Typography } from 'antd';
 import { CheckCircleTwoTone, ClockCircleTwoTone, EditTwoTone, FileOutlined, QuestionCircleTwoTone } from '@ant-design/icons';
@@ -23,6 +23,7 @@ import {
   useLazyDownloadProtocolDocxQuery,
   useLazyGetActTyByIdQuery,
   usePatchActTyMutation,
+  useUpdateActTyMutation,
   useUpdateTyMutation
 } from 'api/Ty.api';
 import { usePermissions } from 'hooks/useAuth';
@@ -77,8 +78,10 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const [triggerContractDownload, { isFetching: isContractDownloading }] = useLazyDownloadContractDocxQuery();
   const [updateTy] = useUpdateTyMutation();
   const [patchActTy] = usePatchActTyMutation();
-  const [createAct] = useCreateActTyMutation();
+  const [createAct, { isLoading: isActCreating }] = useCreateActTyMutation();
+  const [updateActTy, { isLoading: isActUpdating }] = useUpdateActTyMutation();
   const [triggerGetAct, { isFetching: isActFetching }] = useLazyGetActTyByIdQuery();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [createRefusal] = useCreateRefusalMutation();
 
   const isTuApproved = objectData?.stage === 'approved';
@@ -318,6 +321,30 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     }
   };
 
+  const handleUploadActClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const onFileSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!id) return;
+    try {
+      if (objectData?.act?.id) {
+        await updateActTy({ id: objectData.act.id, file, status: 'done' }).unwrap();
+      } else {
+        await createAct({ ty: id, file, status: 'done' }).unwrap();
+      }
+      message.success(t('tuDetails.act.messages.fileUploaded', 'Файл акта загружен'));
+      refetch();
+    } catch (err) {
+      console.error('[ACT UPLOAD] failed', err);
+      message.error(t('tuDetails.act.messages.uploadFailed', 'Не удалось загрузить акт'));
+    } finally {
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
   if (isLoading) {
     return (
       <DashboardLayout title={`${t(title)} ${id}`}>
@@ -391,47 +418,62 @@ export const TuDetails: FC<IProps> = ({ title }) => {
                 {getActStatusIcon(objectData.act?.status as IActEnum | undefined)}
               </Row>
               <br />
-              {objectData.act && (
-                <Button
-                  loading={isActFetching}
-                  onClick={async () => {
-                    try {
-                      const res = (await triggerGetAct({ id: objectData.act!.id }).unwrap()) as import('types/requests').IActTyResponse;
-                      const fileUrl = res?.file || undefined;
-                      if (!fileUrl) {
-                        message.warning(t('tuDetails.act.messages.fileRequired', 'Выберите файл акта'));
-                        return;
-                      }
-                      try {
-                        const response = await fetch(fileUrl, { credentials: 'include' });
-                        if (!response.ok) throw new Error('download failed');
-                        const blob = await response.blob();
-                        const nameFromUrl = fileUrl.split('/').pop() || `act_${objectData.act!.id}`;
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = nameFromUrl;
-                        document.body.appendChild(a);
-                        a.click();
-                        a.remove();
-                        window.URL.revokeObjectURL(url);
-                      } catch (err) {
-                        console.error('[ACT GET] download file failed', err);
-                        // Fallback — открыть в новой вкладке
-                        window.open(fileUrl, '_blank');
-                      }
-                    } catch (e) {
-                      console.error('[ACT GET] failed', e);
-                      message.error(t('tuDetails.act.messages.statusUpdateFailed', 'Не удалось изменить статус акта'));
-                    }
-                  }}
-                >
-                  {t('tuDetails.act.actions.download', 'Скачать акт')}
-                </Button>
+              {isTuApproved && (
+                <>
+                  <input ref={fileInputRef} type='file' accept='.pdf,.doc,.docx' style={{ display: 'none' }} onChange={onFileSelected} />
+                  <Row gutter={8}>
+                    <Col>
+                      <Button type='primary' ghost loading={isActCreating || isActUpdating} onClick={handleUploadActClick}>
+                        {t('tuDetails.act.actions.upload', 'Загрузить')}
+                      </Button>
+                    </Col>
+                    {objectData.act?.file && (
+                      <Col>
+                        <Button
+                          loading={isActFetching}
+                          onClick={async () => {
+                            try {
+                              const res = (await triggerGetAct({
+                                id: objectData.act!.id
+                              }).unwrap()) as import('types/requests').IActTyResponse;
+                              const fileUrl = res?.file || undefined;
+                              if (!fileUrl) {
+                                message.warning(t('tuDetails.act.messages.fileRequired', 'Выберите файл акта'));
+                                return;
+                              }
+                              try {
+                                const response = await fetch(fileUrl, { credentials: 'include' });
+                                if (!response.ok) throw new Error('download failed');
+                                const blob = await response.blob();
+                                const nameFromUrl = fileUrl.split('/').pop() || `act_${objectData.act!.id}`;
+                                const url = window.URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = nameFromUrl;
+                                document.body.appendChild(a);
+                                a.click();
+                                a.remove();
+                                window.URL.revokeObjectURL(url);
+                              } catch (err) {
+                                console.error('[ACT GET] download file failed', err);
+                                window.open(fileUrl, '_blank');
+                              }
+                            } catch (e) {
+                              console.error('[ACT GET] failed', e);
+                              message.error(t('tuDetails.act.messages.statusUpdateFailed', 'Не удалось изменить статус акта'));
+                            }
+                          }}
+                        >
+                          {t('tuDetails.act.actions.download', 'Скачать')}
+                        </Button>
+                      </Col>
+                    )}
+                  </Row>
+                </>
               )}
               {isTuApproved &&
                 (!objectData.act ? (
-                  <Button type='primary' style={{ marginTop: 8, marginLeft: 0 }} onClick={handleCreateAndFinishAct}>
+                  <Button type='primary' style={{ marginTop: 8, marginLeft: 0, display: 'none' }} onClick={handleCreateAndFinishAct}>
                     {t('tuDetails.act.actions.create', 'Создать акт')}
                   </Button>
                 ) : objectData.act.status !== 'done' ? (

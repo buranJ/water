@@ -272,6 +272,20 @@ export const tyApi = createApi({
       },
       invalidatesTags: (_result, _error, body) => [{ type: 'Ty', id: String(body.ty) }, 'Ty']
     }),
+    updateActTy: build.mutation<IActTyResponse, { id: number | string; file: File; status?: import('types/common').IActEnum }>({
+      query: ({ id, file, status }) => {
+        const formData = new FormData();
+        if (status) formData.append('status', status);
+        formData.append('file', file);
+        return {
+          url: `/ty/act_ty/${id}`,
+          method: 'PUT',
+          body: formData,
+          formData: true
+        };
+      },
+      invalidatesTags: (result) => (result ? [{ type: 'Ty', id: String(result.ty) }, 'Ty'] : ['Ty'])
+    }),
     patchActTy: build.mutation<IActTyResponse, IPatchActTyParams>({
       query: ({ id, body }) => ({
         url: `/ty/act_ty/${id}`,
@@ -299,6 +313,7 @@ export const {
   useLazyDownloadTyPdfQuery,
   useLazyDownloadProtocolDocxQuery,
   useCreateActTyMutation,
+  useUpdateActTyMutation,
   usePatchActTyMutation,
   useLazyGetActTyByIdQuery
 } = tyApi;
