@@ -43,7 +43,7 @@ type FormValues = Omit<ITyItem, 'type_ty' | 'customer' | 'application'> & {
 
   // Newly added fields mapped to payloadCreate
   tu_number?: string;
-  tech_council_date?: string;
+  council_date?: string;
   fire_input_1?: string | string[];
   fire_input_2?: string | string[];
 
@@ -174,7 +174,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               values.firefightingExpensesOuter != null ? String(values.firefightingExpensesOuter) : values.fire_fighting_outer,
             sewage_amount: values.sewage_amount,
             tu_number: values.tu_number,
-            tech_council_date: values.tech_council_date,
+            council_date: values.council_date,
             fire_input_1: Array.isArray(values.fire_input_1) ? values.fire_input_1.join(', ') : values.fire_input_1,
             fire_input_2: Array.isArray(values.fire_input_2) ? values.fire_input_2.join(', ') : values.fire_input_2,
             customer: customerId,
@@ -189,7 +189,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             collector_diametr_sewer: values.collector_diametr_sewer,
             street_pass_sewer: values.street_pass_sewer,
             provide_sewer: values.provide_sewer,
-            council_date: values.council_date,
+            tech_council_date: values.tech_council_date,
             free_pressure_connection_point: values.free_pressure_connection_point
           };
           if (objectId != null) payloadCreate.entity = objectId;
