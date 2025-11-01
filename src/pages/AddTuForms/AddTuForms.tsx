@@ -59,6 +59,12 @@ type FormValues = Omit<ITyItem, 'type_ty' | 'customer' | 'application'> & {
   collector_diametr_sewer?: number | string;
   street_pass_sewer?: string;
   provide_sewer?: string;
+
+  // Increase load specific fields (strings)
+  increase_water?: string;
+  increase_sewage?: string;
+  additional_cold_water_required?: string;
+  additional_sewage_amount?: string;
 };
 
 const getTypeTyId = (tt: unknown): number | undefined => {
@@ -184,10 +190,13 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             collector_diametr_fire_2: values.collector_diametr_fire_2,
             street_pass_input_2: values.street_pass_input_2,
             sewer_pipe: values.sewer_pipe,
-            collector_diametr_sewer:
-              values.collector_diametr_sewer != null ? String(values.collector_diametr_sewer) : undefined,
+            collector_diametr_sewer: values.collector_diametr_sewer != null ? String(values.collector_diametr_sewer) : undefined,
             street_pass_sewer: values.street_pass_sewer,
-            provide_sewer: values.provide_sewer
+            provide_sewer: values.provide_sewer,
+            increase_water: values.increase_water,
+            increase_sewage: values.increase_sewage,
+            additional_cold_water_required: values.additional_cold_water_required,
+            additional_sewage_amount: values.additional_sewage_amount
           };
           if (objectId != null) payloadCreate.entity = objectId;
           if (values.formula != null) payloadCreate.formula = values.formula;
@@ -458,6 +467,10 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
   // All fields inside "ТЕХНИЧЕСКИЕ ПАРАМЕТРЫ" should be read-only while editing TU (match water-2)
   const techParamsReadOnly = Boolean(tuQuery.data?.id);
 
+  // Watch selected TU type to conditionally render increase-loads fields
+  const selectedTypeId = Form.useWatch('type_ty', form);
+  const isIncreaseLoads = typesTyQuery.data?.find((type) => type.id === selectedTypeId)?.title === 'На увеличение нагрузок';
+
   const onCustomerEdit = useCallback(() => {
     navigate(`/dashboard/customers/${tuQuery.data?.customer.id}/edit`);
   }, [navigate, tuQuery.data?.customer?.id]);
@@ -619,6 +632,39 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Form.Item>
           </Col>
         </Row>
+
+        {isIncreaseLoads && (
+          <>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item name='increase_water' label={'Вода'} rules={[{ required: false }]}>
+                  <Input size='large' />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item name='increase_sewage' label={'Стоки'} rules={[{ required: false }]}>
+                  <Input size='large' />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  name='additional_cold_water_required'
+                  label={'Дополнительно требуемое количество холодной воды'}
+                  rules={[{ required: false }]}
+                >
+                  <Input size='large' />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item name='additional_sewage_amount' label={'Дополнительное количество стоков'} rules={[{ required: false }]}>
+                  <Input size='large' />
+                </Form.Item>
+              </Col>
+            </Row>
+          </>
+        )}
 
         {/* ENI */}
         {/* <Form.Item label={t('addTuForms.form.labels.eni')} name='eni' rules={[{ required: false }, { validator: zodRule(eniSchema) }]}>
