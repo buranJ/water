@@ -159,6 +159,9 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
           // Build TU create payload (map migrated fields)
           const payloadCreate: any = {
+            tu_number: values.tu_number,
+            council_date: values.council_date,
+            free_pressure_connection_point: values.free_pressure_connection_point,
             // Core TU fields from the form
             request_source: values.request_source,
             request_number: values.request_number,
@@ -196,7 +199,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             increase_water: values.increase_water,
             increase_sewage: values.increase_sewage,
             additional_cold_water_required: values.additional_cold_water_required,
-            additional_sewage_amount: values.additional_sewage_amount
+            additional_sewage_amount: values.additional_sewage_amount,
+            tech_council_date: values.tech_council_date
           };
           if (objectId != null) payloadCreate.entity = objectId;
           if (values.formula != null) payloadCreate.formula = values.formula;
