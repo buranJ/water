@@ -144,7 +144,8 @@ export const DataSection: FC<DataSectionProps> = ({ objectData }) => {
         <br />
         <Text strong>{t('tuDetails.labels.streetPass')}</Text> <Text>{objectData?.street_pass_input_1 || '—'}</Text>
         <br />
-        <Text strong>{t('addTuForms.form.labels.freePressureInput1')}</Text> <Text>{objectData?.free_pressure_required_input_1 || '—'}</Text>
+        <Text strong>{t('addTuForms.form.labels.freePressureInput1')}</Text>{' '}
+        <Text>{objectData?.free_pressure_required_input_1 || '—'}</Text>
         <br />
         <Text strong>{t('addTuForms.form.labels.waterPipeDiameter1')}</Text> <Text>{objectData?.collector_diametr_fire_1 || '—'}</Text>
         <br />
@@ -152,7 +153,8 @@ export const DataSection: FC<DataSectionProps> = ({ objectData }) => {
         <br />
         <Text strong>{t('tuDetails.labels.streetPass')}</Text> <Text>{objectData?.street_pass_input_2 || '—'}</Text>
         <br />
-        <Text strong>{t('addTuForms.form.labels.freePressureInput2')}</Text> <Text>{objectData?.free_pressure_required_input_2 || '—'}</Text>
+        <Text strong>{t('addTuForms.form.labels.freePressureInput2')}</Text>{' '}
+        <Text>{objectData?.free_pressure_required_input_2 || '—'}</Text>
         <br />
         <Text strong>{t('addTuForms.form.labels.waterPipeDiameter2')}</Text> <Text>{objectData?.collector_diametr_fire_2 || '—'}</Text>
         <br />
