@@ -501,11 +501,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Title>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item
-              name='tu_number'
-              label={'Номер тех условия'}
-              rules={[{ required: true, message: t('addTuForms.form.validation.specifySource') }]}
-            >
+            <Form.Item name='tu_number' label={'Номер тех условия'} rules={[{ message: t('addTuForms.form.validation.specifySource') }]}>
               <Input size='large' defaultValue={'04-'} />
             </Form.Item>
           </Col>
@@ -513,7 +509,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Form.Item
               name='tech_council_date'
               label={'Дата тех совета'}
-              rules={[{ required: true, message: t('addTuForms.form.validation.specifyRequestDate') }]}
+              rules={[{ message: t('addTuForms.form.validation.specifyRequestDate') }]}
               normalize={(value: Dayjs) => formatDate(value)}
               getValueProps={(value: string) => ({ value: parseDate(value) })}
             >
@@ -526,7 +522,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Form.Item
               label={t('addTuForms.form.labels.requestSource')}
               name='request_source'
-              rules={[{ required: true, message: t('addTuForms.form.validation.specifySource') }]}
+              rules={[{ message: t('addTuForms.form.validation.specifySource') }]}
             >
               <Select size='large' placeholder={t('addTuForms.form.placeholders.requestSource')} showSearch optionFilterProp='children'>
                 {requestSources?.results?.map((rs: any) => (
@@ -554,7 +550,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Form.Item
               label={t('addTuForms.form.labels.requestNumber')}
               name='request_number'
-              rules={[{ required: true, message: t('addTuForms.form.validation.specifyRequestNumber') }]}
+              rules={[{ message: t('addTuForms.form.validation.specifyRequestNumber') }]}
             >
               <Input size='large' placeholder={t('addTuForms.form.placeholders.requestNumber')} />
             </Form.Item>
@@ -563,7 +559,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Form.Item
               label={t('addTuForms.form.labels.requestDate')}
               name='request_date'
-              rules={[{ required: true, message: t('addTuForms.form.validation.specifyRequestDate') }]}
+              rules={[{ message: t('addTuForms.form.validation.specifyRequestDate') }]}
               normalize={(value: Dayjs) => formatDate(value)}
               getValueProps={(value: string) => ({ value: parseDate(value) })}
             >
@@ -577,7 +573,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Form.Item
               label={t('addTuForms.form.labels.customer')}
               name='customer'
-              rules={[{ required: true, message: t('addTuForms.form.validation.specifyCustomer') }]}
+              rules={[{ message: t('addTuForms.form.validation.specifyCustomer') }]}
               extra={
                 !isCreateMode ? (
                   <Button type='link' style={{ padding: 0, height: 'auto' }} onClick={onCustomerEdit}>
@@ -593,7 +589,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Form.Item
               label={t('addTuForms.form.labels.objectName')}
               name='object_name'
-              rules={[{ required: true, message: t('addTuForms.form.validation.specifyObjectName') }]}
+              rules={[{ message: t('addTuForms.form.validation.specifyObjectName') }]}
             >
               <TextArea size='large' placeholder={t('addTuForms.form.placeholders.objectName')} />
             </Form.Item>
@@ -605,7 +601,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Form.Item
               label={t('addTuForms.form.labels.address')}
               name='address'
-              rules={[{ required: true, message: t('addTuForms.form.validation.specifyAddress') }]}
+              rules={[{ message: t('addTuForms.form.validation.specifyAddress') }]}
             >
               <Input
                 disabled={!isCreateMode}
@@ -626,6 +622,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               label={t('addTuForms.form.labels.techConditionType')}
               name='type_ty'
               rules={[{ required: true, message: t('addTuForms.form.validation.selectType') }]}
+              validateTrigger={['onChange', 'onBlur']}
             >
               <Select size='large' placeholder={t('addTuForms.form.placeholders.techConditionType')}>
                 {typesTyQuery.data?.map((type) => (
@@ -712,7 +709,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         <Form.Item
           label={t('addTuForms.form.labels.sewageAmount')}
           name='sewage_amount'
-          rules={[{ required: true, message: t('addTuForms.form.validation.required') }]}
+          rules={[{ message: t('addTuForms.form.validation.required') }]}
         >
           <Input disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.sewageAmount')} />
         </Form.Item>
