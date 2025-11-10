@@ -156,6 +156,11 @@ export interface IGetTyById {
     id: number;
     title: string;
   } | null;
+  parent_tc_number?: string;
+  increase_water?: string;
+  increase_sewage?: string;
+  additional_cold_water_required?: string;
+  additional_sewage_amount?: string;
 }
 
 export interface ITyItem {
@@ -224,6 +229,11 @@ export interface ITyItem {
     title: string;
   };
   free_pressure_connection_point?: number;
+  parent_tc_number?: string;
+  increase_water?: string;
+  increase_sewage?: string;
+  additional_cold_water_required?: string;
+  additional_sewage_amount?: string;
 }
 
 export interface ITyBody {
@@ -279,6 +289,11 @@ export interface ITyBody {
   formula: number;
   application: number;
   payment_deadline: Date;
+  parent_tc_number?: string;
+  increase_water?: string;
+  increase_sewage?: string;
+  additional_cold_water_required?: string;
+  additional_sewage_amount?: string;
 }
 
 export interface ITyListQueryParams {

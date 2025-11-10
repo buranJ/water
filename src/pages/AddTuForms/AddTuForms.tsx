@@ -65,6 +65,7 @@ type FormValues = Omit<ITyItem, 'type_ty' | 'customer' | 'application'> & {
   increase_sewage?: string;
   additional_cold_water_required?: string;
   additional_sewage_amount?: string;
+  previous_tu_number?: string; // Добавлено новое поле
 };
 
 const getTypeTyId = (tt: unknown): number | undefined => {
@@ -200,8 +201,10 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             increase_sewage: values.increase_sewage,
             additional_cold_water_required: values.additional_cold_water_required,
             additional_sewage_amount: values.additional_sewage_amount,
+            previous_tu_number: values.previous_tu_number, // Добавлено в payload
             tech_council_date: values.tech_council_date,
-            collector_diametr_water: values.collector_diametr_water
+            collector_diametr_water: values.collector_diametr_water,
+            parent_tc_number: values.parent_tc_number,
           };
           if (objectId != null) payloadCreate.entity = objectId;
           if (values.formula != null) payloadCreate.formula = values.formula;
@@ -387,7 +390,12 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         const base: any = {
           ...values,
           customer: tuQuery.data.customer.id,
-          entity: tuQuery.data.entity
+          entity: tuQuery.data.entity,
+          parent_tc_number: values.parent_tc_number,
+          increase_water: values.increase_water,
+          increase_sewage: values.increase_sewage,
+          additional_cold_water_required: values.additional_cold_water_required,
+          additional_sewage_amount: values.additional_sewage_amount
         };
         if (values.request_date) base.request_date = values.request_date;
         if (values.payment_deadline) base.payment_deadline = values.payment_deadline;
@@ -439,38 +447,15 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         // Для Select поле ожидает id. Бэк может вернуть либо объект, либо число.
         type_ty: getTypeTyId(tuQuery.data.type_ty),
         // request_source может прийти строкой или объектом {id,title}
-        request_source: getRequestSourceTitle((tuQuery.data as any).request_source)
+        request_source: getRequestSourceTitle((tuQuery.data as any).request_source),
+        parent_tc_number: tuQuery.data.parent_tc_number,
+        increase_water: tuQuery.data.increase_water,
+        increase_sewage: tuQuery.data.increase_sewage,
+        additional_cold_water_required: tuQuery.data.additional_cold_water_required,
+        additional_sewage_amount: tuQuery.data.additional_sewage_amount
       } as any);
     }
   }, [form, tuQuery]);
-
-  // const stageOptions = useMemo(
-  //   () => [
-  //     { value: 'draft', label: t('addTuForms.form.options.stages.draft') },
-  //     { value: 'review', label: t('addTuForms.form.options.stages.review') },
-  //     { value: 'approved', label: t('addTuForms.form.options.stages.approved') },
-  //     { value: 'done', label: t('addTuForms.form.options.stages.done') }
-  //   ],
-  //   []
-  // );
-
-  // const statusOptions = [
-  //   {
-  //     value: 'active',
-  //     label: t('addTuForms.form.options.status.active')
-  //   },
-  //   {
-  //     value: 'inactive',
-  //     label: t('addTuForms.form.options.status.inactive')
-  //   },
-  //   {
-  //     value: 'archived',
-  //     label: t('addTuForms.form.options.status.archived')
-  //   }
-  // ];
-
-  // All fields inside "ТЕХНИЧЕСКИЕ ПАРАМЕТРЫ" should be read-only while editing TU (match water-2)
-  const techParamsReadOnly = Boolean(tuQuery.data?.id);
 
   // Watch selected TU type to conditionally render increase-loads fields
   const selectedTypeId = Form.useWatch('type_ty', form);
@@ -479,10 +464,6 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
   const onCustomerEdit = useCallback(() => {
     navigate(`/dashboard/customers/${tuQuery.data?.customer.id}/edit`);
   }, [navigate, tuQuery.data?.customer?.id]);
-
-  const onAddressEdit = useCallback(() => {
-    navigate(`/dashboard/objects/${tuQuery.data?.entity}`);
-  }, [navigate, tuQuery.data?.entity]);
 
   return (
     <DashboardLayout title={title}>
@@ -500,12 +481,12 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           {t('addTuForms.titles.main')}
         </Title>
         <Row gutter={16}>
-          <Col span={12}>
+          <Col span={8}>
             <Form.Item name='tu_number' label={'Номер тех условия'} rules={[{ message: t('addTuForms.form.validation.specifySource') }]}>
               <Input size='large' defaultValue={'04-'} />
             </Form.Item>
           </Col>
-          <Col span={12}>
+          <Col span={8}>
             <Form.Item
               name='tech_council_date'
               label={'Дата тех совета'}
@@ -516,9 +497,19 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               <DatePicker format='DD.MM.YYYY' size='large' placeholder={t('addTuForms.form.placeholders.requestDate')} />
             </Form.Item>
           </Col>
+          <Col span={8}>
+            <Form.Item
+              name='council_date'
+              label={t('addTuForms.form.labels.council_date')}
+              normalize={(value: Dayjs) => formatDate(value)}
+              getValueProps={(value: string) => ({ value: parseDate(value) })}
+            >
+              <DatePicker format='DD.MM.YYYY' size='large' placeholder={t('addTuForms.form.placeholders.council_date')} />
+            </Form.Item>
+          </Col>
         </Row>
         <Row gutter={24}>
-          <Col span={12}>
+          <Col span={24}>
             <Form.Item
               label={t('addTuForms.form.labels.requestSource')}
               name='request_source'
@@ -531,16 +522,6 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
                   </Option>
                 ))}
               </Select>
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              name='council_date'
-              label={t('addTuForms.form.labels.council_date')}
-              normalize={(value: Dayjs) => formatDate(value)}
-              getValueProps={(value: string) => ({ value: parseDate(value) })}
-            >
-              <DatePicker format='DD.MM.YYYY' size='large' placeholder={t('addTuForms.form.placeholders.council_date')} />
             </Form.Item>
           </Col>
         </Row>
@@ -582,7 +563,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
                 ) : undefined
               }
             >
-              <TextArea disabled={!isCreateMode} size='large' placeholder={t('addTuForms.form.placeholders.customer')} />
+              <TextArea size='large' placeholder={t('addTuForms.form.placeholders.customer')} />
             </Form.Item>
           </Col>
           <Col span={12}>
@@ -603,18 +584,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               name='address'
               rules={[{ message: t('addTuForms.form.validation.specifyAddress') }]}
             >
-              <Input
-                disabled={!isCreateMode}
-                size='large'
-                placeholder={t('addTuForms.form.placeholders.address')}
-                addonAfter={
-                  !isCreateMode ? (
-                    <Button type='link' style={{ padding: 0, height: 'auto' }} onClick={onAddressEdit}>
-                      <span style={{ fontSize: 14 }}>{t('addTuForms.form.buttons.change')}</span>
-                    </Button>
-                  ) : undefined
-                }
-              />
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.address')} />
             </Form.Item>
           </Col>
           <Col span={12}>
@@ -637,41 +607,48 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
         {isIncreaseLoads && (
           <>
+            {/* Номер предыдущего тех условия - НОВОЕ ПОЛЕ */}
+            <Row gutter={16}>
+              <Col span={24}>
+                <Form.Item name='parent_tc_number' label='Номер предыдущего тех условия' rules={[{ required: false }]}>
+                  <Input size='large' placeholder='Введите номер предыдущего тех условия' />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            {/* Вода и Стоки */}
             <Row gutter={16}>
               <Col span={12}>
-                <Form.Item name='increase_water' label={'Вода'} rules={[{ required: false }]}>
+                <Form.Item name='increase_water' label='Существующие нагрузки Вода' rules={[{ required: false }]}>
                   <Input size='large' />
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item name='increase_sewage' label={'Стоки'} rules={[{ required: false }]}>
+                <Form.Item name='increase_sewage' label='Стоки' rules={[{ required: false }]}>
                   <Input size='large' />
                 </Form.Item>
               </Col>
             </Row>
+
+            {/* Дополнительные количества */}
             <Row gutter={16}>
               <Col span={12}>
                 <Form.Item
                   name='additional_cold_water_required'
-                  label={'Дополнительно требуемое количество холодной воды'}
+                  label='Дополнительно требуемое количество холодной воды'
                   rules={[{ required: false }]}
                 >
                   <Input size='large' />
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item name='additional_sewage_amount' label={'Дополнительное количество стоков'} rules={[{ required: false }]}>
+                <Form.Item name='additional_sewage_amount' label='Дополнительное количество стоков' rules={[{ required: false }]}>
                   <Input size='large' />
                 </Form.Item>
               </Col>
             </Row>
           </>
         )}
-
-        {/* ENI */}
-        {/* <Form.Item label={t('addTuForms.form.labels.eni')} name='eni' rules={[{ required: false }, { validator: zodRule(eniSchema) }]}>
-          <MaskedInput size='large' mask='000-000-000-000' placeholder={t('addTuForms.form.placeholders.eni')} inputMode='numeric' />
-        </Form.Item> */}
 
         {/* =========================
             ТЕХНИЧЕСКИЕ ПАРАМЕТРЫ
@@ -683,12 +660,12 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item label={t('addTuForms.form.labels.waterRequired')} name='water_required' rules={[{ required: false }]}>
-              <Input disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.waterRequired')} />
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.waterRequired')} />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item label={t('addTuForms.form.labels.pressureRequired')} name='pressure_required' rules={[{ required: false }]}>
-              <Input disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.pressureRequired')} />
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.pressureRequired')} />
             </Form.Item>
           </Col>
         </Row>
@@ -696,12 +673,12 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item label={t('addTuForms.form.labels.fireFightingInner')} name='fire_fighting_outer' rules={[{ required: false }]}>
-              <Input disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.fireFighting')} />
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.fireFighting')} />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item label={t('addTuForms.form.labels.fireFightingOuter')} name='fire_fighting_inner' rules={[{ required: false }]}>
-              <Input disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.fireFighting')} />
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.fireFighting')} />
             </Form.Item>
           </Col>
         </Row>
@@ -711,7 +688,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           name='sewage_amount'
           rules={[{ message: t('addTuForms.form.validation.required') }]}
         >
-          <Input disabled={techParamsReadOnly} size='large' placeholder={t('addTuForms.form.placeholders.sewageAmount')} />
+          <Input size='large' placeholder={t('addTuForms.form.placeholders.sewageAmount')} />
         </Form.Item>
 
         <Row gutter={16}>
@@ -778,24 +755,12 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Option value='проектируемый'>проектируемый</Option>
           </Select>
         </Form.Item>
-        {/* <Form.Item label={t('addTuForms.form.labels.fireInput1')} name='fire_input_1' rules={[{ required: false }]}>
-          <Input size='large' />
-        </Form.Item> */}
         <Row gutter={24}>
           <Col span={12}>
             <Form.Item label={t('addTuForms.form.labels.waterPipeDiameter1')} name='collector_diametr_fire_1' rules={[{ required: false }]}>
               <Input size='large' />
             </Form.Item>
           </Col>
-          {/* <Col span={8}>
-            <Form.Item
-              label={t('addTuForms.form.labels.freePressureInput1')}
-              name='free_pressure_required_input_1'
-              rules={[{ required: false }]}
-            >
-              <Input type='number' min={0} size='large' placeholder={t('addTuForms.form.placeholders.freePressureInput1')} />
-            </Form.Item>
-          </Col> */}
           <Col span={12}>
             <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_input_1' rules={[{ required: false }]}>
               <Input size='large' />
@@ -812,24 +777,12 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Option value='проектируемый'>проектируемый</Option>
           </Select>
         </Form.Item>
-        {/* <Form.Item label={t('addTuForms.form.labels.fireInput2')} name='fire_input_2' rules={[{ required: false }]}>
-          <Input size='large' />
-        </Form.Item> */}
         <Row gutter={24}>
           <Col span={12}>
             <Form.Item label={t('addTuForms.form.labels.waterPipeDiameter2')} name='collector_diametr_fire_2' rules={[{ required: false }]}>
               <Input size='large' />
             </Form.Item>
           </Col>
-          {/* <Col span={8}>
-            <Form.Item
-              label={t('addTuForms.form.labels.freePressureInput2')}
-              name='free_pressure_required_input_2'
-              rules={[{ required: false }]}
-            >
-              <Input type='number' min={0} size='large' placeholder={t('addTuForms.form.placeholders.freePressureInput2')} />
-            </Form.Item>
-          </Col> */}
           <Col span={12}>
             <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_input_2' rules={[{ required: false }]}>
               <Input size='large' />
@@ -877,11 +830,6 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         <Form.Item label={'Предусмотреть'} name='provide_sewer' rules={[{ required: false }]}>
           <TextArea size='large' />
         </Form.Item>
-
-        {/* Примечания */}
-        {/* <Form.Item label={t('addTuForms.form.labels.notes')} name='notes' rules={[{ required: false }]}>
-          <Input.TextArea placeholder={t('addTuForms.form.placeholders.notes')} rows={3} />
-        </Form.Item> */}
 
         {/* =========================
             ФИНАНСЫ
