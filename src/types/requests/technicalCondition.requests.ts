@@ -10,6 +10,11 @@ export type ICreateTechnicalConditionRequest = ITyItem;
 export type ICreateTechnicalConditionParams = Omit<Partial<ITyBody>, 'request_date' | 'payment_deadline'> & {
   request_date?: string;
   payment_deadline?: string;
+  parent_tc_number?: string;
+  increase_water?: string;
+  increase_sewage?: string;
+  additional_cold_water_required?: string;
+  additional_sewage_amount?: string;
 };
 
 export type IGetTechnicalConditionByIdParams = { tyId: string };
