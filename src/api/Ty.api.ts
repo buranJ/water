@@ -28,7 +28,20 @@ import type {
   IProtocolDocxResponse,
   ITypesTYResponse,
   IUpdateTechnicalConditionParams,
-  IUpdateTechnicalConditionResponse
+  IUpdateTechnicalConditionResponse,
+  // New: load increase DOCX
+  ILoadIncreaseDocxParams,
+  ILoadIncreaseDocxResponse,
+  // New: balance acceptance
+  IGetBalanceAcceptanceParams,
+  IGetBalanceAcceptanceResponse,
+  ICreateBalanceAcceptanceParams,
+  ICreateBalanceAcceptanceResponse,
+  IPutBalanceAcceptanceParams,
+  IPutBalanceAcceptanceResponse,
+  IPatchBalanceAcceptanceParams,
+  IPatchBalanceAcceptanceResponse,
+  IDeleteBalanceAcceptanceParams
 } from 'types/requests';
 
 export const tyApi = createApi({
@@ -206,6 +219,124 @@ export const tyApi = createApi({
       }),
       keepUnusedDataFor: 0
     }),
+    downloadLoadIncreaseDocx: build.query<ILoadIncreaseDocxResponse, ILoadIncreaseDocxParams>({
+      query: ({ tyId }) => ({
+        url: `/ty/${tyId}/load-increase-docx/`,
+        method: 'GET',
+        headers: {
+          Accept: '*/*'
+        },
+        responseHandler: async (response) => {
+          const blob = await response.blob();
+          const disposition = response.headers.get('content-disposition') || '';
+          let filename: string | null = null;
+
+          const starMatch = /filename\*\s*=\s*[^']+'[^']*'([^;]+)/i.exec(disposition);
+          if (starMatch) {
+            try {
+              filename = decodeURIComponent(starMatch[1]);
+            } catch {
+              filename = starMatch[1];
+            }
+          }
+          if (!filename) {
+            const match = /filename="?([^";]+)"?/i.exec(disposition);
+            filename = match ? match[1] : null;
+          }
+          return { blob, filename };
+        }
+      }),
+      keepUnusedDataFor: 0
+    }),
+    getBalanceAcceptance: build.query<IGetBalanceAcceptanceResponse, IGetBalanceAcceptanceParams>({
+      query: ({ ty_id }) => ({
+        url: `/ty/${ty_id}/balance_acceptance/`,
+        method: 'GET'
+      }),
+      providesTags: (_result, _error, { ty_id }) => [{ type: 'Ty', id: ty_id }]
+    }),
+    createBalanceAcceptance: build.mutation<ICreateBalanceAcceptanceResponse, ICreateBalanceAcceptanceParams>({
+      query: ({ body }) => {
+        const anyBody = body as unknown as Record<string, unknown>;
+        if (anyBody && anyBody.file instanceof File) {
+          const formData = new FormData();
+          Object.entries(anyBody).forEach(([key, value]) => {
+            if (value === undefined || value === null) return;
+            if (value instanceof File) formData.append(key, value);
+            else formData.append(key, typeof value === 'string' ? value : String(value));
+          });
+          return {
+            url: `/ty/balance_acceptance/`,
+            method: 'POST',
+            body: formData,
+            formData: true
+          };
+        }
+        return {
+          url: `/ty/balance_acceptance/`,
+          method: 'POST',
+          body
+        };
+      },
+      invalidatesTags: (_result, _error, { body }) => [{ type: 'Ty', id: String(body.ty) }, 'Ty']
+    }),
+    putBalanceAcceptance: build.mutation<IPutBalanceAcceptanceResponse, IPutBalanceAcceptanceParams>({
+      query: ({ ty_id, body }) => {
+        const anyBody = body as unknown as Record<string, unknown>;
+        if (anyBody && anyBody.file instanceof File) {
+          const formData = new FormData();
+          Object.entries(anyBody).forEach(([key, value]) => {
+            if (value === undefined || value === null) return;
+            if (value instanceof File) formData.append(key, value);
+            else formData.append(key, typeof value === 'string' ? value : String(value));
+          });
+          return {
+            url: `/ty/${ty_id}/balance_acceptance/`,
+            method: 'PUT',
+            body: formData,
+            formData: true
+          };
+        }
+        return {
+          url: `/ty/${ty_id}/balance_acceptance/`,
+          method: 'PUT',
+          body
+        };
+      },
+      invalidatesTags: (_result, _error, { ty_id }) => [{ type: 'Ty', id: ty_id }, 'Ty']
+    }),
+    patchBalanceAcceptance: build.mutation<IPatchBalanceAcceptanceResponse, IPatchBalanceAcceptanceParams>({
+      query: ({ ty_id, body }) => {
+        const anyBody = body as unknown as Record<string, unknown>;
+        if (anyBody && anyBody.file instanceof File) {
+          const formData = new FormData();
+          Object.entries(anyBody).forEach(([key, value]) => {
+            if (value === undefined || value === null) return;
+            if (value instanceof File) formData.append(key, value);
+            else formData.append(key, typeof value === 'string' ? value : String(value));
+          });
+          return {
+            url: `/ty/${ty_id}/balance_acceptance/`,
+            method: 'PATCH',
+            body: formData,
+            formData: true
+          };
+        }
+        return {
+          url: `/ty/${ty_id}/balance_acceptance/`,
+          method: 'PATCH',
+          body
+        };
+      },
+      invalidatesTags: (_result, _error, { ty_id }) => [{ type: 'Ty', id: ty_id }, 'Ty']
+    }),
+    deleteBalanceAcceptance: build.mutation<void, IDeleteBalanceAcceptanceParams>({
+      query: ({ ty_id }) => ({
+        url: `/ty/${ty_id}/balance_acceptance/`,
+        method: 'DELETE'
+      }),
+      invalidatesTags: (_result, _error, { ty_id }) => [{ type: 'Ty', id: ty_id }, 'Ty']
+    }),
     downloadProtocolDocx: build.query<IProtocolDocxResponse, IProtocolDocxParams>({
       query: ({ tyId }) => ({
         url: `/ty/${tyId}/protocol-docx/`,
@@ -272,10 +403,14 @@ export const tyApi = createApi({
       },
       invalidatesTags: (_result, _error, body) => [{ type: 'Ty', id: String(body.ty) }, 'Ty']
     }),
-    updateActTy: build.mutation<IActTyResponse, { id: number | string; file: File; status?: import('types/common').IActEnum }>({
-      query: ({ id, file, status }) => {
+    updateActTy: build.mutation<
+      IActTyResponse,
+      { id: number | string; file: File; status?: import('types/common').IActEnum; ty?: number | string }
+    >({
+      query: ({ id, file, status, ty }) => {
         const formData = new FormData();
         if (status) formData.append('status', status);
+        if (ty !== undefined) formData.append('ty', String(ty));
         formData.append('file', file);
         return {
           url: `/ty/act_ty/${id}`,
@@ -312,6 +447,14 @@ export const {
   useGetLoadIncreasesQuery,
   useLazyDownloadTyPdfQuery,
   useLazyDownloadProtocolDocxQuery,
+  useLazyDownloadLoadIncreaseDocxQuery,
+  // Balance acceptance hooks
+  useGetBalanceAcceptanceQuery,
+  useCreateBalanceAcceptanceMutation,
+  usePutBalanceAcceptanceMutation,
+  usePatchBalanceAcceptanceMutation,
+  useDeleteBalanceAcceptanceMutation,
+  // Act hooks
   useCreateActTyMutation,
   useUpdateActTyMutation,
   usePatchActTyMutation,

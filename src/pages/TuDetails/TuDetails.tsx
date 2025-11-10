@@ -24,7 +24,11 @@ import {
   useLazyGetActTyByIdQuery,
   usePatchActTyMutation,
   useUpdateActTyMutation,
-  useUpdateTyMutation
+  useUpdateTyMutation,
+  useLazyDownloadLoadIncreaseDocxQuery,
+  useGetBalanceAcceptanceQuery,
+  useCreateBalanceAcceptanceMutation,
+  usePutBalanceAcceptanceMutation
 } from 'api/Ty.api';
 import { usePermissions } from 'hooks/useAuth';
 import { t } from 'i18next';
@@ -75,14 +79,20 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const [activeTab, setActiveTab] = useState<string>(searchParams.get('tab') || '1');
   const [isAddLoadVisible, setIsAddLoadVisible] = useState<boolean>(false);
   const [triggerDownload, { isFetching: isDownloading }] = useLazyDownloadProtocolDocxQuery();
+  const [triggerLoadIncrease, { isFetching: isLoadIncreaseDownloading }] = useLazyDownloadLoadIncreaseDocxQuery();
   const [triggerContractDownload, { isFetching: isContractDownloading }] = useLazyDownloadContractDocxQuery();
   const [updateTy] = useUpdateTyMutation();
   const [patchActTy] = usePatchActTyMutation();
   const [createAct, { isLoading: isActCreating }] = useCreateActTyMutation();
   const [updateActTy, { isLoading: isActUpdating }] = useUpdateActTyMutation();
   const [triggerGetAct, { isFetching: isActFetching }] = useLazyGetActTyByIdQuery();
+  const balanceQuery = useGetBalanceAcceptanceQuery({ ty_id: id || '' }, { skip: !id });
+  const [createBalance, { isLoading: isBalanceCreating }] = useCreateBalanceAcceptanceMutation();
+  const [updateBalance, { isLoading: isBalanceUpdating }] = usePutBalanceAcceptanceMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const balanceFileInputRef = useRef<HTMLInputElement>(null);
   const [createRefusal] = useCreateRefusalMutation();
+  const balanceData = balanceQuery.data as import('types/requests').IGetBalanceAcceptanceResponse;
 
   const isTuApproved = objectData?.stage === 'approved';
 
@@ -259,6 +269,23 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     }
   };
 
+  const handleDownloadLoadIncrease = async () => {
+    if (!id) return;
+    try {
+      const { blob, filename } = await triggerLoadIncrease({ tyId: id }).unwrap();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename || `load_increase_${id}.docx`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Failed to download Load Increase DOCX', error);
+    }
+  };
+
   const handleDownloadContract = async (protocol_id: string) => {
     if (!id) return;
     const customerType = objectData?.customer?.type;
@@ -331,7 +358,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     if (!id) return;
     try {
       if (objectData?.act?.id) {
-        await updateActTy({ id: objectData.act.id, file, status: 'done' }).unwrap();
+        await updateActTy({ id: objectData.act.id, file, status: 'done', ty: id }).unwrap();
       } else {
         await createAct({ ty: id, file, status: 'done' }).unwrap();
       }
@@ -342,6 +369,72 @@ export const TuDetails: FC<IProps> = ({ title }) => {
       message.error(t('tuDetails.act.messages.uploadFailed', 'Не удалось загрузить акт'));
     } finally {
       if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const handleUploadBalanceClick = () => {
+    balanceFileInputRef.current?.click();
+  };
+
+  const onBalanceFileSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !id) return;
+    try {
+      if (balanceData && balanceData.id) {
+        const payloadUpdate: import('types/requests').IPutBalanceAcceptanceParams['body'] = { ty: id, file };
+        await updateBalance({ ty_id: id, body: payloadUpdate }).unwrap();
+      } else {
+        const payloadCreate: import('types/requests').ICreateBalanceAcceptanceParams['body'] = { ty: id, file };
+        await createBalance({ body: payloadCreate }).unwrap();
+      }
+      message.success(t('tuDetails.act.messages.fileUploaded', 'Файл загружен'));
+      await balanceQuery.refetch();
+    } catch (err) {
+      console.error('[BALANCE UPLOAD] failed', err);
+      message.error(t('tuDetails.act.messages.uploadFailed', 'Не удалось загрузить файл'));
+    } finally {
+      if (balanceFileInputRef.current) balanceFileInputRef.current.value = '';
+    }
+  };
+
+  const handleDownloadBalance = async () => {
+    try {
+      const fileVal = balanceData?.file;
+      if (!fileVal) {
+        message.warning(t('tuDetails.act.messages.fileRequired', 'Выберите файл'));
+        return;
+      }
+      if (fileVal instanceof File) {
+        const url = window.URL.createObjectURL(fileVal);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileVal.name || `balance_acceptance_${id}`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+        return;
+      }
+      try {
+        const response = await fetch(fileVal, { credentials: 'include' });
+        if (!response.ok) throw new Error('download failed');
+        const blob = await response.blob();
+        const nameFromUrl = fileVal.split('/').pop() || `balance_acceptance_${id}`;
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = nameFromUrl;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      } catch (err) {
+        console.error('[BALANCE GET] download file failed', err);
+        window.open(fileVal, '_blank');
+      }
+    } catch (e) {
+      console.error('[BALANCE GET] failed', e);
+      message.error(t('tuDetails.act.messages.statusUpdateFailed', 'Не удалось получить данные'));
     }
   };
 
@@ -388,6 +481,8 @@ export const TuDetails: FC<IProps> = ({ title }) => {
         isDownloading={isDownloading}
         onDownloadContract={handleDownloadContract}
         isContractDownloading={isContractDownloading}
+        onDownloadLoadIncrease={handleDownloadLoadIncrease}
+        isLoadIncreaseDownloading={isLoadIncreaseDownloading}
         data={objectData}
       />
 
@@ -481,6 +576,50 @@ export const TuDetails: FC<IProps> = ({ title }) => {
                     {t('tuDetails.act.actions.finish', 'Завершить')}
                   </Button>
                 ) : null)}
+            </Card>
+
+            <Card style={{ marginTop: 16 }}>
+              <Title level={4}>Информация о принятии на баланс предприятия наружных сетей водопровода и канализации</Title>
+              {balanceData?.file && (
+                <Row justify='start' align='middle' gutter={8}>
+                  <Col>
+                    <FileOutlined style={{ color: '#1677ff' }} />
+                  </Col>
+                  <Col>
+                    <Typography.Link onClick={handleDownloadBalance}>
+                      {typeof balanceData!.file === 'string'
+                        ? decodeURIComponent((balanceData!.file as string).split('/').pop() || 'balance_acceptance.docx')
+                        : (balanceData!.file as File)?.name || 'balance_acceptance.docx'}
+                    </Typography.Link>
+                  </Col>
+                </Row>
+              )}
+              <br />
+              {isTuApproved && (
+                <>
+                  <input
+                    ref={balanceFileInputRef}
+                    type='file'
+                    accept='.pdf,.doc,.docx'
+                    style={{ display: 'none' }}
+                    onChange={onBalanceFileSelected}
+                  />
+                  <Row gutter={8}>
+                    <Col>
+                      <Button type='primary' ghost loading={isBalanceCreating || isBalanceUpdating} onClick={handleUploadBalanceClick}>
+                        {t('tuDetails.act.actions.upload', 'Загрузить')}
+                      </Button>
+                    </Col>
+                    {balanceData?.file && (
+                      <Col>
+                        <Button loading={balanceQuery.isFetching} onClick={handleDownloadBalance}>
+                          {t('tuDetails.act.actions.download', 'Скачать')}
+                        </Button>
+                      </Col>
+                    )}
+                  </Row>
+                </>
+              )}
             </Card>
           </Col>
         )}

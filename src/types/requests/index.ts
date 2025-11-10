@@ -58,5 +58,19 @@ export type {
   IProtocolDocxResponse,
   ITypesTYResponse,
   IUpdateTechnicalConditionParams,
-  IUpdateTechnicalConditionResponse
+  IUpdateTechnicalConditionResponse,
+  // New: Load increase DOCX
+  ILoadIncreaseDocxParams,
+  ILoadIncreaseDocxResponse,
+  // New: Balance Acceptance
+  IBalanceAcceptance,
+  IGetBalanceAcceptanceParams,
+  IGetBalanceAcceptanceResponse,
+  ICreateBalanceAcceptanceParams,
+  ICreateBalanceAcceptanceResponse,
+  IPutBalanceAcceptanceParams,
+  IPutBalanceAcceptanceResponse,
+  IPatchBalanceAcceptanceParams,
+  IPatchBalanceAcceptanceResponse,
+  IDeleteBalanceAcceptanceParams
 } from './technicalCondition.requests';

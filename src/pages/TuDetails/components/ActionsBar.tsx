@@ -19,6 +19,9 @@ interface ActionsBarProps {
   // New props for contract download
   onDownloadContract?: (protocol_id: string) => void;
   isContractDownloading?: boolean;
+  // New: Load increase TU DOCX
+  onDownloadLoadIncrease?: () => void;
+  isLoadIncreaseDownloading?: boolean;
   visible?: boolean;
   data: IGetTyById;
 }
@@ -33,6 +36,9 @@ export const ActionsBar: FC<ActionsBarProps> = ({
   isDownloading,
   onDownloadContract,
   isContractDownloading,
+  // load increase
+  onDownloadLoadIncrease,
+  isLoadIncreaseDownloading,
   data,
   visible = true
 }) => {
@@ -63,7 +69,9 @@ export const ActionsBar: FC<ActionsBarProps> = ({
           >
             {t('tuDetails.actions.downloadContract')}
           </Button>
-          <Button icon={<DownloadOutlined />}>Скачать ТУ на увелечение нагрузок</Button>
+          <Button onClick={onDownloadLoadIncrease} icon={<DownloadOutlined />} loading={isLoadIncreaseDownloading} disabled={!id}>
+            {t('tuDetails.actions.downloadLoadIncreaseTu', 'Скачать ТУ на увеличение нагрузок')}
+          </Button>
         </>
       )}
       {hasPermission('add_actty') && (

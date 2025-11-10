@@ -100,6 +100,9 @@ export type IDownloadTyPdfParams = { tyId: string };
 export type IProtocolDocxResponse = { blob: Blob; filename: string | null };
 export type IProtocolDocxParams = { tyId: string };
 
+export type ILoadIncreaseDocxResponse = { blob: Blob; filename: string | null };
+export type ILoadIncreaseDocxParams = { tyId: string };
+
 export interface ICreateActTyParams {
   ty: number | string;
   status?: IActEnum;
@@ -122,3 +125,34 @@ export interface IPatchActTyParams {
     status: IActEnum;
   };
 }
+
+/**
+ * Balance Acceptance types (generic to align with evolving backend schema)
+ */
+export type IBalanceAcceptance = {
+  id?: number;
+  ty?: number | string;
+  file?: File | string;
+} & Record<string, unknown>;
+
+export type IGetBalanceAcceptanceParams = { ty_id: string };
+export type IGetBalanceAcceptanceResponse = IBalanceAcceptance | null;
+
+export interface ICreateBalanceAcceptanceParams {
+  body: IBalanceAcceptance & { ty: number | string };
+}
+export type ICreateBalanceAcceptanceResponse = IBalanceAcceptance;
+
+export interface IPutBalanceAcceptanceParams {
+  ty_id: string;
+  body: IBalanceAcceptance;
+}
+export type IPutBalanceAcceptanceResponse = IBalanceAcceptance;
+
+export interface IPatchBalanceAcceptanceParams {
+  ty_id: string;
+  body: Partial<IBalanceAcceptance>;
+}
+export type IPatchBalanceAcceptanceResponse = IBalanceAcceptance;
+
+export type IDeleteBalanceAcceptanceParams = { ty_id: string };
