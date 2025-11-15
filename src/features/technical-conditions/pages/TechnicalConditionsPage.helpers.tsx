@@ -38,6 +38,8 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
     },
     { title: t('customers.columns.customer'), dataIndex: ['customer', 'full_name'], key: 'customer', width: 170 },
     { title: t('applicationDetails.labels.address'), dataIndex: 'address', key: 'address', width: 170 },
+    // Дата тех совета (request_date)
+    { title: t('applicationDetails.labels.requestDate'), dataIndex: 'request_date', key: 'request_date', width: 135 },
     { title: t('applicationDetails.labels.objectName'), dataIndex: 'object_name', key: 'objectName', width: 260 },
     { title: t('applicationDetails.labels.waterRequired'), dataIndex: 'water_required', key: 'water_required', width: 135 },
     {

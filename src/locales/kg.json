@@ -685,7 +685,8 @@
       "address": "Дарек",
       "waterRequired": "Суу керектөө көлөмү",
       "wastewater": "Стоктор көлөмү",
-      "status": "Статус"
+      "status": "Статус",
+      "requestDate": "Техникалык кеңештин датасы"
     },
     "status": {
       "approved": "Бекитилди",

@@ -839,7 +839,8 @@
       "address": "Адрес",
       "waterRequired": "Количество водопроводной воды",
       "wastewater": "Количество стоков",
-      "status": "Статус"
+      "status": "Статус",
+      "requestDate": "Дата тех. совета"
     },
     "status": {
       "approved": "Одобрено",

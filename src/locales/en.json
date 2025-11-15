@@ -839,7 +839,8 @@
       "address": "Address",
       "waterRequired": "Required water supply",
       "wastewater": "Wastewater volume",
-      "status": "Status"
+      "status": "Status",
+      "requestDate": "Date of the technical council"
     },
     "status": {
       "approved": "Approved",
