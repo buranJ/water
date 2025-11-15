@@ -4,6 +4,7 @@ import { Alert, Button, Card, Col, Flex, message, Row, Space, Spin, TableColumns
 import { ClockCircleOutlined, DownloadOutlined, EditOutlined, UploadOutlined } from '@ant-design/icons';
 import { Table } from 'common/ui';
 import { EditProtocolModal } from 'components/EditProtocolModal/EditProtocolModal';
+import { EditProtocolTableModal } from 'components/EditProtocolTableModal/EditProtocolTableModal';
 import { InvoicesList } from 'components/InvoicesList/InvoicesList';
 import { EnhancedPaymentsTab } from 'components/PaymentsTab/EnhancedPaymentsTab';
 import { IGetTyById } from 'types/entities';
@@ -35,6 +36,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
   const [activeAccountingTab, setActiveAccountingTab] = useState<string>('1');
   const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false);
   const [shouldOpenPaymentModal, setShouldOpenPaymentModal] = useState<boolean>(false);
+  const [isProtocolEditModalVisible, setIsProtocolEditModalVisible] = useState<boolean>(false);
   const { t } = useTranslation();
 
   const {
@@ -77,8 +79,10 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
   };
 
   const handleEditClick = () => {
-    // Убираем предупреждение о невозможности редактирования
     setIsEditModalVisible(true);
+  };
+  const handleProtocolEditClick = () => {
+    setIsProtocolEditModalVisible(true);
   };
 
   const handleEditModalClose = () => {
@@ -86,6 +90,10 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
     refetchProtocol();
   };
 
+  const handleProtocolEditModalClose = () => {
+    setIsProtocolEditModalVisible(false);
+    refetchProtocol();
+  };
   // Обновленная функция для обработки успешного редактирования
   const handleEditSuccess = async () => {
     try {
@@ -172,7 +180,29 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
       message.error(t('accounting.errors.downloadProtocolError'));
     }
   };
+  const handleProtocolEditSuccess = async () => {
+    try {
+      await refetchProtocol();
 
+      if (hasInvoices && protocolData?.id) {
+        message.info('Обновляем связанные данные...');
+
+        try {
+          await generateInvoice({ protocolId: protocolData.id.toString() }).unwrap();
+          await refetchInvoice();
+          await getInvoicesByProtocolTy({ protocol_id: protocolData.id.toString() });
+
+          message.success('Протокол обновлен, счета пересчитаны');
+        } catch (invoiceError) {
+          console.error('Error regenerating invoices:', invoiceError);
+          message.warning('Протокол обновлен, но есть проблемы с пересчетом счетов');
+        }
+      }
+    } catch (error) {
+      console.error('Error in handleProtocolEditSuccess:', error);
+      message.error('Ошибка при обновлении протокола');
+    }
+  };
   const formatCurrency = (amount: string | number) => {
     return `${parseFloat(amount.toString()).toLocaleString('ru-RU')} ${currency}`;
   };
@@ -326,6 +356,9 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
             <Space wrap size={[12, 8]} style={{ flex: '0 0 auto' }}>
               <Button icon={<EditOutlined />} type='primary' onClick={handleEditClick} size='middle' disabled={isEditDisabled}>
                 {t('common.edit')}
+              </Button>
+              <Button icon={<EditOutlined />} type='default' onClick={handleProtocolEditClick} size='middle'>
+                Изменить протокол
               </Button>
               <Button icon={<DownloadOutlined />} type='default' onClick={handleDownloadProtocol} loading={isDownloading} size='middle'>
                 {t('protocolDetail.buttons.downloadProtocol')}
@@ -506,6 +539,12 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
         onClose={handleEditModalClose}
         protocolData={protocolData || null}
         onSuccess={handleEditSuccess} // Передаем новый обработчик
+      />
+      <EditProtocolTableModal
+        visible={isProtocolEditModalVisible}
+        onClose={handleProtocolEditModalClose}
+        protocolData={protocolData || null}
+        onSuccess={handleProtocolEditSuccess}
       />
     </Space>
   );

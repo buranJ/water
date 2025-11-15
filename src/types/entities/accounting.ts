@@ -30,6 +30,13 @@ export interface IAccountingProtocol {
   nsp_kanal: string;
   created_at: string;
   technical_condition: number;
+  customer_name?: string;
+  object_name?: string;
+  load_vik?: number;
+  connection_cost_vik?: number;
+  total_cost?: number;
+  paid_earlier?: number; // Новое поле
+  payment_balance?: number; // Новое поле
 }
 
 export interface IGetAccountingProtocolParams {

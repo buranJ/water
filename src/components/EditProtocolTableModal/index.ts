@@ -1,0 +1,1 @@
+export { EditProtocolTableModal } from './EditProtocolTableModal';
