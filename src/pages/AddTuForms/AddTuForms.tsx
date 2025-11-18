@@ -204,7 +204,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             previous_tu_number: values.previous_tu_number, // Добавлено в payload
             tech_council_date: values.tech_council_date,
             collector_diametr_water: values.collector_diametr_water,
-            parent_tc_number: values.parent_tc_number,
+            parent_tc_number: values.parent_tc_number
           };
           if (objectId != null) payloadCreate.entity = objectId;
           if (values.formula != null) payloadCreate.formula = values.formula;
@@ -482,11 +482,6 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Title>
         <Row gutter={16}>
           <Col span={8}>
-            <Form.Item name='tu_number' label={'Номер тех условия'} rules={[{ message: t('addTuForms.form.validation.specifySource') }]}>
-              <Input size='large' defaultValue={'04-'} />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
             <Form.Item
               name='tech_council_date'
               label={'Дата тех совета'}
@@ -495,6 +490,11 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               getValueProps={(value: string) => ({ value: parseDate(value) })}
             >
               <DatePicker format='DD.MM.YYYY' size='large' placeholder={t('addTuForms.form.placeholders.requestDate')} />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item name='tu_number' label={'Исходящий номер ТУ'} rules={[{ message: t('addTuForms.form.validation.specifySource') }]}>
+              <Input size='large' defaultValue={'04-'} />
             </Form.Item>
           </Col>
           <Col span={8}>
