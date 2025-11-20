@@ -8,7 +8,7 @@ import { DashboardLayout } from 'components';
 import { ITyItem } from 'types/entities';
 import './style.scss';
 
-import { useCreateTyMutation, useGetTyByIdQuery, useGetTypesTyQuery, usePatchTyMutation } from 'api/Ty.api';
+import { useCreateTyMutation, useGetTyByIdQuery, useGetTypesTyQuery, usePatchTyMutation, useLazyGetTyByNumberQuery } from 'api/Ty.api';
 import { useCreateCustomerMutation, useLazyGetCustomerQuery } from 'api/Customer.api';
 import { useCreateObjectMutation, useLazyGetAllObjectsQuery } from 'api/Object.api';
 import { useGetAllFormulasQuery } from 'api/Formula.api';
@@ -105,12 +105,17 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
   const [triggerCheckEntity] = useLazyCheckRefuseByEntityQuery();
   const [triggerCheckTuCustomer] = useLazyCheckTuByCustomerQuery();
   const [triggerCheckTuEntity] = useLazyCheckTuByEntityQuery();
+  const [triggerGetTyByNumber] = useLazyGetTyByNumberQuery();
 
   const tuQuery = useGetTyByIdQuery({ tyId: tyId || '' }, { skip: !tyId });
   const [form] = Form.useForm<FormValues>();
 
   const formatDate = useCallback((date: Dayjs | undefined) => date?.format('YYYY-MM-DD') || '', []);
   const parseDate = useCallback((dateString: string | undefined) => (dateString ? dayjs(dateString) : null), []);
+  const toStr = useCallback(
+    (v: string | Date | undefined) => (typeof v === 'string' ? v : v ? dayjs(v).format('YYYY-MM-DD') : undefined),
+    []
+  );
 
   const onFinish = useCallback(
     async (values: FormValues) => {
@@ -461,6 +466,84 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
   const selectedTypeId = Form.useWatch('type_ty', form);
   const isIncreaseLoads = typesTyQuery.data?.find((type) => type.id === selectedTypeId)?.title === 'На увеличение нагрузок';
 
+  const onParentTuBlur = useCallback(async () => {
+    const raw = form.getFieldValue('parent_tc_number');
+    const value = typeof raw === 'string' ? raw.trim() : String(raw ?? '').trim();
+    if (!value) return;
+
+    try {
+      const resp = await triggerGetTyByNumber({ tuNumber: value }).unwrap();
+      const results = (resp as any)?.results;
+      const data = Array.isArray(results)
+        ? (results.find((i: any) => i?.tu_number === value) ?? results[0])
+        : resp;
+      if (!data) {
+        message.error('Не удалось найти ТУ по номеру');
+        return;
+      }
+
+      const mapped: any = {
+        // Основные поля
+        request_source: getRequestSourceTitle((data as any).request_source),
+        request_number: (data as any).request_number,
+        request_date: toStr((data as any).request_date as any),
+        customer: (data as any).customer?.full_name,
+        object_name: (data as any).object_name,
+        address: (data as any).address,
+        eni: (data as any).eni,
+
+        // Тех. параметры
+        sewage_amount: (data as any).sewage_amount,
+        water_required: (data as any).water_required,
+        pressure_required: (data as any).pressure_required,
+        fire_fighting_inner: (data as any).fire_fighting_inner,
+        fire_fighting_outer: (data as any).fire_fighting_outer,
+
+        // Пожаротушение и подключения
+        fire_input_1: (data as any).fire_input_1,
+        fire_input_2: (data as any).fire_input_2,
+        street_pass_water: (data as any).street_pass_water,
+        collector_diametr_water: (data as any).collector_diametr_water,
+        provide_water: (data as any).provide_water,
+
+        street_pass_sewer: (data as any).street_pass_sewer,
+        collector_diametr_sewer: (data as any).collector_diametr_sewer,
+        sewer_pipe: (data as any).sewer_pipe,
+        provide_sewer: (data as any).provide_sewer,
+
+        street_pass_input_1: (data as any).street_pass_input_1,
+        collector_diametr_fire_1: (data as any).collector_diametr_fire_1,
+        street_pass_input_2: (data as any).street_pass_input_2,
+        collector_diametr_fire_2: (data as any).collector_diametr_fire_2,
+
+        // Прочее
+        payment_deadline: toStr((data as any).payment_deadline as any),
+        free_pressure_connection_point: (data as any).free_pressure_connection_point,
+
+        // Для увеличения нагрузок (если есть)
+        increase_water: (data as any).increase_water,
+        increase_sewage: (data as any).increase_sewage,
+        additional_cold_water_required: (data as any).additional_cold_water_required,
+        additional_sewage_amount: (data as any).additional_sewage_amount
+      };
+
+      // Присвоить type_ty только если пришёл в ответе (чтобы не сбивать выбранное значение)
+      const maybeTypeId = getTypeTyId((data as any).type_ty);
+      if (maybeTypeId != null) mapped.type_ty = maybeTypeId;
+
+      // Не изменяем эти поля
+      delete mapped.tech_council_date;
+      delete mapped.tu_number;
+      delete mapped.council_date;
+
+      form.setFieldsValue(mapped);
+      message.success('Данные предыдущего ТУ подставлены');
+    } catch (e) {
+      console.error(e);
+      message.error('Не удалось найти ТУ по номеру');
+    }
+  }, [form, toStr, triggerGetTyByNumber]);
+
   const onCustomerEdit = useCallback(() => {
     navigate(`/dashboard/customers/${tuQuery.data?.customer.id}/edit`);
   }, [navigate, tuQuery.data?.customer?.id]);
@@ -508,23 +591,25 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Form.Item>
           </Col>
         </Row>
-        <Row gutter={24}>
-          <Col span={24}>
-            <Form.Item
-              label={t('addTuForms.form.labels.requestSource')}
-              name='request_source'
-              rules={[{ message: t('addTuForms.form.validation.specifySource') }]}
-            >
-              <Select size='large' placeholder={t('addTuForms.form.placeholders.requestSource')} showSearch optionFilterProp='children'>
-                {requestSources?.results?.map((rs: any) => (
-                  <Option key={rs.id} value={rs.title}>
-                    {rs.title}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
-        </Row>
+        {!isIncreaseLoads && (
+          <Row gutter={24}>
+            <Col span={24}>
+              <Form.Item
+                label={t('addTuForms.form.labels.requestSource')}
+                name='request_source'
+                rules={[{ message: t('addTuForms.form.validation.specifySource') }]}
+              >
+                <Select size='large' placeholder={t('addTuForms.form.placeholders.requestSource')} showSearch optionFilterProp='children'>
+                  {requestSources?.results?.map((rs: any) => (
+                    <Option key={rs.id} value={rs.title}>
+                      {rs.title}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+        )}
 
         <Row gutter={16}>
           <Col span={12}>
@@ -578,15 +663,17 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Row>
 
         <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item
-              label={t('addTuForms.form.labels.address')}
-              name='address'
-              rules={[{ message: t('addTuForms.form.validation.specifyAddress') }]}
-            >
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.address')} />
-            </Form.Item>
-          </Col>
+          {!isIncreaseLoads && (
+            <Col span={12}>
+              <Form.Item
+                label={t('addTuForms.form.labels.address')}
+                name='address'
+                rules={[{ message: t('addTuForms.form.validation.specifyAddress') }]}
+              >
+                <Input size='large' placeholder={t('addTuForms.form.placeholders.address')} />
+              </Form.Item>
+            </Col>
+          )}
           <Col span={12}>
             <Form.Item
               label={t('addTuForms.form.labels.techConditionType')}
@@ -611,7 +698,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Row gutter={16}>
               <Col span={24}>
                 <Form.Item name='parent_tc_number' label='Номер предыдущего тех условия' rules={[{ required: false }]}>
-                  <Input size='large' placeholder='Введите номер предыдущего тех условия' />
+                  <Input size='large' placeholder='Введите номер предыдущего тех условия' onBlur={onParentTuBlur} />
                 </Form.Item>
               </Col>
             </Row>
@@ -653,9 +740,10 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         {/* =========================
             ТЕХНИЧЕСКИЕ ПАРАМЕТРЫ
         ========================= */}
-        <Title level={4} style={{ borderBottom: '1px solid #D9D9D9', paddingBottom: '4px', marginTop: '24px' }}>
-          {t('addTuForms.titles.techParams')}
-        </Title>
+        <div style={{ display: isIncreaseLoads ? 'none' : undefined }}>
+          <Title level={4} style={{ borderBottom: '1px solid #D9D9D9', paddingBottom: '4px', marginTop: '24px' }}>
+            {t('addTuForms.titles.techParams')}
+          </Title>
 
         <Row gutter={16}>
           <Col span={12}>
@@ -704,6 +792,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Form.Item>
           </Col>
         </Row>
+        </div>
 
         {/* =========================
             ПОДКЛЮЧЕНИЕ
@@ -712,87 +801,90 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           {t('addTuForms.titles.connection')}
         </Title>
 
-        {/* Водопровод */}
-        <Title level={5} style={{ marginTop: '12px' }}>
-          {t('tuDetails.titles.waterSupply')}
-        </Title>
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item
-              label={'Подключение выполнить от водопроводной линии'}
-              name='water_pipe'
-              rules={[{ required: false }]}
-              normalize={(v) => (Array.isArray(v) ? v.slice(-1)[0] : v)}
-              getValueProps={(value: string | undefined) => ({ value: value ? [value] : [] })}
-            >
-              <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
-                <Option value='существующий'>существующий</Option>
-                <Option value='проектируемый'>проектируемый</Option>
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label={'Диаметром'} name='collector_diametr_water' rules={[{ required: false }]}>
-              <Input size='large' />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_water' rules={[{ required: false }]}>
-          <Input size='large' />
-        </Form.Item>
-        <Form.Item label={'Предусмотреть'} name='provide_water' rules={[{ required: false }]}>
-          <TextArea size='large' />
-        </Form.Item>
+        {/* Водопровод и пожаротушение (скрывать при "На увеличение нагрузок") */}
+        <div style={{ display: isIncreaseLoads ? 'none' : undefined }}>
+          <Title level={5} style={{ marginTop: '12px' }}>
+            {t('tuDetails.titles.waterSupply')}
+          </Title>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                label={'Подключение выполнить от водопроводной линии'}
+                name='water_pipe'
+                rules={[{ required: false }]}
+                normalize={(v) => (Array.isArray(v) ? v.slice(-1)[0] : v)}
+                getValueProps={(value: string | undefined) => ({ value: value ? [value] : [] })}
+              >
+                <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
+                  <Option value='существующий'>существующий</Option>
+                  <Option value='проектируемый'>проектируемый</Option>
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label={'Диаметром'} name='collector_diametr_water' rules={[{ required: false }]}>
+                <Input size='large' />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_water' rules={[{ required: false }]}>
+            <Input size='large' />
+          </Form.Item>
+          <Form.Item label={'Предусмотреть'} name='provide_water' rules={[{ required: false }]}>
+            <TextArea size='large' />
+          </Form.Item>
 
-        {/* Пожаротушение */}
-        <Title level={5} style={{ marginTop: '12px' }}>
-          {t('addTuForms.form.labels.fireInput1')}
-        </Title>
+          {/* Пожаротушение */}
+          <Title level={5} style={{ marginTop: '12px' }}>
+            {t('addTuForms.form.labels.fireInput1')}
+          </Title>
 
-        <Form.Item name='fire_input_1' label={'На пожаротушение объекта подключение выполнить'} rules={[{ required: false }]}>
-          <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
-            <Option value='существующий'>существующий</Option>
-            <Option value='проектируемый'>проектируемый</Option>
-          </Select>
-        </Form.Item>
-        <Row gutter={24}>
-          <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.waterPipeDiameter1')} name='collector_diametr_fire_1' rules={[{ required: false }]}>
-              <Input size='large' />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_input_1' rules={[{ required: false }]}>
-              <Input size='large' />
-            </Form.Item>
-          </Col>
-        </Row>
+          <Form.Item name='fire_input_1' label={'На пожаротушение объекта подключение выполнить'} rules={[{ required: false }]}>
+            <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
+              <Option value='существующий'>существующий</Option>
+              <Option value='проектируемый'>проектируемый</Option>
+            </Select>
+          </Form.Item>
+          <Row gutter={24}>
+            <Col span={12}>
+              <Form.Item label={t('addTuForms.form.labels.waterPipeDiameter1')} name='collector_diametr_fire_1' rules={[{ required: false }]}>
+                <Input size='large' />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_input_1' rules={[{ required: false }]}>
+                <Input size='large' />
+              </Form.Item>
+            </Col>
+          </Row>
 
-        <Title level={5} style={{ marginTop: '12px' }}>
-          {t('addTuForms.form.labels.fireInput2')}
-        </Title>
-        <Form.Item name='fire_input_2' label={'На пожаротушение объекта подключение выполнить'} rules={[{ required: false }]}>
-          <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
-            <Option value='существующий'>существующий</Option>
-            <Option value='проектируемый'>проектируемый</Option>
-          </Select>
-        </Form.Item>
-        <Row gutter={24}>
-          <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.waterPipeDiameter2')} name='collector_diametr_fire_2' rules={[{ required: false }]}>
-              <Input size='large' />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_input_2' rules={[{ required: false }]}>
-              <Input size='large' />
-            </Form.Item>
-          </Col>
-        </Row>
+          <Title level={5} style={{ marginTop: '12px' }}>
+            {t('addTuForms.form.labels.fireInput2')}
+          </Title>
+          <Form.Item name='fire_input_2' label={'На пожаротушение объекта подключение выполнить'} rules={[{ required: false }]}>
+            <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
+              <Option value='существующий'>существующий</Option>
+              <Option value='проектируемый'>проектируемый</Option>
+            </Select>
+          </Form.Item>
+          <Row gutter={24}>
+            <Col span={12}>
+              <Form.Item label={t('addTuForms.form.labels.waterPipeDiameter2')} name='collector_diametr_fire_2' rules={[{ required: false }]}>
+                <Input size='large' />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_input_2' rules={[{ required: false }]}>
+                <Input size='large' />
+              </Form.Item>
+            </Col>
+          </Row>
+        </div>
         <Form.Item
           label={t('addTuForms.form.labels.freePressureAtConnectionPoint')}
           name='free_pressure_connection_point'
           rules={[{ required: false }]}
+          preserve
         >
           <Input size='large' placeholder='10' type='number' />
         </Form.Item>
@@ -801,33 +893,35 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         <Title level={5} style={{ marginTop: '12px' }}>
           {t('tuDetails.titles.sewer')}
         </Title>
-        <Row gutter={16}>
-          <Col span={8}>
-            <Form.Item
-              label={t('addTuForms.form.labels.sewer')}
-              name='sewer_pipe'
-              rules={[{ required: false }]}
-              normalize={(v) => (Array.isArray(v) ? v.slice(-1)[0] : v)}
-              getValueProps={(value: string | undefined) => ({ value: value ? [value] : [] })}
-            >
-              <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
-                <Option value='существующий'>существующий</Option>
-                <Option value='проектируемый'>проектируемый</Option>
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item label={t('addTuForms.form.labels.collector')} name='collector_diametr_sewer' rules={[{ required: false }]}>
-              <Input type='number' min={0} size='large' placeholder={t('addTuForms.form.placeholders.diameter')} />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_sewer' rules={[{ required: false }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.streetPass')} />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Form.Item label={'Предусмотреть'} name='provide_sewer' rules={[{ required: false }]}>
+        <div style={{ display: isIncreaseLoads ? 'none' : undefined }}>
+          <Row gutter={16}>
+            <Col span={8}>
+              <Form.Item
+                label={t('addTuForms.form.labels.sewer')}
+                name='sewer_pipe'
+                rules={[{ required: false }]}
+                normalize={(v) => (Array.isArray(v) ? v.slice(-1)[0] : v)}
+                getValueProps={(value: string | undefined) => ({ value: value ? [value] : [] })}
+              >
+                <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
+                  <Option value='существующий'>существующий</Option>
+                  <Option value='проектируемый'>проектируемый</Option>
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={t('addTuForms.form.labels.collector')} name='collector_diametr_sewer' rules={[{ required: false }]}>
+                <Input type='number' min={0} size='large' placeholder={t('addTuForms.form.placeholders.diameter')} />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_sewer' rules={[{ required: false }]}>
+                <Input size='large' placeholder={t('addTuForms.form.placeholders.streetPass')} />
+              </Form.Item>
+            </Col>
+          </Row>
+        </div>
+        <Form.Item label={'Предусмотреть'} name='provide_sewer' rules={[{ required: false }]} preserve>
           <TextArea size='large' />
         </Form.Item>
 

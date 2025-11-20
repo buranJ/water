@@ -75,6 +75,15 @@ export const tyApi = createApi({
       providesTags: (_result, _error, { tyId }) => [{ type: 'Ty', id: tyId }]
     }),
 
+    // Поиск ТУ по номеру (GET /ty/?search={номер ТУ})
+    getTyByNumber: build.query<IGetAllTechnicalConditionResponse, { tuNumber: string }>({
+      query: ({ tuNumber }) => ({
+        url: `/ty/`,
+        method: 'GET',
+        params: { search: tuNumber }
+      })
+    }),
+
     updateTy: build.mutation<IUpdateTechnicalConditionResponse, IUpdateTechnicalConditionParams>({
       query: ({ id, body }) => ({
         url: `/ty/${id}/`,
@@ -436,6 +445,7 @@ export const {
   useGetAllTyQuery,
   useCreateTyMutation,
   useGetTyByIdQuery,
+  useLazyGetTyByNumberQuery,
   useUpdateTyMutation,
   usePatchTyMutation,
   useDeleteTyMutation,
