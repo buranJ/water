@@ -521,8 +521,11 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         free_pressure_connection_point: (data as any).free_pressure_connection_point,
 
         // Для увеличения нагрузок (если есть)
-        increase_water: (data as any).increase_water,
-        increase_sewage: (data as any).increase_sewage,
+        // Видимые поля при режиме "На увеличение нагрузок":
+        // - "Существующие нагрузки Вода" -> increase_water = water_required из сервера
+        // - "Стоки" -> increase_sewage = sewage_amount из сервера
+        increase_water: (data as any).water_required,
+        increase_sewage: (data as any).sewage_amount,
         additional_cold_water_required: (data as any).additional_cold_water_required,
         additional_sewage_amount: (data as any).additional_sewage_amount
       };
