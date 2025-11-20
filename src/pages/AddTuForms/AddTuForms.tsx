@@ -527,9 +527,6 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         additional_sewage_amount: (data as any).additional_sewage_amount
       };
 
-      // Присвоить type_ty только если пришёл в ответе (чтобы не сбивать выбранное значение)
-      const maybeTypeId = getTypeTyId((data as any).type_ty);
-      if (maybeTypeId != null) mapped.type_ty = maybeTypeId;
 
       // Не изменяем эти поля
       delete mapped.tech_council_date;
