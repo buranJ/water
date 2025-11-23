@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { FC, useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { Button, Col, DatePicker, Form, Input, message, Row, Select, Modal, Typography } from 'antd';
+import { Button, Col, DatePicker, Form, Input, message, Row, Select, Modal, Typography, Switch } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import dayjs, { Dayjs } from 'dayjs';
 import { DashboardLayout } from 'components';
@@ -177,6 +177,9 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             object_name: values.object_name ?? values.object,
             address: values.address,
             status: values.status,
+            is_water: values.is_water,
+            is_kanal: values.is_kanal,
+            stage: values.stage,
             // Mapping from ApplicationsCreate fields to TU fields
             water_required: values.quantity != null ? String(values.quantity) : values.water_required,
             pressure_required:
@@ -491,6 +494,9 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         object_name: (data as any).object_name,
         address: (data as any).address,
         eni: (data as any).eni,
+        is_water: (data as any).is_water ?? false,
+        is_kanal: (data as any).is_kanal ?? false,
+        stage: (data as any).stage,
 
         // Тех. параметры
         sewage_amount: (data as any).sewage_amount,
@@ -597,7 +603,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               <Form.Item
                 label={t('addTuForms.form.labels.requestSource')}
                 name='request_source'
-                rules={[{ message: t('addTuForms.form.validation.specifySource') }]}
+                rules={[{ required: true, message: t('addTuForms.form.validation.specifySource') }]}
               >
                 <Select size='large' placeholder={t('addTuForms.form.placeholders.requestSource')} showSearch optionFilterProp='children'>
                   {requestSources?.results?.map((rs: any) => (
@@ -622,13 +628,13 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item
-              label={t('addTuForms.form.labels.requestDate')}
-              name='request_date'
-              rules={[{ message: t('addTuForms.form.validation.specifyRequestDate') }]}
-              normalize={(value: Dayjs) => formatDate(value)}
-              getValueProps={(value: string) => ({ value: parseDate(value) })}
-            >
+              <Form.Item
+                label={t('addTuForms.form.labels.requestDate')}
+                name='request_date'
+                rules={[{ required: true, message: t('addTuForms.form.validation.specifyRequestDate') }]}
+                normalize={(value: Dayjs) => formatDate(value)}
+                getValueProps={(value: string) => ({ value: parseDate(value) })}
+              >
               <DatePicker format='DD.MM.YYYY' size='large' placeholder={t('addTuForms.form.placeholders.requestDate')} />
             </Form.Item>
           </Col>
@@ -655,7 +661,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Form.Item
               label={t('addTuForms.form.labels.objectName')}
               name='object_name'
-              rules={[{ message: t('addTuForms.form.validation.specifyObjectName') }]}
+              rules={[{ required: true, message: t('addTuForms.form.validation.specifyObjectName') }]}
             >
               <TextArea size='large' placeholder={t('addTuForms.form.placeholders.objectName')} />
             </Form.Item>
@@ -668,7 +674,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               <Form.Item
                 label={t('addTuForms.form.labels.address')}
                 name='address'
-                rules={[{ message: t('addTuForms.form.validation.specifyAddress') }]}
+                rules={[{ required: true, message: t('addTuForms.form.validation.specifyAddress') }]}
               >
                 <Input size='large' placeholder={t('addTuForms.form.placeholders.address')} />
               </Form.Item>
@@ -747,13 +753,24 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.waterRequired')} name='water_required' rules={[{ required: false }]}>
+            <Form.Item
+              label={t('addTuForms.form.labels.waterRequired')}
+              name='water_required'
+              rules={[{ required: true, message: t('addTuForms.form.validation.required') }]}
+            >
               <Input size='large' placeholder={t('addTuForms.form.placeholders.waterRequired')} />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.pressureRequired')} name='pressure_required' rules={[{ required: false }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.pressureRequired')} />
+            <Form.Item
+              label={t('addTuForms.form.labels.pressureRequired')}
+              name='pressure_required'
+              rules={[
+                { required: true, message: t('addTuForms.form.validation.required') },
+                { pattern: /^\d+(\.\d+)?$/, message: t('applicationsCreate.form.validation.number') || 'Введите число' }
+              ]}
+            >
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.pressureRequired')} type='number' />
             </Form.Item>
           </Col>
         </Row>
@@ -774,7 +791,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         <Form.Item
           label={t('addTuForms.form.labels.sewageAmount')}
           name='sewage_amount'
-          rules={[{ message: t('addTuForms.form.validation.required') }]}
+          rules={[{ required: true, message: t('addTuForms.form.validation.required') }]}
         >
           <Input size='large' placeholder={t('addTuForms.form.placeholders.sewageAmount')} />
         </Form.Item>
@@ -788,6 +805,63 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
                     {formula.title}
                   </Option>
                 ))}
+              </Select>
+            </Form.Item>
+          </Col>
+        </Row>
+
+        {/* Обязательные флаги и стадия (required) */}
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item
+              label='Подключение к воде'
+              name='is_water'
+              valuePropName='checked'
+              initialValue={false}
+              rules={[
+                {
+                  validator: (_: any, v: any) =>
+                    v === true || v === false
+                      ? Promise.resolve()
+                      : Promise.reject(new Error(t('addTuForms.form.validation.required')))
+                }
+              ]}
+            >
+              <Switch />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              label='Подключение к канализации'
+              name='is_kanal'
+              valuePropName='checked'
+              initialValue={false}
+              rules={[
+                {
+                  validator: (_: any, v: any) =>
+                    v === true || v === false
+                      ? Promise.resolve()
+                      : Promise.reject(new Error(t('addTuForms.form.validation.required')))
+                }
+              ]}
+            >
+              <Switch />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item
+              label={t('addTuForms.form.labels.stage')}
+              name='stage'
+              rules={[{ required: true, message: t('addTuForms.form.validation.required') }]}
+            >
+              <Select size='large' placeholder={t('addTuForms.form.placeholders.stage', 'Стадия')}>
+                <Option value='draft'>{t('addTuForms.form.options.stages.draft')}</Option>
+                <Option value='review'>{t('addTuForms.form.options.stages.review')}</Option>
+                <Option value='approved'>{t('addTuForms.form.options.stages.approved')}</Option>
+                <Option value='done'>{t('addTuForms.form.options.stages.done')}</Option>
               </Select>
             </Form.Item>
           </Col>
