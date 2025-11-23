@@ -69,9 +69,11 @@ export const ActionsBar: FC<ActionsBarProps> = ({
           >
             {t('tuDetails.actions.downloadContract')}
           </Button>
-          <Button onClick={onDownloadLoadIncrease} icon={<DownloadOutlined />} loading={isLoadIncreaseDownloading} disabled={!id}>
-            {t('tuDetails.actions.downloadLoadIncreaseTu', 'Скачать ТУ на увеличение нагрузок')}
-          </Button>
+          {(data?.type === 'load_increase' || data?.type_ty === 9) && (
+            <Button onClick={onDownloadLoadIncrease} icon={<DownloadOutlined />} loading={isLoadIncreaseDownloading} disabled={!id}>
+              {t('tuDetails.actions.downloadLoadIncreaseTu', 'Скачать ТУ на увеличение нагрузок')}
+            </Button>
+          )}
         </>
       )}
       {hasPermission('add_actty') && (

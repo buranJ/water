@@ -152,10 +152,7 @@ export interface IGetTyById {
   author: number;
   formula: number;
   responsible?: number;
-  type_ty: {
-    id: number;
-    title: string;
-  } | null;
+  type_ty: number | null;
   parent_tc_number?: string;
   increase_water?: string;
   increase_sewage?: string;
