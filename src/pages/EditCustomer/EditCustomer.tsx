@@ -74,7 +74,7 @@ export const EditCustomer: FC<IProps> = ({ title }) => {
       } else {
         message.error(t('customers.messages.updateError'));
       }
-      // eslint-disable-next-line no-console
+
       console.error('Ошибка при обновлении заказчика:', error);
     }
   };

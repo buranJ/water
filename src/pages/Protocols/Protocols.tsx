@@ -218,7 +218,12 @@ export default function ProtocolsPage({ title = 'routers.protocols' }: { title?:
                 { value: 'created_at', label: t('filterBar.newOldFirst') }
               ]}
             />
-            <RangePicker showTime format='DD.MM.YYYY HH:mm' onChange={handleDateChange} placeholder={[t('common.dateStart'), t('common.dateEnd')]} />
+            <RangePicker
+              showTime
+              format='DD.MM.YYYY HH:mm'
+              onChange={handleDateChange}
+              placeholder={[t('common.dateStart'), t('common.dateEnd')]}
+            />
 
             <Button type='primary' onClick={() => setParams({ search: searchInput })}>
               {t('filterBar.search')}

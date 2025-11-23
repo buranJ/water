@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { Button, DatePicker, Form, Input, message, Modal, Space } from 'antd';
 import { Table } from 'common/ui';
@@ -63,6 +63,11 @@ export const TechnicalConditionsPage = () => {
   const paymentAmountStr = s('payment_amount');
   const tuWithLoadsStr = s('tu_with_loads');
 
+  // Column header filters from URL (server-side if backend supports)
+  const tuNumberParam = s('tu_number');
+  const customerNameParam = s('customer_name');
+  const objectNameParam = s('object_name');
+
   const type_ty = typeTyStr && !Number.isNaN(Number(typeTyStr)) ? Number(typeTyStr) : undefined;
   const id = idStr && !Number.isNaN(Number(idStr)) ? Number(idStr) : undefined;
   const address = addressParam || undefined;
@@ -81,7 +86,12 @@ export const TechnicalConditionsPage = () => {
     ordering: ordering || '-created_at',
     has_invoice,
     overdue,
-    due_in_days
+    due_in_days,
+    // Column-level filters (backend may support; fallback is applied on client below)
+    address,
+    tu_number: tuNumberParam,
+    customer_name: customerNameParam,
+    object_name: objectNameParam
   };
 
   const { data: tuData, isLoading } = useGetAllTyQuery(queryParams, {
@@ -99,6 +109,46 @@ export const TechnicalConditionsPage = () => {
   const [exportReports, { isLoading: exporting }] = useExportReportsMutation();
 
   const [tableData, setTableData] = useState<ITechnicalCondition[]>([]);
+
+  // Column filters UI state + debounce to update URL/query
+  const [columnFilters, setColumnFilters] = useState({
+    tu_number: tuNumberParam || '',
+    customer_name: customerNameParam || '',
+    address: address || '',
+    object_name: objectNameParam || ''
+  });
+
+  // Sync header inputs with URL if filters were changed externally (e.g., presets/filter bar)
+  useEffect(() => {
+    setColumnFilters({
+      tu_number: tuNumberParam || '',
+      customer_name: customerNameParam || '',
+      address: address || '',
+      object_name: objectNameParam || ''
+    });
+  }, [tuNumberParam, customerNameParam, address, objectNameParam]);
+
+  const filterDebounceRef = useRef<number | undefined>(undefined);
+  const handleColumnFilterChange = (field: 'tu_number' | 'customer_name' | 'address' | 'object_name', value: string) => {
+    setColumnFilters((prev) => ({ ...prev, [field]: value }));
+    if (filterDebounceRef.current) {
+      clearTimeout(filterDebounceRef.current);
+    }
+    filterDebounceRef.current = window.setTimeout(() => {
+      const next = new URLSearchParams(searchParams);
+      const setOrDelete = (key: string, val: string) => {
+        if (!val || val.trim() === '') next.delete(key);
+        else next.set(key, val);
+      };
+      setOrDelete('tu_number', field === 'tu_number' ? value : columnFilters.tu_number);
+      setOrDelete('customer_name', field === 'customer_name' ? value : columnFilters.customer_name);
+      setOrDelete('address', field === 'address' ? value : columnFilters.address);
+      setOrDelete('object_name', field === 'object_name' ? value : columnFilters.object_name);
+      next.set('page', '1');
+      next.set('page_size', String(pageSize));
+      setSearchParams(next, { replace: false });
+    }, 400);
+  };
 
   useEffect(() => {
     if (tuData && Array.isArray(tuData.results)) {
@@ -124,9 +174,23 @@ export const TechnicalConditionsPage = () => {
         data = data.filter((d) => ((d.type || '') === 'load_increase') === tu_with_loads);
       }
 
+      // Column header filters (client-side fallback; server also receives params)
+      if (tuNumberParam && tuNumberParam.trim()) {
+        const term = tuNumberParam.toLowerCase();
+        data = data.filter((d) => (d.tu_number || '').toLowerCase().includes(term));
+      }
+      if (customerNameParam && customerNameParam.trim()) {
+        const term = customerNameParam.toLowerCase();
+        data = data.filter((d) => (d.customer?.full_name || '').toLowerCase().includes(term));
+      }
+      if (objectNameParam && objectNameParam.trim()) {
+        const term = objectNameParam.toLowerCase();
+        data = data.filter((d) => (d.object_name || '').toLowerCase().includes(term));
+      }
+
       setTableData(data);
     }
-  }, [tuData, id, address, payment_amount, tu_with_loads]);
+  }, [tuData, id, address, payment_amount, tu_with_loads, tuNumberParam, customerNameParam, objectNameParam]);
 
   const handleFilterChange = (values: TUFilterValues) => {
     const next = new URLSearchParams(searchParams);
@@ -234,9 +298,11 @@ export const TechnicalConditionsPage = () => {
               navigate(`/dashboard/technical-conditions/tu-details/${record.id}`);
               break;
           }
-        }
+        },
+        filters: columnFilters,
+        onFilterChange: handleColumnFilterChange
       }),
-    [navigate, patchTy]
+    [navigate, patchTy, columnFilters, handleColumnFilterChange]
   );
 
   const handlePageChange = (newPage: number, newPageSize?: number) => {

@@ -49,6 +49,9 @@ export const EditProtocolTableModal: FC<IProps> = ({ visible, onClose, protocolD
       await updateProtocol({
         protocolId: protocolData.id.toString(),
         body: {
+          load: protocolData.load,
+          water_price: protocolData.water_price,
+          kanal_price: protocolData.kanal_price,
           ...values,
           technical_condition: protocolData.technical_condition
         }

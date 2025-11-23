@@ -309,6 +309,12 @@ export interface ITyListQueryParams {
   has_invoice?: boolean;
   overdue?: boolean;
   due_in_days?: number;
+
+  // Column-level filters (server-side if supported; otherwise used for client fallback)
+  tu_number?: string;
+  customer_name?: string;
+  object_name?: string;
+  address?: string;
 }
 
 export interface ITypesTY {

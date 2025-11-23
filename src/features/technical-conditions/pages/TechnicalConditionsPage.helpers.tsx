@@ -1,4 +1,4 @@
-import { Button, Space, Tag, Typography } from 'antd';
+import { Button, Input, Space, Tag, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
@@ -8,14 +8,35 @@ import i18next from 'i18next';
 
 type actionType = 'edit' | 'delete' | 'view';
 
-type IGetColumnsFn = (options: { onClick: (record: ITechnicalCondition, action: actionType) => void }) => ColumnsType<ITechnicalCondition>;
+type ColumnFilters = {
+  tu_number?: string;
+  customer_name?: string;
+  address?: string;
+  object_name?: string;
+};
+type IGetColumnsFn = (options: {
+  onClick: (record: ITechnicalCondition, action: actionType) => void;
+  filters: ColumnFilters;
+  onFilterChange: (field: keyof ColumnFilters, value: string) => void;
+}) => ColumnsType<ITechnicalCondition>;
 
 const { t } = i18next;
 
-export const getColumns: IGetColumnsFn = ({ onClick }) => {
+export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange }) => {
   return [
     {
-      title: t('historyOfLoads.columns.tu'),
+      title: (
+        <div>
+          <div>{t('historyOfLoads.columns.tu')}</div>
+          <Input
+            allowClear
+            size='small'
+            value={filters.tu_number}
+            onChange={(e) => onFilterChange('tu_number', e.target.value)}
+            placeholder={t('technicalConditions.tuNumberPrefix', '№ ТУ')}
+          />
+        </div>
+      ),
       dataIndex: 'tu_number',
       key: 'tu_number',
       render: (text, record) => (
@@ -36,11 +57,59 @@ export const getColumns: IGetColumnsFn = ({ onClick }) => {
         return dayjs(date).format('DD-MM-YYYY-HH:mm');
       }
     },
-    { title: t('customers.columns.customer'), dataIndex: ['customer', 'full_name'], key: 'customer', width: 170 },
-    { title: t('applicationDetails.labels.address'), dataIndex: 'address', key: 'address', width: 170 },
+    {
+      title: (
+        <div>
+          <div>{t('customers.columns.customer')}</div>
+          <Input
+            allowClear
+            size='small'
+            value={filters.customer_name}
+            onChange={(e) => onFilterChange('customer_name', e.target.value)}
+            placeholder={t('customers.columns.customer')}
+          />
+        </div>
+      ),
+      dataIndex: ['customer', 'full_name'],
+      key: 'customer',
+      width: 170
+    },
+    {
+      title: (
+        <div>
+          <div>{t('applicationDetails.labels.address')}</div>
+          <Input
+            allowClear
+            size='small'
+            value={filters.address}
+            onChange={(e) => onFilterChange('address', e.target.value)}
+            placeholder={t('applicationDetails.labels.address')}
+          />
+        </div>
+      ),
+      dataIndex: 'address',
+      key: 'address',
+      width: 170
+    },
     // Дата тех совета (request_date)
     { title: t('applicationDetails.labels.requestDate'), dataIndex: 'request_date', key: 'request_date', width: 135 },
-    { title: t('applicationDetails.labels.objectName'), dataIndex: 'object_name', key: 'objectName', width: 260 },
+    {
+      title: (
+        <div>
+          <div>{t('applicationDetails.labels.objectName')}</div>
+          <Input
+            allowClear
+            size='small'
+            value={filters.object_name}
+            onChange={(e) => onFilterChange('object_name', e.target.value)}
+            placeholder={t('applicationDetails.labels.objectName')}
+          />
+        </div>
+      ),
+      dataIndex: 'object_name',
+      key: 'objectName',
+      width: 260
+    },
     { title: t('applicationDetails.labels.waterRequired'), dataIndex: 'water_required', key: 'water_required', width: 135 },
     {
       title: t('applicationDetails.labels.wastewater'),

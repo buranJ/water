@@ -32,10 +32,15 @@ export type { IExportReportsParams, IExportReportsResponse } from './reports.req
 export type {
   IActTyResponse,
   IAddLoadParams,
+  // New: Balance Acceptance
+  IBalanceAcceptance,
   // act_ty
   ICreateActTyParams,
+  ICreateBalanceAcceptanceParams,
+  ICreateBalanceAcceptanceResponse,
   ICreateTechnicalConditionParams,
   ICreateTechnicalConditionRequest,
+  IDeleteBalanceAcceptanceParams,
   IDeleteTechnicalConditionParams,
   IDeleteTechnicalConditionResponse,
   IDownloadTyPdfParams,
@@ -44,6 +49,8 @@ export type {
   IForkMinimalResponse,
   IGetAllTechnicalConditionParams,
   IGetAllTechnicalConditionResponse,
+  IGetBalanceAcceptanceParams,
+  IGetBalanceAcceptanceResponse,
   IGetLoadIncreasesParams,
   IGetLoadIncreasesResponse,
   IGetTechnicalConditionByIdParams,
@@ -51,26 +58,19 @@ export type {
   IGetTyHistoryParams,
   IGetTyHistoryResponse,
   IITypesTYParams,
+  // New: Load increase DOCX
+  ILoadIncreaseDocxParams,
+  ILoadIncreaseDocxResponse,
   IPatchActTyParams,
+  IPatchBalanceAcceptanceParams,
+  IPatchBalanceAcceptanceResponse,
   IPatchTechnicalConditionParams,
   IPatchTechnicalConditionResponse,
   IProtocolDocxParams,
   IProtocolDocxResponse,
-  ITypesTYResponse,
-  IUpdateTechnicalConditionParams,
-  IUpdateTechnicalConditionResponse,
-  // New: Load increase DOCX
-  ILoadIncreaseDocxParams,
-  ILoadIncreaseDocxResponse,
-  // New: Balance Acceptance
-  IBalanceAcceptance,
-  IGetBalanceAcceptanceParams,
-  IGetBalanceAcceptanceResponse,
-  ICreateBalanceAcceptanceParams,
-  ICreateBalanceAcceptanceResponse,
   IPutBalanceAcceptanceParams,
   IPutBalanceAcceptanceResponse,
-  IPatchBalanceAcceptanceParams,
-  IPatchBalanceAcceptanceResponse,
-  IDeleteBalanceAcceptanceParams
+  ITypesTYResponse,
+  IUpdateTechnicalConditionParams,
+  IUpdateTechnicalConditionResponse
 } from './technicalCondition.requests';
