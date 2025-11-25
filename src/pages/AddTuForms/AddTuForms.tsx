@@ -597,7 +597,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               <Form.Item
                 label={t('addTuForms.form.labels.requestSource')}
                 name='request_source'
-                rules={[{ message: t('addTuForms.form.validation.specifySource') }]}
+                rules={[{ required: true, message: t('addTuForms.form.validation.specifySource') }]}
               >
                 <Select size='large' placeholder={t('addTuForms.form.placeholders.requestSource')} showSearch optionFilterProp='children'>
                   {requestSources?.results?.map((rs: any) => (
@@ -625,7 +625,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Form.Item
               label={t('addTuForms.form.labels.requestDate')}
               name='request_date'
-              rules={[{ message: t('addTuForms.form.validation.specifyRequestDate') }]}
+              rules={[{ required: true, message: t('addTuForms.form.validation.specifyRequestDate') }]}
               normalize={(value: Dayjs) => formatDate(value)}
               getValueProps={(value: string) => ({ value: parseDate(value) })}
             >
@@ -652,11 +652,11 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item
-              label={t('addTuForms.form.labels.objectName')}
-              name='object_name'
-              rules={[{ message: t('addTuForms.form.validation.specifyObjectName') }]}
-            >
+              <Form.Item
+                label={t('addTuForms.form.labels.objectName')}
+                name='object_name'
+                rules={[{ required: true, message: t('addTuForms.form.validation.specifyObjectName') }]}
+              >
               <TextArea size='large' placeholder={t('addTuForms.form.placeholders.objectName')} />
             </Form.Item>
           </Col>
@@ -668,7 +668,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               <Form.Item
                 label={t('addTuForms.form.labels.address')}
                 name='address'
-                rules={[{ message: t('addTuForms.form.validation.specifyAddress') }]}
+                rules={[{ required: true, message: t('addTuForms.form.validation.specifyAddress') }]}
               >
                 <Input size='large' placeholder={t('addTuForms.form.placeholders.address')} />
               </Form.Item>
@@ -747,12 +747,12 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.waterRequired')} name='water_required' rules={[{ required: false }]}>
+            <Form.Item label={t('addTuForms.form.labels.waterRequired')} name='water_required' rules={[{ required: !isIncreaseLoads, message: t('addTuForms.form.validation.required') }]}>
               <Input size='large' placeholder={t('addTuForms.form.placeholders.waterRequired')} />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.pressureRequired')} name='pressure_required' rules={[{ required: false }]}>
+            <Form.Item label={t('addTuForms.form.labels.pressureRequired')} name='pressure_required' rules={[{ required: !isIncreaseLoads, message: t('addTuForms.form.validation.required') }]}>
               <Input size='large' placeholder={t('addTuForms.form.placeholders.pressureRequired')} />
             </Form.Item>
           </Col>
@@ -774,7 +774,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         <Form.Item
           label={t('addTuForms.form.labels.sewageAmount')}
           name='sewage_amount'
-          rules={[{ message: t('addTuForms.form.validation.required') }]}
+          rules={[{ required: !isIncreaseLoads, message: t('addTuForms.form.validation.required') }]}
         >
           <Input size='large' placeholder={t('addTuForms.form.placeholders.sewageAmount')} />
         </Form.Item>
