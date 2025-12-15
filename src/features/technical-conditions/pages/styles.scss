@@ -12,3 +12,18 @@
     text-align: center;
   }
 }
+
+/* В файле стилей компонента, где используется таблица */
+.ant-table-row {
+  transition: background-color 0.2s;
+}
+
+.ant-table-row:hover > td {
+  background-color: #f5f5f5 !important;
+  cursor: pointer;
+}
+
+/* Для последней ячейки с кнопками */
+.ant-table-row > td:last-child {
+  cursor: default !important;
+}
