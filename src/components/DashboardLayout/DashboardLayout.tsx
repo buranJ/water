@@ -2,7 +2,7 @@ import { type ReactNode, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Avatar, Flex, Layout, Menu, type MenuProps, Skeleton, theme, Typography } from 'antd';
-import { FileTextOutlined, LeftOutlined, TeamOutlined, UploadOutlined, UserOutlined } from '@ant-design/icons';
+import { ExportOutlined, FileTextOutlined, LeftOutlined, TeamOutlined, UploadOutlined, UserOutlined } from '@ant-design/icons';
 import { NotificationsBell } from 'components/NotificationsBell';
 import arrow from 'assets/icons/arrow.svg';
 import logo from 'assets/icons/logo.svg';
@@ -94,6 +94,12 @@ export const DashboardLayout = ({ children, title }: Props) => {
       key: '/dashboard/protocols',
       icon: <FileTextOutlined />,
       label: t('dashboard.pages.protocols')
+    },
+    // ДОБАВЛЯЕМ НОВЫЙ ПУНКТ МЕНЮ
+    {
+      key: '/dashboard/protocols/export',
+      icon: <ExportOutlined />,
+      label: t('dashboard.pages.protocolsExport', 'Экспорт протоколов')
     },
     hasPermission('view_customer') && {
       key: '/dashboard/customers',
