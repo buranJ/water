@@ -57,7 +57,7 @@ export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange }) 
       width: 150,
       render: (date) => {
         if (!date) return '-';
-        return dayjs(date).format('DD-MM-YYYY-HH:mm');
+        return dayjs(date).format('DD.MM.YYYY');
       },
       onCell: clickableCellProps
     },

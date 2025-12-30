@@ -8,7 +8,7 @@ import { DashboardLayout } from 'components';
 import { ITyItem } from 'types/entities';
 import './style.scss';
 
-import { useCreateTyMutation, useGetTyByIdQuery, useGetTypesTyQuery, usePatchTyMutation, useLazyGetTyByNumberQuery } from 'api/Ty.api';
+import { useCreateTyMutation, useGetTyByIdQuery, useGetTypesTyQuery, useLazyGetTyByNumberQuery, usePatchTyMutation } from 'api/Ty.api';
 import { useCreateCustomerMutation, useLazyGetCustomerQuery } from 'api/Customer.api';
 import { useCreateObjectMutation, useLazyGetAllObjectsQuery } from 'api/Object.api';
 import { useGetAllFormulasQuery } from 'api/Formula.api';
@@ -65,7 +65,7 @@ type FormValues = Omit<ITyItem, 'type_ty' | 'customer' | 'application'> & {
   increase_sewage?: string;
   additional_cold_water_required?: string;
   additional_sewage_amount?: string;
-  previous_tu_number?: string; // Добавлено новое поле
+  previous_tu_number?: string;
 };
 
 const getTypeTyId = (tt: unknown): number | undefined => {
@@ -96,7 +96,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
   const [createTy, { isLoading: createLoading }] = useCreateTyMutation();
   const isCreateMode = !tyId;
 
-  // Customer/Object helpers (migrated from ApplicationsCreate)
+  // Customer/Object helpers
   const [createCustomer] = useCreateCustomerMutation();
   const [createObject] = useCreateObjectMutation();
   const [triggerGetCustomers] = useLazyGetCustomerQuery();
@@ -116,6 +116,10 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
     (v: string | Date | undefined) => (typeof v === 'string' ? v : v ? dayjs(v).format('YYYY-MM-DD') : undefined),
     []
   );
+
+  // Watch selected TU type to conditionally render increase-loads fields
+  const selectedTypeId = Form.useWatch('type_ty', form);
+  const isIncreaseLoads = typesTyQuery.data?.find((type) => type.id === selectedTypeId)?.title === 'на увеличение нагрузок';
 
   const onFinish = useCallback(
     async (values: FormValues) => {
@@ -141,7 +145,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             }
           }
 
-          // Resolve or create object (without house/contact)
+          // Resolve or create object
           let objectId: number | undefined;
           if (values.object && customerId) {
             const objectSearch = await triggerGetObjects({ search: values.object, page: 1, page_size: 10 }).unwrap();
@@ -163,12 +167,11 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             }
           }
 
-          // Build TU create payload (map migrated fields)
+          // Build TU create payload
           const payloadCreate: any = {
             tu_number: values.tu_number,
             council_date: values.council_date,
             free_pressure_connection_point: values.free_pressure_connection_point,
-            // Core TU fields from the form
             request_source: values.request_source,
             request_number: values.request_number,
             request_date: values.request_date || dayjs(Date.now()).format('YYYY-MM-DD'),
@@ -177,7 +180,6 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             object_name: values.object_name ?? values.object,
             address: values.address,
             status: values.status,
-            // Mapping from ApplicationsCreate fields to TU fields
             water_required: values.quantity != null ? String(values.quantity) : values.water_required,
             pressure_required:
               values.pressure != null && !Number.isNaN(Number(values.pressure))
@@ -206,13 +208,19 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             increase_sewage: values.increase_sewage,
             additional_cold_water_required: values.additional_cold_water_required,
             additional_sewage_amount: values.additional_sewage_amount,
-            previous_tu_number: values.previous_tu_number, // Добавлено в payload
+            previous_tu_number: values.previous_tu_number,
             tech_council_date: values.tech_council_date,
             collector_diametr_water: values.collector_diametr_water,
             parent_tc_number: values.parent_tc_number
           };
+
+          // ИСПРАВЛЕНИЕ: Добавляем formula для всех типов ТУ
+          if (values.formula != null) {
+            payloadCreate.formula = values.formula;
+          }
+
+          // Добавляем остальные поля
           if (objectId != null) payloadCreate.entity = objectId;
-          if (values.formula != null) payloadCreate.formula = values.formula;
           if (values.eni != null) payloadCreate.eni = values.eni;
 
           // Pre-submit refusal + TU checks
@@ -244,7 +252,6 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             const hasEntityRefusals = Array.isArray(byEntity?.results) && byEntity.results.length > 0;
             const hasRefusals = hasCustomerRefusals || hasEntityRefusals;
 
-            // Build TU lists (labels)
             type TuShort = { request_number?: string; number?: string; tu_number?: string; title?: string; id?: number };
             const tuCustomerList = (tuByCustomer as { results?: TuShort[] } | undefined)?.results ?? [];
             const tuEntityList = (tuByEntity as { results?: TuShort[] } | undefined)?.results ?? [];
@@ -260,7 +267,6 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
             const hasTuCustomer = tuCustomerItems.length > 0;
             const hasTuEntity = tuEntityItems.length > 0;
-
             const showModal = hasRefusals || hasTuCustomer || hasTuEntity;
 
             if (showModal) {
@@ -375,7 +381,6 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               if (!confirmed) return;
             }
           } catch (e) {
-            // In case of unexpected error during checks, proceed but log it
             console.warn('Refusal/TU checks failed', e);
           }
 
@@ -449,9 +454,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         application: tuQuery.data.application?.id,
         request_date: toStr(tuQuery.data.request_date as unknown as string | Date | undefined),
         payment_deadline: toStr(tuQuery.data.payment_deadline as unknown as string | Date | undefined),
-        // Для Select поле ожидает id. Бэк может вернуть либо объект, либо число.
         type_ty: getTypeTyId(tuQuery.data.type_ty),
-        // request_source может прийти строкой или объектом {id,title}
         request_source: getRequestSourceTitle((tuQuery.data as any).request_source),
         parent_tc_number: tuQuery.data.parent_tc_number,
         increase_water: tuQuery.data.increase_water,
@@ -462,10 +465,6 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
     }
   }, [form, tuQuery]);
 
-  // Watch selected TU type to conditionally render increase-loads fields
-  const selectedTypeId = Form.useWatch('type_ty', form);
-  const isIncreaseLoads = typesTyQuery.data?.find((type) => type.id === selectedTypeId)?.title === 'На увеличение нагрузок';
-
   const onParentTuBlur = useCallback(async () => {
     const raw = form.getFieldValue('parent_tc_number');
     const value = typeof raw === 'string' ? raw.trim() : String(raw ?? '').trim();
@@ -474,16 +473,13 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
     try {
       const resp = await triggerGetTyByNumber({ tuNumber: value }).unwrap();
       const results = (resp as any)?.results;
-      const data = Array.isArray(results)
-        ? (results.find((i: any) => i?.tu_number === value) ?? results[0])
-        : resp;
+      const data = Array.isArray(results) ? (results.find((i: any) => i?.tu_number === value) ?? results[0]) : resp;
       if (!data) {
         message.error('Не удалось найти ТУ по номеру');
         return;
       }
 
       const mapped: any = {
-        // Основные поля
         request_source: getRequestSourceTitle((data as any).request_source),
         request_number: (data as any).request_number,
         request_date: toStr((data as any).request_date as any),
@@ -491,47 +487,32 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         object_name: (data as any).object_name,
         address: (data as any).address,
         eni: (data as any).eni,
-
-        // Тех. параметры
         sewage_amount: (data as any).sewage_amount,
         water_required: (data as any).water_required,
         pressure_required: (data as any).pressure_required,
         fire_fighting_inner: (data as any).fire_fighting_inner,
         fire_fighting_outer: (data as any).fire_fighting_outer,
-
-        // Пожаротушение и подключения
         fire_input_1: (data as any).fire_input_1,
         fire_input_2: (data as any).fire_input_2,
         street_pass_water: (data as any).street_pass_water,
         collector_diametr_water: (data as any).collector_diametr_water,
         provide_water: (data as any).provide_water,
-
         street_pass_sewer: (data as any).street_pass_sewer,
         collector_diametr_sewer: (data as any).collector_diametr_sewer,
         sewer_pipe: (data as any).sewer_pipe,
         provide_sewer: (data as any).provide_sewer,
-
         street_pass_input_1: (data as any).street_pass_input_1,
         collector_diametr_fire_1: (data as any).collector_diametr_fire_1,
         street_pass_input_2: (data as any).street_pass_input_2,
         collector_diametr_fire_2: (data as any).collector_diametr_fire_2,
-
-        // Прочее
         payment_deadline: toStr((data as any).payment_deadline as any),
         free_pressure_connection_point: (data as any).free_pressure_connection_point,
-
-        // Для увеличения нагрузок (если есть)
-        // Видимые поля при режиме "На увеличение нагрузок":
-        // - "Существующие нагрузки Вода" -> increase_water = water_required из сервера
-        // - "Стоки" -> increase_sewage = sewage_amount из сервера
         increase_water: (data as any).water_required,
         increase_sewage: (data as any).sewage_amount,
         additional_cold_water_required: (data as any).additional_cold_water_required,
         additional_sewage_amount: (data as any).additional_sewage_amount
       };
 
-
-      // Не изменяем эти поля
       delete mapped.tech_council_date;
       delete mapped.tu_number;
       delete mapped.council_date;
@@ -591,6 +572,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Form.Item>
           </Col>
         </Row>
+
         {!isIncreaseLoads && (
           <Row gutter={24}>
             <Col span={24}>
@@ -652,11 +634,11 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Form.Item>
           </Col>
           <Col span={12}>
-              <Form.Item
-                label={t('addTuForms.form.labels.objectName')}
-                name='object_name'
-                rules={[{ required: true, message: t('addTuForms.form.validation.specifyObjectName') }]}
-              >
+            <Form.Item
+              label={t('addTuForms.form.labels.objectName')}
+              name='object_name'
+              rules={[{ required: true, message: t('addTuForms.form.validation.specifyObjectName') }]}
+            >
               <TextArea size='large' placeholder={t('addTuForms.form.placeholders.objectName')} />
             </Form.Item>
           </Col>
@@ -694,7 +676,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
         {isIncreaseLoads && (
           <>
-            {/* Номер предыдущего тех условия - НОВОЕ ПОЛЕ */}
+            {/* Номер предыдущего тех условия */}
             <Row gutter={16}>
               <Col span={24}>
                 <Form.Item name='parent_tc_number' label='Номер предыдущего тех условия' rules={[{ required: false }]}>
@@ -734,69 +716,88 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
                 </Form.Item>
               </Col>
             </Row>
+
+            {/* ФОРМУЛА ДЛЯ "НА УВЕЛИЧЕНИЕ НАГРУЗОК" - ИСПРАВЛЕНИЕ */}
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item label={t('addTuForms.form.labels.formula')} name='formula' rules={[{ required: false }]}>
+                  <Select size='large' placeholder={t('addTuForms.form.placeholders.formula')}>
+                    {formulas?.results?.map((formula: any) => (
+                      <Option key={formula.id} value={formula.id}>
+                        {formula.title}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
           </>
         )}
 
-        {/* =========================
-            ТЕХНИЧЕСКИЕ ПАРАМЕТРЫ
-        ========================= */}
+        {/* ТЕХНИЧЕСКИЕ ПАРАМЕТРЫ (скрыты для "На увеличение нагрузок") */}
         <div style={{ display: isIncreaseLoads ? 'none' : undefined }}>
           <Title level={4} style={{ borderBottom: '1px solid #D9D9D9', paddingBottom: '4px', marginTop: '24px' }}>
             {t('addTuForms.titles.techParams')}
           </Title>
 
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.waterRequired')} name='water_required' rules={[{ required: !isIncreaseLoads, message: t('addTuForms.form.validation.required') }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.waterRequired')} />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.pressureRequired')} name='pressure_required' rules={[{ required: !isIncreaseLoads, message: t('addTuForms.form.validation.required') }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.pressureRequired')} />
-            </Form.Item>
-          </Col>
-        </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                label={t('addTuForms.form.labels.waterRequired')}
+                name='water_required'
+                rules={[{ required: !isIncreaseLoads, message: t('addTuForms.form.validation.required') }]}
+              >
+                <Input size='large' placeholder={t('addTuForms.form.placeholders.waterRequired')} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label={t('addTuForms.form.labels.pressureRequired')}
+                name='pressure_required'
+                rules={[{ required: !isIncreaseLoads, message: t('addTuForms.form.validation.required') }]}
+              >
+                <Input size='large' placeholder={t('addTuForms.form.placeholders.pressureRequired')} />
+              </Form.Item>
+            </Col>
+          </Row>
 
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.fireFightingInner')} name='fire_fighting_outer' rules={[{ required: false }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.fireFighting')} />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.fireFightingOuter')} name='fire_fighting_inner' rules={[{ required: false }]}>
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.fireFighting')} />
-            </Form.Item>
-          </Col>
-        </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item label={t('addTuForms.form.labels.fireFightingInner')} name='fire_fighting_outer' rules={[{ required: false }]}>
+                <Input size='large' placeholder={t('addTuForms.form.placeholders.fireFighting')} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label={t('addTuForms.form.labels.fireFightingOuter')} name='fire_fighting_inner' rules={[{ required: false }]}>
+                <Input size='large' placeholder={t('addTuForms.form.placeholders.fireFighting')} />
+              </Form.Item>
+            </Col>
+          </Row>
 
-        <Form.Item
-          label={t('addTuForms.form.labels.sewageAmount')}
-          name='sewage_amount'
-          rules={[{ required: !isIncreaseLoads, message: t('addTuForms.form.validation.required') }]}
-        >
-          <Input size='large' placeholder={t('addTuForms.form.placeholders.sewageAmount')} />
-        </Form.Item>
+          <Form.Item
+            label={t('addTuForms.form.labels.sewageAmount')}
+            name='sewage_amount'
+            rules={[{ required: !isIncreaseLoads, message: t('addTuForms.form.validation.required') }]}
+          >
+            <Input size='large' placeholder={t('addTuForms.form.placeholders.sewageAmount')} />
+          </Form.Item>
 
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.formula')} name='formula' rules={[{ required: false }]}>
-              <Select size='large' placeholder={t('addTuForms.form.placeholders.formula')}>
-                {formulas?.results?.map((formula: any) => (
-                  <Option key={formula.id} value={formula.id}>
-                    {formula.title}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
-        </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item label={t('addTuForms.form.labels.formula')} name='formula' rules={[{ required: false }]}>
+                <Select size='large' placeholder={t('addTuForms.form.placeholders.formula')}>
+                  {formulas?.results?.map((formula: any) => (
+                    <Option key={formula.id} value={formula.id}>
+                      {formula.title}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
         </div>
 
-        {/* =========================
-            ПОДКЛЮЧЕНИЕ
-        ========================= */}
+        {/* ПОДКЛЮЧЕНИЕ */}
         <Title level={4} style={{ borderBottom: '1px solid #D9D9D9', paddingBottom: '4px', marginTop: '24px' }}>
           {t('addTuForms.titles.connection')}
         </Title>
@@ -847,7 +848,11 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Form.Item>
           <Row gutter={24}>
             <Col span={12}>
-              <Form.Item label={t('addTuForms.form.labels.waterPipeDiameter1')} name='collector_diametr_fire_1' rules={[{ required: false }]}>
+              <Form.Item
+                label={t('addTuForms.form.labels.waterPipeDiameter1')}
+                name='collector_diametr_fire_1'
+                rules={[{ required: false }]}
+              >
                 <Input size='large' />
               </Form.Item>
             </Col>
@@ -869,7 +874,11 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Form.Item>
           <Row gutter={24}>
             <Col span={12}>
-              <Form.Item label={t('addTuForms.form.labels.waterPipeDiameter2')} name='collector_diametr_fire_2' rules={[{ required: false }]}>
+              <Form.Item
+                label={t('addTuForms.form.labels.waterPipeDiameter2')}
+                name='collector_diametr_fire_2'
+                rules={[{ required: false }]}
+              >
                 <Input size='large' />
               </Form.Item>
             </Col>
@@ -880,6 +889,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Col>
           </Row>
         </div>
+
         <Form.Item
           label={t('addTuForms.form.labels.freePressureAtConnectionPoint')}
           name='free_pressure_connection_point'
@@ -925,9 +935,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           <TextArea size='large' />
         </Form.Item>
 
-        {/* =========================
-            ФИНАНСЫ
-        ========================= */}
+        {/* ФИНАНСЫ */}
         <Title level={4} style={{ borderBottom: '1px solid #D9D9D9', paddingBottom: '4px', marginTop: '24px' }}>
           {t('addTuForms.titles.finance')}
         </Title>
