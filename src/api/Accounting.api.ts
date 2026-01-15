@@ -19,6 +19,15 @@ import {
   IUpdateProtocolResponse
 } from 'types/entities/accounting';
 
+interface IExportProtocolsParams {
+  council_date_start?: string;
+  council_date_end?: string;
+  tech_council_date_start?: string;
+  tech_council_date_end?: string;
+  tu_numbers?: string;
+  exclude_tu_numbers?: string;
+}
+
 export const accountingApi = createApi({
   reducerPath: 'accountingApi',
   baseQuery: getBaseQuery(),
@@ -41,7 +50,6 @@ export const accountingApi = createApi({
       providesTags: ['Protocol']
     }),
 
-    // List invoices with filters, ordering and pagination
     getInvoicesList: build.query<IPaginatedInvoicesList, IGetInvoicesListParams>({
       query: (params = {}) => ({
         url: '/buhgalteria/invoices/',
@@ -51,7 +59,6 @@ export const accountingApi = createApi({
       providesTags: ['Invoice']
     }),
 
-    // Fetch protocol by ID to resolve its technical_condition for navigation
     getProtocolById: build.query<IAccountingProtocol, { protocolId: string }>({
       query: ({ protocolId }) => ({
         url: `/buhgalteria/protocols/${protocolId}/`,
@@ -132,6 +139,28 @@ export const accountingApi = createApi({
         formData: true
       }),
       invalidatesTags: ['Payment']
+    }),
+
+    // Переделано на mutation для корректной работы экспорта
+    exportProtocolsExcel: build.mutation<Blob, IExportProtocolsParams>({
+      query: (params) => ({
+        url: '/buhgalteria/protocols/export-excel/',
+        method: 'GET',
+        params,
+        responseHandler: async (response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const blob = await response.blob();
+
+          if (blob.size === 0) {
+            throw new Error('Получен пустой файл');
+          }
+
+          return blob;
+        }
+      })
     })
   })
 });
@@ -147,3 +176,4 @@ export const useLazyDownloadProtocolQuery = accountingApi.useLazyDownloadProtoco
 export const useGetPaymentsByInvoiceQuery = accountingApi.useGetPaymentsByInvoiceQuery;
 export const useCreatePaymentMutation = accountingApi.useCreatePaymentMutation;
 export const useLazyGetProtocolByIdQuery = accountingApi.useLazyGetProtocolByIdQuery;
+export const useExportProtocolsExcelMutation = accountingApi.useExportProtocolsExcelMutation;

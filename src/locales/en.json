@@ -1135,7 +1135,7 @@
       "placeholders": {
         "requestSource": "Object name",
         "requestNumber": "12345",
-        "requestDate": "YYYY-MM-DD",
+        "requestDate": "DD-MM.YYYY",
         "customer": "Full name or organization",
         "objectName": "Residential house",
         "address": "Object address",

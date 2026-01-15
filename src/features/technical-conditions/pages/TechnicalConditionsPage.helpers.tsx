@@ -23,6 +23,12 @@ type IGetColumnsFn = (options: {
 const { t } = i18next;
 
 export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange }) => {
+  // Общие свойства для всех ячеек кроме последней (с кнопками действий)
+  const clickableCellProps = (record: ITechnicalCondition) => ({
+    style: { cursor: 'pointer' },
+    onClick: () => onClick(record, 'view')
+  });
+
   return [
     {
       title: (
@@ -34,17 +40,14 @@ export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange }) 
             value={filters.tu_number}
             onChange={(e) => onFilterChange('tu_number', e.target.value)}
             placeholder={t('technicalConditions.tuNumberPrefix', '№ ТУ')}
+            onClick={(e) => e.stopPropagation()} // Предотвращаем клик по инпуту
           />
         </div>
       ),
       dataIndex: 'tu_number',
       key: 'tu_number',
-      render: (text, record) => (
-        <Typography.Link onClick={() => onClick(record, 'view')} strong>
-          {text}
-        </Typography.Link>
-      ),
-      onCell: (record) => ({ style: { cursor: 'pointer' }, onClick: () => onClick(record, 'view') }),
+      render: (text) => <Typography.Text strong>{text}</Typography.Text>,
+      onCell: clickableCellProps,
       width: 90
     },
     {
@@ -54,8 +57,9 @@ export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange }) 
       width: 150,
       render: (date) => {
         if (!date) return '-';
-        return dayjs(date).format('DD-MM-YYYY-HH:mm');
-      }
+        return dayjs(date).format('DD.MM.YYYY');
+      },
+      onCell: clickableCellProps
     },
     {
       title: (
@@ -67,12 +71,14 @@ export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange }) 
             value={filters.customer_name}
             onChange={(e) => onFilterChange('customer_name', e.target.value)}
             placeholder={t('customers.columns.customer')}
+            onClick={(e) => e.stopPropagation()}
           />
         </div>
       ),
       dataIndex: ['customer', 'full_name'],
       key: 'customer',
-      width: 170
+      width: 170,
+      onCell: clickableCellProps
     },
     {
       title: (
@@ -84,15 +90,22 @@ export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange }) 
             value={filters.address}
             onChange={(e) => onFilterChange('address', e.target.value)}
             placeholder={t('applicationDetails.labels.address')}
+            onClick={(e) => e.stopPropagation()}
           />
         </div>
       ),
       dataIndex: 'address',
       key: 'address',
-      width: 170
+      width: 170,
+      onCell: clickableCellProps
     },
-    // Дата тех совета (request_date)
-    { title: t('applicationDetails.labels.requestDate'), dataIndex: 'request_date', key: 'request_date', width: 135 },
+    {
+      title: t('applicationDetails.labels.requestDate'),
+      dataIndex: 'request_date',
+      key: 'request_date',
+      width: 135,
+      onCell: clickableCellProps
+    },
     {
       title: (
         <div>
@@ -103,19 +116,28 @@ export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange }) 
             value={filters.object_name}
             onChange={(e) => onFilterChange('object_name', e.target.value)}
             placeholder={t('applicationDetails.labels.objectName')}
+            onClick={(e) => e.stopPropagation()}
           />
         </div>
       ),
       dataIndex: 'object_name',
       key: 'objectName',
-      width: 260
+      width: 260,
+      onCell: clickableCellProps
     },
-    { title: t('applicationDetails.labels.waterRequired'), dataIndex: 'water_required', key: 'water_required', width: 135 },
+    {
+      title: t('applicationDetails.labels.waterRequired'),
+      dataIndex: 'water_required',
+      key: 'water_required',
+      width: 135,
+      onCell: clickableCellProps
+    },
     {
       title: t('applicationDetails.labels.wastewater'),
       dataIndex: 'sewage_amount',
       key: 'sewage_amount',
-      width: 135
+      width: 135,
+      onCell: clickableCellProps
     },
     {
       title: t('protocolDetail.invoice.title'),
@@ -132,18 +154,44 @@ export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange }) 
             </Typography.Text>
           </>
         );
-      }
+      },
+      onCell: clickableCellProps
     },
-    { title: t('tuDetails.labels.paymentInvoiceNumber'), dataIndex: 'request_number', key: 'payment_invoice_number', width: 160 },
-    { title: t('tuDetails.labels.paymentAmount'), dataIndex: 'payment_amount', key: 'payment_amount', width: 145 },
-    { title: t('protocolDetail.paid'), dataIndex: 'paid_amount', key: 'paid_amount', width: 145 },
-    { title: t('protocolDetail.payment.columns.date'), dataIndex: 'payment_date', key: 'payment_date', width: 145 },
+    {
+      title: t('tuDetails.labels.paymentInvoiceNumber'),
+      dataIndex: 'request_number',
+      key: 'payment_invoice_number',
+      width: 160,
+      onCell: clickableCellProps
+    },
+    {
+      title: t('tuDetails.labels.paymentAmount'),
+      dataIndex: 'payment_amount',
+      key: 'payment_amount',
+      width: 145,
+      onCell: clickableCellProps
+    },
+    {
+      title: t('protocolDetail.paid'),
+      dataIndex: 'paid_amount',
+      key: 'paid_amount',
+      width: 145,
+      onCell: clickableCellProps
+    },
+    {
+      title: t('protocolDetail.payment.columns.date'),
+      dataIndex: 'payment_date',
+      key: 'payment_date',
+      width: 145,
+      onCell: clickableCellProps
+    },
     {
       title: t('common.remaining'),
       dataIndex: 'remaining_amount',
       key: 'remaining_amount',
       width: 145,
-      render: (text) => (text < 0 ? 0 : text)
+      render: (text) => (text < 0 ? 0 : text),
+      onCell: clickableCellProps
     },
     {
       title: t('common.status'),
@@ -158,18 +206,34 @@ export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange }) 
         }
         return <Tag color='default'>{t('filterBar.archived')}</Tag>;
       },
-      width: 145
+      width: 145,
+      onCell: clickableCellProps
     },
     {
       title: t('exportDataHistory.columns.actions'),
       key: 'action',
       render: (_, record) => (
         <Space>
-          <Button icon={<EditOutlined />} onClick={() => onClick(record, 'edit')} disabled={record.status === 'inactive'} />
-          <Button icon={<DeleteOutlined />} onClick={() => onClick(record, 'delete')} danger />
+          <Button
+            icon={<EditOutlined />}
+            onClick={(e) => {
+              e.stopPropagation(); // Предотвращаем всплытие события
+              onClick(record, 'edit');
+            }}
+            disabled={record.status === 'inactive'}
+          />
+          <Button
+            icon={<DeleteOutlined />}
+            onClick={(e) => {
+              e.stopPropagation(); // Предотвращаем всплытие события
+              onClick(record, 'delete');
+            }}
+            danger
+          />
         </Space>
       ),
       width: 145
+      // Для этой колонки НЕ добавляем onCell
     }
   ];
 };

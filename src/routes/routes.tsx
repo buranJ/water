@@ -26,6 +26,7 @@ const Notifications = lazy(() => import('pages/Notification'));
 const TyImport = lazy(() => import('pages/TyImport'));
 const Invoices = lazy(() => import('pages/Invoices'));
 const Protocols = lazy(() => import('pages/Protocols'));
+const ProtocolsExport = lazy(() => import('pages/ProtocolsExport')); // НОВЫЙ ИМПОРТ
 
 export const routerConfig: RouteObject[] = [
   {
@@ -128,6 +129,10 @@ export const routerConfig: RouteObject[] = [
   {
     path: '/dashboard/invoices',
     element: <Invoices title='routers.invoices' />
+  },
+  {
+    path: '/dashboard/protocols/export',
+    element: <ProtocolsExport />
   },
   {
     path: '*',
