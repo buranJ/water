@@ -760,12 +760,12 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.fireFightingInner')} name='fire_fighting_outer' rules={[{ required: false }]}>
+            <Form.Item label={t('addTuForms.form.labels.fireFightingInner')} name='fire_fighting_inner' rules={[{ required: false }]}>
               <Input size='large' placeholder={t('addTuForms.form.placeholders.fireFighting')} />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label={t('addTuForms.form.labels.fireFightingOuter')} name='fire_fighting_inner' rules={[{ required: false }]}>
+            <Form.Item label={t('addTuForms.form.labels.fireFightingOuter')} name='fire_fighting_outer' rules={[{ required: false }]}>
               <Input size='large' placeholder={t('addTuForms.form.placeholders.fireFighting')} />
             </Form.Item>
           </Col>
