@@ -66,6 +66,9 @@ type FormValues = Omit<ITyItem, 'type_ty' | 'customer' | 'application'> & {
   additional_cold_water_required?: string;
   additional_sewage_amount?: string;
   previous_tu_number?: string;
+
+  // Refusal field
+  notes?: string;
 };
 
 const getTypeTyId = (tt: unknown): number | undefined => {
@@ -117,9 +120,10 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
     []
   );
 
-  // Watch selected TU type to conditionally render increase-loads fields
+  // Watch selected TU type to conditionally render fields
   const selectedTypeId = Form.useWatch('type_ty', form);
   const isIncreaseLoads = typesTyQuery.data?.find((type) => type.id === selectedTypeId)?.title === 'на увеличение нагрузок';
+  const isRefusal = typesTyQuery.data?.find((type) => type.id === selectedTypeId)?.title === 'отказы';
 
   const onFinish = useCallback(
     async (values: FormValues) => {
@@ -134,7 +138,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               : undefined;
             if (foundCustomer?.id != null) {
               customerId = foundCustomer.id;
-            } else {
+            } else if (!isRefusal) {
               const customerResponse = await createCustomer({
                 full_name: values.customer,
                 pasport: '',
@@ -147,7 +151,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
           // Resolve or create object
           let objectId: number | undefined;
-          if (values.object && customerId) {
+          if (values.object && customerId && !isRefusal) {
             const objectSearch = await triggerGetObjects({ search: values.object, page: 1, page_size: 10 }).unwrap();
             const foundObject = objectSearch.results?.find(
               (o: { id: number; title?: string; address_street?: string; customer?: number }) =>
@@ -211,10 +215,11 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             previous_tu_number: values.previous_tu_number,
             tech_council_date: values.tech_council_date,
             collector_diametr_water: values.collector_diametr_water,
-            parent_tc_number: values.parent_tc_number
+            parent_tc_number: values.parent_tc_number,
+            notes: values.notes // Добавляем поле причины отказа
           };
 
-          // ИСПРАВЛЕНИЕ: Добавляем formula для всех типов ТУ
+          // Добавляем formula для всех типов ТУ
           if (values.formula != null) {
             payloadCreate.formula = values.formula;
           }
@@ -223,165 +228,168 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           if (objectId != null) payloadCreate.entity = objectId;
           if (values.eni != null) payloadCreate.eni = values.eni;
 
-          // Pre-submit refusal + TU checks
-          try {
-            const [byCustomer, byEntity, tuByCustomer, tuByEntity] = await Promise.all([
-              customerId
-                ? triggerCheckCustomer(customerId)
-                    .unwrap()
-                    .catch(() => ({ results: [] }))
-                : Promise.resolve({ results: [] }),
-              objectId
-                ? triggerCheckEntity(objectId)
-                    .unwrap()
-                    .catch(() => ({ results: [] }))
-                : Promise.resolve({ results: [] }),
-              customerId
-                ? triggerCheckTuCustomer(customerId)
-                    .unwrap()
-                    .catch(() => ({ results: [] }))
-                : Promise.resolve({ results: [] }),
-              objectId
-                ? triggerCheckTuEntity(objectId)
-                    .unwrap()
-                    .catch(() => ({ results: [] }))
-                : Promise.resolve({ results: [] })
-            ]);
+          // Пропускаем проверки отказов для типа "отказы"
+          if (!isRefusal) {
+            // Pre-submit refusal + TU checks
+            try {
+              const [byCustomer, byEntity, tuByCustomer, tuByEntity] = await Promise.all([
+                customerId
+                  ? triggerCheckCustomer(customerId)
+                      .unwrap()
+                      .catch(() => ({ results: [] }))
+                  : Promise.resolve({ results: [] }),
+                objectId
+                  ? triggerCheckEntity(objectId)
+                      .unwrap()
+                      .catch(() => ({ results: [] }))
+                  : Promise.resolve({ results: [] }),
+                customerId
+                  ? triggerCheckTuCustomer(customerId)
+                      .unwrap()
+                      .catch(() => ({ results: [] }))
+                  : Promise.resolve({ results: [] }),
+                objectId
+                  ? triggerCheckTuEntity(objectId)
+                      .unwrap()
+                      .catch(() => ({ results: [] }))
+                  : Promise.resolve({ results: [] })
+              ]);
 
-            const hasCustomerRefusals = Array.isArray(byCustomer?.results) && byCustomer.results.length > 0;
-            const hasEntityRefusals = Array.isArray(byEntity?.results) && byEntity.results.length > 0;
-            const hasRefusals = hasCustomerRefusals || hasEntityRefusals;
+              const hasCustomerRefusals = Array.isArray(byCustomer?.results) && byCustomer.results.length > 0;
+              const hasEntityRefusals = Array.isArray(byEntity?.results) && byEntity.results.length > 0;
+              const hasRefusals = hasCustomerRefusals || hasEntityRefusals;
 
-            type TuShort = { request_number?: string; number?: string; tu_number?: string; title?: string; id?: number };
-            const tuCustomerList = (tuByCustomer as { results?: TuShort[] } | undefined)?.results ?? [];
-            const tuEntityList = (tuByEntity as { results?: TuShort[] } | undefined)?.results ?? [];
-            const labelOf = (item: TuShort): string =>
-              item.request_number ?? item.number ?? item.tu_number ?? item.title ?? (item.id != null ? `ID: ${item.id}` : '');
+              type TuShort = { request_number?: string; number?: string; tu_number?: string; title?: string; id?: number };
+              const tuCustomerList = (tuByCustomer as { results?: TuShort[] } | undefined)?.results ?? [];
+              const tuEntityList = (tuByEntity as { results?: TuShort[] } | undefined)?.results ?? [];
+              const labelOf = (item: TuShort): string =>
+                item.request_number ?? item.number ?? item.tu_number ?? item.title ?? (item.id != null ? `ID: ${item.id}` : '');
 
-            const tuCustomerItems = (Array.isArray(tuCustomerList) ? tuCustomerList : [])
-              .map((item) => ({ id: item?.id, label: labelOf(item) }))
-              .filter((v) => !!v.label);
-            const tuEntityItems = (Array.isArray(tuEntityList) ? tuEntityList : [])
-              .map((item) => ({ id: item?.id, label: labelOf(item) }))
-              .filter((v) => !!v.label);
+              const tuCustomerItems = (Array.isArray(tuCustomerList) ? tuCustomerList : [])
+                .map((item) => ({ id: item?.id, label: labelOf(item) }))
+                .filter((v) => !!v.label);
+              const tuEntityItems = (Array.isArray(tuEntityList) ? tuEntityList : [])
+                .map((item) => ({ id: item?.id, label: labelOf(item) }))
+                .filter((v) => !!v.label);
 
-            const hasTuCustomer = tuCustomerItems.length > 0;
-            const hasTuEntity = tuEntityItems.length > 0;
-            const showModal = hasRefusals || hasTuCustomer || hasTuEntity;
+              const hasTuCustomer = tuCustomerItems.length > 0;
+              const hasTuEntity = tuEntityItems.length > 0;
+              const showModal = hasRefusals || hasTuCustomer || hasTuEntity;
 
-            if (showModal) {
-              const confirmContent = hasRefusals
-                ? hasCustomerRefusals && hasEntityRefusals
-                  ? t('refusal.confirmContentBoth', 'Найдены отказы по заказчику и объекту. Продолжить отправку заявки?')
-                  : hasCustomerRefusals
-                    ? t('refusal.confirmContentCustomer', 'Найдены отказы по заказчику. Продолжить отправку заявки?')
-                    : t('refusal.confirmContentEntity', 'Найдены отказы по объекту. Продолжить отправку заявки?')
-                : hasTuCustomer && hasTuEntity
-                  ? t('refusal.confirmContentTuBoth', 'Найдены связанные ТУ по заказчику и объекту. Продолжить отправку заявки?')
-                  : hasTuCustomer
-                    ? t('refusal.confirmContentTuCustomer', 'Найдены связанные ТУ по заказчику. Продолжить отправку заявки?')
-                    : t('refusal.confirmContentTuEntity', 'Найдены связанные ТУ по объекту. Продолжить отправку заявки?');
+              if (showModal) {
+                const confirmContent = hasRefusals
+                  ? hasCustomerRefusals && hasEntityRefusals
+                    ? t('refusal.confirmContentBoth', 'Найдены отказы по заказчику и объекту. Продолжить отправку заявки?')
+                    : hasCustomerRefusals
+                      ? t('refusal.confirmContentCustomer', 'Найдены отказы по заказчику. Продолжить отправку заявки?')
+                      : t('refusal.confirmContentEntity', 'Найдены отказы по объекту. Продолжить отправку заявки?')
+                  : hasTuCustomer && hasTuEntity
+                    ? t('refusal.confirmContentTuBoth', 'Найдены связанные ТУ по заказчику и объекту. Продолжить отправку заявки?')
+                    : hasTuCustomer
+                      ? t('refusal.confirmContentTuCustomer', 'Найдены связанные ТУ по заказчику. Продолжить отправку заявки?')
+                      : t('refusal.confirmContentTuEntity', 'Найдены связанные ТУ по объекту. Продолжить отправку заявки?');
 
-              const customerCauseTitles = ((byCustomer?.results ?? []) as Array<{ causes?: Array<{ title?: string }> }>)
-                .flatMap((r) => r.causes ?? [])
-                .map((c) => c.title)
-                .filter((v): v is string => Boolean(v))
-                .filter((v, i, a) => a.indexOf(v) === i);
+                const customerCauseTitles = ((byCustomer?.results ?? []) as Array<{ causes?: Array<{ title?: string }> }>)
+                  .flatMap((r) => r.causes ?? [])
+                  .map((c) => c.title)
+                  .filter((v): v is string => Boolean(v))
+                  .filter((v, i, a) => a.indexOf(v) === i);
 
-              const entityCauseTitles = ((byEntity?.results ?? []) as Array<{ causes?: Array<{ title?: string }> }>)
-                .flatMap((r) => r.causes ?? [])
-                .map((c) => c.title)
-                .filter((v): v is string => Boolean(v))
-                .filter((v, i, a) => a.indexOf(v) === i);
+                const entityCauseTitles = ((byEntity?.results ?? []) as Array<{ causes?: Array<{ title?: string }> }>)
+                  .flatMap((r) => r.causes ?? [])
+                  .map((c) => c.title)
+                  .filter((v): v is string => Boolean(v))
+                  .filter((v, i, a) => a.indexOf(v) === i);
 
-              const detailsContent = (
-                <div>
-                  <div style={{ marginBottom: 8 }}>{confirmContent}</div>
+                const detailsContent = (
+                  <div>
+                    <div style={{ marginBottom: 8 }}>{confirmContent}</div>
 
-                  {hasCustomerRefusals && (
-                    <div style={{ marginTop: 8 }}>
-                      <strong>{t('refusal.customerTitle', 'Отказы по заказчику')}</strong>
-                      {customerCauseTitles.length > 0 ? (
+                    {hasCustomerRefusals && (
+                      <div style={{ marginTop: 8 }}>
+                        <strong>{t('refusal.customerTitle', 'Отказы по заказчику')}</strong>
+                        {customerCauseTitles.length > 0 ? (
+                          <ul style={{ margin: '4px 0 0', paddingLeft: 18 }}>
+                            {customerCauseTitles.map((title, idx) => (
+                              <li key={idx}>{title}</li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <div>- {t('refusal.noCauses', 'Причины не указаны')}</div>
+                        )}
+                      </div>
+                    )}
+
+                    {hasEntityRefusals && (
+                      <div style={{ marginTop: 8 }}>
+                        <strong>{t('refusal.entityTitle', 'Отказы по объекту')}</strong>
+                        {entityCauseTitles.length > 0 ? (
+                          <ul style={{ margin: '4px 0 0', paddingLeft: 18 }}>
+                            {entityCauseTitles.map((title, idx) => (
+                              <li key={idx}>{title}</li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <div>- {t('refusal.noCauses', 'Причины не указаны')}</div>
+                        )}
+                      </div>
+                    )}
+
+                    {hasTuCustomer && (
+                      <div style={{ marginTop: 8 }}>
+                        <strong>{t('refusal.tuCustomerTitle', 'Найдены ТУ по заказчику')}</strong>
                         <ul style={{ margin: '4px 0 0', paddingLeft: 18 }}>
-                          {customerCauseTitles.map((title, idx) => (
-                            <li key={idx}>{title}</li>
+                          {tuCustomerItems.map((item, idx) => (
+                            <li key={idx}>
+                              {item.id != null ? (
+                                <a href={`/dashboard/technical-conditions/tu-details/${item.id}`} target='_blank'>
+                                  {item.label}
+                                </a>
+                              ) : (
+                                item.label
+                              )}
+                            </li>
                           ))}
                         </ul>
-                      ) : (
-                        <div>- {t('refusal.noCauses', 'Причины не указаны')}</div>
-                      )}
-                    </div>
-                  )}
+                      </div>
+                    )}
 
-                  {hasEntityRefusals && (
-                    <div style={{ marginTop: 8 }}>
-                      <strong>{t('refusal.entityTitle', 'Отказы по объекту')}</strong>
-                      {entityCauseTitles.length > 0 ? (
+                    {hasTuEntity && (
+                      <div style={{ marginTop: 8 }}>
+                        <strong>{t('refusal.tuEntityTitle', 'Найдены ТУ по объекту')}</strong>
                         <ul style={{ margin: '4px 0 0', paddingLeft: 18 }}>
-                          {entityCauseTitles.map((title, idx) => (
-                            <li key={idx}>{title}</li>
+                          {tuEntityItems.map((item, idx) => (
+                            <li key={idx}>
+                              {item.id != null ? (
+                                <a href={`/dashboard/technical-conditions/tu-details/${item.id}`} target='_blank'>
+                                  {item.label}
+                                </a>
+                              ) : (
+                                item.label
+                              )}
+                            </li>
                           ))}
                         </ul>
-                      ) : (
-                        <div>- {t('refusal.noCauses', 'Причины не указаны')}</div>
-                      )}
-                    </div>
-                  )}
+                      </div>
+                    )}
+                  </div>
+                );
 
-                  {hasTuCustomer && (
-                    <div style={{ marginTop: 8 }}>
-                      <strong>{t('refusal.tuCustomerTitle', 'Найдены ТУ по заказчику')}</strong>
-                      <ul style={{ margin: '4px 0 0', paddingLeft: 18 }}>
-                        {tuCustomerItems.map((item, idx) => (
-                          <li key={idx}>
-                            {item.id != null ? (
-                              <a href={`/dashboard/technical-conditions/tu-details/${item.id}`} target='_blank'>
-                                {item.label}
-                              </a>
-                            ) : (
-                              item.label
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  {hasTuEntity && (
-                    <div style={{ marginTop: 8 }}>
-                      <strong>{t('refusal.tuEntityTitle', 'Найдены ТУ по объекту')}</strong>
-                      <ul style={{ margin: '4px 0 0', paddingLeft: 18 }}>
-                        {tuEntityItems.map((item, idx) => (
-                          <li key={idx}>
-                            {item.id != null ? (
-                              <a href={`/dashboard/technical-conditions/tu-details/${item.id}`} target='_blank'>
-                                {item.label}
-                              </a>
-                            ) : (
-                              item.label
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              );
-
-              const confirmed = await new Promise<boolean>((resolve) => {
-                Modal.confirm({
-                  title: t('refusal.confirmTitle', 'Вы уверены, что хотите продолжить?'),
-                  content: detailsContent,
-                  okText: t('common.continue', 'Продолжить'),
-                  cancelText: t('common.cancel', 'Отмена'),
-                  onOk: () => resolve(true),
-                  onCancel: () => resolve(false)
+                const confirmed = await new Promise<boolean>((resolve) => {
+                  Modal.confirm({
+                    title: t('refusal.confirmTitle', 'Вы уверены, что хотите продолжить?'),
+                    content: detailsContent,
+                    okText: t('common.continue', 'Продолжить'),
+                    cancelText: t('common.cancel', 'Отмена'),
+                    onOk: () => resolve(true),
+                    onCancel: () => resolve(false)
+                  });
                 });
-              });
-              if (!confirmed) return;
+                if (!confirmed) return;
+              }
+            } catch (e) {
+              console.warn('Refusal/TU checks failed', e);
             }
-          } catch (e) {
-            console.warn('Refusal/TU checks failed', e);
           }
 
           const created = await createTy(payloadCreate).unwrap();
@@ -396,7 +404,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           return;
         }
 
-        // Update mode: keep normalized strings for dates
+        // Update mode
         const base: any = {
           ...values,
           customer: tuQuery.data.customer.id,
@@ -405,7 +413,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           increase_water: values.increase_water,
           increase_sewage: values.increase_sewage,
           additional_cold_water_required: values.additional_cold_water_required,
-          additional_sewage_amount: values.additional_sewage_amount
+          additional_sewage_amount: values.additional_sewage_amount,
+          notes: values.notes
         };
         if (values.request_date) base.request_date = values.request_date;
         if (values.payment_deadline) base.payment_deadline = values.payment_deadline;
@@ -432,7 +441,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
       triggerCheckCustomer,
       triggerCheckEntity,
       triggerCheckTuCustomer,
-      triggerCheckTuEntity
+      triggerCheckTuEntity,
+      isRefusal
     ]
   );
 
@@ -460,7 +470,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         increase_water: tuQuery.data.increase_water,
         increase_sewage: tuQuery.data.increase_sewage,
         additional_cold_water_required: tuQuery.data.additional_cold_water_required,
-        additional_sewage_amount: tuQuery.data.additional_sewage_amount
+        additional_sewage_amount: tuQuery.data.additional_sewage_amount,
+        notes: tuQuery.data.notes
       } as any);
     }
   }, [form, tuQuery]);
@@ -564,16 +575,16 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           <Col span={8}>
             <Form.Item
               name='council_date'
-              label={t('addTuForms.form.labels.council_date')}
+              label={'Дата исходящих ТУ'}
               normalize={(value: Dayjs) => formatDate(value)}
               getValueProps={(value: string) => ({ value: parseDate(value) })}
             >
-              <DatePicker format='DD.MM.YYYY' size='large' placeholder={t('addTuForms.form.placeholders.council_date')} />
+              <DatePicker format='DD.MM.YYYY' size='large' placeholder={'Выберите дату исходящих ТУ'} />
             </Form.Item>
           </Col>
         </Row>
 
-        {!isIncreaseLoads && (
+        {(!isIncreaseLoads && !isRefusal) && (
           <Row gutter={24}>
             <Col span={24}>
               <Form.Item
@@ -593,12 +604,32 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Row>
         )}
 
+        {isRefusal && (
+          <Row gutter={24}>
+            <Col span={24}>
+              <Form.Item
+                label={t('addTuForms.form.labels.requestSource')}
+                name='request_source'
+                rules={[{ required: false }]}
+              >
+                <Select size='large' placeholder={t('addTuForms.form.placeholders.requestSource')} showSearch optionFilterProp='children'>
+                  {requestSources?.results?.map((rs: any) => (
+                    <Option key={rs.id} value={rs.title}>
+                      {rs.title}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+        )}
+
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
               label={t('addTuForms.form.labels.requestNumber')}
               name='request_number'
-              rules={[{ message: t('addTuForms.form.validation.specifyRequestNumber') }]}
+              rules={[{ required: !isRefusal, message: t('addTuForms.form.validation.specifyRequestNumber') }]}
             >
               <Input size='large' placeholder={t('addTuForms.form.placeholders.requestNumber')} />
             </Form.Item>
@@ -607,7 +638,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Form.Item
               label={t('addTuForms.form.labels.requestDate')}
               name='request_date'
-              rules={[{ required: true, message: t('addTuForms.form.validation.specifyRequestDate') }]}
+              rules={[{ required: !isRefusal, message: t('addTuForms.form.validation.specifyRequestDate') }]}
               normalize={(value: Dayjs) => formatDate(value)}
               getValueProps={(value: string) => ({ value: parseDate(value) })}
             >
@@ -621,7 +652,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Form.Item
               label={t('addTuForms.form.labels.customer')}
               name='customer'
-              rules={[{ message: t('addTuForms.form.validation.specifyCustomer') }]}
+              rules={[{ required: !isRefusal, message: t('addTuForms.form.validation.specifyCustomer') }]}
               extra={
                 !isCreateMode ? (
                   <Button type='link' style={{ padding: 0, height: 'auto' }} onClick={onCustomerEdit}>
@@ -637,7 +668,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Form.Item
               label={t('addTuForms.form.labels.objectName')}
               name='object_name'
-              rules={[{ required: true, message: t('addTuForms.form.validation.specifyObjectName') }]}
+              rules={[{ required: !isRefusal, message: t('addTuForms.form.validation.specifyObjectName') }]}
             >
               <TextArea size='large' placeholder={t('addTuForms.form.placeholders.objectName')} />
             </Form.Item>
@@ -645,17 +676,15 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Row>
 
         <Row gutter={16}>
-          {!isIncreaseLoads && (
-            <Col span={12}>
-              <Form.Item
-                label={t('addTuForms.form.labels.address')}
-                name='address'
-                rules={[{ required: true, message: t('addTuForms.form.validation.specifyAddress') }]}
-              >
-                <Input size='large' placeholder={t('addTuForms.form.placeholders.address')} />
-              </Form.Item>
-            </Col>
-          )}
+          <Col span={12}>
+            <Form.Item
+              label={t('addTuForms.form.labels.address')}
+              name='address'
+              rules={[{ required: !isRefusal, message: t('addTuForms.form.validation.specifyAddress') }]}
+            >
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.address')} />
+            </Form.Item>
+          </Col>
           <Col span={12}>
             <Form.Item
               label={t('addTuForms.form.labels.techConditionType')}
@@ -673,6 +702,25 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Form.Item>
           </Col>
         </Row>
+
+        {/* Поле причины отказа для типа "отказы" */}
+        {isRefusal && (
+          <Row gutter={16}>
+            <Col span={24}>
+              <Form.Item
+                name='notes'
+                label='Причина отказа'
+                rules={[{ required: true, message: 'Обязательное поле - укажите причину отказа' }]}
+              >
+                <TextArea 
+                  size='large' 
+                  rows={4}
+                  placeholder='Укажите причину отказа в выдаче технических условий...' 
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+        )}
 
         {isIncreaseLoads && (
           <>
@@ -717,7 +765,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               </Col>
             </Row>
 
-            {/* ФОРМУЛА ДЛЯ "НА УВЕЛИЧЕНИЕ НАГРУЗОК" - ИСПРАВЛЕНИЕ */}
+            {/* ФОРМУЛА ДЛЯ "НА УВЕЛИЧЕНИЕ НАГРУЗОК" */}
             <Row gutter={16}>
               <Col span={12}>
                 <Form.Item label={t('addTuForms.form.labels.formula')} name='formula' rules={[{ required: false }]}>
@@ -734,8 +782,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </>
         )}
 
-        {/* ТЕХНИЧЕСКИЕ ПАРАМЕТРЫ (скрыты для "На увеличение нагрузок") */}
-        <div style={{ display: isIncreaseLoads ? 'none' : undefined }}>
+        {/* ТЕХНИЧЕСКИЕ ПАРАМЕТРЫ (скрыты для "На увеличение нагрузок" и "отказы") */}
+        <div style={{ display: isIncreaseLoads || isRefusal ? 'none' : undefined }}>
           <Title level={4} style={{ borderBottom: '1px solid #D9D9D9', paddingBottom: '4px', marginTop: '24px' }}>
             {t('addTuForms.titles.techParams')}
           </Title>
@@ -745,7 +793,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               <Form.Item
                 label={t('addTuForms.form.labels.waterRequired')}
                 name='water_required'
-                rules={[{ required: !isIncreaseLoads, message: t('addTuForms.form.validation.required') }]}
+                rules={[{ required: !isIncreaseLoads && !isRefusal, message: t('addTuForms.form.validation.required') }]}
               >
                 <Input size='large' placeholder={t('addTuForms.form.placeholders.waterRequired')} />
               </Form.Item>
@@ -754,7 +802,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               <Form.Item
                 label={t('addTuForms.form.labels.pressureRequired')}
                 name='pressure_required'
-                rules={[{ required: !isIncreaseLoads, message: t('addTuForms.form.validation.required') }]}
+                rules={[{ required: !isIncreaseLoads && !isRefusal, message: t('addTuForms.form.validation.required') }]}
               >
                 <Input size='large' placeholder={t('addTuForms.form.placeholders.pressureRequired')} />
               </Form.Item>
@@ -777,7 +825,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           <Form.Item
             label={t('addTuForms.form.labels.sewageAmount')}
             name='sewage_amount'
-            rules={[{ required: !isIncreaseLoads, message: t('addTuForms.form.validation.required') }]}
+            rules={[{ required: !isIncreaseLoads && !isRefusal, message: t('addTuForms.form.validation.required') }]}
           >
             <Input size='large' placeholder={t('addTuForms.form.placeholders.sewageAmount')} />
           </Form.Item>
@@ -797,158 +845,162 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Row>
         </div>
 
-        {/* ПОДКЛЮЧЕНИЕ */}
-        <Title level={4} style={{ borderBottom: '1px solid #D9D9D9', paddingBottom: '4px', marginTop: '24px' }}>
-          {t('addTuForms.titles.connection')}
-        </Title>
-
-        {/* Водопровод и пожаротушение (скрывать при "На увеличение нагрузок") */}
-        <div style={{ display: isIncreaseLoads ? 'none' : undefined }}>
-          <Title level={5} style={{ marginTop: '12px' }}>
-            {t('tuDetails.titles.waterSupply')}
+        {/* ПОДКЛЮЧЕНИЕ (скрыто для "отказы") */}
+        <div style={{ display: isRefusal ? 'none' : undefined }}>
+          <Title level={4} style={{ borderBottom: '1px solid #D9D9D9', paddingBottom: '4px', marginTop: '24px' }}>
+            {t('addTuForms.titles.connection')}
           </Title>
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                label={'Подключение выполнить от водопроводной линии'}
-                name='water_pipe'
-                rules={[{ required: false }]}
-                normalize={(v) => (Array.isArray(v) ? v.slice(-1)[0] : v)}
-                getValueProps={(value: string | undefined) => ({ value: value ? [value] : [] })}
-              >
-                <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
-                  <Option value='существующий'>существующий</Option>
-                  <Option value='проектируемый'>проектируемый</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label={'Диаметром'} name='collector_diametr_water' rules={[{ required: false }]}>
-                <Input size='large' />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_water' rules={[{ required: false }]}>
-            <Input size='large' />
+
+          {/* Водопровод и пожаротушение (скрывать при "На увеличение нагрузок") */}
+          <div style={{ display: isIncreaseLoads ? 'none' : undefined }}>
+            <Title level={5} style={{ marginTop: '12px' }}>
+              {t('tuDetails.titles.waterSupply')}
+            </Title>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  label={'Подключение выполнить от водопроводной линии'}
+                  name='water_pipe'
+                  rules={[{ required: false }]}
+                  normalize={(v) => (Array.isArray(v) ? v.slice(-1)[0] : v)}
+                  getValueProps={(value: string | undefined) => ({ value: value ? [value] : [] })}
+                >
+                  <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
+                    <Option value='существующий'>существующий</Option>
+                    <Option value='проектируемый'>проектируемый</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label={'Диаметром'} name='collector_diametr_water' rules={[{ required: false }]}>
+                  <Input size='large' />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_water' rules={[{ required: false }]}>
+              <Input size='large' />
+            </Form.Item>
+            <Form.Item label={'Предусмотреть'} name='provide_water' rules={[{ required: false }]}>
+              <TextArea size='large' />
+            </Form.Item>
+
+            {/* Пожаротушение */}
+            <Title level={5} style={{ marginTop: '12px' }}>
+              {t('addTuForms.form.labels.fireInput1')}
+            </Title>
+
+            <Form.Item name='fire_input_1' label={'На пожаротушение объекта подключение выполнить'} rules={[{ required: false }]}>
+              <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
+                <Option value='существующий'>существующий</Option>
+                <Option value='проектируемый'>проектируемый</Option>
+              </Select>
+            </Form.Item>
+            <Row gutter={24}>
+              <Col span={12}>
+                <Form.Item
+                  label={t('addTuForms.form.labels.waterPipeDiameter1')}
+                  name='collector_diametr_fire_1'
+                  rules={[{ required: false }]}
+                >
+                  <Input size='large' />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_input_1' rules={[{ required: false }]}>
+                  <Input size='large' />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Title level={5} style={{ marginTop: '12px' }}>
+              {t('addTuForms.form.labels.fireInput2')}
+            </Title>
+            <Form.Item name='fire_input_2' label={'На пожаротушение объекта подключение выполнить'} rules={[{ required: false }]}>
+              <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
+                <Option value='существующий'>существующий</Option>
+                <Option value='проектируемый'>проектируемый</Option>
+              </Select>
+            </Form.Item>
+            <Row gutter={24}>
+              <Col span={12}>
+                <Form.Item
+                  label={t('addTuForms.form.labels.waterPipeDiameter2')}
+                  name='collector_diametr_fire_2'
+                  rules={[{ required: false }]}
+                >
+                  <Input size='large' />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_input_2' rules={[{ required: false }]}>
+                  <Input size='large' />
+                </Form.Item>
+              </Col>
+            </Row>
+          </div>
+
+          <Form.Item
+            label={t('addTuForms.form.labels.freePressureAtConnectionPoint')}
+            name='free_pressure_connection_point'
+            rules={[{ required: false }]}
+            preserve
+          >
+            <Input size='large' placeholder='10' type='number' />
           </Form.Item>
-          <Form.Item label={'Предусмотреть'} name='provide_water' rules={[{ required: false }]}>
+
+          {/* Канализация */}
+          <Title level={5} style={{ marginTop: '12px' }}>
+            {t('tuDetails.titles.sewer')}
+          </Title>
+          <div style={{ display: isIncreaseLoads ? 'none' : undefined }}>
+            <Row gutter={16}>
+              <Col span={8}>
+                <Form.Item
+                  label={t('addTuForms.form.labels.sewer')}
+                  name='sewer_pipe'
+                  rules={[{ required: false }]}
+                  normalize={(v) => (Array.isArray(v) ? v.slice(-1)[0] : v)}
+                  getValueProps={(value: string | undefined) => ({ value: value ? [value] : [] })}
+                >
+                  <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
+                    <Option value='существующий'>существующий</Option>
+                    <Option value='проектируемый'>проектируемый</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label={t('addTuForms.form.labels.collector')} name='collector_diametr_sewer' rules={[{ required: false }]}>
+                  <Input type='number' min={0} size='large' placeholder={t('addTuForms.form.placeholders.diameter')} />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_sewer' rules={[{ required: false }]}>
+                  <Input size='large' placeholder={t('addTuForms.form.placeholders.streetPass')} />
+                </Form.Item>
+              </Col>
+            </Row>
+          </div>
+          <Form.Item label={'Предусмотреть'} name='provide_sewer' rules={[{ required: false }]} preserve>
             <TextArea size='large' />
           </Form.Item>
-
-          {/* Пожаротушение */}
-          <Title level={5} style={{ marginTop: '12px' }}>
-            {t('addTuForms.form.labels.fireInput1')}
-          </Title>
-
-          <Form.Item name='fire_input_1' label={'На пожаротушение объекта подключение выполнить'} rules={[{ required: false }]}>
-            <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
-              <Option value='существующий'>существующий</Option>
-              <Option value='проектируемый'>проектируемый</Option>
-            </Select>
-          </Form.Item>
-          <Row gutter={24}>
-            <Col span={12}>
-              <Form.Item
-                label={t('addTuForms.form.labels.waterPipeDiameter1')}
-                name='collector_diametr_fire_1'
-                rules={[{ required: false }]}
-              >
-                <Input size='large' />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_input_1' rules={[{ required: false }]}>
-                <Input size='large' />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Title level={5} style={{ marginTop: '12px' }}>
-            {t('addTuForms.form.labels.fireInput2')}
-          </Title>
-          <Form.Item name='fire_input_2' label={'На пожаротушение объекта подключение выполнить'} rules={[{ required: false }]}>
-            <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
-              <Option value='существующий'>существующий</Option>
-              <Option value='проектируемый'>проектируемый</Option>
-            </Select>
-          </Form.Item>
-          <Row gutter={24}>
-            <Col span={12}>
-              <Form.Item
-                label={t('addTuForms.form.labels.waterPipeDiameter2')}
-                name='collector_diametr_fire_2'
-                rules={[{ required: false }]}
-              >
-                <Input size='large' />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_input_2' rules={[{ required: false }]}>
-                <Input size='large' />
-              </Form.Item>
-            </Col>
-          </Row>
         </div>
 
-        <Form.Item
-          label={t('addTuForms.form.labels.freePressureAtConnectionPoint')}
-          name='free_pressure_connection_point'
-          rules={[{ required: false }]}
-          preserve
-        >
-          <Input size='large' placeholder='10' type='number' />
-        </Form.Item>
+        {/* ФИНАНСЫ (скрыто для "отказы") */}
+        <div style={{ display: isRefusal ? 'none' : undefined }}>
+          <Title level={4} style={{ borderBottom: '1px solid #D9D9D9', paddingBottom: '4px', marginTop: '24px' }}>
+            {t('addTuForms.titles.finance')}
+          </Title>
 
-        {/* Канализация */}
-        <Title level={5} style={{ marginTop: '12px' }}>
-          {t('tuDetails.titles.sewer')}
-        </Title>
-        <div style={{ display: isIncreaseLoads ? 'none' : undefined }}>
-          <Row gutter={16}>
-            <Col span={8}>
-              <Form.Item
-                label={t('addTuForms.form.labels.sewer')}
-                name='sewer_pipe'
-                rules={[{ required: false }]}
-                normalize={(v) => (Array.isArray(v) ? v.slice(-1)[0] : v)}
-                getValueProps={(value: string | undefined) => ({ value: value ? [value] : [] })}
-              >
-                <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
-                  <Option value='существующий'>существующий</Option>
-                  <Option value='проектируемый'>проектируемый</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label={t('addTuForms.form.labels.collector')} name='collector_diametr_sewer' rules={[{ required: false }]}>
-                <Input type='number' min={0} size='large' placeholder={t('addTuForms.form.placeholders.diameter')} />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_sewer' rules={[{ required: false }]}>
-                <Input size='large' placeholder={t('addTuForms.form.placeholders.streetPass')} />
-              </Form.Item>
-            </Col>
-          </Row>
+          <Form.Item
+            label={t('addTuForms.form.labels.paymentDeadline')}
+            name='payment_deadline'
+            rules={[]}
+            normalize={(value: Dayjs) => formatDate(value)}
+            getValueProps={(value: string) => ({ value: parseDate(value) })}
+          >
+            <DatePicker size='large' placeholder={t('addTuForms.form.placeholders.paymentDeadline')} format='DD.MM.YYYY' />
+          </Form.Item>
         </div>
-        <Form.Item label={'Предусмотреть'} name='provide_sewer' rules={[{ required: false }]} preserve>
-          <TextArea size='large' />
-        </Form.Item>
-
-        {/* ФИНАНСЫ */}
-        <Title level={4} style={{ borderBottom: '1px solid #D9D9D9', paddingBottom: '4px', marginTop: '24px' }}>
-          {t('addTuForms.titles.finance')}
-        </Title>
-
-        <Form.Item
-          label={t('addTuForms.form.labels.paymentDeadline')}
-          name='payment_deadline'
-          rules={[]}
-          normalize={(value: Dayjs) => formatDate(value)}
-          getValueProps={(value: string) => ({ value: parseDate(value) })}
-        >
-          <DatePicker size='large' placeholder={t('addTuForms.form.placeholders.paymentDeadline')} format='DD.MM.YYYY' />
-        </Form.Item>
 
         <Row justify='end'>
           <Col>

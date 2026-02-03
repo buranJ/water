@@ -3,7 +3,7 @@ import { RouteObject } from 'react-router';
 import { DashboardLayout } from 'components/DashboardLayout';
 
 const Login = lazy(() => import('features/auth/pages'));
-const Geoportal = lazy(() => import('pages/Geoportal'));
+// const Geoportal = lazy(() => import('pages/Geoportal'));
 const TechnicalConditions = lazy(() => import('features/technical-conditions'));
 const AddTuForms = lazy(() => import('pages/AddTuForms'));
 const ExportData = lazy(() => import('pages/ExportData'));
@@ -35,8 +35,8 @@ export const routerConfig: RouteObject[] = [
     index: true
   },
   {
-    path: '/dashboard/geo',
-    element: <Geoportal title='dashboard.pages.geoportal' />
+    // path: '/dashboard/geo',
+    // element: <Geoportal title='dashboard.pages.geoportal' />
   },
   {
     path: '/dashboard/technical-conditions',

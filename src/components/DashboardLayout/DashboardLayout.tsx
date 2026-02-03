@@ -7,7 +7,7 @@ import { NotificationsBell } from 'components/NotificationsBell';
 import arrow from 'assets/icons/arrow.svg';
 import logo from 'assets/icons/logo.svg';
 import ExportIcon from 'assets/icons/sidebar/export.svg?react';
-import GeoportalIcon from 'assets/icons/sidebar/geoportal.svg?react';
+// import GeoportalIcon from 'assets/icons/sidebar/geoportal.svg?react';
 import TuIcon from 'assets/icons/sidebar/tu.svg?react';
 import './styles.scss';
 
@@ -75,11 +75,11 @@ export const DashboardLayout = ({ children, title }: Props) => {
     background: '#001529'
   };
   const items: MenuProps['items'] = [
-    {
-      key: '/dashboard/geo',
-      icon: <GeoportalIcon />,
-      label: t('dashboard.pages.geoportal')
-    },
+    // {
+    //   key: '/dashboard/geo',
+    //   // icon: <GeoportalIcon />,
+    //   label: t('dashboard.pages.geoportal')
+    // },
     hasPermission('view_technicalcondition') && {
       key: '/dashboard/technical-conditions',
       icon: <TuIcon />,
