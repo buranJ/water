@@ -584,7 +584,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Col>
         </Row>
 
-        {(!isIncreaseLoads && !isRefusal) && (
+        {!isIncreaseLoads && !isRefusal && (
           <Row gutter={24}>
             <Col span={24}>
               <Form.Item
@@ -607,11 +607,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         {isRefusal && (
           <Row gutter={24}>
             <Col span={24}>
-              <Form.Item
-                label={t('addTuForms.form.labels.requestSource')}
-                name='request_source'
-                rules={[{ required: false }]}
-              >
+              <Form.Item label={t('addTuForms.form.labels.requestSource')} name='request_source' rules={[{ required: false }]}>
                 <Select size='large' placeholder={t('addTuForms.form.placeholders.requestSource')} showSearch optionFilterProp='children'>
                   {requestSources?.results?.map((rs: any) => (
                     <Option key={rs.id} value={rs.title}>
@@ -712,11 +708,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
                 label='Причина отказа'
                 rules={[{ required: true, message: 'Обязательное поле - укажите причину отказа' }]}
               >
-                <TextArea 
-                  size='large' 
-                  rows={4}
-                  placeholder='Укажите причину отказа в выдаче технических условий...' 
-                />
+                <TextArea size='large' rows={4} placeholder='Укажите причину отказа в выдаче технических условий...' />
               </Form.Item>
             </Col>
           </Row>
@@ -725,12 +717,30 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         {isIncreaseLoads && (
           <>
             {/* Номер предыдущего тех условия */}
-            <Row gutter={16}>
-              <Col span={24}>
+            <Row gutter={24}>
+              <Col span={12}>
+                <Form.Item
+                  label={t('addTuForms.form.labels.requestSource')}
+                  name='request_source'
+                  rules={[{ required: true, message: t('addTuForms.form.validation.specifySource') }]}
+                >
+                  <Select size='large' placeholder={t('addTuForms.form.placeholders.requestSource')} showSearch optionFilterProp='children'>
+                    {requestSources?.results?.map((rs: any) => (
+                      <Option key={rs.id} value={rs.title}>
+                        {rs.title}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={12}>
                 <Form.Item name='parent_tc_number' label='Номер предыдущего тех условия' rules={[{ required: false }]}>
                   <Input size='large' placeholder='Введите номер предыдущего тех условия' onBlur={onParentTuBlur} />
                 </Form.Item>
               </Col>
+            </Row>
+            <Row gutter={16}>
+              
             </Row>
 
             {/* Вода и Стоки */}
@@ -768,7 +778,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             {/* ФОРМУЛА ДЛЯ "НА УВЕЛИЧЕНИЕ НАГРУЗОК" */}
             <Row gutter={16}>
               <Col span={12}>
-                <Form.Item label={t('addTuForms.form.labels.formula')} name='formula' rules={[{ required: false }]}>
+                <Form.Item label={t('addTuForms.form.labels.formula')} name='formula' rules={[{ required: true }]}>
                   <Select size='large' placeholder={t('addTuForms.form.placeholders.formula')}>
                     {formulas?.results?.map((formula: any) => (
                       <Option key={formula.id} value={formula.id}>
@@ -832,7 +842,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item label={t('addTuForms.form.labels.formula')} name='formula' rules={[{ required: false }]}>
+              <Form.Item label={t('addTuForms.form.labels.formula')} name='formula' rules={[{ required: true }]}>
                 <Select size='large' placeholder={t('addTuForms.form.placeholders.formula')}>
                   {formulas?.results?.map((formula: any) => (
                     <Option key={formula.id} value={formula.id}>
