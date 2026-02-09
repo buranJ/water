@@ -66,6 +66,7 @@ type FormValues = Omit<ITyItem, 'type_ty' | 'customer' | 'application'> & {
   additional_cold_water_required?: string;
   additional_sewage_amount?: string;
   previous_tu_number?: string;
+  old_council_date?: string; // Новое поле для "на увеличение нагрузок"
 
   // Refusal field
   notes?: string;
@@ -216,8 +217,13 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             tech_council_date: values.tech_council_date,
             collector_diametr_water: values.collector_diametr_water,
             parent_tc_number: values.parent_tc_number,
-            notes: values.notes // Добавляем поле причины отказа
+            notes: values.notes
           };
+
+          // Добавляем old_council_date только для "на увеличение нагрузок"
+          if (isIncreaseLoads && values.old_council_date) {
+            payloadCreate.old_council_date = values.old_council_date;
+          }
 
           // Добавляем formula для всех типов ТУ
           if (values.formula != null) {
@@ -416,6 +422,12 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           additional_sewage_amount: values.additional_sewage_amount,
           notes: values.notes
         };
+
+        // Добавляем old_council_date только для "на увеличение нагрузок" в режиме редактирования
+        if (isIncreaseLoads && values.old_council_date) {
+          base.old_council_date = values.old_council_date;
+        }
+
         if (values.request_date) base.request_date = values.request_date;
         if (values.payment_deadline) base.payment_deadline = values.payment_deadline;
         if (tuQuery.data.application?.id != null) base.application = tuQuery.data.application.id;
@@ -442,7 +454,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
       triggerCheckEntity,
       triggerCheckTuCustomer,
       triggerCheckTuEntity,
-      isRefusal
+      isRefusal,
+      isIncreaseLoads
     ]
   );
 
@@ -471,6 +484,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         increase_sewage: tuQuery.data.increase_sewage,
         additional_cold_water_required: tuQuery.data.additional_cold_water_required,
         additional_sewage_amount: tuQuery.data.additional_sewage_amount,
+        old_council_date: toStr((tuQuery.data as any).old_council_date as unknown as string | Date | undefined),
         notes: tuQuery.data.notes
       } as any);
     }
@@ -521,7 +535,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         increase_water: (data as any).water_required,
         increase_sewage: (data as any).sewage_amount,
         additional_cold_water_required: (data as any).additional_cold_water_required,
-        additional_sewage_amount: (data as any).additional_sewage_amount
+        additional_sewage_amount: (data as any).additional_sewage_amount,
+        old_council_date: toStr((data as any).council_date as any) // Подставляем дату совета из предыдущего ТУ
       };
 
       delete mapped.tech_council_date;
@@ -584,7 +599,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Col>
         </Row>
 
-        {!isIncreaseLoads && !isRefusal && (
+        {(!isIncreaseLoads && !isRefusal) && (
           <Row gutter={24}>
             <Col span={24}>
               <Form.Item
@@ -607,7 +622,11 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         {isRefusal && (
           <Row gutter={24}>
             <Col span={24}>
-              <Form.Item label={t('addTuForms.form.labels.requestSource')} name='request_source' rules={[{ required: false }]}>
+              <Form.Item
+                label={t('addTuForms.form.labels.requestSource')}
+                name='request_source'
+                rules={[{ required: false }]}
+              >
                 <Select size='large' placeholder={t('addTuForms.form.placeholders.requestSource')} showSearch optionFilterProp='children'>
                   {requestSources?.results?.map((rs: any) => (
                     <Option key={rs.id} value={rs.title}>
@@ -708,7 +727,11 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
                 label='Причина отказа'
                 rules={[{ required: true, message: 'Обязательное поле - укажите причину отказа' }]}
               >
-                <TextArea size='large' rows={4} placeholder='Укажите причину отказа в выдаче технических условий...' />
+                <TextArea 
+                  size='large' 
+                  rows={4}
+                  placeholder='Укажите причину отказа в выдаче технических условий...' 
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -716,9 +739,9 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
         {isIncreaseLoads && (
           <>
-            {/* Номер предыдущего тех условия */}
+            {/* Источник запроса для "на увеличение нагрузок" */}
             <Row gutter={24}>
-              <Col span={12}>
+              <Col span={24}>
                 <Form.Item
                   label={t('addTuForms.form.labels.requestSource')}
                   name='request_source'
@@ -733,15 +756,33 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
                   </Select>
                 </Form.Item>
               </Col>
+            </Row>
+
+            {/* Номер предыдущего тех условия */}
+            <Row gutter={16}>
               <Col span={12}>
                 <Form.Item name='parent_tc_number' label='Номер предыдущего тех условия' rules={[{ required: false }]}>
                   <Input size='large' placeholder='Введите номер предыдущего тех условия' onBlur={onParentTuBlur} />
                 </Form.Item>
               </Col>
+               <Col span={12}>
+                <Form.Item
+                  name='old_council_date'
+                  label='Дата предыдущего тех совета'
+                  rules={[{ required: false }]}
+                  normalize={(value: Dayjs) => formatDate(value)}
+                  getValueProps={(value: string) => ({ value: parseDate(value) })}
+                >
+                  <DatePicker 
+                    format='DD.MM.YYYY' 
+                    size='large' 
+                    placeholder='Выберите дату предыдущего тех совета'
+                  />
+                </Form.Item>
+              </Col>
             </Row>
-            <Row gutter={16}>
-              
-            </Row>
+
+          
 
             {/* Вода и Стоки */}
             <Row gutter={16}>
@@ -775,10 +816,10 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               </Col>
             </Row>
 
-            {/* ФОРМУЛА ДЛЯ "НА УВЕЛИЧЕНИЕ НАГРУЗОК" */}
+            {/* ФОРМУЛА ДЛЯ "НА УВЕЛИЧЕНИЕ НАГРУЗОК" - ОБЯЗАТЕЛЬНОЕ */}
             <Row gutter={16}>
               <Col span={12}>
-                <Form.Item label={t('addTuForms.form.labels.formula')} name='formula' rules={[{ required: true }]}>
+                <Form.Item label={t('addTuForms.form.labels.formula')} name='formula' rules={[{ required: true, message: t('addTuForms.form.validation.required') }]}>
                   <Select size='large' placeholder={t('addTuForms.form.placeholders.formula')}>
                     {formulas?.results?.map((formula: any) => (
                       <Option key={formula.id} value={formula.id}>
@@ -842,7 +883,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item label={t('addTuForms.form.labels.formula')} name='formula' rules={[{ required: true }]}>
+              <Form.Item label={t('addTuForms.form.labels.formula')} name='formula' rules={[{ required: true, message: t('addTuForms.form.validation.required') }]}>
                 <Select size='large' placeholder={t('addTuForms.form.placeholders.formula')}>
                   {formulas?.results?.map((formula: any) => (
                     <Option key={formula.id} value={formula.id}>
