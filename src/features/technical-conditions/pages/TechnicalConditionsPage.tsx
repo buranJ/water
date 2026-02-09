@@ -388,7 +388,7 @@ export const TechnicalConditionsPage = () => {
         <div style={{ width: '100%', overflowX: 'auto' }}>
           <Table resizable pagination={false} loading={isLoading} columns={columns} dataSource={tableData} rowKey='id' bordered />
         </div>
-        <Pagination total={tuData?.count || 0} current={page} pageSize={pageSize} onChange={handlePageChange} />
+        <Pagination showSizeChanger total={tuData?.count || 0} current={page} pageSize={pageSize} onChange={handlePageChange} />
       </div>
     </DashboardLayout>
   );
