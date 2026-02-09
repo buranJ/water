@@ -346,7 +346,7 @@ export const TechnicalConditionsPage = () => {
           onOk={handleSavePresetOk}
           onCancel={() => setSaveModalOpen(false)}
           confirmLoading={creatingPreset}
-          destroyOnClose
+          destroyOnHidden
         >
           <Form form={saveForm} layout='vertical'>
             <Form.Item
@@ -366,7 +366,7 @@ export const TechnicalConditionsPage = () => {
           open={exportModal}
           title={t('technicalConditions.export.title', 'Экспорт данных')}
           onCancel={() => setExportModal(false)}
-          destroyOnClose
+          destroyOnHidden
           footer={
             <Space>
               <Button onClick={() => setExportModal(false)}>{t('common.cancel')}</Button>
