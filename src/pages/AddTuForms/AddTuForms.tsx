@@ -768,7 +768,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
                <Col span={12}>
                 <Form.Item
                   name='old_council_date'
-                  label='Дата предыдущего тех совета'
+                  label='Дата'
                   rules={[{ required: false }]}
                   normalize={(value: Dayjs) => formatDate(value)}
                   getValueProps={(value: string) => ({ value: parseDate(value) })}
@@ -776,7 +776,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
                   <DatePicker 
                     format='DD.MM.YYYY' 
                     size='large' 
-                    placeholder='Выберите дату предыдущего тех совета'
+                    placeholder='Выберите дату'
                   />
                 </Form.Item>
               </Col>
