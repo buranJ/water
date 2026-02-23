@@ -26,6 +26,15 @@ export type {
   IGetFileListParams,
   IUploadFileParams
 } from './fileFolder.requests';
+export type {
+  ICreateLandParcelParams,
+  IDeleteLandParcelParams,
+  IGetAllLandParcelsParams,
+  IGetLandParcelByIdParams,
+  ILandParcel,
+  ILandParcelsListResponse,
+  IUpdateLandParcelParams
+} from './LandParcel.types';
 export type { IGetObjectChangeHistoryParams, IGetObjectChangeHistoryResponse } from './object.requests';
 export type { IFilterPreset, IFilterPresetRequest, IGetPresetsParams, IGetPresetsResponse, PresetTarget } from './presets.requests';
 export type { IExportReportsParams, IExportReportsResponse } from './reports.requests';

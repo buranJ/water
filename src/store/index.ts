@@ -11,6 +11,7 @@ import {
   filefolderApi,
   formulaApi,
   geoportalApi,
+  landParcelApi,
   notificationsApi,
   objectApi,
   presetsApi,
@@ -42,6 +43,8 @@ const store = configureStore({
     [notificationsApi.reducerPath]: notificationsApi.reducer,
     [presetsApi.reducerPath]: presetsApi.reducer,
     [requestSourceApi.reducerPath]: requestSourceApi.reducer,
+    [landParcelApi.reducerPath]: landParcelApi.reducer,
+
     [streetApi.reducerPath]: streetApi.reducer
   },
   middleware: (getDefaultMiddleware) =>
@@ -68,7 +71,8 @@ const store = configureStore({
       tyImportApi.middleware,
       requestSourceApi.middleware,
       streetApi.middleware,
-      presetsApi.middleware
+      presetsApi.middleware,
+      landParcelApi.middleware
     )
 });
 

@@ -2,7 +2,15 @@ import { type ReactNode, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Avatar, Flex, Layout, Menu, type MenuProps, Skeleton, theme, Typography } from 'antd';
-import { ExportOutlined, FileTextOutlined, LeftOutlined, TeamOutlined, UploadOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  EnvironmentOutlined,
+  ExportOutlined,
+  FileTextOutlined,
+  LeftOutlined,
+  TeamOutlined,
+  UploadOutlined,
+  UserOutlined
+} from '@ant-design/icons';
 import { NotificationsBell } from 'components/NotificationsBell';
 import arrow from 'assets/icons/arrow.svg';
 import logo from 'assets/icons/logo.svg';
@@ -89,6 +97,11 @@ export const DashboardLayout = ({ children, title }: Props) => {
       key: '/dashboard/invoices',
       icon: <FileTextOutlined />,
       label: t('dashboard.pages.bills')
+    },
+    {
+      key: '/dashboard/land-parcels',
+      icon: <EnvironmentOutlined />,
+      label: 'Земельные участки'
     },
     {
       key: '/dashboard/protocols',

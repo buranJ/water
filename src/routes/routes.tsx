@@ -2,8 +2,11 @@ import { lazy } from 'react';
 import { RouteObject } from 'react-router';
 import { DashboardLayout } from 'components/DashboardLayout';
 
+const LandParcelsPage = lazy(() => import('pages/LandParcelsPage'));
+const AddLandParcelForm = lazy(() => import('pages/AddLandParcelForm'));
+const LandParcelDetails = lazy(() => import('pages/LandParcelDetails'));
+
 const Login = lazy(() => import('features/auth/pages'));
-// const Geoportal = lazy(() => import('pages/Geoportal'));
 const TechnicalConditions = lazy(() => import('features/technical-conditions'));
 const AddTuForms = lazy(() => import('pages/AddTuForms'));
 const ExportData = lazy(() => import('pages/ExportData'));
@@ -26,7 +29,7 @@ const Notifications = lazy(() => import('pages/Notification'));
 const TyImport = lazy(() => import('pages/TyImport'));
 const Invoices = lazy(() => import('pages/Invoices'));
 const Protocols = lazy(() => import('pages/Protocols'));
-const ProtocolsExport = lazy(() => import('pages/ProtocolsExport')); // НОВЫЙ ИМПОРТ
+const ProtocolsExport = lazy(() => import('pages/ProtocolsExport'));
 
 export const routerConfig: RouteObject[] = [
   {
@@ -34,10 +37,28 @@ export const routerConfig: RouteObject[] = [
     element: <Login />,
     index: true
   },
+
+  // ✅ ЗЕМЕЛЬНЫЕ УЧАСТКИ - ПРАВИЛЬНЫЙ ПОРЯДОК!
   {
-    // path: '/dashboard/geo',
-    // element: <Geoportal title='dashboard.pages.geoportal' />
+    path: '/dashboard/land-parcels',
+    element: <LandParcelsPage />
   },
+  {
+    // ✅ ДОБАВЛЕНИЕ - ДОЛЖНО БЫТЬ ПЕРЕД :id
+    path: '/dashboard/land-parcels/add',
+    element: <AddLandParcelForm title='routers.addLandParcel' />
+  },
+  {
+    // ✅ РЕДАКТИРОВАНИЕ - ДОЛЖНО БЫТЬ ПЕРЕД :id (без /edit)
+    path: '/dashboard/land-parcels/:id/edit',
+    element: <AddLandParcelForm title='routers.editLandParcel' />
+  },
+  {
+    // ✅ ДЕТАЛЬНАЯ СТРАНИЦА - ПОСЛЕ всех конкретных роутов
+    path: '/dashboard/land-parcels/:id',
+    element: <LandParcelDetails title='routers.landParcelDetails' />
+  },
+
   {
     path: '/dashboard/technical-conditions',
     element: <TechnicalConditions />
