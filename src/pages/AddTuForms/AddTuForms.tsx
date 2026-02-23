@@ -564,6 +564,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         name='add-tu-form'
         layout='vertical'
         onFinish={onFinish}
+        onFinishFailed={(errorInfo) => console.log(errorInfo)}
         onKeyDown={handleEnterFocusNext}
         className='add-tu-forms'
       >
@@ -727,10 +728,10 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
                 label='Причина отказа'
                 rules={[{ required: true, message: 'Обязательное поле - укажите причину отказа' }]}
               >
-                <TextArea 
-                  size='large' 
+                <TextArea
+                  size='large'
                   rows={4}
-                  placeholder='Укажите причину отказа в выдаче технических условий...' 
+                  placeholder='Укажите причину отказа в выдаче технических условий...'
                 />
               </Form.Item>
             </Col>
@@ -773,16 +774,16 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
                   normalize={(value: Dayjs) => formatDate(value)}
                   getValueProps={(value: string) => ({ value: parseDate(value) })}
                 >
-                  <DatePicker 
-                    format='DD.MM.YYYY' 
-                    size='large' 
+                  <DatePicker
+                    format='DD.MM.YYYY'
+                    size='large'
                     placeholder='Выберите дату'
                   />
                 </Form.Item>
               </Col>
             </Row>
 
-          
+
 
             {/* Вода и Стоки */}
             <Row gutter={16}>
@@ -819,7 +820,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             {/* ФОРМУЛА ДЛЯ "НА УВЕЛИЧЕНИЕ НАГРУЗОК" - ОБЯЗАТЕЛЬНОЕ */}
             <Row gutter={16}>
               <Col span={12}>
-                <Form.Item label={t('addTuForms.form.labels.formula')} name='formula' rules={[{ required: true, message: t('addTuForms.form.validation.required') }]}>
+                <Form.Item label={t('addTuForms.form.labels.formula')} name='formula' rules={[{ required: !isRefusal, message: t('addTuForms.form.validation.required') }]}>
                   <Select size='large' placeholder={t('addTuForms.form.placeholders.formula')}>
                     {formulas?.results?.map((formula: any) => (
                       <Option key={formula.id} value={formula.id}>
@@ -883,7 +884,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item label={t('addTuForms.form.labels.formula')} name='formula' rules={[{ required: true, message: t('addTuForms.form.validation.required') }]}>
+              <Form.Item label={t('addTuForms.form.labels.formula')} name='formula' rules={[{ required: !isRefusal, message: t('addTuForms.form.validation.required') }]}>
                 <Select size='large' placeholder={t('addTuForms.form.placeholders.formula')}>
                   {formulas?.results?.map((formula: any) => (
                     <Option key={formula.id} value={formula.id}>
