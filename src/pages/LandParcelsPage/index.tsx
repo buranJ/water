@@ -10,6 +10,7 @@ import { getColumns } from './LandParcelsPage.helpers';
 import './styles.scss';
 
 import { useDeleteLandParcelMutation, useGetAllLandParcelsQuery } from 'api/LandParcel.api';
+import { usePermissions } from 'hooks/useAuth';
 
 type ColumnFilters = {
   request_number?: string;
@@ -36,6 +37,7 @@ interface LandParcelsPageProps {
 
 export const LandParcelsPage: FC<LandParcelsPageProps> = ({ title }) => {
   const navigate = useNavigate();
+  const { hasPermission } = usePermissions();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Pagination from URL
@@ -220,9 +222,10 @@ export const LandParcelsPage: FC<LandParcelsPageProps> = ({ title }) => {
           }
         },
         filters: columnFilters,
-        onFilterChange: handleColumnFilterChange
+        onFilterChange: handleColumnFilterChange,
+        hasPermission
       }),
-    [navigate, columnFilters]
+    [navigate, columnFilters, hasPermission]
   );
 
   const handlePageChange = (newPage: number, newPageSize?: number) => {

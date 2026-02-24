@@ -3,6 +3,7 @@ import { Badge, Button, Col, DatePicker, Form, Input, Row, Select, Space } from 
 import { DownloadOutlined, FilterOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 // import dayjs, { Dayjs } from 'dayjs';
 import './styles.scss';
+import { usePermissions } from 'hooks/useAuth';
 
 const { RangePicker } = DatePicker;
 
@@ -30,6 +31,7 @@ export const LandParcelsFilterBar = ({ onFilterChange, onAddClick, onDownloadCli
   const [form] = Form.useForm();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [activeCount, setActiveCount] = useState(0);
+  const { hasPermission } = usePermissions();
 
   useEffect(() => {
     if (initialValues) {
@@ -169,7 +171,7 @@ export const LandParcelsFilterBar = ({ onFilterChange, onAddClick, onDownloadCli
       </Form>
 
       <Space>
-        <Button type='primary' icon={<PlusOutlined />} onClick={() => onAddClick()}>
+        <Button disabled={!hasPermission('add_landparcel')} type='primary' icon={<PlusOutlined />} onClick={() => onAddClick()}>
           Добавить участок
         </Button>
 

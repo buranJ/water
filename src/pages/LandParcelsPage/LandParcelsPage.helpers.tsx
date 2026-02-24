@@ -16,9 +16,10 @@ type IGetColumnsFn = (options: {
   onClick: (record: ILandParcel, action: ActionType) => void;
   filters: ColumnFilters;
   onFilterChange: (field: keyof ColumnFilters, value: string) => void;
+  hasPermission: (codename: string) => boolean;
 }) => ColumnsType<ILandParcel>;
 
-export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange }) => {
+export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange, hasPermission }) => {
   // Общие свойства для кликабельных ячеек
   const clickableCellProps = (record: ILandParcel) => ({
     style: { cursor: 'pointer' },
@@ -133,21 +134,25 @@ export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange }) 
       fixed: 'right',
       render: (_, record) => (
         <Space>
-          <Button
-            icon={<EditOutlined />}
-            onClick={(e) => {
-              e.stopPropagation();
-              onClick(record, 'edit');
-            }}
-          />
-          <Button
-            icon={<DeleteOutlined />}
-            danger
-            onClick={(e) => {
-              e.stopPropagation();
-              onClick(record, 'delete');
-            }}
-          />
+          {hasPermission('change_landparcel') && (
+            <Button
+              icon={<EditOutlined />}
+              onClick={(e) => {
+                e.stopPropagation();
+                onClick(record, 'edit');
+              }}
+            />
+          )}
+          {hasPermission('delete_landparcel') && (
+            <Button
+              icon={<DeleteOutlined />}
+              danger
+              onClick={(e) => {
+                e.stopPropagation();
+                onClick(record, 'delete');
+              }}
+            />
+          )}
         </Space>
       )
     }

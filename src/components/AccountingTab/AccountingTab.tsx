@@ -40,6 +40,8 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
   const [isProtocolEditModalVisible, setIsProtocolEditModalVisible] = useState<boolean>(false);
   const { t } = useTranslation();
 
+  const { hasPermission } = usePermissions();
+
   const {
     data: protocolData,
     isLoading: protocolLoading,
@@ -355,10 +357,10 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
               {technicalConditionId}-472
             </Title>
             <Space wrap size={[12, 8]} style={{ flex: '0 0 auto' }}>
-              <Button icon={<EditOutlined />} type='primary' onClick={handleEditClick} size='middle' disabled={isEditDisabled}>
+              <Button disabled={!hasPermission('change_protocol')} icon={<EditOutlined />} type='primary' onClick={handleEditClick} size='middle'>
                 {t('common.edit')}
               </Button>
-              <Button icon={<EditOutlined />} type='default' onClick={handleProtocolEditClick} size='middle'>
+              <Button disabled={!hasPermission('change_protocol')} icon={<EditOutlined />} type='default' onClick={handleProtocolEditClick} size='middle'>
                 Изменить протокол
               </Button>
               <Button icon={<DownloadOutlined />} type='default' onClick={handleDownloadProtocol} loading={isDownloading} size='middle'>
@@ -437,11 +439,11 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
     return t('tuDetails.archivedMessage');
   }
 
-  const { hasPermission } = usePermissions();
-
   if (!hasPermission('view_protocol')) {
     return <div>Нет доступа</div>;
   }
+
+  // change_protocol
 
   return (
     <Space direction='vertical' size={24} style={{ width: '100%' }}>
@@ -534,6 +536,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
               onClick={handleUpload}
               size='large'
               style={{ height: '48px', fontSize: '16px' }}
+              disabled={!hasPermission('add_payment')}
             >
               {t('common.upload')}
             </Button>

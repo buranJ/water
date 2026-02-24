@@ -7,6 +7,7 @@ import type { IAccountingInvoice, IPayment } from 'types/entities/accounting';
 import { AddPaymentModal } from './AddPaymentModal';
 
 import { useGetPaymentsByInvoiceQuery } from 'api/Accounting.api';
+import { usePermissions } from 'hooks/useAuth';
 
 const { Title, Text } = Typography;
 
@@ -23,6 +24,7 @@ interface IInvoicePaymentsProps {
 
 const InvoicePayments: FC<IInvoicePaymentsProps> = ({ invoice, onAddPayment }) => {
   const { t } = useTranslation();
+  const { hasPermission } = usePermissions();
 
   const {
     data: paymentsData,
@@ -164,7 +166,7 @@ const InvoicePayments: FC<IInvoicePaymentsProps> = ({ invoice, onAddPayment }) =
         <Text strong>
           {t('protocolDetail.tabs.payments')} ({payments.length})
         </Text>
-        <Button type='primary' size='small' icon={<PlusOutlined />} onClick={() => onAddPayment(invoice.id.toString())}>
+        <Button disabled={!hasPermission('add_payment')} type='primary' size='small' icon={<PlusOutlined />} onClick={() => onAddPayment(invoice.id.toString())}>
           {t('paymentsTab.buttons.add')}
         </Button>
       </Flex>

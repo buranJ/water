@@ -103,6 +103,7 @@ export const AddPaymentModal: FC<IProps> = ({ visible, onClose, invoiceId }) => 
 
   return (
     <Modal title={t('paymentsModal.title')} open={visible} onCancel={handleCancel} width={600} footer={null}>
+      йцукен
       <Form form={form} layout='vertical' onFinish={handleSubmit} style={{ marginTop: 16 }}>
         <Row gutter={16}>
           <Col span={12}>

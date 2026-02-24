@@ -98,7 +98,7 @@ export const DashboardLayout = ({ children, title }: Props) => {
       icon: <FileTextOutlined />,
       label: t('dashboard.pages.bills')
     },
-    {
+    hasPermission('view_landparcel') && {
       key: '/dashboard/land-parcels',
       icon: <EnvironmentOutlined />,
       label: 'Земельные участки'
