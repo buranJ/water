@@ -9,6 +9,7 @@ import moreFileImg from 'assets/images/Architecture/more-file.png';
 
 import { useCreateFilefolderMutation } from 'api/FileFolder.api';
 import { Modal } from 'ui/Modal';
+// import { usePermissions } from 'hooks/useAuth';
 
 const { Title } = Typography;
 
@@ -45,8 +46,15 @@ export const Architecture: FC<IProps> = ({ documentsRequire, documentsCustom, ca
     }
   }, [isError, isSuccess, t]);
 
+  // const { hasPermission } = usePermissions();
+
+  // if (!hasPermission('view_protocol')) {
+  //   return <div>Нет доступа</div>;
+  // }
+
   return (
     <>
+    qwertyu
       <div style={{ marginTop: 24 }}>
         <Title level={4}>{t('architecture.titles.documentsToUpload')}</Title>
         <Row gutter={[16, 16]} style={{ marginTop: 16 }}>

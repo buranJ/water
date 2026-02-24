@@ -16,6 +16,7 @@ import {
   useLazyDownloadProtocolQuery
 } from 'api/Accounting.api';
 import { useLazyGetInvoicesByProtocolTyQuery } from 'api/Buhgalteria.api';
+import { usePermissions } from 'hooks/useAuth';
 
 const { Title, Text } = Typography;
 
@@ -434,6 +435,12 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
 
   if (data?.status !== 'active') {
     return t('tuDetails.archivedMessage');
+  }
+
+  const { hasPermission } = usePermissions();
+
+  if (!hasPermission('view_protocol')) {
+    return <div>Нет доступа</div>;
   }
 
   return (
