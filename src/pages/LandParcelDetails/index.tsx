@@ -7,6 +7,7 @@ import { DashboardLayout } from 'components';
 import './styles.scss';
 
 import { useDeleteLandParcelMutation, useGetLandParcelByIdQuery } from 'api/LandParcel.api';
+import { usePermissions } from 'hooks/useAuth';
 
 const { Title } = Typography;
 
@@ -17,6 +18,7 @@ interface LandParcelDetailsProps {
 const LandParcelDetails: FC<LandParcelDetailsProps> = ({ title }) => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const { hasPermission } = usePermissions();
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
@@ -93,11 +95,11 @@ const LandParcelDetails: FC<LandParcelDetailsProps> = ({ title }) => {
                 type='primary'
                 icon={<EditOutlined />}
                 onClick={() => navigate(`/dashboard/land-parcels/${id}/edit`)}
-                disabled={isLoading}
+                disabled={isLoading || !hasPermission('change_landparcel')}
               >
                 Редактировать
               </Button>
-              <Button danger icon={<DeleteOutlined />} onClick={() => setDeleteModalOpen(true)} disabled={isLoading}>
+              <Button danger icon={<DeleteOutlined />} onClick={() => setDeleteModalOpen(true)} disabled={isLoading || !hasPermission('delete_landparcel')}>
                 Удалить
               </Button>
             </Space>
