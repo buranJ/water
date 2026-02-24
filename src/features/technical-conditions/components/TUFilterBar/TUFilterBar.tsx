@@ -7,6 +7,7 @@ import './styles.scss';
 
 import { useGetTypesTyQuery } from 'api/Ty.api';
 import { t } from 'i18next';
+import { usePermissions } from 'hooks/useAuth';
 
 const { Option } = Select;
 
@@ -50,6 +51,7 @@ export const TUFilterBar = ({
   onApplyPreset,
   onRequestSavePreset
 }: Props) => {
+  const { hasPermission } = usePermissions();
   const [form] = Form.useForm();
   const { data: typesTy } = useGetTypesTyQuery();
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -253,7 +255,7 @@ export const TUFilterBar = ({
       </Form>
 
       <Space>
-        <Button type='primary' icon={<PlusOutlined />} onClick={() => onAddClick()}>
+        <Button disabled={!hasPermission('add_technicalcondition')} type='primary' icon={<PlusOutlined />} onClick={() => onAddClick()}>
           {t('filterBar.add')}
         </Button>
 
