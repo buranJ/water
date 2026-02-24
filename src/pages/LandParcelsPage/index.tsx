@@ -1,29 +1,39 @@
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
-import { Button, message, Modal, Space } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { message, Modal } from 'antd';
 import { Table } from 'common/ui';
 import { Pagination } from 'common/ui';
 import { DashboardLayout } from 'components';
 import { ILandParcel } from 'types/requests';
+import { LandParcelsFilterBar } from './LandParcelsFilterBar/';
 import { getColumns } from './LandParcelsPage.helpers';
 import './styles.scss';
 
 import { useDeleteLandParcelMutation, useGetAllLandParcelsQuery } from 'api/LandParcel.api';
 
 type ColumnFilters = {
-  title?: string;
-  kadastr_number?: string;
+  request_number?: string;
   customer_name?: string;
   address?: string;
 };
 
-// ✅ ДОБАВИЛИ interface
+interface LandParcelsFilterValues {
+  search?: string;
+  request_number?: string;
+  customer_name?: string;
+  address?: string;
+  purpose?: string;
+  council_date_start?: string;
+  council_date_end?: string;
+  tech_council_date_start?: string;
+  tech_council_date_end?: string;
+  ordering?: string;
+}
+
 interface LandParcelsPageProps {
   title?: string;
 }
 
-// ✅ ИЗМЕНИЛИ сигнатуру компонента
 export const LandParcelsPage: FC<LandParcelsPageProps> = ({ title }) => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -32,27 +42,34 @@ export const LandParcelsPage: FC<LandParcelsPageProps> = ({ title }) => {
   const page = Number(searchParams.get('page')) > 0 ? Number(searchParams.get('page')) : 1;
   const pageSize = Number(searchParams.get('page_size')) > 0 ? Number(searchParams.get('page_size')) : 10;
 
+  const s = (key: string) => searchParams.get(key) || undefined;
+
   // Filters from URL
-  const search = searchParams.get('search') || undefined;
-  const titleParam = searchParams.get('title') || undefined;
-  const kadastrParam = searchParams.get('kadastr_number') || undefined;
-  const customerNameParam = searchParams.get('customer_name') || undefined;
-  const addressParam = searchParams.get('address') || undefined;
+  const search = s('search');
+  const requestNumberParam = s('request_number');
+  const customerNameParam = s('customer_name');
+  const addressParam = s('address');
+  const purposeParam = s('purpose');
+  const councilDateStart = s('council_date_start');
+  const councilDateEnd = s('council_date_end');
+  const techCouncilDateStart = s('tech_council_date_start');
+  const techCouncilDateEnd = s('tech_council_date_end');
+  const ordering = s('ordering') || '-created_at';
 
   // API Query
   const { data, isLoading } = useGetAllLandParcelsQuery({
     page,
     page_size: pageSize,
     search,
-    kadastr_number: kadastrParam
+    request_number: requestNumberParam,
+    ordering
   });
 
   const [deleteLandParcel] = useDeleteLandParcelMutation();
 
-  // Column filters state
+  // Column filters state (для инлайн фильтров в таблице)
   const [columnFilters, setColumnFilters] = useState<ColumnFilters>({
-    title: titleParam || '',
-    kadastr_number: kadastrParam || '',
+    request_number: requestNumberParam || '',
     customer_name: customerNameParam || '',
     address: addressParam || ''
   });
@@ -60,29 +77,24 @@ export const LandParcelsPage: FC<LandParcelsPageProps> = ({ title }) => {
   // Filtered data (client-side fallback)
   const [tableData, setTableData] = useState<ILandParcel[]>([]);
 
-  // Sync filters with URL
+  // Sync column filters with URL
   useEffect(() => {
     setColumnFilters({
-      title: titleParam || '',
-      kadastr_number: kadastrParam || '',
+      request_number: requestNumberParam || '',
       customer_name: customerNameParam || '',
       address: addressParam || ''
     });
-  }, [titleParam, kadastrParam, customerNameParam, addressParam]);
+  }, [requestNumberParam, customerNameParam, addressParam]);
 
   // Client-side filtering
   useEffect(() => {
     if (data?.results) {
       let filtered = data.results;
 
-      if (titleParam && titleParam.trim()) {
-        const term = titleParam.toLowerCase();
-        filtered = filtered.filter((d) => (d.title || '').toLowerCase().includes(term));
-      }
-
-      if (kadastrParam && kadastrParam.trim()) {
-        const term = kadastrParam.toLowerCase();
-        filtered = filtered.filter((d) => (d.kadastr_number || '').toLowerCase().includes(term));
+      // Фильтры из таблицы (инлайн)
+      if (requestNumberParam && requestNumberParam.trim()) {
+        const term = requestNumberParam.toLowerCase();
+        filtered = filtered.filter((d) => (d.request_number || '').toLowerCase().includes(term));
       }
 
       if (customerNameParam && customerNameParam.trim()) {
@@ -95,11 +107,43 @@ export const LandParcelsPage: FC<LandParcelsPageProps> = ({ title }) => {
         filtered = filtered.filter((d) => (d.address || '').toLowerCase().includes(term));
       }
 
+      // Фильтры из FilterBar
+      if (purposeParam && purposeParam.trim()) {
+        const term = purposeParam.toLowerCase();
+        filtered = filtered.filter((d) => (d.purpose || '').toLowerCase().includes(term));
+      }
+
+      if (councilDateStart && councilDateEnd) {
+        filtered = filtered.filter((d) => {
+          if (!d.council_date) return false;
+          const date = new Date(d.council_date);
+          return date >= new Date(councilDateStart) && date <= new Date(councilDateEnd);
+        });
+      }
+
+      if (techCouncilDateStart && techCouncilDateEnd) {
+        filtered = filtered.filter((d) => {
+          if (!d.tech_council_date) return false;
+          const date = new Date(d.tech_council_date);
+          return date >= new Date(techCouncilDateStart) && date <= new Date(techCouncilDateEnd);
+        });
+      }
+
       setTableData(filtered);
     }
-  }, [data, titleParam, kadastrParam, customerNameParam, addressParam]);
+  }, [
+    data,
+    requestNumberParam,
+    customerNameParam,
+    addressParam,
+    purposeParam,
+    councilDateStart,
+    councilDateEnd,
+    techCouncilDateStart,
+    techCouncilDateEnd
+  ]);
 
-  // Debounced filter change
+  // Debounced filter change (для инлайн фильтров таблицы)
   const filterDebounceRef = useRef<number | undefined>(undefined);
   const handleColumnFilterChange = (field: keyof ColumnFilters, value: string) => {
     setColumnFilters((prev) => ({ ...prev, [field]: value }));
@@ -115,8 +159,7 @@ export const LandParcelsPage: FC<LandParcelsPageProps> = ({ title }) => {
         else next.set(key, val);
       };
 
-      setOrDelete('title', field === 'title' ? value : columnFilters.title || '');
-      setOrDelete('kadastr_number', field === 'kadastr_number' ? value : columnFilters.kadastr_number || '');
+      setOrDelete('request_number', field === 'request_number' ? value : columnFilters.request_number || '');
       setOrDelete('customer_name', field === 'customer_name' ? value : columnFilters.customer_name || '');
       setOrDelete('address', field === 'address' ? value : columnFilters.address || '');
 
@@ -125,11 +168,26 @@ export const LandParcelsPage: FC<LandParcelsPageProps> = ({ title }) => {
     }, 400);
   };
 
+  // Filter change от FilterBar
+  const handleFilterChange = (values: LandParcelsFilterValues) => {
+    const next = new URLSearchParams(searchParams);
+    const setOrDelete = (key: string, val: unknown) => {
+      if (val === undefined || val === null || String(val).trim() === '') next.delete(key);
+      else next.set(key, String(val));
+    };
+
+    Object.entries(values).forEach(([k, v]) => setOrDelete(k, v as unknown));
+
+    next.set('page', '1');
+    next.set('page_size', String(pageSize));
+    setSearchParams(next, { replace: false });
+  };
+
   // Handle actions
   const handleDelete = async (record: ILandParcel) => {
     Modal.confirm({
       title: 'Удалить земельный участок?',
-      content: `Вы уверены, что хотите удалить участок "${record.title || `#${record.id}`}"?`,
+      content: `Вы уверены, что хотите удалить участок "${record.request_number || `#${record.id}`}"?`,
       okText: 'Удалить',
       okType: 'danger',
       cancelText: 'Отмена',
@@ -177,14 +235,23 @@ export const LandParcelsPage: FC<LandParcelsPageProps> = ({ title }) => {
   return (
     <DashboardLayout title={title || 'Земельные участки'}>
       <div className='land-parcels-page'>
-        {/* Toolbar */}
-        <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Space>
-            <Button type='primary' icon={<PlusOutlined />} onClick={() => navigate('/dashboard/land-parcels/add')}>
-              Добавить участок
-            </Button>
-          </Space>
-        </div>
+        {/* FilterBar */}
+        <LandParcelsFilterBar
+          initialValues={{
+            search,
+            request_number: requestNumberParam,
+            customer_name: customerNameParam,
+            address: addressParam,
+            purpose: purposeParam,
+            council_date_start: councilDateStart,
+            council_date_end: councilDateEnd,
+            tech_council_date_start: techCouncilDateStart,
+            tech_council_date_end: techCouncilDateEnd,
+            ordering
+          }}
+          onFilterChange={handleFilterChange}
+          onAddClick={() => navigate('/dashboard/land-parcels/add')}
+        />
 
         {/* Table */}
         <div style={{ width: '100%', overflowX: 'auto' }}>
@@ -198,5 +265,4 @@ export const LandParcelsPage: FC<LandParcelsPageProps> = ({ title }) => {
   );
 };
 
-// ✅ Default export
 export default LandParcelsPage;

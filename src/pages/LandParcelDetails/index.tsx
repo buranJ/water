@@ -10,12 +10,10 @@ import { useDeleteLandParcelMutation, useGetLandParcelByIdQuery } from 'api/Land
 
 const { Title } = Typography;
 
-// ✅ ДОБАВЛЯЕМ interface для props
 interface LandParcelDetailsProps {
   title?: string;
 }
 
-// ✅ ДОБАВЛЯЕМ FC типизацию и props
 const LandParcelDetails: FC<LandParcelDetailsProps> = ({ title }) => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
@@ -44,7 +42,7 @@ const LandParcelDetails: FC<LandParcelDetailsProps> = ({ title }) => {
     }
   };
 
-  // ✅ Обработка ошибки
+  // Обработка ошибки
   if (error) {
     console.error('❌ Error loading land parcel:', error);
     return (
@@ -84,7 +82,7 @@ const LandParcelDetails: FC<LandParcelDetailsProps> = ({ title }) => {
               </Button>
               {landParcel && (
                 <Title level={3} style={{ margin: 0 }}>
-                  {landParcel.title || `Участок #${landParcel.id}`}
+                  {landParcel.request_number || `Участок #${landParcel.id}`}
                 </Title>
               )}
             </Space>
@@ -109,17 +107,15 @@ const LandParcelDetails: FC<LandParcelDetailsProps> = ({ title }) => {
         {/* Main Info Card */}
         <Card title='Основная информация' style={{ marginBottom: 24 }}>
           {isLoading ? (
-            <Skeleton active paragraph={{ rows: 6 }} />
+            <Skeleton active paragraph={{ rows: 8 }} />
           ) : landParcel ? (
             <Descriptions bordered column={2}>
               <Descriptions.Item label='ID'>
                 <Typography.Text strong>#{landParcel.id}</Typography.Text>
               </Descriptions.Item>
 
-              <Descriptions.Item label='Название участка'>{landParcel.title || '—'}</Descriptions.Item>
-
-              <Descriptions.Item label='Кадастровый номер' span={2}>
-                <Typography.Text copyable={landParcel.kadastr_number ? true : false}>{landParcel.kadastr_number || '—'}</Typography.Text>
+              <Descriptions.Item label='Номер запроса'>
+                <Typography.Text copyable={landParcel.request_number ? true : false}>{landParcel.request_number || '—'}</Typography.Text>
               </Descriptions.Item>
 
               <Descriptions.Item label='Адрес' span={2}>
@@ -138,6 +134,32 @@ const LandParcelDetails: FC<LandParcelDetailsProps> = ({ title }) => {
                     </Typography.Link>
                     <Typography.Text type='secondary'>(ID: {landParcel.customer})</Typography.Text>
                   </Space>
+                ) : (
+                  '—'
+                )}
+              </Descriptions.Item>
+
+              <Descriptions.Item label='Дата совета'>
+                {landParcel.council_date ? dayjs(landParcel.council_date).format('DD.MM.YYYY') : '—'}
+              </Descriptions.Item>
+
+              <Descriptions.Item label='Дата тех совета'>
+                {landParcel.tech_council_date ? dayjs(landParcel.tech_council_date).format('DD.MM.YYYY') : '—'}
+              </Descriptions.Item>
+
+              <Descriptions.Item label='Файл' span={2}>
+                {landParcel.file ? (
+                  <Typography.Link href={landParcel.file} target='_blank' rel='noopener noreferrer'>
+                    Скачать файл
+                  </Typography.Link>
+                ) : (
+                  '—'
+                )}
+              </Descriptions.Item>
+
+              <Descriptions.Item label='Комментарий' span={2}>
+                {landParcel.comment ? (
+                  <Typography.Paragraph style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{landParcel.comment}</Typography.Paragraph>
                 ) : (
                   '—'
                 )}
@@ -173,9 +195,10 @@ const LandParcelDetails: FC<LandParcelDetailsProps> = ({ title }) => {
           okButtonProps={{ danger: true, loading: isDeleting }}
         >
           <Typography.Paragraph>
-            Вы уверены, что хотите удалить участок <strong>{landParcel?.title || `#${landParcel?.id}`}</strong>?
+            Вы уверены, что хотите удалить участок <strong>{landParcel?.request_number || `#${landParcel?.id}`}</strong>?
           </Typography.Paragraph>
           {landParcel?.customer_name && <Typography.Paragraph type='secondary'>Заказчик: {landParcel.customer_name}</Typography.Paragraph>}
+          {landParcel?.address && <Typography.Paragraph type='secondary'>Адрес: {landParcel.address}</Typography.Paragraph>}
           <Typography.Paragraph type='danger'>Это действие нельзя отменить!</Typography.Paragraph>
         </Modal>
       </div>
@@ -183,5 +206,4 @@ const LandParcelDetails: FC<LandParcelDetailsProps> = ({ title }) => {
   );
 };
 
-// ✅ ВАЖНО: default export
 export default LandParcelDetails;

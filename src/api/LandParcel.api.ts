@@ -15,7 +15,6 @@ export const landParcelApi = createApi({
   baseQuery: getBaseQuery(),
   tagTypes: ['LandParcel'],
   endpoints: (build) => ({
-    // GET /object/land-parcels/ - список всех участков
     getAllLandParcels: build.query<ILandParcelsListResponse, IGetAllLandParcelsParams>({
       query: (params) => ({
         url: '/object/land-parcels/',
@@ -25,53 +24,96 @@ export const landParcelApi = createApi({
       providesTags: ['LandParcel']
     }),
 
-    // ✅ ИСПРАВЛЕНО: убрали слэш в конце
-    // GET /object/land-parcels/{id} - получить участок по ID
     getLandParcelById: build.query<ILandParcel, IGetLandParcelByIdParams>({
       query: ({ id }) => ({
-        url: `/object/land-parcels/${id}`, // ✅ БЕЗ слэша
+        url: `/object/land-parcels/${id}`,
         method: 'GET'
       }),
       providesTags: (_result, _error, { id }) => [{ type: 'LandParcel', id }]
     }),
 
-    // POST /object/land-parcels/create - создать новый участок
+    // ✅ ОБНОВЛЕНО: поддержка файлов
     createLandParcel: build.mutation<ILandParcel, ICreateLandParcelParams>({
-      query: (body) => ({
-        url: '/object/land-parcels/create',
-        method: 'POST',
-        body
-      }),
+      query: (body) => {
+        // Если есть файл, используем FormData
+        if (body.file && body.file instanceof File) {
+          const formData = new FormData();
+
+          Object.entries(body).forEach(([key, value]) => {
+            if (value === undefined || value === null) return;
+            if (value instanceof File) {
+              formData.append(key, value);
+            } else {
+              formData.append(key, String(value));
+            }
+          });
+
+          return {
+            url: '/object/land-parcels/create',
+            method: 'POST',
+            body: formData,
+            formData: true
+          };
+        }
+
+        // Иначе обычный JSON
+        return {
+          url: '/object/land-parcels/create',
+          method: 'POST',
+          body
+        };
+      },
       invalidatesTags: ['LandParcel']
     }),
 
-    // ✅ ИСПРАВЛЕНО: убрали слэш
-    // PUT /object/land-parcels/{id} - полное обновление
     updateLandParcel: build.mutation<ILandParcel, IUpdateLandParcelParams>({
       query: ({ id, body }) => ({
-        url: `/object/land-parcels/${id}`, // ✅ БЕЗ слэша
+        url: `/object/land-parcels/${id}`,
         method: 'PUT',
         body
       }),
       invalidatesTags: (_result, _error, { id }) => [{ type: 'LandParcel', id }, 'LandParcel']
     }),
 
-    // ✅ ИСПРАВЛЕНО: убрали слэш
-    // PATCH /object/land-parcels/{id} - частичное обновление
+    // ✅ ОБНОВЛЕНО: поддержка файлов
     patchLandParcel: build.mutation<ILandParcel, IUpdateLandParcelParams>({
-      query: ({ id, body }) => ({
-        url: `/object/land-parcels/${id}`, // ✅ БЕЗ слэша
-        method: 'PATCH',
-        body
-      }),
+      query: ({ id, body }) => {
+        const anyBody = body as unknown as Record<string, unknown>;
+
+        // Если есть файл, используем FormData
+        if (anyBody && anyBody.file instanceof File) {
+          const formData = new FormData();
+
+          Object.entries(anyBody).forEach(([key, value]) => {
+            if (value === undefined || value === null) return;
+            if (value instanceof File) {
+              formData.append(key, value);
+            } else {
+              formData.append(key, String(value));
+            }
+          });
+
+          return {
+            url: `/object/land-parcels/${id}`,
+            method: 'PATCH',
+            body: formData,
+            formData: true
+          };
+        }
+
+        // Иначе обычный JSON
+        return {
+          url: `/object/land-parcels/${id}`,
+          method: 'PATCH',
+          body
+        };
+      },
       invalidatesTags: (_result, _error, { id }) => [{ type: 'LandParcel', id }, 'LandParcel']
     }),
 
-    // ✅ ИСПРАВЛЕНО: убрали слэш
-    // DELETE /object/land-parcels/{id} - удалить участок
     deleteLandParcel: build.mutation<void, IDeleteLandParcelParams>({
       query: ({ id }) => ({
-        url: `/object/land-parcels/${id}`, // ✅ БЕЗ слэша
+        url: `/object/land-parcels/${id}`,
         method: 'DELETE'
       }),
       invalidatesTags: ['LandParcel']

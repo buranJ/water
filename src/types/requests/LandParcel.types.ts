@@ -5,13 +5,16 @@
 // Response types
 export interface ILandParcel {
   id: number;
-  title?: string;
+  customer_name?: string;
   address?: string;
-  kadastr_number?: string;
   purpose?: string;
+  council_date?: string; // ✅ НОВОЕ
+  request_number?: string; // ✅ НОВОЕ
+  tech_council_date?: string; // ✅ НОВОЕ
+  file?: string; // ✅ НОВОЕ
+  comment?: string; // ✅ НОВОЕ
   customer?: number;
-  customer_name?: string; // ✅ НОВОЕ: имя заказчика
-  creater?: number; // ✅ НОВОЕ: кто создал
+  creater?: number;
   created_at?: string;
   updated_at?: string;
 }
@@ -30,14 +33,18 @@ export interface IGetAllLandParcelsParams {
   search?: string;
   ordering?: string;
   customer?: number;
-  kadastr_number?: string;
+  request_number?: string; // ✅ ОБНОВЛЕНО: вместо kadastr_number
 }
 
+// ✅ ВСЕ ПОЛЯ ОПЦИОНАЛЬНЫЕ при создании
 export interface ICreateLandParcelParams {
-  title?: string;
   address?: string;
-  kadastr_number?: string;
   purpose?: string;
+  council_date?: string; // ✅ НОВОЕ
+  request_number?: string; // ✅ НОВОЕ
+  tech_council_date?: string; // ✅ НОВОЕ
+  file?: File; // ✅ НОВОЕ (тип File для загрузки)
+  comment?: string; // ✅ НОВОЕ
   customer?: number;
 }
 
@@ -52,4 +59,19 @@ export interface IUpdateLandParcelParams {
 
 export interface IDeleteLandParcelParams {
   id: number | string;
+}
+export interface IGetAllLandParcelsParams {
+  page?: number;
+  page_size?: number;
+  search?: string;
+  ordering?: string;
+  customer?: number;
+  request_number?: string;
+  customer_name?: string;
+  address?: string;
+  purpose?: string;
+  council_date_start?: string;
+  council_date_end?: string;
+  tech_council_date_start?: string;
+  tech_council_date_end?: string;
 }

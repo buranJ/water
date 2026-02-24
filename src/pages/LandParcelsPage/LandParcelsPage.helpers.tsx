@@ -7,8 +7,7 @@ import { ILandParcel } from 'types/requests';
 type ActionType = 'edit' | 'delete' | 'view';
 
 type ColumnFilters = {
-  title?: string;
-  kadastr_number?: string;
+  request_number?: string;
   customer_name?: string;
   address?: string;
 };
@@ -38,39 +37,19 @@ export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange }) 
     {
       title: (
         <div>
-          <div>Название участка</div>
+          <div>Номер запроса</div>
           <Input
             allowClear
             size='small'
-            value={filters.title}
-            onChange={(e) => onFilterChange('title', e.target.value)}
-            placeholder='Поиск по названию'
+            value={filters.request_number}
+            onChange={(e) => onFilterChange('request_number', e.target.value)}
+            placeholder='Поиск по номеру'
             onClick={(e) => e.stopPropagation()}
           />
         </div>
       ),
-      dataIndex: 'title',
-      key: 'title',
-      width: 200,
-      render: (text) => text || '—',
-      onCell: clickableCellProps
-    },
-    {
-      title: (
-        <div>
-          <div>Кадастровый номер</div>
-          <Input
-            allowClear
-            size='small'
-            value={filters.kadastr_number}
-            onChange={(e) => onFilterChange('kadastr_number', e.target.value)}
-            placeholder='Поиск по кадастру'
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
-      ),
-      dataIndex: 'kadastr_number',
-      key: 'kadastr_number',
+      dataIndex: 'request_number',
+      key: 'request_number',
       width: 200,
       render: (text) => text || '—',
       onCell: clickableCellProps
@@ -96,7 +75,7 @@ export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange }) 
       onCell: clickableCellProps
     },
     {
-      title: 'Назначение',
+      title: 'Наименование объекта',
       dataIndex: 'purpose',
       key: 'purpose',
       width: 150,
@@ -121,6 +100,22 @@ export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange }) 
       key: 'customer_name',
       width: 200,
       render: (text) => text || '—',
+      onCell: clickableCellProps
+    },
+    {
+      title: 'Дата запроса',
+      dataIndex: 'council_date',
+      key: 'council_date',
+      width: 150,
+      render: (date) => (date ? dayjs(date).format('DD.MM.YYYY') : '—'),
+      onCell: clickableCellProps
+    },
+    {
+      title: 'Дата тех совета',
+      dataIndex: 'tech_council_date',
+      key: 'tech_council_date',
+      width: 150,
+      render: (date) => (date ? dayjs(date).format('DD.MM.YYYY') : '—'),
       onCell: clickableCellProps
     },
     {

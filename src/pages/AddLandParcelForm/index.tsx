@@ -1,6 +1,9 @@
 import { FC, useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { Button, Col, Form, Input, message, Row } from 'antd';
+import type { UploadFile } from 'antd';
+import { Button, Col, DatePicker, Form, Input, message, Row, Upload } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+import dayjs, { Dayjs } from 'dayjs';
 import { DashboardLayout } from 'components';
 
 import { useCreateCustomerMutation, useLazyGetCustomerQuery } from 'api/Customer.api';
@@ -10,10 +13,13 @@ import { handleEnterFocusNext } from 'utils/formNavigation';
 const { TextArea } = Input;
 
 interface FormValues {
-  title?: string;
   address?: string;
-  kadastr_number?: string;
   purpose?: string;
+  council_date?: string;
+  request_number?: string;
+  tech_council_date?: string;
+  file?: UploadFile[];
+  comment?: string;
   customer?: string;
 }
 
@@ -28,26 +34,27 @@ const AddLandParcelForm: FC<AddLandParcelFormProps> = ({ title }) => {
 
   const [form] = Form.useForm<FormValues>();
 
-  // API hooks
   const [createLandParcel, { isLoading: isCreating }] = useCreateLandParcelMutation();
   const [patchLandParcel, { isLoading: isUpdating }] = usePatchLandParcelMutation();
 
-  // Для работы с заказчиками
   const [triggerGetCustomers] = useLazyGetCustomerQuery();
   const [createCustomer] = useCreateCustomerMutation();
 
-  // ✅ Загружаем данные при редактировании
   const { data: landParcelData, isLoading: isLoadingData } = useGetLandParcelByIdQuery({ id: id! }, { skip: !isEditMode });
 
-  // ✅ Заполняем форму при редактировании
+  // Helpers для дат
+  const formatDate = useCallback((date: Dayjs | undefined) => date?.format('YYYY-MM-DD') || '', []);
+  const parseDate = useCallback((dateString: string | undefined) => (dateString ? dayjs(dateString) : null), []);
+
   useEffect(() => {
     if (isEditMode && landParcelData) {
       form.setFieldsValue({
-        title: landParcelData.title,
         address: landParcelData.address,
-        kadastr_number: landParcelData.kadastr_number,
         purpose: landParcelData.purpose,
-        // ✅ ВАЖНО: показываем имя заказчика, а не ID
+        council_date: landParcelData.council_date,
+        request_number: landParcelData.request_number,
+        tech_council_date: landParcelData.tech_council_date,
+        comment: landParcelData.comment,
         customer: landParcelData.customer_name || (landParcelData.customer ? String(landParcelData.customer) : undefined)
       });
     }
@@ -58,7 +65,6 @@ const AddLandParcelForm: FC<AddLandParcelFormProps> = ({ title }) => {
       try {
         let customerId: number | undefined;
 
-        // ✅ Если указан заказчик — ищем или создаём
         if (values.customer && values.customer.trim()) {
           try {
             const customerSearch = await triggerGetCustomers({
@@ -73,9 +79,7 @@ const AddLandParcelForm: FC<AddLandParcelFormProps> = ({ title }) => {
 
             if (foundCustomer?.id != null) {
               customerId = foundCustomer.id;
-              console.log('✅ Найден существующий заказчик:', customerId);
             } else {
-              // Создаём нового заказчика
               const customerResponse = await createCustomer({
                 full_name: values.customer,
                 pasport: '',
@@ -83,7 +87,6 @@ const AddLandParcelForm: FC<AddLandParcelFormProps> = ({ title }) => {
                 status: 'active'
               }).unwrap();
               customerId = customerResponse.id;
-              console.log('✅ Создан новый заказчик:', customerId);
             }
           } catch (error) {
             console.error('Ошибка при работе с заказчиком:', error);
@@ -91,33 +94,37 @@ const AddLandParcelForm: FC<AddLandParcelFormProps> = ({ title }) => {
           }
         }
 
-        // ✅ Формируем payload
         const payload: Record<string, unknown> = {};
 
-        if (values.title?.trim()) payload.title = values.title;
         if (values.address?.trim()) payload.address = values.address;
-        if (values.kadastr_number?.trim()) payload.kadastr_number = values.kadastr_number;
         if (values.purpose?.trim()) payload.purpose = values.purpose;
+        if (values.council_date) payload.council_date = values.council_date;
+        if (values.request_number?.trim()) payload.request_number = values.request_number;
+        if (values.tech_council_date) payload.tech_council_date = values.tech_council_date;
+        if (values.comment?.trim()) payload.comment = values.comment;
         if (customerId !== undefined) payload.customer = customerId;
+
+        // ✅ Обработка файла
+        if (values.file && values.file.length > 0 && values.file[0].originFileObj) {
+          payload.file = values.file[0].originFileObj;
+        }
 
         console.log('📤 Отправляем на сервер:', payload);
 
         if (isEditMode) {
-          // ✅ Обновление существующего участка
           await patchLandParcel({
             id: id!,
             body: payload
           }).unwrap();
 
           message.success('Земельный участок успешно обновлён');
-          navigate(`/dashboard/land-parcels/${id}`); // ✅ Возвращаемся на детальную страницу
+          navigate(`/dashboard/land-parcels/${id}`);
         } else {
-          // Создание нового участка
           const created = await createLandParcel(payload).unwrap();
 
           message.success('Земельный участок успешно создан');
           form.resetFields();
-          navigate(`/dashboard/land-parcels/${created.id}`); // ✅ Переходим на детальную страницу
+          navigate(`/dashboard/land-parcels/${created.id}`);
         }
       } catch (error) {
         console.error('❌ Error saving land parcel:', error);
@@ -154,14 +161,38 @@ const AddLandParcelForm: FC<AddLandParcelFormProps> = ({ title }) => {
       >
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item name='title' label='Название участка' rules={[{ max: 255, message: 'Максимум 255 символов' }]}>
-              <Input size='large' placeholder='Например: Участок 1' />
+            <Form.Item
+              name='council_date'
+              label='Дата запроса'
+              normalize={(value: Dayjs) => formatDate(value)}
+              getValueProps={(value: string) => ({ value: parseDate(value) })}
+            >
+              <DatePicker size='large' format='DD.MM.YYYY' style={{ width: '100%' }} placeholder='Выберите дату' />
             </Form.Item>
           </Col>
 
           <Col span={12}>
-            <Form.Item name='kadastr_number' label='Кадастровый номер'>
-              <Input size='large' placeholder='Введите кадастровый номер' />
+            <Form.Item name='request_number' label='Номер запроса'>
+              <Input size='large' placeholder='Введите номер запроса' />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item
+              name='tech_council_date'
+              label='Дата тех совета'
+              normalize={(value: Dayjs) => formatDate(value)}
+              getValueProps={(value: string) => ({ value: parseDate(value) })}
+            >
+              <DatePicker size='large' format='DD.MM.YYYY' style={{ width: '100%' }} placeholder='Выберите дату' />
+            </Form.Item>
+          </Col>
+
+          <Col span={12}>
+            <Form.Item name='customer' label='Заказчик'>
+              <Input size='large' placeholder='Введите ФИО заказчика' />
             </Form.Item>
           </Col>
         </Row>
@@ -176,14 +207,26 @@ const AddLandParcelForm: FC<AddLandParcelFormProps> = ({ title }) => {
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item name='purpose' label='Назначение'>
-              <Input size='large' placeholder='Например: Сельхоз' />
+            <Form.Item name='purpose' label='Наименование объекта'>
+              <Input size='large' />
             </Form.Item>
           </Col>
 
           <Col span={12}>
-            <Form.Item name='customer' label='Заказчик'>
-              <Input size='large' placeholder='Введите ФИО заказчика' />
+            <Form.Item name='file' label='Файл' valuePropName='fileList' getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}>
+              <Upload beforeUpload={() => false} maxCount={1}>
+                <Button icon={<UploadOutlined />} size='large'>
+                  Загрузить файл
+                </Button>
+              </Upload>
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row gutter={16}>
+          <Col span={24}>
+            <Form.Item name='comment' label='Комментарий'>
+              <TextArea size='large' rows={4} placeholder='Введите комментарий' />
             </Form.Item>
           </Col>
         </Row>

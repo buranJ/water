@@ -41,22 +41,22 @@ export const routerConfig: RouteObject[] = [
   // ✅ ЗЕМЕЛЬНЫЕ УЧАСТКИ - ПРАВИЛЬНЫЙ ПОРЯДОК!
   {
     path: '/dashboard/land-parcels',
-    element: <LandParcelsPage />
+    element: <LandParcelsPage title='Земельные участки' />
   },
   {
     // ✅ ДОБАВЛЕНИЕ - ДОЛЖНО БЫТЬ ПЕРЕД :id
     path: '/dashboard/land-parcels/add',
-    element: <AddLandParcelForm title='routers.addLandParcel' />
+    element: <AddLandParcelForm title='Добавить земельный участок' />
   },
   {
     // ✅ РЕДАКТИРОВАНИЕ - ДОЛЖНО БЫТЬ ПЕРЕД :id (без /edit)
     path: '/dashboard/land-parcels/:id/edit',
-    element: <AddLandParcelForm title='routers.editLandParcel' />
+    element: <AddLandParcelForm title='Редактировать земельный участок' />
   },
   {
     // ✅ ДЕТАЛЬНАЯ СТРАНИЦА - ПОСЛЕ всех конкретных роутов
     path: '/dashboard/land-parcels/:id',
-    element: <LandParcelDetails title='routers.landParcelDetails' />
+    element: <LandParcelDetails title='Детали участка' />
   },
 
   {
