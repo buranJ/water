@@ -141,7 +141,6 @@ export const accountingApi = createApi({
       invalidatesTags: ['Payment']
     }),
 
-    // Переделано на mutation для корректной работы экспорта
     exportProtocolsExcel: build.mutation<Blob, IExportProtocolsParams>({
       query: (params) => ({
         url: '/buhgalteria/protocols/export-excel/',
@@ -161,6 +160,16 @@ export const accountingApi = createApi({
           return blob;
         }
       })
+    }),
+
+    // ✅ НОВЫЙ ENDPOINT: Изменение статуса просмотра протокола
+    patchProtocol: build.mutation<IAccountingProtocol, { id: number; body: { is_viewed: boolean } }>({
+      query: ({ id, body }) => ({
+        url: `/buhgalteria/protocols/${id}/`,
+        method: 'PATCH',
+        body
+      }),
+      invalidatesTags: ['Protocol']
     })
   })
 });
@@ -177,3 +186,4 @@ export const useGetPaymentsByInvoiceQuery = accountingApi.useGetPaymentsByInvoic
 export const useCreatePaymentMutation = accountingApi.useCreatePaymentMutation;
 export const useLazyGetProtocolByIdQuery = accountingApi.useLazyGetProtocolByIdQuery;
 export const useExportProtocolsExcelMutation = accountingApi.useExportProtocolsExcelMutation;
+export const usePatchProtocolMutation = accountingApi.usePatchProtocolMutation; // ✅ НОВОЕ

@@ -23,6 +23,7 @@ export interface IAccountingProtocol {
   // Итоговые суммы
   total_sum_main: string;
   total_sum_paper: string;
+  is_viewed?: boolean;
   // Основные налоги
   nds: string;
   nsp: string;

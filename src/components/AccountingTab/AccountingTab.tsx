@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Button, Card, Col, Flex, message, Row, Space, Spin, TableColumnsType, Tabs, TabsProps, Typography } from 'antd';
-import { ClockCircleOutlined, DownloadOutlined, EditOutlined, UploadOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, ClockCircleOutlined, DownloadOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import { Table } from 'common/ui';
 import { EditProtocolModal } from 'components/EditProtocolModal/EditProtocolModal';
 import { EditProtocolTableModal } from 'components/EditProtocolTableModal/EditProtocolTableModal';
@@ -13,7 +13,8 @@ import {
   useGenerateInvoiceMutation,
   useGetAccountingProtocolQuery,
   useGetInvoicesByProtocolQuery,
-  useLazyDownloadProtocolQuery
+  useLazyDownloadProtocolQuery,
+  usePatchProtocolMutation
 } from 'api/Accounting.api';
 import { useLazyGetInvoicesByProtocolTyQuery } from 'api/Buhgalteria.api';
 import { usePermissions } from 'hooks/useAuth';
@@ -61,13 +62,10 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
   const [generateInvoice, { isLoading: isGenerating }] = useGenerateInvoiceMutation();
   const [downloadProtocol, { isLoading: isDownloading }] = useLazyDownloadProtocolQuery();
   const [getInvoicesByProtocolTy] = useLazyGetInvoicesByProtocolTyQuery();
+  const [patchProtocol, { isLoading: isMarkingViewed }] = usePatchProtocolMutation(); // ✅ НОВОЕ
 
   const currency = t('tuDetails.currency');
   const hasInvoices = invoicesData && invoicesData.length > 0 && !invoiceError;
-
-  // Убираем блокировку редактирования - теперь можно редактировать всегда
-  // const isEditDisabled = hasInvoices; // Старая логика
-  // const isEditDisabled = false; // Разрешаем редактирование всегда
 
   useEffect(() => {
     if (onOpenPaymentModal) {
@@ -76,14 +74,15 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
     }
   }, [onOpenPaymentModal]);
 
-  const handleUpload = () => {
-    setActiveAccountingTab('2');
-    setShouldOpenPaymentModal(true);
-  };
+  // const handleUpload = () => {
+  //   setActiveAccountingTab('2');
+  //   setShouldOpenPaymentModal(true);
+  // };
 
   const handleEditClick = () => {
     setIsEditModalVisible(true);
   };
+
   const handleProtocolEditClick = () => {
     setIsProtocolEditModalVisible(true);
   };
@@ -97,13 +96,35 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
     setIsProtocolEditModalVisible(false);
     refetchProtocol();
   };
-  // Обновленная функция для обработки успешного редактирования
-  const handleEditSuccess = async () => {
+
+  // ✅ НОВАЯ ФУНКЦИЯ: Отметить счет как просмотренный
+  const handleMarkAsViewed = async () => {
+    if (!protocolData?.id) {
+      message.error('ID протокола не найден');
+      return;
+    }
+
     try {
-      // Обновляем данные протокола
+      await patchProtocol({
+        id: protocolData.id,
+        body: {
+          is_viewed: !protocolData.is_viewed
+        }
+      }).unwrap();
+
       await refetchProtocol();
 
-      // Если есть счета, регенерируем их с новыми данными
+      message.success(protocolData.is_viewed ? 'Счет отмечен как непросмотренный' : 'Счет отмечен как просмотренный');
+    } catch (error) {
+      console.error('Error marking protocol as viewed:', error);
+      message.error('Ошибка при изменении статуса просмотра');
+    }
+  };
+
+  const handleEditSuccess = async () => {
+    try {
+      await refetchProtocol();
+
       if (hasInvoices && protocolData?.id) {
         message.info(t('accounting.messages.updatingInvoices'));
 
@@ -183,6 +204,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
       message.error(t('accounting.errors.downloadProtocolError'));
     }
   };
+
   const handleProtocolEditSuccess = async () => {
     try {
       await refetchProtocol();
@@ -206,6 +228,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
       message.error('Ошибка при обновлении протокола');
     }
   };
+
   const formatCurrency = (amount: string | number) => {
     return `${parseFloat(amount.toString()).toLocaleString('ru-RU')} ${currency}`;
   };
@@ -455,8 +478,6 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
     return <div>Нет доступа</div>;
   }
 
-  // change_protocol
-
   return (
     <Space direction='vertical' size={24} style={{ width: '100%' }}>
       <div style={{ width: '100%' }}>
@@ -514,43 +535,42 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
           </Card>
         </Col>
 
+        {/* ✅ НОВАЯ КАРТОЧКА: Счет просмотрен */}
         <Col xs={24} sm={24} md={12} lg={12} xl={12} xxl={12}>
           <Card style={{ height: '100%' }} bodyStyle={{ padding: '20px' }}>
             <Title level={4} style={{ fontSize: '18px', marginBottom: 20 }}>
-              {t('protocolDetail.invoice.uploadReceipt')}
+              Статус просмотра счета
             </Title>
 
             <div
               style={{
-                backgroundColor: '#327BE8',
+                backgroundColor: protocolData.is_viewed ? '#52c41a' : '#faad14',
                 height: 8,
                 borderRadius: 4,
                 margin: '20px 0'
               }}
             />
 
-            <Text
-              type='secondary'
-              style={{
-                display: 'block',
-                marginBottom: 24,
-                fontSize: '14px',
-                lineHeight: '1.6'
-              }}
-            >
-              {t('tuDetails.hint.uploadToFinishTu')}
-            </Text>
+            <Flex vertical gap={16} style={{ marginBottom: 24 }}>
+              <Text type='secondary' style={{ fontSize: '14px', lineHeight: '1.6' }}>
+                {protocolData.is_viewed
+                  ? 'Счет был просмотрен. Вы можете отметить его как непросмотренный при необходимости.'
+                  : 'Счет ожидает просмотра. Отметьте его как просмотренный после проверки.'}
+              </Text>
+
+              {protocolData.is_viewed && <Alert message='Счет просмотрен' type='success' icon={<CheckCircleOutlined />} showIcon />}
+            </Flex>
 
             <Button
-              type='primary'
+              type={protocolData.is_viewed ? 'default' : 'primary'}
               block
-              icon={<UploadOutlined />}
-              onClick={handleUpload}
+              icon={protocolData.is_viewed ? <ClockCircleOutlined /> : <EyeOutlined />}
+              onClick={handleMarkAsViewed}
+              loading={isMarkingViewed}
               size='large'
               style={{ height: '48px', fontSize: '16px' }}
-              disabled={!hasPermission('add_payment')}
             >
-              {t('common.upload')}
+              {protocolData.is_viewed ? 'Отметить как непросмотренный' : 'Отметить как просмотренный'}
             </Button>
           </Card>
         </Col>
@@ -560,7 +580,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
         visible={isEditModalVisible}
         onClose={handleEditModalClose}
         protocolData={protocolData || null}
-        onSuccess={handleEditSuccess} // Передаем новый обработчик
+        onSuccess={handleEditSuccess}
       />
       <EditProtocolTableModal
         visible={isProtocolEditModalVisible}
