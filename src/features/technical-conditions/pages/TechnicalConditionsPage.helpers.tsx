@@ -1,6 +1,5 @@
-import { Button, Input, Space, Tag, Typography } from 'antd';
+import { Input, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { ITechnicalCondition } from 'types/entities/tu';
 
@@ -23,7 +22,7 @@ type IGetColumnsFn = (options: {
 const { t } = i18next;
 
 export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange }) => {
-  // Общие свойства для всех ячеек кроме последней (с кнопками действий)
+  // Общие свойства для всех ячеек
   const clickableCellProps = (record: ITechnicalCondition) => ({
     style: { cursor: 'pointer' },
     onClick: () => onClick(record, 'view')
@@ -40,7 +39,7 @@ export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange }) 
             value={filters.tu_number}
             onChange={(e) => onFilterChange('tu_number', e.target.value)}
             placeholder={t('technicalConditions.tuNumberPrefix', '№ ТУ')}
-            onClick={(e) => e.stopPropagation()} // Предотвращаем клик по инпуту
+            onClick={(e) => e.stopPropagation()}
           />
         </div>
       ),
@@ -56,7 +55,7 @@ export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange }) 
       key: 'council_date',
       width: 150,
       render: (date) => {
-        if (!date) return '-';
+        if (!date) return '—';
         return dayjs(date).format('DD.MM.YYYY');
       },
       onCell: clickableCellProps
@@ -104,6 +103,10 @@ export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange }) 
       dataIndex: 'request_date',
       key: 'request_date',
       width: 135,
+      render: (date) => {
+        if (!date) return '—';
+        return dayjs(date).format('DD.MM.YYYY');
+      },
       onCell: clickableCellProps
     },
     {
@@ -139,21 +142,18 @@ export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange }) 
       width: 135,
       onCell: clickableCellProps
     },
+    // ✅ ИСПОЛНИТЕЛЬ: показываем "Пользователь" если None или пусто
     {
-      title: t('protocolDetail.invoice.title'),
-      dataIndex: 'payment_paper',
-      key: 'payment_paper',
-      width: 160,
-      render: (_, record) => {
-        return (
-          <>
-            <Typography.Text strong>№{record.payment_paper?.number}</Typography.Text>
-            <br />
-            <Typography.Text type='secondary'>
-              {t('protocolDetail.payment.columns.date')}: {dayjs(record.payment_paper?.date).format('DD.MM.YYYY')}
-            </Typography.Text>
-          </>
-        );
+      title: 'Исполнитель:',
+      dataIndex: 'author_name',
+      key: 'author_name',
+      width: 200,
+      render: (text) => {
+        // Если None, пусто, или строка "None" - показываем "Пользователь"
+        if (!text || text === 'None' || text.trim() === '' || text.includes('None')) {
+          return 'Пользователь';
+        }
+        return text;
       },
       onCell: clickableCellProps
     },
@@ -183,6 +183,10 @@ export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange }) 
       dataIndex: 'payment_date',
       key: 'payment_date',
       width: 145,
+      render: (date) => {
+        if (!date) return '—';
+        return dayjs(date).format('DD.MM.YYYY');
+      },
       onCell: clickableCellProps
     },
     {
@@ -192,48 +196,6 @@ export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange }) 
       width: 145,
       render: (text) => (text < 0 ? 0 : text),
       onCell: clickableCellProps
-    },
-    {
-      title: t('common.status'),
-      dataIndex: 'status',
-      key: 'status',
-      render: (_, record: ITechnicalCondition) => {
-        if (record.status === 'active') {
-          return <Tag color='green'>{t('filterBar.approved')}</Tag>;
-        }
-        if (record.status === 'inactive') {
-          return <Tag color='red'>{t('filterBar.rejected')}</Tag>;
-        }
-        return <Tag color='default'>{t('filterBar.archived')}</Tag>;
-      },
-      width: 145,
-      onCell: clickableCellProps
-    },
-    {
-      title: t('exportDataHistory.columns.actions'),
-      key: 'action',
-      render: (_, record) => (
-        <Space>
-          <Button
-            icon={<EditOutlined />}
-            onClick={(e) => {
-              e.stopPropagation(); // Предотвращаем всплытие события
-              onClick(record, 'edit');
-            }}
-            disabled={record.status === 'inactive'}
-          />
-          <Button
-            icon={<DeleteOutlined />}
-            onClick={(e) => {
-              e.stopPropagation(); // Предотвращаем всплытие события
-              onClick(record, 'delete');
-            }}
-            danger
-          />
-        </Space>
-      ),
-      width: 145
-      // Для этой колонки НЕ добавляем onCell
     }
   ];
 };
