@@ -357,10 +357,22 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
               {technicalConditionId}-472
             </Title>
             <Space wrap size={[12, 8]} style={{ flex: '0 0 auto' }}>
-              <Button disabled={!hasPermission('change_protocol')} icon={<EditOutlined />} type='primary' onClick={handleEditClick} size='middle'>
+              <Button
+                disabled={!hasPermission('change_protocol')}
+                icon={<EditOutlined />}
+                type='primary'
+                onClick={handleEditClick}
+                size='middle'
+              >
                 {t('common.edit')}
               </Button>
-              <Button disabled={!hasPermission('change_protocol')} icon={<EditOutlined />} type='default' onClick={handleProtocolEditClick} size='middle'>
+              <Button
+                disabled={!hasPermission('change_protocol')}
+                icon={<EditOutlined />}
+                type='default'
+                onClick={handleProtocolEditClick}
+                size='middle'
+              >
                 Изменить протокол
               </Button>
               <Button icon={<DownloadOutlined />} type='default' onClick={handleDownloadProtocol} loading={isDownloading} size='middle'>
