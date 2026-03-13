@@ -161,8 +161,10 @@ export const TUFilterBar = ({
           <Col xs={24} sm={12} md={8} lg={6}>
             <Form.Item name='has_invoice' label={t('technicalConditions.filter.hasInvoice')}>
               <Select variant='filled' allowClear style={{ width: '100%' }}>
-                <Option value='true'>{t('profile.yes')}</Option>
-                <Option value='false'>{t('profile.no')}</Option>
+                <Option value='true'>Да</Option>
+                <Option value='false'>Нет</Option>
+                <Option value='viewed'>Просмотренные</Option>
+                <Option value='not_viewed'>Не просмотренные</Option>
               </Select>
             </Form.Item>
           </Col>
