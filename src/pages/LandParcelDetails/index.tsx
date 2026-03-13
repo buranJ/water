@@ -99,7 +99,12 @@ const LandParcelDetails: FC<LandParcelDetailsProps> = ({ title }) => {
               >
                 Редактировать
               </Button>
-              <Button danger icon={<DeleteOutlined />} onClick={() => setDeleteModalOpen(true)} disabled={isLoading || !hasPermission('delete_landparcel')}>
+              <Button
+                danger
+                icon={<DeleteOutlined />}
+                onClick={() => setDeleteModalOpen(true)}
+                disabled={isLoading || !hasPermission('delete_landparcel')}
+              >
                 Удалить
               </Button>
             </Space>

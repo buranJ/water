@@ -6,8 +6,8 @@ import { IFilterPreset } from 'types/requests';
 import './styles.scss';
 
 import { useGetTypesTyQuery } from 'api/Ty.api';
-import { t } from 'i18next';
 import { usePermissions } from 'hooks/useAuth';
+import { t } from 'i18next';
 
 const { Option } = Select;
 
