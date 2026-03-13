@@ -293,6 +293,7 @@ export interface ITyBody {
   additional_sewage_amount?: string;
 }
 
+// ✅ ИЗМЕНЕНО: Добавлено поле is_viewed
 export interface ITyListQueryParams {
   customer?: number;
   entity?: number;
@@ -307,6 +308,7 @@ export interface ITyListQueryParams {
   status?: IStatus6b3Enum;
   type_ty?: number;
   has_invoice?: boolean;
+  is_viewed?: boolean; // ✅ НОВОЕ ПОЛЕ
   overdue?: boolean;
   due_in_days?: number;
 

@@ -67,7 +67,7 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
 
   // Убираем блокировку редактирования - теперь можно редактировать всегда
   // const isEditDisabled = hasInvoices; // Старая логика
-  const isEditDisabled = false; // Разрешаем редактирование всегда
+  // const isEditDisabled = false; // Разрешаем редактирование всегда
 
   useEffect(() => {
     if (onOpenPaymentModal) {

@@ -23,7 +23,7 @@ interface TUFilterValues {
   stage?: IStageEnum;
   status?: IStatus6b3Enum;
   date?: string;
-  has_invoice?: boolean;
+  has_invoice?: boolean | string; // ✅ ИЗМЕНЕНО: может быть строкой ('viewed', 'not_viewed')
   overdue?: boolean;
   due_in_days?: number;
   type_ty?: number;
@@ -49,11 +49,11 @@ export const TechnicalConditionsPage = () => {
   const date = s('date');
   const payment_ordering = s('payment_ordering');
   const filterOrdering = s('ordering');
-  const hasInvoiceStr = s('has_invoice');
+  const hasInvoiceStr = s('has_invoice'); // ✅ Оставляем как строку
   const overdueStr = s('overdue');
   const dueInDaysStr = s('due_in_days');
 
-  const has_invoice = hasInvoiceStr === 'true' ? true : hasInvoiceStr === 'false' ? false : undefined;
+  // ❌ УДАЛЕНО: const has_invoice = hasInvoiceStr === 'true' ? true : ...
   const overdue = overdueStr === 'true' ? true : overdueStr === 'false' ? false : undefined;
   const due_in_days = dueInDaysStr && !Number.isNaN(Number(dueInDaysStr)) ? Number(dueInDaysStr) : undefined;
 
@@ -76,6 +76,7 @@ export const TechnicalConditionsPage = () => {
 
   const ordering = [date, payment_ordering, filterOrdering].filter(Boolean).join(', ');
 
+  // ✅ ИЗМЕНЕНО: Собираем базовые параметры БЕЗ has_invoice
   const queryParams: IGetAllTechnicalConditionParams = {
     page,
     page_size: pageSize,
@@ -84,7 +85,7 @@ export const TechnicalConditionsPage = () => {
     stage,
     type_ty,
     ordering: ordering || '-created_at',
-    has_invoice,
+    // has_invoice - убрали отсюда, добавим ниже условно
     overdue,
     due_in_days,
     // Column-level filters (backend may support; fallback is applied on client below)
@@ -93,6 +94,21 @@ export const TechnicalConditionsPage = () => {
     customer_name: customerNameParam,
     object_name: objectNameParam
   };
+
+  // ✅ НОВАЯ ЛОГИКА: Обрабатываем has_invoice и is_viewed
+  if (hasInvoiceStr === 'viewed') {
+    // Просмотренные
+    queryParams.is_viewed = true;
+  } else if (hasInvoiceStr === 'not_viewed') {
+    // Не просмотренные
+    queryParams.is_viewed = false;
+  } else if (hasInvoiceStr === 'true') {
+    // Да (есть счет)
+    queryParams.has_invoice = true;
+  } else if (hasInvoiceStr === 'false') {
+    // Нет (нет счета)
+    queryParams.has_invoice = false;
+  }
 
   const { data: tuData, isLoading } = useGetAllTyQuery(queryParams, {
     refetchOnMountOrArgChange: true
@@ -312,6 +328,9 @@ export const TechnicalConditionsPage = () => {
     setSearchParams(next, { replace: false });
   };
 
+  // ✅ ИЗМЕНЕНО: Преобразуем has_invoice для initialValues в TUFilterBar
+  const has_invoice_for_filter = hasInvoiceStr === 'true' ? true : hasInvoiceStr === 'false' ? false : hasInvoiceStr || undefined;
+
   return (
     <DashboardLayout title={t('routers.technicalSpecificatio')}>
       <div className='technical-conditions-page'>
@@ -323,7 +342,7 @@ export const TechnicalConditionsPage = () => {
             status: status,
             stage: stage,
             date,
-            has_invoice,
+            has_invoice: has_invoice_for_filter, // ✅ Передаём строку или boolean
             overdue,
             due_in_days,
             type_ty,

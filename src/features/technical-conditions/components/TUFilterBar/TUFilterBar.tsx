@@ -18,7 +18,7 @@ interface TUFilterValues {
   stage?: IStageEnum;
   status?: IStatus6b3Enum;
   date?: string;
-  has_invoice?: boolean;
+  has_invoice?: boolean | string;
   overdue?: boolean;
   due_in_days?: number;
   type_ty?: number;
