@@ -108,7 +108,7 @@ export const DashboardLayout = ({ children, title }: Props) => {
       icon: <FileTextOutlined />,
       label: t('dashboard.pages.protocols')
     },
-    // ДОБАВЛЯЕМ НОВЫЙ ПУНКТ МЕНЮ
+
     {
       key: '/dashboard/protocols/export',
       icon: <ExportOutlined />,

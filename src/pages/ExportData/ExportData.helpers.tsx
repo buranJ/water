@@ -1,5 +1,6 @@
 import { FC, useMemo, useState } from 'react';
-import { Checkbox, Col, DatePicker, Form, Input, InputNumber, Row, Select } from 'antd';
+import { Checkbox, Col, DatePicker, Form, Input, InputNumber, Row, Select, Tooltip } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import type { FieldConfig } from './ExportData.config';
 
 import { useGetAllCustomersQuery } from 'api/Customer.api';
@@ -33,7 +34,31 @@ export const FiltersGrid: FC<{ fields: FieldConfig[] }> = ({ fields }) => {
 
   const renderField = (fc: FieldConfig, idx: number) => {
     const name = ['filters', fc.name];
-    const commonProps = { name, label: t(`exportData.filters.${fc.name}`) || fc.label } as const;
+    const label = fc.name === 'object_names' ? fc.label : t(`exportData.filters.${fc.name}`) || fc.label;
+
+    // ✅ Label с tooltip если есть
+    const labelNode = fc.tooltip ? (
+      <span>
+        {label}{' '}
+        <Tooltip title={fc.tooltip}>
+          <QuestionCircleOutlined style={{ color: '#999' }} />
+        </Tooltip>
+      </span>
+    ) : (
+      label
+    );
+
+    const commonProps = { name, label: labelNode } as const;
+
+    if (fc.type === 'text_array') {
+      return (
+        <Col span={12} key={`${fc.name}_${idx}`}>
+          <Form.Item {...commonProps}>
+            <Input placeholder={fc.placeholder || 'Например: Объект1/Объект2/Объект3'} />
+          </Form.Item>
+        </Col>
+      );
+    }
 
     // Dynamic overrides by field name
     if (fc.name === 'formula_id') {
@@ -120,7 +145,7 @@ export const FiltersGrid: FC<{ fields: FieldConfig[] }> = ({ fields }) => {
         return (
           <Col span={12} key={`${fc.name}_${idx}`}>
             <Form.Item {...commonProps}>
-              <Input placeholder={t('exportData.placeholders.text') || 'Текст'} />
+              <Input placeholder={fc.placeholder || t('exportData.placeholders.text') || 'Текст'} />
             </Form.Item>
           </Col>
         );

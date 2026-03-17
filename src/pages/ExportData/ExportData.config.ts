@@ -2,7 +2,7 @@ import type { ExportEntity } from 'types/entities/reports.entities';
 
 import { t } from 'i18next';
 
-export type FieldType = 'number' | 'string' | 'date' | 'boolean' | 'select';
+export type FieldType = 'number' | 'string' | 'date' | 'boolean' | 'select' | 'text_array';
 
 export interface FieldConfig {
   name:
@@ -32,10 +32,13 @@ export interface FieldConfig {
     | 'protocol_id'
     | 'invoice_type'
     | 'invoice_date_start'
-    | 'invoice_date_end';
+    | 'invoice_date_end'
+    | 'object_names';
   label: string;
   type: FieldType;
   options?: { value: string; label: string }[];
+  placeholder?: string;
+  tooltip?: string;
 }
 
 export type FormValues = {
@@ -105,7 +108,6 @@ const APPLICATION_STATUS_OPTIONS = [
   { value: 'contracted', label: t('exportData.config.applicationStatusOptions.contracted') }
 ];
 
-// Полный перечень фильтров по сущностям (из OpenAPI)
 export const FILTER_CONFIG: Record<ExportEntity, FieldConfig[]> = {
   technical_conditions: [
     { name: 'id', label: t('exportData.filters.id'), type: 'number' },
@@ -119,7 +121,14 @@ export const FILTER_CONFIG: Record<ExportEntity, FieldConfig[]> = {
     { name: 'request_date_start', label: t('exportData.filters.request_date_start'), type: 'date' },
     { name: 'request_date_end', label: t('exportData.filters.request_date_end'), type: 'date' },
     { name: 'is_water', label: t('exportData.filters.is_water'), type: 'boolean' },
-    { name: 'is_kanal', label: t('exportData.filters.is_kanal'), type: 'boolean' }
+    { name: 'is_kanal', label: t('exportData.filters.is_kanal'), type: 'boolean' },
+    {
+      name: 'object_names',
+      label: 'Наименование объекта',
+      type: 'text_array',
+      placeholder: 'Например: Мойка/Лейка/Двухэтажка',
+      tooltip: 'Разделяйте названия объектов символом /'
+    }
   ],
   entities: [
     { name: 'id', label: t('exportData.filters.id'), type: 'number' },
@@ -173,6 +182,7 @@ function hasFormat(v: unknown): v is { format: (fmt: string) => string } {
   return typeof v === 'object' && v !== null && 'format' in v && typeof (v as { format?: unknown }).format === 'function';
 }
 
+// ✅ ИСПРАВЛЕНО: убрана специальная обработка object_names
 export const prepareFilters = (filters?: Record<string, unknown>) => {
   if (!filters) return undefined;
   const prepared = Object.entries(filters).reduce<Record<string, unknown>>((acc, [k, v]) => {
