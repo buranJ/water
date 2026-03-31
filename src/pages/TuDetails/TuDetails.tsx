@@ -20,7 +20,10 @@ import { type RefusalBody, useCreateRefusalMutation } from 'api/Refusal.api';
 import {
   useCreateActTyMutation,
   useCreateBalanceAcceptanceMutation,
+  useGenerateActTyMutation,
+  useGenerateDopTyMutation,
   useGetBalanceAcceptanceQuery,
+  useGetDopTyQuery,
   useGetTyByIdQuery,
   useLazyDownloadLoadIncreaseDocxQuery,
   useLazyDownloadProtocolDocxQuery,
@@ -78,6 +81,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>(searchParams.get('tab') || '1');
   const [isAddLoadVisible, setIsAddLoadVisible] = useState<boolean>(false);
+
   const [triggerDownload, { isFetching: isDownloading }] = useLazyDownloadProtocolDocxQuery();
   const [triggerLoadIncrease, { isFetching: isLoadIncreaseDownloading }] = useLazyDownloadLoadIncreaseDocxQuery();
   const [triggerContractDownload, { isFetching: isContractDownloading }] = useLazyDownloadContractDocxQuery();
@@ -86,6 +90,8 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const [createAct, { isLoading: isActCreating }] = useCreateActTyMutation();
   const [updateActTy, { isLoading: isActUpdating }] = useUpdateActTyMutation();
   const [triggerGetAct, { isFetching: isActFetching }] = useLazyGetActTyByIdQuery();
+  const [generateActTy, { isLoading: isGeneratingActTy }] = useGenerateActTyMutation();
+
   const balanceQuery = useGetBalanceAcceptanceQuery({ ty_id: id || '' }, { skip: !id });
   const [createBalance, { isLoading: isBalanceCreating }] = useCreateBalanceAcceptanceMutation();
   const [updateBalance, { isLoading: isBalanceUpdating }] = usePutBalanceAcceptanceMutation();
@@ -93,6 +99,10 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const balanceFileInputRef = useRef<HTMLInputElement>(null);
   const [createRefusal] = useCreateRefusalMutation();
   const balanceData = balanceQuery.data as import('types/requests').IGetBalanceAcceptanceResponse;
+
+  const dopTyQuery = useGetDopTyQuery({ ty_id: id || '' }, { skip: !id });
+  const [generateDopTy, { isLoading: isGeneratingDopTy }] = useGenerateDopTyMutation();
+  const dopTyData = dopTyQuery.data as import('types/requests').IGetDopTyResponse | undefined;
 
   const isTuApproved = objectData?.stage === 'approved';
 
@@ -309,7 +319,6 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     }
   };
 
-  // Create-and-finish act in one click
   const handleCreateAndFinishAct = async () => {
     if (!id) return;
     if (objectData?.stage !== 'approved') {
@@ -332,7 +341,6 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     }
   };
 
-  // Fallback: finish existing act to "done"
   const handleFinishAct = async () => {
     if (!objectData?.act?.id) {
       message.error(t('tuDetails.act.messages.statusUpdateFailed', 'Не удалось изменить статус акта'));
@@ -438,6 +446,108 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     }
   };
 
+  const handleGenerateDopTy = async () => {
+    if (!id) return;
+    try {
+      await generateDopTy({ ty_id: id }).unwrap();
+      message.success('Дополнения к ТУ успешно сгенерированы');
+      await dopTyQuery.refetch();
+    } catch (error) {
+      console.error('Failed to generate DopTy', error);
+      message.error('Не удалось сгенерировать дополнения');
+    }
+  };
+
+  const handleDownloadDopTy = async () => {
+    try {
+      const fileUrl = dopTyData?.file;
+      if (!fileUrl) {
+        message.warning('Файл дополнений не найден');
+        return;
+      }
+      try {
+        const response = await fetch(fileUrl, { credentials: 'include' });
+        if (!response.ok) throw new Error('download failed');
+        const blob = await response.blob();
+        const nameFromUrl = fileUrl.split('/').pop() || `dop_ty_${id}.docx`;
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = decodeURIComponent(nameFromUrl);
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      } catch (err) {
+        console.error('[DOP_TY] download file failed', err);
+        window.open(fileUrl, '_blank');
+      }
+    } catch (e) {
+      console.error('[DOP_TY] failed', e);
+      message.error('Не удалось скачать дополнения');
+    }
+  };
+
+  const handleGenerateSimpleAct = async () => {
+    if (!id) return;
+    try {
+      const response = await generateActTy({ ty_id: id, type: 'default_act' }).unwrap();
+      const fileUrl = response.file_url;
+
+      try {
+        const fetchResponse = await fetch(fileUrl, { credentials: 'include' });
+        if (!fetchResponse.ok) throw new Error('download failed');
+        const blob = await fetchResponse.blob();
+        const nameFromUrl = fileUrl.split('/').pop() || `simple_act_${id}.docx`;
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = decodeURIComponent(nameFromUrl);
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+        message.success('Простой акт успешно сгенерирован и скачан');
+      } catch (err) {
+        console.error('[ACT GENERATE] download failed', err);
+        window.open(fileUrl, '_blank');
+      }
+    } catch (error) {
+      console.error('Failed to generate simple act', error);
+      message.error('Не удалось сгенерировать простой акт');
+    }
+  };
+
+  const handleGenerateBlockAct = async () => {
+    if (!id) return;
+    try {
+      const response = await generateActTy({ ty_id: id, type: 'multi_act' }).unwrap();
+      const fileUrl = response.file_url;
+
+      try {
+        const fetchResponse = await fetch(fileUrl, { credentials: 'include' });
+        if (!fetchResponse.ok) throw new Error('download failed');
+        const blob = await fetchResponse.blob();
+        const nameFromUrl = fileUrl.split('/').pop() || `block_act_${id}.docx`;
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = decodeURIComponent(nameFromUrl);
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+        message.success('Блочный акт успешно сгенерирован и скачан');
+      } catch (err) {
+        console.error('[ACT GENERATE] download failed', err);
+        window.open(fileUrl, '_blank');
+      }
+    } catch (error) {
+      console.error('Failed to generate block act', error);
+      message.error('Не удалось сгенерировать блочный акт');
+    }
+  };
+
   if (isLoading) {
     return (
       <DashboardLayout title={`${t(title)} ${id}`}>
@@ -456,15 +566,9 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     );
   }
 
-  const folders = foldersQuery.data; // где foldersQuery.data имеет тип IFileFolderFolder
-
-  // Подсчитываем общее число необходимых папок
+  const folders = foldersQuery.data;
   const totalRequiredFolders = folders?.required?.length ?? 0;
-
-  // Подсчитываем, сколько из них имеют filled === true
   const filledRequiredFolders = folders?.required?.filter((item) => item.filled).length ?? 0;
-
-  // Вычисляем процент (если totalRequiredFolders > 0)
   const percent = totalRequiredFolders > 0 ? (filledRequiredFolders / totalRequiredFolders) * 100 : 0;
 
   return (
@@ -496,6 +600,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
 
             <Card>
               <Title level={4}>{t('tuDetails.titles.confirmationAct')}</Title>
+
               {objectData.act?.file && (
                 <Row justify='start' align='middle' gutter={8}>
                   <Col>
@@ -508,13 +613,29 @@ export const TuDetails: FC<IProps> = ({ title }) => {
                   </Col>
                 </Row>
               )}
+
               <Row justify='space-between' align='middle'>
                 <Text>{getActStatusLabel(objectData.act?.status as IActEnum | undefined)}</Text>
                 {getActStatusIcon(objectData.act?.status as IActEnum | undefined)}
               </Row>
+
               <br />
+
               {isTuApproved && (
                 <>
+                  <Row gutter={8} style={{ marginBottom: 12 }}>
+                    <Col>
+                      <Button type='default' loading={isGeneratingActTy} onClick={handleGenerateSimpleAct}>
+                        Простой акт
+                      </Button>
+                    </Col>
+                    <Col>
+                      <Button type='default' loading={isGeneratingActTy} onClick={handleGenerateBlockAct}>
+                        Блочный акт
+                      </Button>
+                    </Col>
+                  </Row>
+
                   <input ref={fileInputRef} type='file' accept='.pdf,.doc,.docx' style={{ display: 'none' }} onChange={onFileSelected} />
                   <Row gutter={8}>
                     <Col>
@@ -566,6 +687,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
                   </Row>
                 </>
               )}
+
               {isTuApproved &&
                 (!objectData.act ? (
                   <Button type='primary' style={{ marginTop: 8, marginLeft: 0, display: 'none' }} onClick={handleCreateAndFinishAct}>
@@ -580,6 +702,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
 
             <Card style={{ marginTop: 16 }}>
               <Title level={4}>Информация о принятии на баланс предприятия наружных сетей водопровода и канализации</Title>
+
               {balanceData?.file && (
                 <Row justify='start' align='middle' gutter={8}>
                   <Col>
@@ -594,7 +717,9 @@ export const TuDetails: FC<IProps> = ({ title }) => {
                   </Col>
                 </Row>
               )}
+
               <br />
+
               {isTuApproved && (
                 <>
                   <input
@@ -607,19 +732,62 @@ export const TuDetails: FC<IProps> = ({ title }) => {
                   <Row gutter={8}>
                     <Col>
                       <Button type='primary' ghost loading={isBalanceCreating || isBalanceUpdating} onClick={handleUploadBalanceClick}>
-                        {t('tuDetails.act.actions.upload', 'Загрузить')}
+                        Загрузить
                       </Button>
                     </Col>
                     {balanceData?.file && (
                       <Col>
                         <Button loading={balanceQuery.isFetching} onClick={handleDownloadBalance}>
-                          {t('tuDetails.act.actions.download', 'Скачать')}
+                          Скачать
                         </Button>
                       </Col>
                     )}
                   </Row>
                 </>
               )}
+            </Card>
+
+            <Card style={{ marginTop: 16 }}>
+              <Title level={4}>Дополнения к ТУ</Title>
+
+              {dopTyData?.file ? (
+                <Row justify='start' align='middle' gutter={8} style={{ marginBottom: 16 }}>
+                  <Col>
+                    <FileOutlined style={{ color: '#1677ff' }} />
+                  </Col>
+                  <Col>
+                    <Typography.Link onClick={handleDownloadDopTy}>
+                      {decodeURIComponent(dopTyData.file.split('/').pop() || 'dop_ty.docx')}
+                    </Typography.Link>
+                  </Col>
+                </Row>
+              ) : (
+                <Row justify='start' align='middle' gutter={8} style={{ marginBottom: 16 }}>
+                  <Col>
+                    <FileOutlined style={{ color: '#999' }} />
+                  </Col>
+                  <Col>
+                    <Typography.Text type='secondary'>Файл не загружен</Typography.Text>
+                  </Col>
+                </Row>
+              )}
+
+              <Row gutter={8}>
+                {!dopTyData?.file && (
+                  <Col>
+                    <Button type='primary' loading={isGeneratingDopTy || dopTyQuery.isFetching} onClick={handleGenerateDopTy}>
+                      Сгенерировать дополнения
+                    </Button>
+                  </Col>
+                )}
+                {dopTyData?.file && (
+                  <Col>
+                    <Button type='default' loading={dopTyQuery.isFetching} onClick={handleDownloadDopTy}>
+                      Скачать дополнения
+                    </Button>
+                  </Col>
+                )}
+              </Row>
             </Card>
           </Col>
         )}

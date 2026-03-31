@@ -1,3 +1,4 @@
+export * from './ActTy.types';
 export type {
   IApplication,
   IGetApplicationHistoryParams,
@@ -17,6 +18,7 @@ export type {
   IGetCustomerParams,
   IGetCustomerResponse
 } from './customer.requests';
+export * from './DopTy.types';
 export type {
   ICreateFolderParams,
   ICreateFolderResponse,

@@ -15,11 +15,17 @@ import type {
   IDownloadTyPdfResponse,
   IForkMinimalParams,
   IForkMinimalResponse,
+  IGenerateActTyParams, // ✅ ДОБАВЬ
+  IGenerateActTyResponse,
+  IGenerateDopTyParams, // ✅ ДОБАВЬ
+  IGenerateDopTyResponse, // ✅ ДОБАВЬ
   IGetAllTechnicalConditionParams,
   IGetAllTechnicalConditionResponse,
-  // New: balance acceptance
   IGetBalanceAcceptanceParams,
   IGetBalanceAcceptanceResponse,
+  // New: balance acceptance
+  IGetDopTyParams, // ✅ ДОБАВЬ
+  IGetDopTyResponse, // ✅ ДОБАВЬ
   IGetLoadIncreasesParams,
   IGetLoadIncreasesResponse,
   IGetTechnicalConditionByIdParams,
@@ -47,7 +53,7 @@ import type {
 export const tyApi = createApi({
   reducerPath: 'tyApi',
   baseQuery: getBaseQuery(),
-  tagTypes: ['Ty', 'TyLoads'],
+  tagTypes: ['Ty', 'TyLoads', 'DopTy'],
   endpoints: (build) => ({
     getAllTy: build.query<IGetAllTechnicalConditionResponse, IGetAllTechnicalConditionParams>({
       query: (params) => ({
@@ -437,6 +443,28 @@ export const tyApi = createApi({
         body
       }),
       invalidatesTags: (result) => (result ? [{ type: 'Ty', id: String(result.ty) }, 'Ty'] : ['Ty'])
+    }),
+    generateActTy: build.mutation<IGenerateActTyResponse, IGenerateActTyParams>({
+      query: ({ ty_id, type }) => ({
+        url: `/ty/${ty_id}/act_ty/generate/?type=${type}`,
+        method: 'POST'
+      }),
+      invalidatesTags: (_result, _error, { ty_id }) => [{ type: 'Ty', id: ty_id }]
+    }),
+    getDopTy: build.query<IGetDopTyResponse, IGetDopTyParams>({
+      query: ({ ty_id }) => ({
+        url: `/ty/${ty_id}/dop_ty/`,
+        method: 'GET'
+      }),
+      providesTags: (_result, _error, { ty_id }) => [{ type: 'DopTy', id: ty_id }]
+    }),
+
+    generateDopTy: build.mutation<IGenerateDopTyResponse, IGenerateDopTyParams>({
+      query: ({ ty_id }) => ({
+        url: `/ty/${ty_id}/dop_ty/generate/`,
+        method: 'POST'
+      }),
+      invalidatesTags: (_result, _error, { ty_id }) => [{ type: 'DopTy', id: ty_id }]
     })
   })
 });
@@ -452,12 +480,15 @@ export const {
   useGetTypesTyQuery,
   useGetHistoryTyQuery,
   useCreateTyFromApplicationMutation,
+  useGenerateActTyMutation,
   useAddLoadMutation,
   useForkMinimalMutation,
   useGetLoadIncreasesQuery,
   useLazyDownloadTyPdfQuery,
   useLazyDownloadProtocolDocxQuery,
   useLazyDownloadLoadIncreaseDocxQuery,
+  useGetDopTyQuery,
+  useGenerateDopTyMutation,
   // Balance acceptance hooks
   useGetBalanceAcceptanceQuery,
   useCreateBalanceAcceptanceMutation,
