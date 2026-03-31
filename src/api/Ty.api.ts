@@ -49,7 +49,10 @@ import type {
   IUpdateTechnicalConditionParams,
   IUpdateTechnicalConditionResponse
 } from 'types/requests';
-
+export interface IUploadDopTyParams {
+  ty_id: string;
+  file: File;
+}
 export const tyApi = createApi({
   reducerPath: 'tyApi',
   baseQuery: getBaseQuery(),
@@ -465,6 +468,19 @@ export const tyApi = createApi({
         method: 'POST'
       }),
       invalidatesTags: (_result, _error, { ty_id }) => [{ type: 'DopTy', id: ty_id }]
+    }),
+    uploadDopTy: build.mutation<IGetDopTyResponse, IUploadDopTyParams>({
+      query: ({ ty_id, file }) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        return {
+          url: `/ty/${ty_id}/dop_ty/`,
+          method: 'PUT',
+          body: formData,
+          formData: true
+        };
+      },
+      invalidatesTags: (_result, _error, { ty_id }) => [{ type: 'DopTy', id: ty_id }]
     })
   })
 });
@@ -499,5 +515,6 @@ export const {
   useCreateActTyMutation,
   useUpdateActTyMutation,
   usePatchActTyMutation,
+  useUploadDopTyMutation,
   useLazyGetActTyByIdQuery
 } = tyApi;

@@ -31,7 +31,8 @@ import {
   usePatchActTyMutation,
   usePutBalanceAcceptanceMutation,
   useUpdateActTyMutation,
-  useUpdateTyMutation
+  useUpdateTyMutation,
+  useUploadDopTyMutation
 } from 'api/Ty.api';
 import { usePermissions } from 'hooks/useAuth';
 import { t } from 'i18next';
@@ -102,7 +103,9 @@ export const TuDetails: FC<IProps> = ({ title }) => {
 
   const dopTyQuery = useGetDopTyQuery({ ty_id: id || '' }, { skip: !id });
   const [generateDopTy, { isLoading: isGeneratingDopTy }] = useGenerateDopTyMutation();
+  const [uploadDopTy, { isLoading: isUploadingDopTy }] = useUploadDopTyMutation();
   const dopTyData = dopTyQuery.data as import('types/requests').IGetDopTyResponse | undefined;
+  const dopTyFileInputRef = useRef<HTMLInputElement>(null);
 
   const isTuApproved = objectData?.stage === 'approved';
 
@@ -488,6 +491,25 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     }
   };
 
+  const handleUploadDopTyClick = () => {
+    dopTyFileInputRef.current?.click();
+  };
+
+  const onDopTyFileSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !id) return;
+    try {
+      await uploadDopTy({ ty_id: id, file }).unwrap();
+      message.success('Файл дополнений загружен');
+      await dopTyQuery.refetch();
+    } catch (err) {
+      console.error('[DOP_TY UPLOAD] failed', err);
+      message.error('Не удалось загрузить файл дополнений');
+    } finally {
+      if (dopTyFileInputRef.current) dopTyFileInputRef.current.value = '';
+    }
+  };
+
   const handleGenerateSimpleAct = async () => {
     if (!id) return;
     try {
@@ -772,6 +794,14 @@ export const TuDetails: FC<IProps> = ({ title }) => {
                 </Row>
               )}
 
+              <input
+                ref={dopTyFileInputRef}
+                type='file'
+                accept='.pdf,.doc,.docx'
+                style={{ display: 'none' }}
+                onChange={onDopTyFileSelected}
+              />
+
               <Row gutter={8}>
                 {!dopTyData?.file && (
                   <Col>
@@ -780,12 +810,20 @@ export const TuDetails: FC<IProps> = ({ title }) => {
                     </Button>
                   </Col>
                 )}
+
                 {dopTyData?.file && (
-                  <Col>
-                    <Button type='default' loading={dopTyQuery.isFetching} onClick={handleDownloadDopTy}>
-                      Скачать дополнения
-                    </Button>
-                  </Col>
+                  <>
+                    <Col>
+                      <Button type='primary' ghost loading={isUploadingDopTy} onClick={handleUploadDopTyClick}>
+                        Загрузить
+                      </Button>
+                    </Col>
+                    <Col>
+                      <Button type='default' loading={dopTyQuery.isFetching} onClick={handleDownloadDopTy}>
+                        Скачать
+                      </Button>
+                    </Col>
+                  </>
                 )}
               </Row>
             </Card>
