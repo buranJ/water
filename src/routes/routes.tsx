@@ -30,6 +30,7 @@ const TyImport = lazy(() => import('pages/TyImport'));
 const Invoices = lazy(() => import('pages/Invoices'));
 const Protocols = lazy(() => import('pages/Protocols'));
 const ProtocolsExport = lazy(() => import('pages/ProtocolsExport'));
+const ReportPage = lazy(() => import('pages/ReportPage/ReportPage')); // ✅ ДОБАВЬ
 
 export const routerConfig: RouteObject[] = [
   {
@@ -94,6 +95,11 @@ export const routerConfig: RouteObject[] = [
   {
     path: '/dashboard/export-data/history',
     element: <ExportDataHistory title='routers.historyExportData' />
+  },
+  // ✅✅✅ ДОБАВЬ ЭТОТ РОУТ
+  {
+    path: '/dashboard/report',
+    element: <ReportPage />
   },
   {
     path: '/dashboard/customers',

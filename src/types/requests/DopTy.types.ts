@@ -17,6 +17,7 @@ export interface IGenerateDopTyResponse {
   detail: string;
   file_url: string;
 }
+
 export interface IUploadDopTyParams {
   ty_id: string;
   file: File;

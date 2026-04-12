@@ -15,17 +15,16 @@ import type {
   IDownloadTyPdfResponse,
   IForkMinimalParams,
   IForkMinimalResponse,
-  IGenerateActTyParams, // ✅ ДОБАВЬ
+  IGenerateActTyParams,
   IGenerateActTyResponse,
-  IGenerateDopTyParams, // ✅ ДОБАВЬ
-  IGenerateDopTyResponse, // ✅ ДОБАВЬ
+  IGenerateDopTyParams,
+  IGenerateDopTyResponse,
   IGetAllTechnicalConditionParams,
   IGetAllTechnicalConditionResponse,
   IGetBalanceAcceptanceParams,
   IGetBalanceAcceptanceResponse,
-  // New: balance acceptance
-  IGetDopTyParams, // ✅ ДОБАВЬ
-  IGetDopTyResponse, // ✅ ДОБАВЬ
+  IGetDopTyParams,
+  IGetDopTyResponse,
   IGetLoadIncreasesParams,
   IGetLoadIncreasesResponse,
   IGetTechnicalConditionByIdParams,
@@ -33,7 +32,6 @@ import type {
   IGetTyHistoryParams,
   IGetTyHistoryResponse,
   IITypesTYParams,
-  // New: load increase DOCX
   ILoadIncreaseDocxParams,
   ILoadIncreaseDocxResponse,
   IPatchActTyParams,
@@ -45,14 +43,18 @@ import type {
   IProtocolDocxResponse,
   IPutBalanceAcceptanceParams,
   IPutBalanceAcceptanceResponse,
+  IReportParams,
+  IReportResponse,
   ITypesTYResponse,
   IUpdateTechnicalConditionParams,
   IUpdateTechnicalConditionResponse
 } from 'types/requests';
+
 export interface IUploadDopTyParams {
   ty_id: string;
   file: File;
 }
+
 export const tyApi = createApi({
   reducerPath: 'tyApi',
   baseQuery: getBaseQuery(),
@@ -84,7 +86,6 @@ export const tyApi = createApi({
       providesTags: (_result, _error, { tyId }) => [{ type: 'Ty', id: tyId }]
     }),
 
-    // Поиск ТУ по номеру (GET /ty/?search={номер ТУ})
     getTyByNumber: build.query<IGetAllTechnicalConditionResponse, { tuNumber: string }>({
       query: ({ tuNumber }) => ({
         url: `/ty/`,
@@ -117,12 +118,14 @@ export const tyApi = createApi({
         method: 'DELETE'
       })
     }),
+
     getTypesTy: build.query<ITypesTYResponse, IITypesTYParams>({
       query: () => ({
         url: '/ty/typesTY/',
         method: 'GET'
       })
     }),
+
     getHistoryTy: build.query<IGetTyHistoryResponse, IGetTyHistoryParams>({
       query: ({ tyId, ...params }) => ({
         url: `/ty/${tyId}/history/`,
@@ -130,12 +133,14 @@ export const tyApi = createApi({
         params
       })
     }),
+
     createTyFromApplication: build.mutation<void, { application_id: number }>({
       query: ({ application_id }) => ({
         url: `/ty/from-application/${application_id}/`,
         method: 'POST'
       })
     }),
+
     addLoad: build.mutation<void, IAddLoadParams>({
       query: ({ ty_id, water_required, pressure_required, sewage_amount, comment, files }) => {
         const formData = new FormData();
@@ -165,7 +170,6 @@ export const tyApi = createApi({
           formData.append('sewage_amount', String(sewage_amount));
           if (comment) formData.append('comment', comment);
 
-          // Append optional extras supported by TechnicalConditionBaseRequest
           Object.entries(rest).forEach(([key, value]) => {
             if (value === undefined || value === null) return;
             formData.append(key, typeof value === 'number' || typeof value === 'boolean' ? String(value) : (value as string));
@@ -204,6 +208,7 @@ export const tyApi = createApi({
       }),
       providesTags: (_result, _error, { tyId }) => [{ type: 'TyLoads', id: tyId }]
     }),
+
     downloadTyPdf: build.query<IDownloadTyPdfResponse, IDownloadTyPdfParams>({
       query: ({ tyId }) => ({
         url: `/ty/${tyId}/protocol-pdf/`,
@@ -216,7 +221,6 @@ export const tyApi = createApi({
           const disposition = response.headers.get('content-disposition') || '';
           let filename: string | null = null;
 
-          // Try RFC 5987 filename* first (e.g., filename*=UTF-8''encoded%20name.pdf)
           const starMatch = /filename\*\s*=\s*[^']+'[^']*'([^;]+)/i.exec(disposition);
           if (starMatch) {
             try {
@@ -226,7 +230,6 @@ export const tyApi = createApi({
             }
           }
 
-          // Fallback to regular filename="name.pdf"
           if (!filename) {
             const match = /filename="?([^";]+)"?/i.exec(disposition);
             filename = match ? match[1] : null;
@@ -237,6 +240,7 @@ export const tyApi = createApi({
       }),
       keepUnusedDataFor: 0
     }),
+
     downloadLoadIncreaseDocx: build.query<ILoadIncreaseDocxResponse, ILoadIncreaseDocxParams>({
       query: ({ tyId }) => ({
         url: `/ty/${tyId}/load-increase-docx/`,
@@ -266,6 +270,7 @@ export const tyApi = createApi({
       }),
       keepUnusedDataFor: 0
     }),
+
     getBalanceAcceptance: build.query<IGetBalanceAcceptanceResponse, IGetBalanceAcceptanceParams>({
       query: ({ ty_id }) => ({
         url: `/ty/${ty_id}/balance_acceptance/`,
@@ -273,6 +278,7 @@ export const tyApi = createApi({
       }),
       providesTags: (_result, _error, { ty_id }) => [{ type: 'Ty', id: ty_id }]
     }),
+
     createBalanceAcceptance: build.mutation<ICreateBalanceAcceptanceResponse, ICreateBalanceAcceptanceParams>({
       query: ({ body }) => {
         const anyBody = body as unknown as Record<string, unknown>;
@@ -298,6 +304,7 @@ export const tyApi = createApi({
       },
       invalidatesTags: (_result, _error, { body }) => [{ type: 'Ty', id: String(body.ty) }, 'Ty']
     }),
+
     putBalanceAcceptance: build.mutation<IPutBalanceAcceptanceResponse, IPutBalanceAcceptanceParams>({
       query: ({ ty_id, body }) => {
         const anyBody = body as unknown as Record<string, unknown>;
@@ -323,6 +330,7 @@ export const tyApi = createApi({
       },
       invalidatesTags: (_result, _error, { ty_id }) => [{ type: 'Ty', id: ty_id }, 'Ty']
     }),
+
     patchBalanceAcceptance: build.mutation<IPatchBalanceAcceptanceResponse, IPatchBalanceAcceptanceParams>({
       query: ({ ty_id, body }) => {
         const anyBody = body as unknown as Record<string, unknown>;
@@ -348,6 +356,7 @@ export const tyApi = createApi({
       },
       invalidatesTags: (_result, _error, { ty_id }) => [{ type: 'Ty', id: ty_id }, 'Ty']
     }),
+
     deleteBalanceAcceptance: build.mutation<void, IDeleteBalanceAcceptanceParams>({
       query: ({ ty_id }) => ({
         url: `/ty/${ty_id}/balance_acceptance/`,
@@ -355,6 +364,7 @@ export const tyApi = createApi({
       }),
       invalidatesTags: (_result, _error, { ty_id }) => [{ type: 'Ty', id: ty_id }, 'Ty']
     }),
+
     downloadProtocolDocx: build.query<IProtocolDocxResponse, IProtocolDocxParams>({
       query: ({ tyId }) => ({
         url: `/ty/${tyId}/protocol-docx/`,
@@ -367,7 +377,6 @@ export const tyApi = createApi({
           const disposition = response.headers.get('content-disposition') || '';
           let filename: string | null = null;
 
-          // Try RFC 5987 filename*
           const starMatch = /filename\*\s*=\s*[^']+'[^']*'([^;]+)/i.exec(disposition);
           if (starMatch) {
             try {
@@ -377,7 +386,6 @@ export const tyApi = createApi({
             }
           }
 
-          // Fallback to regular filename
           if (!filename) {
             const match = /filename="?([^";]+)"?/i.exec(disposition);
             filename = match ? match[1] : null;
@@ -388,13 +396,14 @@ export const tyApi = createApi({
       }),
       keepUnusedDataFor: 0
     }),
+
     getActTyById: build.query<IActTyResponse, { id: string | number }>({
       query: ({ id }) => ({
         url: `/ty/act_ty/${id}`,
         method: 'GET'
       })
     }),
-    // ACT TY: create (POST) and patch (PATCH)
+
     createActTy: build.mutation<IActTyResponse, ICreateActTyParams>({
       query: (body) => {
         if (body.file && body.file instanceof File) {
@@ -421,6 +430,7 @@ export const tyApi = createApi({
       },
       invalidatesTags: (_result, _error, body) => [{ type: 'Ty', id: String(body.ty) }, 'Ty']
     }),
+
     updateActTy: build.mutation<
       IActTyResponse,
       { id: number | string; file: File; status?: import('types/common').IActEnum; ty?: number | string }
@@ -439,6 +449,7 @@ export const tyApi = createApi({
       },
       invalidatesTags: (result) => (result ? [{ type: 'Ty', id: String(result.ty) }, 'Ty'] : ['Ty'])
     }),
+
     patchActTy: build.mutation<IActTyResponse, IPatchActTyParams>({
       query: ({ id, body }) => ({
         url: `/ty/act_ty/${id}`,
@@ -447,6 +458,7 @@ export const tyApi = createApi({
       }),
       invalidatesTags: (result) => (result ? [{ type: 'Ty', id: String(result.ty) }, 'Ty'] : ['Ty'])
     }),
+
     generateActTy: build.mutation<IGenerateActTyResponse, IGenerateActTyParams>({
       query: ({ ty_id, type }) => ({
         url: `/ty/${ty_id}/act_ty/generate/?type=${type}`,
@@ -454,6 +466,7 @@ export const tyApi = createApi({
       }),
       invalidatesTags: (_result, _error, { ty_id }) => [{ type: 'Ty', id: ty_id }]
     }),
+
     getDopTy: build.query<IGetDopTyResponse, IGetDopTyParams>({
       query: ({ ty_id }) => ({
         url: `/ty/${ty_id}/dop_ty/`,
@@ -469,6 +482,7 @@ export const tyApi = createApi({
       }),
       invalidatesTags: (_result, _error, { ty_id }) => [{ type: 'DopTy', id: ty_id }]
     }),
+
     uploadDopTy: build.mutation<IGetDopTyResponse, IUploadDopTyParams>({
       query: ({ ty_id, file }) => {
         const formData = new FormData();
@@ -481,6 +495,47 @@ export const tyApi = createApi({
         };
       },
       invalidatesTags: (_result, _error, { ty_id }) => [{ type: 'DopTy', id: ty_id }]
+    }),
+
+    // ✅✅✅ НОВЫЕ ENDPOINTS ДЛЯ ОТЧЁТА
+    // ✅✅✅ ИСПРАВЛЕННЫЕ ENDPOINTS ДЛЯ ОТЧЁТА
+    getReport: build.query<IReportResponse, IReportParams>({
+      query: (params) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { export: _export, ...queryParams } = params;
+        return {
+          url: '/ty/report/',
+          method: 'GET',
+          params: queryParams
+        };
+      }
+    }),
+
+    downloadReport: build.mutation<{ blob: Blob; filename: string }, IReportParams>({
+      query: (params) => ({
+        url: '/ty/report/',
+        method: 'GET',
+        params, // Здесь включаем export параметр
+        responseHandler: async (response) => {
+          const blob = await response.blob();
+          const disposition = response.headers.get('content-disposition') || '';
+          let filename = 'report.xlsx';
+
+          const starMatch = /filename\*\s*=\s*[^']+'[^']*'([^;]+)/i.exec(disposition);
+          if (starMatch) {
+            try {
+              filename = decodeURIComponent(starMatch[1]);
+            } catch {
+              filename = starMatch[1];
+            }
+          }
+          if (!filename || filename === 'report.xlsx') {
+            const match = /filename="?([^";]+)"?/i.exec(disposition);
+            filename = match ? match[1] : 'report.xlsx';
+          }
+          return { blob, filename };
+        }
+      })
     })
   })
 });
@@ -505,16 +560,16 @@ export const {
   useLazyDownloadLoadIncreaseDocxQuery,
   useGetDopTyQuery,
   useGenerateDopTyMutation,
-  // Balance acceptance hooks
   useGetBalanceAcceptanceQuery,
   useCreateBalanceAcceptanceMutation,
   usePutBalanceAcceptanceMutation,
   usePatchBalanceAcceptanceMutation,
   useDeleteBalanceAcceptanceMutation,
-  // Act hooks
   useCreateActTyMutation,
   useUpdateActTyMutation,
   usePatchActTyMutation,
   useUploadDopTyMutation,
-  useLazyGetActTyByIdQuery
+  useLazyGetActTyByIdQuery,
+  useGetReportQuery,
+  useDownloadReportMutation
 } = tyApi;

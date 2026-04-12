@@ -11,6 +11,7 @@ import {
   UploadOutlined,
   UserOutlined
 } from '@ant-design/icons';
+import { FileSearchOutlined } from '@ant-design/icons';
 import { NotificationsBell } from 'components/NotificationsBell';
 import arrow from 'assets/icons/arrow.svg';
 import logo from 'assets/icons/logo.svg';
@@ -97,6 +98,11 @@ export const DashboardLayout = ({ children, title }: Props) => {
       key: '/dashboard/invoices',
       icon: <FileTextOutlined />,
       label: t('dashboard.pages.bills')
+    },
+    {
+      key: '/dashboard/report',
+      icon: <FileSearchOutlined />,
+      label: 'Отчёт'
     },
     hasPermission('view_landparcel') && {
       key: '/dashboard/land-parcels',

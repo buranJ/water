@@ -39,6 +39,7 @@ export type {
 } from './LandParcel.types';
 export type { IGetObjectChangeHistoryParams, IGetObjectChangeHistoryResponse } from './object.requests';
 export type { IFilterPreset, IFilterPresetRequest, IGetPresetsParams, IGetPresetsResponse, PresetTarget } from './presets.requests';
+export * from './Report.types';
 export type { IExportReportsParams, IExportReportsResponse } from './reports.requests';
 export type {
   IActTyResponse,
