@@ -487,6 +487,8 @@ export const tyApi = createApi({
       query: ({ ty_id, file }) => {
         const formData = new FormData();
         formData.append('file', file);
+        formData.append('ty', ty_id); // ✅ ДОБАВЬ
+        formData.append('status', 'done'); // ✅ ДОБАВЬ
         return {
           url: `/ty/${ty_id}/dop_ty/`,
           method: 'PUT',

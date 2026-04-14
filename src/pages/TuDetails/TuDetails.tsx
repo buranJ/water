@@ -27,7 +27,7 @@ import {
   useGetTyByIdQuery,
   useLazyDownloadLoadIncreaseDocxQuery,
   useLazyDownloadProtocolDocxQuery,
-  useLazyGetActTyByIdQuery,
+  // useLazyGetActTyByIdQuery,
   usePatchActTyMutation,
   usePutBalanceAcceptanceMutation,
   useUpdateActTyMutation,
@@ -90,7 +90,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const [patchActTy] = usePatchActTyMutation();
   const [createAct, { isLoading: isActCreating }] = useCreateActTyMutation();
   const [updateActTy, { isLoading: isActUpdating }] = useUpdateActTyMutation();
-  const [triggerGetAct, { isFetching: isActFetching }] = useLazyGetActTyByIdQuery();
+  // const [triggerGetAct, { isFetching: isActFetching }] = useLazyGetActTyByIdQuery();
   const [generateActTy, { isLoading: isGeneratingActTy }] = useGenerateActTyMutation();
 
   const balanceQuery = useGetBalanceAcceptanceQuery({ ty_id: id || '' }, { skip: !id });
@@ -367,22 +367,42 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!id) return;
+
+    console.log('[ACT UPLOAD] Starting upload');
+    console.log('[ACT UPLOAD] TU ID:', id);
+    console.log('[ACT UPLOAD] File:', file.name);
+
     try {
       if (objectData?.act?.id) {
-        await updateActTy({ id: objectData.act.id, file, status: 'done', ty: id }).unwrap();
+        // ✅ ОБНОВЛЕНИЕ: используем ID ТУ, а не ID акта!
+        console.log('[ACT UPLOAD] Updating act for TU:', id);
+
+        await updateActTy({
+          id: id, // ✅✅✅ ID ТУ (893), НЕ ID АКТА!
+          file,
+          status: 'done',
+          ty: id // ✅ ID ТУ
+        }).unwrap();
       } else {
-        await createAct({ ty: id, file, status: 'done' }).unwrap();
+        // ✅ СОЗДАНИЕ: используем ID ТУ
+        console.log('[ACT UPLOAD] Creating new act for TU:', id);
+
+        await createAct({
+          ty: id, // ✅ ID ТУ
+          file,
+          status: 'done'
+        }).unwrap();
       }
+
       message.success(t('tuDetails.act.messages.fileUploaded', 'Файл акта загружен'));
-      refetch();
+      await refetch();
     } catch (err) {
-      console.error('[ACT UPLOAD] failed', err);
+      console.error('[ACT UPLOAD] Error:', err);
       message.error(t('tuDetails.act.messages.uploadFailed', 'Не удалось загрузить акт'));
     } finally {
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
-
   const handleUploadBalanceClick = () => {
     balanceFileInputRef.current?.click();
   };
@@ -468,26 +488,56 @@ export const TuDetails: FC<IProps> = ({ title }) => {
         message.warning('Файл дополнений не найден');
         return;
       }
+
+      // ✅ Формируем полный URL
+      const baseUrl = import.meta.env.VITE_API_KEY?.replace('/api/v1/', '') || 'https://bsv.sino0on.ru';
+      const fullUrl = fileUrl.startsWith('http') ? fileUrl : `${baseUrl}${fileUrl}`;
+
+      console.log('[DOP_TY DOWNLOAD] Base URL:', baseUrl);
+      console.log('[DOP_TY DOWNLOAD] Relative URL:', fileUrl);
+      console.log('[DOP_TY DOWNLOAD] Full URL:', fullUrl);
+
       try {
-        const response = await fetch(fileUrl, { credentials: 'include' });
-        if (!response.ok) throw new Error('download failed');
+        const response = await fetch(fullUrl, { credentials: 'include' });
+
+        console.log('[DOP_TY DOWNLOAD] Response status:', response.status);
+        console.log('[DOP_TY DOWNLOAD] Content-Type:', response.headers.get('content-type'));
+        console.log('[DOP_TY DOWNLOAD] Content-Length:', response.headers.get('content-length'));
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
         const blob = await response.blob();
+        console.log('[DOP_TY DOWNLOAD] Blob size:', blob.size);
+
+        if (blob.size === 0) {
+          message.error('Файл пустой, попробуйте сгенерировать заново');
+          return;
+        }
+
+        // Декодируем имя файла из URL
         const nameFromUrl = fileUrl.split('/').pop() || `dop_ty_${id}.docx`;
+        const decodedName = decodeURIComponent(nameFromUrl);
+
+        console.log('[DOP_TY DOWNLOAD] Filename:', decodedName);
+
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = decodeURIComponent(nameFromUrl);
+        a.download = decodedName;
         document.body.appendChild(a);
         a.click();
         a.remove();
         window.URL.revokeObjectURL(url);
+
+        message.success('Файл успешно скачан');
       } catch (err) {
-        console.error('[DOP_TY] download file failed', err);
-        window.open(fileUrl, '_blank');
+        console.error('[DOP_TY DOWNLOAD] Download failed', err);
+        window.open(fullUrl, '_blank');
       }
     } catch (e) {
-      console.error('[DOP_TY] failed', e);
-      message.error('Не удалось скачать дополнения');
+      console.error('[DOP_TY] Error', e);
     }
   };
 
@@ -668,37 +718,38 @@ export const TuDetails: FC<IProps> = ({ title }) => {
                     {objectData.act?.file && (
                       <Col>
                         <Button
-                          loading={isActFetching}
                           onClick={async () => {
                             try {
-                              const res = (await triggerGetAct({
-                                id: objectData.act!.id
-                              }).unwrap()) as import('types/requests').IActTyResponse;
-                              const fileUrl = res?.file || undefined;
+                              const fileUrl = objectData.act?.file;
                               if (!fileUrl) {
                                 message.warning(t('tuDetails.act.messages.fileRequired', 'Выберите файл акта'));
                                 return;
                               }
+
+                              console.log('[ACT DOWNLOAD] Downloading file:', fileUrl);
+
                               try {
                                 const response = await fetch(fileUrl, { credentials: 'include' });
                                 if (!response.ok) throw new Error('download failed');
                                 const blob = await response.blob();
-                                const nameFromUrl = fileUrl.split('/').pop() || `act_${objectData.act!.id}`;
+                                const nameFromUrl = fileUrl.split('/').pop() || `act_${id}.docx`;
                                 const url = window.URL.createObjectURL(blob);
                                 const a = document.createElement('a');
                                 a.href = url;
-                                a.download = nameFromUrl;
+                                a.download = decodeURIComponent(nameFromUrl);
                                 document.body.appendChild(a);
                                 a.click();
                                 a.remove();
                                 window.URL.revokeObjectURL(url);
+
+                                console.log('[ACT DOWNLOAD] Success');
                               } catch (err) {
-                                console.error('[ACT GET] download file failed', err);
+                                console.error('[ACT DOWNLOAD] Failed to download file', err);
                                 window.open(fileUrl, '_blank');
                               }
                             } catch (e) {
-                              console.error('[ACT GET] failed', e);
-                              message.error(t('tuDetails.act.messages.statusUpdateFailed', 'Не удалось изменить статус акта'));
+                              console.error('[ACT DOWNLOAD] Error', e);
+                              message.error(t('tuDetails.act.messages.downloadFailed', 'Не удалось скачать акт'));
                             }
                           }}
                         >

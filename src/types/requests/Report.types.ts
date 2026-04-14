@@ -3,6 +3,7 @@ export interface IReportFilters {
   customer?: number;
   due_in_days?: number;
   entity?: number;
+  floors_type?: 'under_12' | 'above_12'; // ✅ ДОБАВЬ
   formula?: number;
   has_debt?: boolean;
   has_invoice?: boolean;

@@ -328,6 +328,20 @@ const ReportPage: FC = () => {
                     ]}
                   />
                 </Col>
+                <Col xs={24} md={8}>
+                  <div style={{ marginBottom: 8 }}>Этажность:</div>
+                  <Select
+                    placeholder='Выберите этажность'
+                    value={filters.floors_type}
+                    onChange={(value) => setFilters((prev) => ({ ...prev, floors_type: value }))}
+                    style={{ width: '100%' }}
+                    allowClear
+                    options={[
+                      { label: 'До 12 этажей', value: 'under_12' },
+                      { label: 'От 12 и выше', value: 'above_12' }
+                    ]}
+                  />
+                </Col>
               </Row>
             </Panel>
           </Collapse>
