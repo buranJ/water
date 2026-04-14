@@ -26,6 +26,7 @@ interface TUFilterValues {
   address?: string;
   payment_amount?: number;
   tu_with_loads?: boolean;
+  author_name?: string;
 }
 
 interface Props {
@@ -211,6 +212,15 @@ export const TUFilterBar = ({
           <Col xs={24} sm={12} md={8} lg={6}>
             <Form.Item name='payment_amount' label={t('tuDetails.labels.paymentAmount')}>
               <InputNumber style={{ width: '100%' }} />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={12} md={8} lg={6}>
+            <Form.Item name='author_name' label={t('technicalConditions.filter.authorName', 'Пользователь')}>
+              <Input
+                allowClear
+                placeholder={t('technicalConditions.filter.authorNamePlaceholder', 'Введите имя')}
+                style={{ width: '100%' }}
+              />
             </Form.Item>
           </Col>
 
