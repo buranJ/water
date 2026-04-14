@@ -145,6 +145,7 @@ export const TechnicalConditionsPage = () => {
   }, [tuNumberParam, customerNameParam, address, objectNameParam]);
 
   const filterDebounceRef = useRef<number | undefined>(undefined);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleColumnFilterChange = (field: 'tu_number' | 'customer_name' | 'address' | 'object_name', value: string) => {
     setColumnFilters((prev) => ({ ...prev, [field]: value }));
     if (filterDebounceRef.current) {
