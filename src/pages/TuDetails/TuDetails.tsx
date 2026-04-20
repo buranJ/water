@@ -566,10 +566,31 @@ export const TuDetails: FC<IProps> = ({ title }) => {
       const response = await generateActTy({ ty_id: id, type: 'default_act' }).unwrap();
       const fileUrl = response.file_url;
 
+      console.log('[SIMPLE ACT] Generated file URL:', fileUrl);
+
+      // ✅ Формируем полный URL
+      const baseUrl = import.meta.env.VITE_API_KEY?.replace('/api/v1/', '') || 'https://bsv.sino0on.ru';
+      const fullUrl = fileUrl.startsWith('http') ? fileUrl : `${baseUrl}${fileUrl}`;
+
+      console.log('[SIMPLE ACT] Full URL:', fullUrl);
+
       try {
-        const fetchResponse = await fetch(fileUrl, { credentials: 'include' });
-        if (!fetchResponse.ok) throw new Error('download failed');
+        const fetchResponse = await fetch(fullUrl, { credentials: 'include' });
+
+        console.log('[SIMPLE ACT] Response status:', fetchResponse.status);
+
+        if (!fetchResponse.ok) {
+          throw new Error(`HTTP ${fetchResponse.status}: ${fetchResponse.statusText}`);
+        }
+
         const blob = await fetchResponse.blob();
+        console.log('[SIMPLE ACT] Blob size:', blob.size);
+
+        if (blob.size === 0) {
+          message.error('Файл пустой, попробуйте сгенерировать заново');
+          return;
+        }
+
         const nameFromUrl = fileUrl.split('/').pop() || `simple_act_${id}.docx`;
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -579,10 +600,12 @@ export const TuDetails: FC<IProps> = ({ title }) => {
         a.click();
         a.remove();
         window.URL.revokeObjectURL(url);
+
         message.success('Простой акт успешно сгенерирован и скачан');
       } catch (err) {
-        console.error('[ACT GENERATE] download failed', err);
-        window.open(fileUrl, '_blank');
+        console.error('[SIMPLE ACT] Download failed', err);
+        message.error('Не удалось скачать акт');
+        window.open(fullUrl, '_blank');
       }
     } catch (error) {
       console.error('Failed to generate simple act', error);
@@ -596,10 +619,31 @@ export const TuDetails: FC<IProps> = ({ title }) => {
       const response = await generateActTy({ ty_id: id, type: 'multi_act' }).unwrap();
       const fileUrl = response.file_url;
 
+      console.log('[BLOCK ACT] Generated file URL:', fileUrl);
+
+      // ✅ Формируем полный URL
+      const baseUrl = import.meta.env.VITE_API_KEY?.replace('/api/v1/', '') || 'https://bsv.sino0on.ru';
+      const fullUrl = fileUrl.startsWith('http') ? fileUrl : `${baseUrl}${fileUrl}`;
+
+      console.log('[BLOCK ACT] Full URL:', fullUrl);
+
       try {
-        const fetchResponse = await fetch(fileUrl, { credentials: 'include' });
-        if (!fetchResponse.ok) throw new Error('download failed');
+        const fetchResponse = await fetch(fullUrl, { credentials: 'include' });
+
+        console.log('[BLOCK ACT] Response status:', fetchResponse.status);
+
+        if (!fetchResponse.ok) {
+          throw new Error(`HTTP ${fetchResponse.status}: ${fetchResponse.statusText}`);
+        }
+
         const blob = await fetchResponse.blob();
+        console.log('[BLOCK ACT] Blob size:', blob.size);
+
+        if (blob.size === 0) {
+          message.error('Файл пустой, попробуйте сгенерировать заново');
+          return;
+        }
+
         const nameFromUrl = fileUrl.split('/').pop() || `block_act_${id}.docx`;
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -609,10 +653,12 @@ export const TuDetails: FC<IProps> = ({ title }) => {
         a.click();
         a.remove();
         window.URL.revokeObjectURL(url);
+
         message.success('Блочный акт успешно сгенерирован и скачан');
       } catch (err) {
-        console.error('[ACT GENERATE] download failed', err);
-        window.open(fileUrl, '_blank');
+        console.error('[BLOCK ACT] Download failed', err);
+        message.error('Не удалось скачать акт');
+        window.open(fullUrl, '_blank');
       }
     } catch (error) {
       console.error('Failed to generate block act', error);
