@@ -156,7 +156,7 @@ export const ProtocolsExport: FC = () => {
         >
           <Row gutter={[16, 16]}>
             <Col span={12}>
-              <Form.Item label={t('protocolsExport.councilDateRange', 'Период даты совета')} name='councilDateRange'>
+              <Form.Item label={t('protocolsExport.councilDateRange', 'Период даты Исходящих ТУ')} name='councilDateRange'>
                 <RangePicker
                   style={{ width: '100%' }}
                   placeholder={[t('protocolsExport.dateStart', 'Дата начала'), t('protocolsExport.dateEnd', 'Дата окончания')]}
