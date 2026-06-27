@@ -68,6 +68,7 @@ export interface ITechnicalCondition {
   };
   entity: number;
   author: number;
+  author_name?: string;
   formula: number;
   responsible: number | null;
   application: number | null;
@@ -318,6 +319,7 @@ export interface ITyListQueryParams {
   customer_name?: string;
   object_name?: string;
   address?: string;
+  author_name?: string;
 }
 
 export interface ITypesTY {

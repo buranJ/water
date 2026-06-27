@@ -67,6 +67,7 @@ export const TechnicalConditionsPage = () => {
   const tuNumberParam = s('tu_number');
   const customerNameParam = s('customer_name');
   const objectNameParam = s('object_name');
+  const authorNameParam = s('author_name');
 
   const type_ty = typeTyStr && !Number.isNaN(Number(typeTyStr)) ? Number(typeTyStr) : undefined;
   const id = idStr && !Number.isNaN(Number(idStr)) ? Number(idStr) : undefined;
@@ -92,7 +93,8 @@ export const TechnicalConditionsPage = () => {
     address,
     tu_number: tuNumberParam,
     customer_name: customerNameParam,
-    object_name: objectNameParam
+    object_name: objectNameParam,
+    author_name: authorNameParam
   };
 
   // ✅ НОВАЯ ЛОГИКА: Обрабатываем has_invoice и is_viewed
@@ -204,10 +206,14 @@ export const TechnicalConditionsPage = () => {
         const term = objectNameParam.toLowerCase();
         data = data.filter((d) => (d.object_name || '').toLowerCase().includes(term));
       }
+      if (authorNameParam && authorNameParam.trim()) {
+        const term = authorNameParam.toLowerCase();
+        data = data.filter((d) => (d.author_name || '').toLowerCase().includes(term));
+      }
 
       setTableData(data);
     }
-  }, [tuData, id, address, payment_amount, tu_with_loads, tuNumberParam, customerNameParam, objectNameParam]);
+  }, [tuData, id, address, payment_amount, tu_with_loads, tuNumberParam, customerNameParam, objectNameParam, authorNameParam]);
 
   const handleFilterChange = (values: TUFilterValues) => {
     const next = new URLSearchParams(searchParams);
