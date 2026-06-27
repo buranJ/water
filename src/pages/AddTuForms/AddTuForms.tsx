@@ -139,7 +139,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               : undefined;
             if (foundCustomer?.id != null) {
               customerId = foundCustomer.id;
-            } else if (!isRefusal) {
+            } else {
+              // Заказчик создаётся всегда, в т.ч. для типа «отказы»
               const customerResponse = await createCustomer({
                 full_name: values.customer,
                 pasport: '',
