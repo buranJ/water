@@ -585,7 +585,16 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
       <EditProtocolTableModal
         visible={isProtocolEditModalVisible}
         onClose={handleProtocolEditModalClose}
-        protocolData={protocolData || null}
+        protocolData={
+          protocolData
+            ? {
+                ...protocolData,
+                // «Общий объём» предзаполняем объёмами из данных ТУ (в ответе протокола их нет)
+                all_water_required: data?.water_required,
+                all_sewage_amount: data?.sewage_amount
+              }
+            : null
+        }
         onSuccess={handleProtocolEditSuccess}
       />
     </Space>
