@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { Button, Card, Col, Collapse, DatePicker, Input, message, Row, Select, Space, Table, Typography } from 'antd';
+import { Button, Card, Col, Collapse, DatePicker, Input, message, Row, Select, Space, Table, theme, Typography } from 'antd';
 import { DownloadOutlined, FilterOutlined } from '@ant-design/icons';
 import dayjs, { Dayjs } from 'dayjs';
 import { DashboardLayout } from 'components/DashboardLayout';
@@ -19,6 +19,7 @@ interface QuarterOption {
 }
 
 const ReportPage: FC = () => {
+  const { token } = theme.useToken();
   const [filters, setFilters] = useState<IReportFilters>({});
   const [exportFormat, setExportFormat] = useState<'excel' | 'word'>('excel');
 
@@ -47,6 +48,12 @@ const ReportPage: FC = () => {
   };
 
   const quarterOptions = generateQuarterOptions();
+
+  // Опции выбора года
+  const yearOptions = Array.from({ length: 6 }, (_, i) => {
+    const year = dayjs().year() - i;
+    return { label: String(year), value: year };
+  });
 
   const getQuarterDates = (quarter: number, year: number): [string, string] => {
     const startMonth = (quarter - 1) * 3 + 1;
@@ -113,6 +120,18 @@ const ReportPage: FC = () => {
       request_date_start: dates[0]!.format('YYYY-MM-DD'),
       request_date_end: dates[1]!.format('YYYY-MM-DD')
     }));
+  };
+
+  // Обработчик выбора года
+  const handleYearChange = (value: number | null) => {
+    setFilters((prev) => {
+      if (value == null) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { year, ...rest } = prev;
+        return rest;
+      }
+      return { ...prev, year: value };
+    });
   };
 
   const handleResetFilters = () => {
@@ -196,6 +215,20 @@ const ReportPage: FC = () => {
           </Title>
 
           <Row gutter={[16, 16]}>
+            <Col xs={24} md={8}>
+              <div style={{ marginBottom: 8 }}>
+                <strong>Год:</strong>
+              </div>
+              <Select
+                placeholder='Выберите год'
+                value={filters.year}
+                onChange={handleYearChange}
+                style={{ width: '100%' }}
+                allowClear
+                options={yearOptions}
+              />
+            </Col>
+
             <Col xs={24} md={8}>
               <div style={{ marginBottom: 8 }}>
                 <strong>Квартал:</strong>
@@ -391,7 +424,7 @@ const ReportPage: FC = () => {
               });
 
               return (
-                <Table.Summary.Row style={{ fontWeight: 'bold', backgroundColor: '#fafafa' }}>
+                <Table.Summary.Row style={{ fontWeight: 'bold', backgroundColor: token.colorFillAlter, color: token.colorText }}>
                   <Table.Summary.Cell index={0}>ИТОГО</Table.Summary.Cell>
                   <Table.Summary.Cell index={1} align='right'>
                     {totalCount}

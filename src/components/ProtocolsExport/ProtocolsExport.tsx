@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Card, Col, DatePicker, Form, Input, message, Row, Space, Typography } from 'antd';
+import { Button, Card, Col, DatePicker, Form, Input, message, Row, Space, theme, Typography } from 'antd';
 import { ClearOutlined, DownloadOutlined } from '@ant-design/icons';
 import dayjs, { Dayjs } from 'dayjs';
 import { DashboardLayout } from 'components';
@@ -28,6 +28,7 @@ interface ExportParams {
 
 export const ProtocolsExport: FC = () => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const [form] = Form.useForm<FilterFormValues>();
   const [exportProtocols, { isLoading }] = useExportProtocolsExcelMutation();
 
@@ -211,7 +212,7 @@ export const ProtocolsExport: FC = () => {
           </Row>
         </Form>
 
-        <div style={{ marginTop: 24, padding: 16, backgroundColor: '#f0f2f5', borderRadius: 8 }}>
+        <div style={{ marginTop: 24, padding: 16, backgroundColor: token.colorFillAlter, borderRadius: 8 }}>
           <Title level={5}>{t('protocolsExport.helpTitle', 'Справка')}</Title>
           <Space direction='vertical' size='small'>
             <Text>{t('protocolsExport.helpText1', '• Все фильтры являются опциональными')}</Text>

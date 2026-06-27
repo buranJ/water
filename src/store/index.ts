@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import Slice from './Slice';
+import ThemeReducer from './ThemeSlice';
 
 import {
   accountingApi,
@@ -26,6 +27,7 @@ import {
 const store = configureStore({
   reducer: {
     Slice: Slice,
+    theme: ThemeReducer,
     [authApi.reducerPath]: authApi.reducer,
     [buhgalteriaApi.reducerPath]: buhgalteriaApi.reducer,
     [customerApi.reducerPath]: customerApi.reducer,

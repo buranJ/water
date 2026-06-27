@@ -3,8 +3,7 @@ import { BrowserRouter } from 'react-router';
 import { createRoot, Root } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { unstableSetRender } from 'antd';
-import { ConfigProvider } from 'antd';
-import ruRu from 'antd/es/locale/ru_RU';
+import { ThemeProvider } from 'components/ThemeProvider';
 import App from './App';
 import '@ant-design/v5-patch-for-react-19'; // Патч для совместимости с React 19
 import './i18n';
@@ -39,12 +38,12 @@ if (!mainContainer) {
 const mainRoot = createRoot(mainContainer);
 mainRoot.render(
   <StrictMode>
-    <ConfigProvider locale={ruRu}>
-      <Provider store={store}>
+    <Provider store={store}>
+      <ThemeProvider>
         <BrowserRouter>
           <App />
         </BrowserRouter>
-      </Provider>
-    </ConfigProvider>
+      </ThemeProvider>
+    </Provider>
   </StrictMode>
 );

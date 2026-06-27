@@ -36,6 +36,7 @@ import {
 } from 'api/Ty.api';
 import { usePermissions } from 'hooks/useAuth';
 import { t } from 'i18next';
+import { downloadServerFile } from 'utils/downloadFile';
 
 type WithCategory = { category?: { id?: string | number; title?: string } };
 
@@ -78,6 +79,9 @@ export const TuDetails: FC<IProps> = ({ title }) => {
       skip: !id
     }
   );
+
+  // В заголовке показываем исходящий номер ТУ (а не id из роута); фолбэк — id
+  const tuNumber = objectData?.tu_number || id;
 
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>(searchParams.get('tab') || '1');
@@ -446,23 +450,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
         window.URL.revokeObjectURL(url);
         return;
       }
-      try {
-        const response = await fetch(fileVal, { credentials: 'include' });
-        if (!response.ok) throw new Error('download failed');
-        const blob = await response.blob();
-        const nameFromUrl = fileVal.split('/').pop() || `balance_acceptance_${id}`;
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = nameFromUrl;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(url);
-      } catch (err) {
-        console.error('[BALANCE GET] download file failed', err);
-        window.open(fileVal, '_blank');
-      }
+      await downloadServerFile(fileVal, `balance_acceptance_${id}`);
     } catch (e) {
       console.error('[BALANCE GET] failed', e);
       message.error(t('tuDetails.act.messages.statusUpdateFailed', 'Не удалось получить данные'));
@@ -482,63 +470,12 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   };
 
   const handleDownloadDopTy = async () => {
-    try {
-      const fileUrl = dopTyData?.file;
-      if (!fileUrl) {
-        message.warning('Файл дополнений не найден');
-        return;
-      }
-
-      // ✅ Формируем полный URL
-      const baseUrl = import.meta.env.VITE_API_KEY?.replace('/api/v1/', '') || 'https://bsv.sino0on.ru';
-      const fullUrl = fileUrl.startsWith('http') ? fileUrl : `${baseUrl}${fileUrl}`;
-
-      console.log('[DOP_TY DOWNLOAD] Base URL:', baseUrl);
-      console.log('[DOP_TY DOWNLOAD] Relative URL:', fileUrl);
-      console.log('[DOP_TY DOWNLOAD] Full URL:', fullUrl);
-
-      try {
-        const response = await fetch(fullUrl, { credentials: 'include' });
-
-        console.log('[DOP_TY DOWNLOAD] Response status:', response.status);
-        console.log('[DOP_TY DOWNLOAD] Content-Type:', response.headers.get('content-type'));
-        console.log('[DOP_TY DOWNLOAD] Content-Length:', response.headers.get('content-length'));
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-
-        const blob = await response.blob();
-        console.log('[DOP_TY DOWNLOAD] Blob size:', blob.size);
-
-        if (blob.size === 0) {
-          message.error('Файл пустой, попробуйте сгенерировать заново');
-          return;
-        }
-
-        // Декодируем имя файла из URL
-        const nameFromUrl = fileUrl.split('/').pop() || `dop_ty_${id}.docx`;
-        const decodedName = decodeURIComponent(nameFromUrl);
-
-        console.log('[DOP_TY DOWNLOAD] Filename:', decodedName);
-
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = decodedName;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(url);
-
-        message.success('Файл успешно скачан');
-      } catch (err) {
-        console.error('[DOP_TY DOWNLOAD] Download failed', err);
-        window.open(fullUrl, '_blank');
-      }
-    } catch (e) {
-      console.error('[DOP_TY] Error', e);
+    const fileUrl = dopTyData?.file;
+    if (!fileUrl) {
+      message.warning('Файл дополнений не найден');
+      return;
     }
+    await downloadServerFile(fileUrl, `dop_ty_${id}.docx`);
   };
 
   const handleUploadDopTyClick = () => {
@@ -560,115 +497,48 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     }
   };
 
-  const handleGenerateSimpleAct = async () => {
+  // Единое надёжное скачивание сгенерированного акта.
+  // Файл (/media/...) защищён так же, как всё API — Bearer-токеном из localStorage,
+  // поэтому качаем его авторизованным fetch (как handleDownloadTu / протокол / договор),
+  // а не cookie-запросом. Это работает одинаково и локально, и на сервере.
+  const downloadGeneratedAct = async (type: 'default_act' | 'multi_act', label: string, fallbackName: string) => {
     if (!id) return;
+
+    let fileUrl = '';
     try {
-      const response = await generateActTy({ ty_id: id, type: 'default_act' }).unwrap();
-      const fileUrl = response.file_url;
-
-      console.log('[SIMPLE ACT] Generated file URL:', fileUrl);
-
-      // ✅ Формируем полный URL
-      const baseUrl = import.meta.env.VITE_API_KEY?.replace('/api/v1/', '') || 'https://bsv.sino0on.ru';
-      const fullUrl = fileUrl.startsWith('http') ? fileUrl : `${baseUrl}${fileUrl}`;
-
-      console.log('[SIMPLE ACT] Full URL:', fullUrl);
-
-      try {
-        const fetchResponse = await fetch(fullUrl, { credentials: 'include' });
-
-        console.log('[SIMPLE ACT] Response status:', fetchResponse.status);
-
-        if (!fetchResponse.ok) {
-          throw new Error(`HTTP ${fetchResponse.status}: ${fetchResponse.statusText}`);
-        }
-
-        const blob = await fetchResponse.blob();
-        console.log('[SIMPLE ACT] Blob size:', blob.size);
-
-        if (blob.size === 0) {
-          message.error('Файл пустой, попробуйте сгенерировать заново');
-          return;
-        }
-
-        const nameFromUrl = fileUrl.split('/').pop() || `simple_act_${id}.docx`;
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = decodeURIComponent(nameFromUrl);
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(url);
-
-        message.success('Простой акт успешно сгенерирован и скачан');
-      } catch (err) {
-        console.error('[SIMPLE ACT] Download failed', err);
-        message.error('Не удалось скачать акт');
-        window.open(fullUrl, '_blank');
-      }
+      const response = await generateActTy({ ty_id: id, type }).unwrap();
+      fileUrl = response.file_url || '';
     } catch (error) {
-      console.error('Failed to generate simple act', error);
-      message.error('Не удалось сгенерировать простой акт');
+      console.error(`Failed to generate act (${type})`, error);
+      message.error(t('tuDetails.act.messages.generateFailed', `Не удалось сгенерировать ${label.toLowerCase()}`));
+      return;
     }
+
+    if (!fileUrl) {
+      message.error(t('tuDetails.act.messages.noFile', 'Сервер не вернул файл акта, попробуйте ещё раз'));
+      return;
+    }
+
+    await downloadServerFile(fileUrl, fallbackName);
   };
 
-  const handleGenerateBlockAct = async () => {
-    if (!id) return;
-    try {
-      const response = await generateActTy({ ty_id: id, type: 'multi_act' }).unwrap();
-      const fileUrl = response.file_url;
+  const handleGenerateSimpleAct = () => downloadGeneratedAct('default_act', 'Простой акт', `simple_act_${id}.docx`);
 
-      console.log('[BLOCK ACT] Generated file URL:', fileUrl);
+  const handleGenerateBlockAct = () => downloadGeneratedAct('multi_act', 'Блочный акт', `block_act_${id}.docx`);
 
-      // ✅ Формируем полный URL
-      const baseUrl = import.meta.env.VITE_API_KEY?.replace('/api/v1/', '') || 'https://bsv.sino0on.ru';
-      const fullUrl = fileUrl.startsWith('http') ? fileUrl : `${baseUrl}${fileUrl}`;
-
-      console.log('[BLOCK ACT] Full URL:', fullUrl);
-
-      try {
-        const fetchResponse = await fetch(fullUrl, { credentials: 'include' });
-
-        console.log('[BLOCK ACT] Response status:', fetchResponse.status);
-
-        if (!fetchResponse.ok) {
-          throw new Error(`HTTP ${fetchResponse.status}: ${fetchResponse.statusText}`);
-        }
-
-        const blob = await fetchResponse.blob();
-        console.log('[BLOCK ACT] Blob size:', blob.size);
-
-        if (blob.size === 0) {
-          message.error('Файл пустой, попробуйте сгенерировать заново');
-          return;
-        }
-
-        const nameFromUrl = fileUrl.split('/').pop() || `block_act_${id}.docx`;
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = decodeURIComponent(nameFromUrl);
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(url);
-
-        message.success('Блочный акт успешно сгенерирован и скачан');
-      } catch (err) {
-        console.error('[BLOCK ACT] Download failed', err);
-        message.error('Не удалось скачать акт');
-        window.open(fullUrl, '_blank');
-      }
-    } catch (error) {
-      console.error('Failed to generate block act', error);
-      message.error('Не удалось сгенерировать блочный акт');
+  // Скачивание уже загруженного файла акта (objectData.act.file)
+  const handleDownloadActFile = async () => {
+    const fileUrl = objectData?.act?.file;
+    if (!fileUrl) {
+      message.warning(t('tuDetails.act.messages.fileRequired', 'Файл акта не найден'));
+      return;
     }
+    await downloadServerFile(fileUrl, `act_${id}.docx`);
   };
 
   if (isLoading) {
     return (
-      <DashboardLayout title={`${t(title)} ${id}`}>
+      <DashboardLayout title={`${t(title)} ${tuNumber}`}>
         <Flex justify='center' align='center' style={{ minHeight: 200 }}>
           <Spin size='large' />
         </Flex>
@@ -678,7 +548,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
 
   if (isError || !objectData) {
     return (
-      <DashboardLayout title={`${t(title)} ${id}`}>
+      <DashboardLayout title={`${t(title)} ${tuNumber}`}>
         <Alert message={t('tuDetails.loadError')} description={t('tuDetails.loadErrorDescription')} type='error' showIcon />
       </DashboardLayout>
     );
@@ -690,7 +560,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const percent = totalRequiredFolders > 0 ? (filledRequiredFolders / totalRequiredFolders) * 100 : 0;
 
   return (
-    <DashboardLayout title={`${t(title)} ${id}`}>
+    <DashboardLayout title={`${t(title)} ${tuNumber}`}>
       <ActionsBar
         visible={activeTab === '1'}
         id={id || ''}
@@ -725,7 +595,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
                     <FileOutlined style={{ color: '#1677ff' }} />
                   </Col>
                   <Col>
-                    <Typography.Link onClick={() => window.open(objectData.act!.file!, '_blank')}>
+                    <Typography.Link onClick={handleDownloadActFile}>
                       {decodeURIComponent(objectData.act!.file!.split('/').pop() || 'act.docx')}
                     </Typography.Link>
                   </Col>
@@ -763,44 +633,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
                     </Col>
                     {objectData.act?.file && (
                       <Col>
-                        <Button
-                          onClick={async () => {
-                            try {
-                              const fileUrl = objectData.act?.file;
-                              if (!fileUrl) {
-                                message.warning(t('tuDetails.act.messages.fileRequired', 'Выберите файл акта'));
-                                return;
-                              }
-
-                              console.log('[ACT DOWNLOAD] Downloading file:', fileUrl);
-
-                              try {
-                                const response = await fetch(fileUrl, { credentials: 'include' });
-                                if (!response.ok) throw new Error('download failed');
-                                const blob = await response.blob();
-                                const nameFromUrl = fileUrl.split('/').pop() || `act_${id}.docx`;
-                                const url = window.URL.createObjectURL(blob);
-                                const a = document.createElement('a');
-                                a.href = url;
-                                a.download = decodeURIComponent(nameFromUrl);
-                                document.body.appendChild(a);
-                                a.click();
-                                a.remove();
-                                window.URL.revokeObjectURL(url);
-
-                                console.log('[ACT DOWNLOAD] Success');
-                              } catch (err) {
-                                console.error('[ACT DOWNLOAD] Failed to download file', err);
-                                window.open(fileUrl, '_blank');
-                              }
-                            } catch (e) {
-                              console.error('[ACT DOWNLOAD] Error', e);
-                              message.error(t('tuDetails.act.messages.downloadFailed', 'Не удалось скачать акт'));
-                            }
-                          }}
-                        >
-                          {t('tuDetails.act.actions.download', 'Скачать')}
-                        </Button>
+                        <Button onClick={handleDownloadActFile}>{t('tuDetails.act.actions.download', 'Скачать')}</Button>
                       </Col>
                     )}
                   </Row>

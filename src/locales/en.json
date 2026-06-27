@@ -1601,5 +1601,19 @@
         }
       }
     }
+  },
+  "theme": {
+    "label": "Appearance theme",
+    "selectHint": "Choose the interface appearance",
+    "modeLight": "Light",
+    "modeDark": "Dark",
+    "names": {
+      "light": "Light",
+      "dark": "Dark",
+      "dim": "Dim",
+      "contrast": "High contrast",
+      "purple": "Purple",
+      "yellow": "Yellow"
+    }
   }
 }

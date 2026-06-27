@@ -2,13 +2,24 @@ import { type FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
-import { Alert, Avatar, Badge, Button, Card, Divider, Modal, Radio, Space, Spin, Typography } from 'antd';
-import { BellOutlined, FlagOutlined, GlobalOutlined, IdcardOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
+import { Alert, Avatar, Badge, Button, Card, Divider, Modal, Radio, Space, Spin, theme, Typography } from 'antd';
+import {
+  BellOutlined,
+  BgColorsOutlined,
+  FlagOutlined,
+  GlobalOutlined,
+  IdcardOutlined,
+  MailOutlined,
+  UserOutlined
+} from '@ant-design/icons';
 import { DashboardLayout } from 'components';
+import { THEME_OPTIONS } from 'components/ThemeProvider/themes';
 import './style.scss';
 
 import { authApi } from 'api/Auth.api';
+import { useAppSelector } from 'hooks/useAppSelector';
 import { useUserInfo } from 'hooks/useAuth';
+import { setTheme } from 'store/ThemeSlice';
 import { clearAuthData, isAuthenticated } from 'utils/authUtils';
 
 interface IProps {
@@ -83,10 +94,35 @@ const AmericanFlag: FC = () => (
   </div>
 );
 
+// Мини-превью темы: фон + поверхность + акцент
+const ThemeSwatch: FC<{ bg: string; surface: string; primary: string }> = ({ bg, surface, primary }) => (
+  <div
+    style={{
+      width: '44px',
+      height: '30px',
+      borderRadius: '6px',
+      background: bg,
+      border: '1px solid rgba(127, 127, 127, 0.3)',
+      position: 'relative',
+      flex: '0 0 auto',
+      overflow: 'hidden'
+    }}
+  >
+    <div
+      style={{ position: 'absolute', left: '5px', top: '6px', width: '22px', height: '7px', borderRadius: '2px', background: surface }}
+    />
+    <div
+      style={{ position: 'absolute', left: '5px', bottom: '5px', width: '14px', height: '6px', borderRadius: '3px', background: primary }}
+    />
+  </div>
+);
+
 export const Profile: FC<IProps> = ({ title }) => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { token } = theme.useToken();
+  const currentTheme = useAppSelector((state) => state.theme.key);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState('language');
 
@@ -145,6 +181,28 @@ export const Profile: FC<IProps> = ({ title }) => {
       value: 'en'
     }
   ];
+
+  const themeOptions = THEME_OPTIONS.map((th) => {
+    const tk = th.config.token ?? {};
+    const bg = (tk.colorBgLayout as string) || (th.isDark ? '#141414' : '#ffffff');
+    const surface = (tk.colorBgContainer as string) || (th.isDark ? '#1f1f1f' : '#f0f0f0');
+    const primary = (tk.colorPrimary as string) || '#1677ff';
+
+    return {
+      value: th.key,
+      label: (
+        <Space align='center'>
+          <ThemeSwatch bg={bg} surface={surface} primary={primary} />
+          <div>
+            <div style={{ fontWeight: 500 }}>{t(th.labelKey)}</div>
+            <div style={{ fontSize: '12px', color: token.colorTextSecondary }}>
+              {th.isDark ? t('theme.modeDark') : t('theme.modeLight')}
+            </div>
+          </div>
+        </Space>
+      )
+    };
+  });
 
   const handleLogout = (): void => {
     clearAuthData();
@@ -220,6 +278,10 @@ export const Profile: FC<IProps> = ({ title }) => {
               <FlagOutlined style={{ fontSize: '20px' }} />
               <li>{t('profile.currentLang')}</li>
             </div>
+            <div className={`language-settings__item ${activeTab === 'theme' ? 'active' : ''}`} onClick={() => setActiveTab('theme')}>
+              <BgColorsOutlined style={{ fontSize: '20px' }} />
+              <li>{t('theme.label')}</li>
+            </div>
             <div className={`language-settings__item ${activeTab === 'account' ? 'active' : ''}`} onClick={() => setActiveTab('account')}>
               <UserOutlined style={{ fontSize: '20px' }} />
               <li>{t('profile.account')}</li>
@@ -265,9 +327,56 @@ export const Profile: FC<IProps> = ({ title }) => {
                         style={{
                           width: '100%',
                           padding: '12px 16px',
-                          border: currentLang === option.value ? '2px solid #1890ff' : '1px solid #f0f0f0',
+                          border: currentLang === option.value ? `2px solid ${token.colorPrimary}` : `1px solid ${token.colorBorder}`,
                           borderRadius: '8px',
-                          backgroundColor: currentLang === option.value ? '#f6ffed' : '#fafafa',
+                          backgroundColor: currentLang === option.value ? token.colorPrimaryBg : token.colorFillAlter,
+                          margin: 0,
+                          display: 'flex',
+                          alignItems: 'center',
+                          transition: 'all 0.3s'
+                        }}
+                      >
+                        {option.label}
+                      </Radio>
+                    ))}
+                  </Space>
+                </Radio.Group>
+              </div>
+            </Card>
+          )}
+
+          {activeTab === 'theme' && (
+            <Card
+              title={
+                <Space>
+                  <BgColorsOutlined style={{ color: token.colorPrimary }} />
+                  {t('theme.label')}
+                </Space>
+              }
+              style={{ borderRadius: '12px' }}
+            >
+              <div style={{ marginBottom: '24px' }}>
+                <Typography.Title level={5} style={{ marginBottom: '8px' }}>
+                  {t('theme.label')}
+                </Typography.Title>
+                <Typography.Text type='secondary'>{t('theme.selectHint')}</Typography.Text>
+              </div>
+
+              <Divider />
+
+              <div style={{ marginTop: '24px' }}>
+                <Radio.Group value={currentTheme} onChange={(e) => dispatch(setTheme(e.target.value))} style={{ width: '100%' }}>
+                  <Space direction='vertical' style={{ width: '100%' }} size='middle'>
+                    {themeOptions.map((option) => (
+                      <Radio
+                        key={option.value}
+                        value={option.value}
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          border: currentTheme === option.value ? `2px solid ${token.colorPrimary}` : `1px solid ${token.colorBorder}`,
+                          borderRadius: '8px',
+                          backgroundColor: currentTheme === option.value ? token.colorPrimaryBg : token.colorFillAlter,
                           margin: 0,
                           display: 'flex',
                           alignItems: 'center',

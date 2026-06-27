@@ -1,6 +1,6 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
-import { Button, Checkbox, Col, Divider, Form, Input, message, Modal, Row, Select, Space, Typography } from 'antd';
+import { Button, Checkbox, Col, Divider, Form, Input, message, Modal, Row, Select, Space, theme, Typography } from 'antd';
 import { DownloadOutlined, SaveOutlined } from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 import type { ExportEntity } from 'types/entities/reports.entities';
@@ -152,6 +152,7 @@ const decodeQSToFormValues = (qs: string): Partial<FormValues> => {
 };
 
 const ExportData: FC<{ title: string }> = ({ title }) => {
+  const { token } = theme.useToken();
   const [form] = Form.useForm<FormValues>();
   const navigate = useNavigate();
   const [exportReports, { isLoading }] = useExportReportsMutation();
@@ -289,7 +290,7 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
         form={form}
         layout='vertical'
         onFinish={onFinish}
-        style={{ background: '#fff', borderRadius: 8, padding: 16 }}
+        style={{ background: token.colorBgContainer, borderRadius: 8, padding: 16 }}
         initialValues={{
           export: 'xlsx',
           include: { customer: false, entity: false, protocol: false, invoices: false, payments: false },

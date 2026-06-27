@@ -1,3 +1,205 @@
 main {
   position: relative;
 }
+
+/* ============================================================
+   Темы оформления
+   Переменные на каждую тему используются для перекраски
+   захардкоженных inline-цветов (см. блок ниже, [data-dark='true']).
+   ============================================================ */
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --app-bg: #f5f5f5;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --app-bg: #141414;
+  --app-surface: #1f1f1f;
+  --app-elevated: #262626;
+  --app-text: rgba(255, 255, 255, 0.88);
+  --app-text-secondary: rgba(255, 255, 255, 0.55);
+  --app-border: #303030;
+}
+
+:root[data-theme='dim'] {
+  color-scheme: dark;
+  --app-bg: #0f172a;
+  --app-surface: #1e293b;
+  --app-elevated: #243045;
+  --app-text: rgba(255, 255, 255, 0.92);
+  --app-text-secondary: rgba(255, 255, 255, 0.62);
+  --app-border: #334155;
+}
+
+:root[data-theme='contrast'] {
+  color-scheme: dark;
+  --app-bg: #000000;
+  --app-surface: #0d0d0d;
+  --app-elevated: #161616;
+  --app-text: #ffffff;
+  --app-text-secondary: rgba(255, 255, 255, 0.85);
+  --app-border: #555555;
+}
+
+:root[data-theme='purple'] {
+  color-scheme: dark;
+  --app-bg: #15101f;
+  --app-surface: #1e1730;
+  --app-elevated: #271d3d;
+  --app-text: rgba(255, 255, 255, 0.92);
+  --app-text-secondary: rgba(255, 255, 255, 0.62);
+  --app-border: #3b2d57;
+}
+
+/* Жёлтая — светлая тёплая тема (data-dark='false'), перекраски ниже не применяются */
+:root[data-theme='yellow'] {
+  color-scheme: light;
+  --app-bg: #fdf6e3;
+}
+
+body {
+  background-color: var(--app-bg, #f5f5f5);
+  transition: background-color 0.3s ease;
+}
+
+/* ============================================================
+   Перекраска захардкоженных inline-цветов в тёмных темах.
+   antd-компоненты адаптируются через токены ConfigProvider,
+   но inline style={{ color/background: '#...' }} токены не знают —
+   ловим их по содержимому атрибута style и переопределяем.
+   ============================================================ */
+
+/* Атрибутные селекторы — с флагом " i" (регистронезависимо), т.к. в коде
+   встречаются цвета и в нижнем (#f5f5f7), и в верхнем (#8C8C8C) регистре. */
+:root[data-dark='true'] {
+  /* --- Светлые фоны -> тёмная поверхность --- */
+  [style*='#f5f5f7' i],
+  [style*='#f5f5f5' i],
+  [style*='#fafafa' i],
+  [style*='#f0f0f0' i],
+  [style*='#f0f1f2' i],
+  [style*='#f0f1f3' i],
+  [style*='#ededed' i],
+  [style*='#e1e0e5' i],
+  [style*='#dfdfdf' i],
+  [style*='#e8f5e9' i],
+  [style*='#f6ffed' i],
+  [style*='#e6f0ff' i] {
+    background-color: var(--app-surface) !important;
+  }
+
+  /* Белые фоны -> приподнятая поверхность (только когда это именно фон,
+     чтобы не задеть белый текст на цветных кнопках) */
+  [style*='background-color: #fff' i],
+  [style*='background: #fff' i],
+  [style*='background-color: white' i],
+  [style*='background: white' i] {
+    background-color: var(--app-elevated) !important;
+  }
+
+  /* --- Тёмный текст -> светлый --- */
+  [style*='#1d1d1f' i],
+  [style*='#101828' i],
+  [style*='#101010' i],
+  [style*='#1f1f1f' i],
+  [style*='color: #000' i],
+  [style*='color: #333' i],
+  [style*='color: #1c1c1e' i],
+  [style*='color: black' i] {
+    color: var(--app-text) !important;
+  }
+
+  /* --- Приглушённый серый текст -> чуть светлее для читаемости --- */
+  [style*='#8e8e93' i],
+  [style*='#8c8c8c' i],
+  [style*='#737379' i],
+  [style*='color: #666' i],
+  [style*='color: #999' i],
+  [style*='color: #667085' i] {
+    color: var(--app-text-secondary) !important;
+  }
+
+  /* Светлые бордюры -> приглушённый тёмный */
+  [style*='1px solid #d9d9d9' i],
+  [style*='1px solid #f0f0f0' i],
+  [style*='1px solid #eee' i] {
+    border-color: var(--app-border) !important;
+  }
+
+  /* Иконки antd наследуют цвет текста (currentColor) */
+  .anticon {
+    color: inherit;
+  }
+}
+
+/* ============================================================
+   Перекраска захардкоженных цветов, заданных через SCSS-классы
+   (их атрибутные селекторы выше не ловят). Только тёмные темы —
+   светлая тема не меняется.
+   ============================================================ */
+
+:root[data-dark='true'] {
+  /* --- Таблицы antd (глобально, все страницы) --- */
+
+  /* Заголовки: в части страниц принудительно белые -> делаем тёмными */
+  .ant-table-thead > tr > th,
+  .ant-table-thead .ant-table-cell {
+    background-color: var(--app-elevated) !important;
+    color: var(--app-text) !important;
+  }
+
+  /* Ховер строки: глобальное правило задаёт #f5f5f5 (светлый) -> тёмный */
+  .ant-table-row:hover > td,
+  .ant-table-tbody > tr.ant-table-row:hover > td,
+  .ant-table-cell-row-hover,
+  td.ant-table-cell-row-hover {
+    background-color: var(--app-elevated) !important;
+  }
+
+  /* Выделенная строка */
+  .ant-table-tbody > tr.ant-table-row-selected > td {
+    background-color: var(--app-elevated) !important;
+  }
+
+  /* Маркер ресайза колонок */
+  .resizable-handle {
+    background: var(--app-border) !important;
+  }
+
+  /* --- Панели фильтров и инпуты с захардкоженными классами --- */
+
+  .tu-filters-panel,
+  .land-parcels-filters-panel {
+    background: var(--app-surface) !important;
+    border-color: var(--app-border) !important;
+  }
+
+  .tu-filters-header,
+  .land-parcels-filters-header {
+    color: var(--app-text) !important;
+    border-bottom-color: var(--app-border) !important;
+  }
+
+  .masked-ant-input {
+    background-color: var(--app-elevated) !important;
+    color: var(--app-text) !important;
+  }
+  .masked-ant-input::placeholder {
+    color: var(--app-text-secondary) !important;
+  }
+
+  /* --- Профиль / языковые настройки --- */
+  .profile,
+  .language-settings__sidebar {
+    background-color: var(--app-surface) !important;
+  }
+  .language-settings__item:hover {
+    background-color: var(--app-elevated) !important;
+  }
+  .language-settings__item.active {
+    background-color: var(--app-elevated) !important;
+    color: var(--app-text) !important;
+  }
+}

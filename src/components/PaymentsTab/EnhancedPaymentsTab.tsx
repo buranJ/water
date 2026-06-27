@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Button, Card, Collapse, Flex, Progress, Space, Spin, TableColumnsType, Tag, Typography } from 'antd';
+import { Alert, Button, Card, Collapse, Flex, Progress, Space, Spin, TableColumnsType, Tag, theme, Typography } from 'antd';
 import { FileTextOutlined, PlusOutlined } from '@ant-design/icons';
 import { Table } from 'common/ui';
 import type { IAccountingInvoice, IPayment } from 'types/entities/accounting';
@@ -24,6 +24,7 @@ interface IInvoicePaymentsProps {
 
 const InvoicePayments: FC<IInvoicePaymentsProps> = ({ invoice, onAddPayment }) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const { hasPermission } = usePermissions();
 
   const {
@@ -130,7 +131,7 @@ const InvoicePayments: FC<IInvoicePaymentsProps> = ({ invoice, onAddPayment }) =
 
   return (
     <div style={{ padding: '0 16px 16px' }}>
-      <Card size='small' style={{ marginBottom: 16, backgroundColor: '#fafafa' }}>
+      <Card size='small' style={{ marginBottom: 16, backgroundColor: token.colorFillAlter }}>
         <Flex justify='space-between' align='center' style={{ marginBottom: 12 }}>
           <div>
             <Text strong>
@@ -166,7 +167,13 @@ const InvoicePayments: FC<IInvoicePaymentsProps> = ({ invoice, onAddPayment }) =
         <Text strong>
           {t('protocolDetail.tabs.payments')} ({payments.length})
         </Text>
-        <Button disabled={!hasPermission('add_payment')} type='primary' size='small' icon={<PlusOutlined />} onClick={() => onAddPayment(invoice.id.toString())}>
+        <Button
+          disabled={!hasPermission('add_payment')}
+          type='primary'
+          size='small'
+          icon={<PlusOutlined />}
+          onClick={() => onAddPayment(invoice.id.toString())}
+        >
           {t('paymentsTab.buttons.add')}
         </Button>
       </Flex>

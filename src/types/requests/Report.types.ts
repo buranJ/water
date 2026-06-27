@@ -26,6 +26,7 @@ export interface IReportFilters {
   status?: 'active' | 'inactive' | 'archived';
   tu_with_loads?: boolean;
   type_ty?: number;
+  year?: number;
 }
 
 export interface IReportParams extends IReportFilters {
