@@ -356,7 +356,7 @@
       "fireInput1": "Пожарный ввод 1:",
       "fireInput2": "Пожарный ввод 2:",
       "notes": "Примечания:",
-      "paymentInvoiceNumber": "Номер счёта:",
+      "paymentInvoiceNumber": "Входящий номер БГА:",
       "paymentPaper": "Сумма за бумажную работу:",
       "paymentConnection": "Сумма за подключение:",
       "paymentAmount": "Итого к оплате:",
