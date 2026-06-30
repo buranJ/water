@@ -152,6 +152,7 @@ export const {
   useLazyGetCustomerQuery,
   useGetAllCustomersQuery,
   useGetCustomerByIdQuery,
+  useLazyGetCustomerByIdQuery,
   useUpdateCustomerMutation,
   usePatchCustomerMutation,
   useDeleteCustomerMutation,

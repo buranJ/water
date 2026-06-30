@@ -9,7 +9,12 @@ import { ITyItem } from 'types/entities';
 import './style.scss';
 
 import { useCreateTyMutation, useGetTyByIdQuery, useGetTypesTyQuery, useLazyGetTyByNumberQuery, usePatchTyMutation } from 'api/Ty.api';
-import { useCreateCustomerMutation, useLazyGetCustomerQuery } from 'api/Customer.api';
+import {
+  useCreateCustomerMutation,
+  useLazyGetCustomerByIdQuery,
+  useLazyGetCustomerQuery,
+  useUpdateCustomerMutation
+} from 'api/Customer.api';
 import { useCreateObjectMutation, useLazyGetAllObjectsQuery } from 'api/Object.api';
 import { useGetAllFormulasQuery } from 'api/Formula.api';
 import { useGetRequestSourcesQuery } from 'api/RequestSource.api';
@@ -102,6 +107,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
   // Customer/Object helpers
   const [createCustomer] = useCreateCustomerMutation();
+  const [updateCustomer] = useUpdateCustomerMutation();
+  const [triggerGetCustomerById] = useLazyGetCustomerByIdQuery();
   const [createObject] = useCreateObjectMutation();
   const [triggerGetCustomers] = useLazyGetCustomerQuery();
   const [triggerGetObjects] = useLazyGetAllObjectsQuery();
@@ -433,6 +440,25 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         if (values.payment_deadline) base.payment_deadline = values.payment_deadline;
         if (tuQuery.data.application?.id != null) base.application = tuQuery.data.application.id;
 
+        // Обновляем самого заказчика (PUT /customer/{id}) данными из формы.
+        // Тянем полный объект и мержим, чтобы PUT не затёр остальные поля.
+        const editCustomerId = tuQuery.data.customer.id;
+        if (editCustomerId && values.customer) {
+          try {
+            const fullCustomer = await triggerGetCustomerById(editCustomerId).unwrap();
+            await updateCustomer({
+              id: editCustomerId,
+              body: {
+                ...fullCustomer,
+                full_name: values.customer,
+                address: values.address
+              }
+            }).unwrap();
+          } catch (err) {
+            console.warn('Не удалось обновить заказчика', err);
+          }
+        }
+
         patchTy({ id: Number(tyId), body: base });
       } catch (e) {
         console.error(e);
@@ -449,6 +475,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
       patchTy,
       triggerGetCustomers,
       createCustomer,
+      updateCustomer,
+      triggerGetCustomerById,
       triggerGetObjects,
       createObject,
       triggerCheckCustomer,
@@ -925,7 +953,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               </Col>
             </Row>
             <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_water' rules={[{ required: false }]}>
-              <Input size='large' />
+              <TextArea size='large' />
             </Form.Item>
             <Form.Item label={'Предусмотреть'} name='provide_water' rules={[{ required: false }]}>
               <TextArea size='large' />
@@ -954,7 +982,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               </Col>
               <Col span={12}>
                 <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_input_1' rules={[{ required: false }]}>
-                  <Input size='large' />
+                  <TextArea size='large' />
                 </Form.Item>
               </Col>
             </Row>
@@ -980,7 +1008,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               </Col>
               <Col span={12}>
                 <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_input_2' rules={[{ required: false }]}>
-                  <Input size='large' />
+                  <TextArea size='large' />
                 </Form.Item>
               </Col>
             </Row>
@@ -1022,7 +1050,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               </Col>
               <Col span={8}>
                 <Form.Item label={t('addTuForms.form.labels.streetPass')} name='street_pass_sewer' rules={[{ required: false }]}>
-                  <Input size='large' placeholder={t('addTuForms.form.placeholders.streetPass')} />
+                  <TextArea size='large' placeholder={t('addTuForms.form.placeholders.streetPass')} />
                 </Form.Item>
               </Col>
             </Row>
