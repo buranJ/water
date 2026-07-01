@@ -8,7 +8,14 @@ import { DashboardLayout } from 'components';
 import { ITyItem } from 'types/entities';
 import './style.scss';
 
-import { useCreateTyMutation, useGetTyByIdQuery, useGetTypesTyQuery, useLazyGetTyByNumberQuery, usePatchTyMutation } from 'api/Ty.api';
+import {
+  useCreateTyMutation,
+  useGetTyByIdQuery,
+  useGetTyGroupsQuery,
+  useGetTypesTyQuery,
+  useLazyGetTyByNumberQuery,
+  usePatchTyMutation
+} from 'api/Ty.api';
 import {
   useCreateCustomerMutation,
   useLazyGetCustomerByIdQuery,
@@ -32,6 +39,7 @@ const { Title } = Typography;
 
 type FormValues = Omit<ITyItem, 'type_ty' | 'customer' | 'application'> & {
   type_ty: number;
+  group?: number;
   customer: string;
   application: number;
   request_date?: string;
@@ -64,6 +72,8 @@ type FormValues = Omit<ITyItem, 'type_ty' | 'customer' | 'application'> & {
   collector_diametr_sewer?: number | string;
   street_pass_sewer?: string;
   provide_sewer?: string;
+  comment_voda?: string;
+  comment_kanal?: string;
 
   // Increase load specific fields (strings)
   increase_water?: string;
@@ -99,6 +109,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
   const navigate = useNavigate();
   const { tyId } = useParams();
   const typesTyQuery = useGetTypesTyQuery();
+  const tyGroupsQuery = useGetTyGroupsQuery();
   const { data: formulas } = useGetAllFormulasQuery({ page: 1, page_size: 100 });
   const { data: requestSources } = useGetRequestSourcesQuery({ page: 1, page_size: 100 });
   const [patchTy, { isLoading, isSuccess }] = usePatchTyMutation();
@@ -190,6 +201,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             request_date: values.request_date || dayjs(Date.now()).format('YYYY-MM-DD'),
             payment_deadline: values.payment_deadline,
             type_ty: values.type_ty,
+            group: values.group,
             object_name: values.object_name ?? values.object,
             address: values.address,
             status: values.status,
@@ -209,6 +221,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             water_pipe: values.water_pipe,
             street_pass_water: values.street_pass_water,
             provide_water: values.provide_water,
+            comment_voda: values.comment_voda,
             collector_diametr_fire_1: values.collector_diametr_fire_1,
             street_pass_input_1: values.street_pass_input_1,
             collector_diametr_fire_2: values.collector_diametr_fire_2,
@@ -217,6 +230,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             collector_diametr_sewer: values.collector_diametr_sewer != null ? String(values.collector_diametr_sewer) : undefined,
             street_pass_sewer: values.street_pass_sewer,
             provide_sewer: values.provide_sewer,
+            comment_kanal: values.comment_kanal,
             increase_water: values.increase_water,
             increase_sewage: values.increase_sewage,
             additional_cold_water_required: values.additional_cold_water_required,
@@ -422,6 +436,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         const base: any = {
           ...values,
           customer: tuQuery.data.customer.id,
+          group: values.group,
           entity: tuQuery.data.entity,
           parent_tc_number: values.parent_tc_number,
           increase_water: values.increase_water,
@@ -459,7 +474,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           }
         }
 
-        patchTy({ id: Number(tyId), body: base });
+        await patchTy({ id: Number(tyId), body: base }).unwrap();
       } catch (e) {
         console.error(e);
         message.error(t('addTuForms.messages.createTuError'));
@@ -507,6 +522,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         request_date: toStr(tuQuery.data.request_date as unknown as string | Date | undefined),
         payment_deadline: toStr(tuQuery.data.payment_deadline as unknown as string | Date | undefined),
         type_ty: getTypeTyId(tuQuery.data.type_ty),
+        group: (tuQuery.data as any).group?.id,
         request_source: getRequestSourceTitle((tuQuery.data as any).request_source),
         parent_tc_number: tuQuery.data.parent_tc_number,
         increase_water: tuQuery.data.increase_water,
@@ -717,7 +733,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Row>
 
         <Row gutter={16}>
-          <Col span={12}>
+          <Col span={8}>
             <Form.Item
               label={t('addTuForms.form.labels.address')}
               name='address'
@@ -726,7 +742,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               <Input size='large' placeholder={t('addTuForms.form.placeholders.address')} />
             </Form.Item>
           </Col>
-          <Col span={12}>
+          <Col span={8}>
             <Form.Item
               label={t('addTuForms.form.labels.techConditionType')}
               name='type_ty'
@@ -737,6 +753,22 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
                 {typesTyQuery.data?.map((type) => (
                   <Option key={type.id} value={type.id}>
                     {type.title}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item label={t('addTuForms.form.labels.group', 'Группа')} name='group'>
+              <Select
+                size='large'
+                allowClear
+                loading={tyGroupsQuery.isLoading}
+                placeholder={t('addTuForms.form.placeholders.group', 'Выберите группу')}
+              >
+                {tyGroupsQuery.data?.map((group) => (
+                  <Option key={group.id} value={group.id}>
+                    {group.title}
                   </Option>
                 ))}
               </Select>
@@ -958,6 +990,13 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Form.Item label={'Предусмотреть'} name='provide_water' rules={[{ required: false }]}>
               <TextArea size='large' />
             </Form.Item>
+            <Form.Item
+              label={t('addTuForms.form.labels.commentWater', 'Комментарий к водопроводу')}
+              name='comment_voda'
+              rules={[{ required: false }]}
+            >
+              <TextArea size='large' />
+            </Form.Item>
 
             {/* Пожаротушение */}
             <Title level={5} style={{ marginTop: '12px' }}>
@@ -1056,6 +1095,14 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Row>
           </div>
           <Form.Item label={'Предусмотреть'} name='provide_sewer' rules={[{ required: false }]} preserve>
+            <TextArea size='large' />
+          </Form.Item>
+          <Form.Item
+            label={t('addTuForms.form.labels.commentSewer', 'Комментарий к канализации')}
+            name='comment_kanal'
+            rules={[{ required: false }]}
+            preserve
+          >
             <TextArea size='large' />
           </Form.Item>
         </div>

@@ -9,7 +9,6 @@ import { AccountingTab } from 'components/AccountingTab/AccountingTab';
 import { DashboardLayout } from 'components/DashboardLayout';
 import { RejectApplicationModal } from 'components/Modal/RejectApplicationModal';
 import { IActEnum } from 'types/common';
-import type { ITyBody } from 'types/entities';
 import AddLoadModal from './AddLoadModal';
 import { Architecture } from './Tabs';
 
@@ -29,9 +28,9 @@ import {
   useLazyDownloadProtocolDocxQuery,
   // useLazyGetActTyByIdQuery,
   usePatchActTyMutation,
+  usePatchTyMutation,
   usePutBalanceAcceptanceMutation,
   useUpdateActTyMutation,
-  useUpdateTyMutation,
   useUploadDopTyMutation
 } from 'api/Ty.api';
 import { usePermissions } from 'hooks/useAuth';
@@ -90,7 +89,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const [triggerDownload, { isFetching: isDownloading }] = useLazyDownloadProtocolDocxQuery();
   const [triggerLoadIncrease, { isFetching: isLoadIncreaseDownloading }] = useLazyDownloadLoadIncreaseDocxQuery();
   const [triggerContractDownload, { isFetching: isContractDownloading }] = useLazyDownloadContractDocxQuery();
-  const [updateTy] = useUpdateTyMutation();
+  const [patchTy] = usePatchTyMutation();
   const [patchActTy] = usePatchActTyMutation();
   const [createAct, { isLoading: isActCreating }] = useCreateActTyMutation();
   const [updateActTy, { isLoading: isActUpdating }] = useUpdateActTyMutation();
@@ -145,7 +144,10 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const handleApproveClick = async () => {
     if (!id) return;
     try {
-      await updateTy({ id, body: { ...objectData, stage: 'approved' } as unknown as ITyBody }).unwrap();
+      // PATCH только изменяемого поля: PUT с полным спредом objectData ломался,
+      // т.к. GET-ответ отдаёт связи (group, customer...) вложенными объектами,
+      // а бэкенд на запись ждёт id (получали "Ожидалось значение первичного ключа, получен dict").
+      await patchTy({ id: Number(id), body: { stage: 'approved' } }).unwrap();
       message.success(t('tuDetails.messages.approved', 'ТУ одобрены'));
       refetch();
     } catch (e) {
@@ -157,7 +159,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const handleRejectTu = async () => {
     if (!id) return;
     try {
-      await updateTy({ id, body: { ...objectData, status: 'rejected' } as unknown as ITyBody }).unwrap();
+      await patchTy({ id: Number(id), body: { status: 'rejected' } }).unwrap();
       message.success(t('tuDetails.messages.tuRejected', 'ТУ отклонено'));
       refetch();
     } catch (e) {

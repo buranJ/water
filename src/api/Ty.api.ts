@@ -55,6 +55,12 @@ export interface IUploadDopTyParams {
   file: File;
 }
 
+export interface ITyGroup {
+  id: number;
+  name: string;
+  title: string;
+}
+
 export const tyApi = createApi({
   reducerPath: 'tyApi',
   baseQuery: getBaseQuery(),
@@ -122,6 +128,13 @@ export const tyApi = createApi({
     getTypesTy: build.query<ITypesTYResponse, IITypesTYParams>({
       query: () => ({
         url: '/ty/typesTY/',
+        method: 'GET'
+      })
+    }),
+
+    getTyGroups: build.query<ITyGroup[], void>({
+      query: () => ({
+        url: '/ty/groups/',
         method: 'GET'
       })
     }),
@@ -551,6 +564,7 @@ export const {
   usePatchTyMutation,
   useDeleteTyMutation,
   useGetTypesTyQuery,
+  useGetTyGroupsQuery,
   useGetHistoryTyQuery,
   useCreateTyFromApplicationMutation,
   useGenerateActTyMutation,
