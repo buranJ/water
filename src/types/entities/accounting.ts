@@ -107,6 +107,13 @@ export interface IAccountingInvoice {
   protocol: number;
 }
 
+export interface IInvoiceRequisite {
+  id: number;
+  name: string;
+  code: string;
+  text: string;
+}
+
 export interface IGetInvoicesByProtocolParams {
   protocolId: string;
 }

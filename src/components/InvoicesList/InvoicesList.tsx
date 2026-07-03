@@ -1,10 +1,11 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Card, Flex, message, Space, Tag, Typography } from 'antd';
-import { CheckCircleOutlined, ClockCircleOutlined, DownloadOutlined } from '@ant-design/icons';
+import type { MenuProps } from 'antd';
+import { Button, Card, Dropdown, Flex, message, Space, Tag, Typography } from 'antd';
+import { CheckCircleOutlined, CheckOutlined, ClockCircleOutlined, DownloadOutlined, FileTextOutlined } from '@ant-design/icons';
 import type { IAccountingInvoice } from 'types/entities/accounting';
 
-import { useLazyDownloadInvoiceQuery } from 'api/Accounting.api';
+import { useGetInvoiceRequisitesQuery, useLazyDownloadInvoiceQuery } from 'api/Accounting.api';
 
 const { Title, Text } = Typography;
 
@@ -15,6 +16,8 @@ interface IProps {
 export const InvoicesList: FC<IProps> = ({ invoices }) => {
   const { t } = useTranslation();
   const [downloadInvoice, { isLoading: isDownloading }] = useLazyDownloadInvoiceQuery();
+  const { data: requisitesData } = useGetInvoiceRequisitesQuery();
+  const [selectedRequisites, setSelectedRequisites] = useState<Record<number, number | undefined>>({});
 
   const getInvoiceTypeLabel = useMemo(
     () => (invoiceType: string) => {
@@ -44,7 +47,8 @@ export const InvoicesList: FC<IProps> = ({ invoices }) => {
 
   const handleDownloadInvoice = async (invoice: IAccountingInvoice) => {
     try {
-      const result = await downloadInvoice({ invoiceId: invoice.id.toString() });
+      const requisite = selectedRequisites[invoice.id];
+      const result = await downloadInvoice({ invoiceId: invoice.id.toString(), requisite });
 
       if ('error' in result) {
         throw new Error('Ошибка загрузки файла');
@@ -94,6 +98,43 @@ export const InvoicesList: FC<IProps> = ({ invoices }) => {
   const formatCurrency = (amount: string) => {
     const currency = t('tuDetails.currency') || 'сом';
     return `${parseFloat(amount).toLocaleString('ru-RU')} ${currency}`;
+  };
+
+  const CLEAR_REQUISITE_KEY = '__clear__';
+
+  const handleSelectRequisite = (invoiceId: number, key: string) => {
+    setSelectedRequisites((prev) => ({
+      ...prev,
+      [invoiceId]: key === CLEAR_REQUISITE_KEY ? undefined : Number(key)
+    }));
+  };
+
+  const getSelectedRequisiteName = (invoiceId: number): string | undefined => {
+    const selectedId = selectedRequisites[invoiceId];
+    if (selectedId == null) return undefined;
+    return requisitesData?.find((r) => r.id === selectedId)?.name;
+  };
+
+  const buildRequisiteMenuItems = (invoiceId: number): MenuProps['items'] => {
+    if (!requisitesData || requisitesData.length === 0) {
+      return [{ key: 'empty', label: t('accounting.messages.noRequisites') || 'Реквизиты не найдены', disabled: true }];
+    }
+
+    const selectedId = selectedRequisites[invoiceId];
+
+    return [
+      {
+        key: CLEAR_REQUISITE_KEY,
+        label: t('accounting.labels.noRequisite') || 'Без реквизитов',
+        icon: selectedId == null ? <CheckOutlined /> : undefined
+      },
+      { type: 'divider' },
+      ...requisitesData.map((requisite) => ({
+        key: String(requisite.id),
+        label: requisite.name,
+        icon: selectedId === requisite.id ? <CheckOutlined /> : undefined
+      }))
+    ];
   };
 
   if (invoices.length === 0) {
@@ -155,6 +196,17 @@ export const InvoicesList: FC<IProps> = ({ invoices }) => {
               </div>
 
               <Space>
+                <Dropdown
+                  trigger={['click']}
+                  menu={{
+                    items: buildRequisiteMenuItems(invoice.id),
+                    onClick: ({ key }) => handleSelectRequisite(invoice.id, key)
+                  }}
+                >
+                  <Button size='small' icon={<FileTextOutlined />}>
+                    {getSelectedRequisiteName(invoice.id) || t('accounting.buttons.selectRequisites') || 'Выбрать реквизиты'}
+                  </Button>
+                </Dropdown>
                 <Button
                   size='small'
                   icon={<DownloadOutlined />}

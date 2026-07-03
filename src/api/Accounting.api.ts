@@ -14,6 +14,7 @@ import {
   IGetInvoicesListParams,
   IGetPaymentsByInvoiceParams,
   IGetPaymentsByInvoiceResponse,
+  IInvoiceRequisite,
   IPaginatedInvoicesList,
   IUpdateProtocolParams,
   IUpdateProtocolResponse
@@ -84,13 +85,21 @@ export const accountingApi = createApi({
       invalidatesTags: ['Invoice']
     }),
 
-    downloadInvoice: build.query<Blob, { invoiceId: string }>({
-      query: ({ invoiceId }) => ({
+    downloadInvoice: build.query<Blob, { invoiceId: string; requisite?: number | string }>({
+      query: ({ invoiceId, requisite }) => ({
         url: `/buhgalteria/invoices/dublicate/${invoiceId}/`,
         method: 'GET',
+        params: requisite != null ? { requisite } : undefined,
         responseHandler: (response) => response.blob()
       }),
       keepUnusedDataFor: 0
+    }),
+
+    getInvoiceRequisites: build.query<IInvoiceRequisite[], void>({
+      query: () => ({
+        url: '/buhgalteria/invoices/requisites/',
+        method: 'GET'
+      })
     }),
 
     updateProtocol: build.mutation<IUpdateProtocolResponse, IUpdateProtocolParams>({
@@ -187,3 +196,4 @@ export const useCreatePaymentMutation = accountingApi.useCreatePaymentMutation;
 export const useLazyGetProtocolByIdQuery = accountingApi.useLazyGetProtocolByIdQuery;
 export const useExportProtocolsExcelMutation = accountingApi.useExportProtocolsExcelMutation;
 export const usePatchProtocolMutation = accountingApi.usePatchProtocolMutation; // ✅ НОВОЕ
+export const useGetInvoiceRequisitesQuery = accountingApi.useGetInvoiceRequisitesQuery;
