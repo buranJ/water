@@ -47,7 +47,7 @@ export const InvoicesList: FC<IProps> = ({ invoices }) => {
 
   const handleDownloadInvoice = async (invoice: IAccountingInvoice) => {
     try {
-      const requisite = selectedRequisites[invoice.id];
+      const requisite = getEffectiveRequisiteId(invoice.id);
       const result = await downloadInvoice({ invoiceId: invoice.id.toString(), requisite });
 
       if ('error' in result) {
@@ -100,41 +100,36 @@ export const InvoicesList: FC<IProps> = ({ invoices }) => {
     return `${parseFloat(amount).toLocaleString('ru-RU')} ${currency}`;
   };
 
-  const CLEAR_REQUISITE_KEY = '__clear__';
+  // По умолчанию выбран "Оптима банк"; при желании переключают на "Бакай банк" и т.п.
+  const defaultRequisiteId = useMemo(() => {
+    if (!requisitesData?.length) return undefined;
+    const optima = requisitesData.find((r) => r.name.toLowerCase().includes('оптима'));
+    return (optima ?? requisitesData[0]).id;
+  }, [requisitesData]);
+
+  const getEffectiveRequisiteId = (invoiceId: number): number | undefined => selectedRequisites[invoiceId] ?? defaultRequisiteId;
 
   const handleSelectRequisite = (invoiceId: number, key: string) => {
-    setSelectedRequisites((prev) => ({
-      ...prev,
-      [invoiceId]: key === CLEAR_REQUISITE_KEY ? undefined : Number(key)
-    }));
+    setSelectedRequisites((prev) => ({ ...prev, [invoiceId]: Number(key) }));
   };
 
   const getSelectedRequisiteName = (invoiceId: number): string | undefined => {
-    const selectedId = selectedRequisites[invoiceId];
-    if (selectedId == null) return undefined;
-    return requisitesData?.find((r) => r.id === selectedId)?.name;
+    const id = getEffectiveRequisiteId(invoiceId);
+    return id == null ? undefined : requisitesData?.find((r) => r.id === id)?.name;
   };
 
   const buildRequisiteMenuItems = (invoiceId: number): MenuProps['items'] => {
     if (!requisitesData || requisitesData.length === 0) {
-      return [{ key: 'empty', label: t('accounting.messages.noRequisites') || 'Реквизиты не найдены', disabled: true }];
+      return [{ key: 'empty', label: t('accounting.messages.noRequisites', 'Реквизиты не найдены'), disabled: true }];
     }
 
-    const selectedId = selectedRequisites[invoiceId];
+    const selectedId = getEffectiveRequisiteId(invoiceId);
 
-    return [
-      {
-        key: CLEAR_REQUISITE_KEY,
-        label: t('accounting.labels.noRequisite') || 'Без реквизитов',
-        icon: selectedId == null ? <CheckOutlined /> : undefined
-      },
-      { type: 'divider' },
-      ...requisitesData.map((requisite) => ({
-        key: String(requisite.id),
-        label: requisite.name,
-        icon: selectedId === requisite.id ? <CheckOutlined /> : undefined
-      }))
-    ];
+    return requisitesData.map((requisite) => ({
+      key: String(requisite.id),
+      label: requisite.name,
+      icon: selectedId === requisite.id ? <CheckOutlined /> : undefined
+    }));
   };
 
   if (invoices.length === 0) {
@@ -204,7 +199,7 @@ export const InvoicesList: FC<IProps> = ({ invoices }) => {
                   }}
                 >
                   <Button size='small' icon={<FileTextOutlined />}>
-                    {getSelectedRequisiteName(invoice.id) || t('accounting.buttons.selectRequisites') || 'Выбрать реквизиты'}
+                    {getSelectedRequisiteName(invoice.id) ?? t('accounting.buttons.selectRequisites', 'Выбрать реквизиты')}
                   </Button>
                 </Dropdown>
                 <Button
