@@ -605,7 +605,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
       <Form
         scrollToFirstError={{ behavior: 'smooth', scrollMode: 'if-needed', block: 'center' }}
         form={form}
-        requiredMark={false}
+        requiredMark
         name='add-tu-form'
         layout='vertical'
         onFinish={onFinish}
