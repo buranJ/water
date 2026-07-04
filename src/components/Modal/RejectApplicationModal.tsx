@@ -1,10 +1,10 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Form, Input, Modal, Select, Space, Typography, Upload } from 'antd';
+import { Button, Form, Input, Modal, Space, Typography, Upload } from 'antd';
 import type { UploadFile } from 'antd/es/upload/interface';
 import { CloseOutlined, UploadOutlined } from '@ant-design/icons';
 
-import { RefusalBody, useGetRefusalCausesQuery } from 'api/Refusal.api';
+import { RefusalBody } from 'api/Refusal.api';
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -18,13 +18,12 @@ interface RejectApplicationModalProps {
 export const RejectApplicationModal: React.FC<RejectApplicationModalProps> = ({ open, onCancel, onReject }) => {
   const [form] = Form.useForm<RefusalBody>();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
-  const refuseQuery = useGetRefusalCausesQuery();
   const { t } = useTranslation();
 
   const handleFinish = (values: RefusalBody) => {
     const adaptedFiles = fileList.map((f) => f.originFileObj).filter(Boolean) as File[];
     onReject({
-      causes_ids: values.causes_ids,
+      causes_ids: [],
       comment: values.comment || '',
       refusal_files: [
         ...adaptedFiles.map((f) => ({
@@ -111,15 +110,6 @@ export const RejectApplicationModal: React.FC<RejectApplicationModalProps> = ({ 
     accept: '.pdf,.doc,.docx'
   };
 
-  const refusals = useMemo(
-    () =>
-      refuseQuery.data?.results.map((r) => ({
-        value: r.id.toString(),
-        label: r.title
-      })) || [],
-    [refuseQuery.data]
-  );
-
   return (
     <Modal
       title={t('tuRejectModal.title')}
@@ -139,25 +129,6 @@ export const RejectApplicationModal: React.FC<RejectApplicationModalProps> = ({ 
       destroyOnHidden
     >
       <Form id='rejectForm' form={form} layout='vertical' onFinish={handleFinish}>
-        <Form.Item
-          label={t('tuRejectModal.labels.reason')}
-          name='causes_ids'
-          rules={[
-            {
-              required: true,
-              message: t('common.required')
-            }
-          ]}
-        >
-          <Select
-            mode='multiple'
-            size='large'
-            placeholder={t('tuRejectModal.placeholders.reason')}
-            style={{ width: '100%' }}
-            options={refusals}
-          />
-        </Form.Item>
-
         <Form.Item label={t('tuRejectModal.labels.comment')} name='comment'>
           <TextArea placeholder={t('tuRejectModal.placeholders.comment')} rows={4} style={{ resize: 'none' }} />
         </Form.Item>

@@ -285,7 +285,8 @@
     "status": {
       "active": "Active",
       "inactive": "Inactive",
-      "archived": "Archived"
+      "archived": "Archived",
+      "rejected": "Rejected"
     },
     "stage": {
       "draft": "Draft",
@@ -374,6 +375,7 @@
       "changeTuData": "History of changes to technical data",
       "downloadTu": "Download TU",
       "rejectTu": "Reject TU",
+      "rejectedTu": "Rejected",
       "approveTu": "Approve TU",
       "downloadContract": "Download contract"
     },

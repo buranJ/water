@@ -285,7 +285,8 @@
     "status": {
       "active": "Активный",
       "inactive": "Неактивный",
-      "archived": "В архиве"
+      "archived": "В архиве",
+      "rejected": "Отказ"
     },
     "stage": {
       "draft": "Черновик",
@@ -374,6 +375,7 @@
       "changeTuData": "История изменений данных ТУ",
       "downloadTu": "Скачать ТУ",
       "rejectTu": "Отказать ТУ",
+      "rejectedTu": "Отказано",
       "approveTu": "Одобрить ТУ",
       "downloadContract": "Скачать договор"
     },

@@ -287,6 +287,7 @@ export interface ITyBody {
   entity: number;
   formula: number;
   application: number;
+  type_ty?: number;
   payment_deadline: Date;
   parent_tc_number?: string;
   increase_water?: string;

@@ -285,7 +285,8 @@
     "status": {
       "active": "Активдүү",
       "inactive": "Иштебейт",
-      "archived": "Архивде"
+      "archived": "Архивде",
+      "rejected": "Баш тартуу"
     },
     "stage": {
       "draft": "Долбоор",
@@ -374,6 +375,7 @@
       "changeTuData": "ТУ маалыматтарынын өзгөрүү тарыхы",
       "downloadTu": "ТУ жүктөп алуу",
       "rejectTu": "ТУдан баш тартуу",
+      "rejectedTu": "Баш тартылды",
       "approveTu": "ТУдан бекитуу",
       "downloadContract": "Келишимди жүктөп алуу"
     },

@@ -24,6 +24,7 @@ import {
   useGetBalanceAcceptanceQuery,
   useGetDopTyQuery,
   useGetTyByIdQuery,
+  useGetTypesTyQuery,
   useLazyDownloadLoadIncreaseDocxQuery,
   useLazyDownloadProtocolDocxQuery,
   // useLazyGetActTyByIdQuery,
@@ -61,6 +62,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const { id } = useParams<{ id: string }>();
   const userQuery = useGetUserInfoQuery();
   const foldersQuery = useGetFoldersQuery({ ty_id: id || '' });
+  const typesTyQuery = useGetTypesTyQuery();
   const { hasPermission } = usePermissions();
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -171,17 +173,24 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const handleRejectSubmit = async (data: RefusalBody) => {
     if (!id) return;
     try {
-      await createRefusal({
-        ty: id,
-        causes_ids: (data.causes_ids as (number | string)[]).map((v) => Number(v)),
-        comment: data.comment,
-        refusal_files: data.refusal_files || []
+      const rejectTypeId = typesTyQuery.data?.find((ty) => ty.title === 'отказы')?.id;
+      // Меняем тип ТУ на "отказы", статус -> inactive (у статуса нет значения "rejected"),
+      // причину сохраняем в notes (подтянется в "Причина отказа" при редактировании).
+      await patchTy({
+        id: Number(id),
+        body: { notes: data.comment || '', status: 'inactive', ...(rejectTypeId ? { type_ty: rejectTypeId } : {}) }
       }).unwrap();
+
+      // Если приложили файлы — сохраняем их отдельным запросом (без причин)
+      if (data.refusal_files?.length) {
+        await createRefusal({ ty: id, causes_ids: [], comment: data.comment, refusal_files: data.refusal_files }).unwrap();
+      }
+
       message.success(t('tuDetails.messages.rejected', 'Отказ создан'));
       setIsModalVisible(false);
       refetch();
     } catch (e) {
-      console.error('Failed to create refusal', e);
+      console.error('Failed to reject TU', e);
       message.error(t('tuDetails.messages.rejectFailed', 'Не удалось создать отказ'));
     }
   };
