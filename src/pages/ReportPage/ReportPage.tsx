@@ -6,6 +6,7 @@ import { DashboardLayout } from 'components/DashboardLayout';
 import type { IReportFilters, IReportItem } from 'types/requests';
 
 import { useDownloadReportMutation, useGetReportQuery } from 'api/Ty.api';
+import { getApiErrorMessage } from 'utils/apiError';
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
@@ -154,7 +155,8 @@ const ReportPage: FC = () => {
       message.success('Отчёт успешно экспортирован');
     } catch (error) {
       console.error('Failed to export report', error);
-      message.error('Не удалось экспортировать отчёт');
+      // Показываем причину ошибки с бэка ({ error: "..." })
+      message.error(getApiErrorMessage(error, 'Не удалось экспортировать отчёт'));
     }
   };
 

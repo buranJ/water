@@ -20,6 +20,7 @@ import { useCreatePresetMutation, useGetPresetsQuery } from 'api/Presets.api';
 import { useExportReportsMutation } from 'api/Reports.api';
 import { usePermissions } from 'hooks/useAuth';
 import { t } from 'i18next';
+import { getApiErrorMessage } from 'utils/apiError';
 
 const { Title } = Typography;
 
@@ -197,8 +198,8 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
           const res = await exportReports(body).unwrap();
           handleDownload(res.blob, res.filename, body.entity, body.export, body.filename);
           message.success(t('exportData.messages.downloaded'));
-        } catch {
-          message.error(t('exportData.messages.failed'));
+        } catch (error) {
+          message.error(getApiErrorMessage(error, t('exportData.messages.failed')));
         } finally {
           setAutoExportDone(true);
           navigate('/dashboard/export-data', { replace: true });
@@ -279,8 +280,9 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
 
       handleDownload(res.blob, res.filename, values.entity!, values.export!, values.filename);
       message.success(t('exportData.messages.downloaded'));
-    } catch {
-      message.error(t('exportData.messages.failed'));
+    } catch (error) {
+      // Показываем причину ошибки с бэка ({ error: "..." })
+      message.error(getApiErrorMessage(error, t('exportData.messages.failed')));
     }
   };
 

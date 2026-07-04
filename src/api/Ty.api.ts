@@ -532,6 +532,15 @@ export const tyApi = createApi({
         method: 'GET',
         params, // Здесь включаем export параметр
         responseHandler: async (response) => {
+          if (!response.ok) {
+            // Возвращаем тело ошибки бэка ({ error: "..." }), чтобы показать причину, а не общий текст
+            const text = await response.text();
+            try {
+              return JSON.parse(text);
+            } catch {
+              return { error: text };
+            }
+          }
           const blob = await response.blob();
           const disposition = response.headers.get('content-disposition') || '';
           let filename = 'report.xlsx';

@@ -157,7 +157,13 @@ export const accountingApi = createApi({
         params,
         responseHandler: async (response) => {
           if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            // Возвращаем тело ошибки бэка ({ error: "..." }), чтобы показать причину, а не общий текст
+            const text = await response.text();
+            try {
+              return JSON.parse(text);
+            } catch {
+              return { error: text };
+            }
           }
 
           const blob = await response.blob();

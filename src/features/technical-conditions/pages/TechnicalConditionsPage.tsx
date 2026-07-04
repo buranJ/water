@@ -15,6 +15,7 @@ import { useCreatePresetMutation, useGetPresetsQuery } from 'api/Presets.api';
 import { useExportReportsMutation } from 'api/Reports.api';
 import { useGetAllTyQuery, usePatchTyMutation } from 'api/Ty.api';
 import { t } from 'i18next';
+import { getApiErrorMessage } from 'utils/apiError';
 
 interface TUFilterValues {
   search?: string;
@@ -280,8 +281,15 @@ export const TechnicalConditionsPage = () => {
   };
 
   const handleExportSubmit = async () => {
+    let vals: Record<string, unknown>;
     try {
-      const vals = await exportForm.validateFields();
+      vals = await exportForm.validateFields();
+    } catch {
+      // ignore validation/cancel
+      return;
+    }
+
+    try {
       const sp = new URLSearchParams(searchParams);
       sp.delete('page');
       sp.delete('page_size');
@@ -301,8 +309,9 @@ export const TechnicalConditionsPage = () => {
       message.success(t('technicalConditions.export.success', 'Экспорт начат'));
       setExportModal(false);
       exportForm.resetFields();
-    } catch {
-      // ignore validation/cancel
+    } catch (error) {
+      // Показываем причину ошибки с бэка ({ error: "..." })
+      message.error(getApiErrorMessage(error, t('technicalConditions.export.error', 'Ошибка при экспорте')));
     }
   };
 

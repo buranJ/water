@@ -6,6 +6,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { DashboardLayout } from 'components';
 
 import { useExportProtocolsExcelMutation } from 'api/Accounting.api';
+import { getApiErrorMessage } from 'utils/apiError';
 
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -108,27 +109,8 @@ export const ProtocolsExport: FC = () => {
       message.success(t('protocolsExport.messages.exportSuccess', 'Экспорт протоколов выполнен успешно'));
     } catch (error) {
       console.error('Export error:', error);
-
-      // Детальная обработка ошибок
-      if (error && typeof error === 'object' && 'status' in error) {
-        const httpError = error as { status: number; data?: { message?: string } };
-
-        if (httpError.status === 500) {
-          message.error('Ошибка на сервере. Попробуйте изменить параметры фильтрации или обратитесь к администратору.');
-        } else if (httpError.status === 400) {
-          message.error('Неверные параметры запроса. Проверьте введенные данные.');
-        } else if (httpError.status === 404) {
-          message.error('Протоколы с указанными параметрами не найдены.');
-        } else if (httpError.data?.message) {
-          message.error(httpError.data.message);
-        } else {
-          message.error(t('protocolsExport.messages.exportError', 'Ошибка при экспорте протоколов'));
-        }
-      } else if (error instanceof Error) {
-        message.error(error.message);
-      } else {
-        message.error(t('protocolsExport.messages.exportError', 'Ошибка при экспорте протоколов'));
-      }
+      // Показываем причину ошибки с бэка ({ error: "..." }), иначе общий текст
+      message.error(getApiErrorMessage(error, t('protocolsExport.messages.exportError', 'Ошибка при экспорте протоколов')));
     }
   };
 

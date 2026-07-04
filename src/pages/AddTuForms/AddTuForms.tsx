@@ -105,6 +105,14 @@ const getRequestSourceTitle = (rs: unknown): string | undefined => {
   return undefined;
 };
 
+// Автотекст для "Комментарий к водопроводу" при типе ТУ "на вынос водопроводной линии"
+const WATER_RELOCATION_COMMENT =
+  'ПРОИЗВЕСТИ ВЫНОС ВОДОПРОВОДНОЙ ЛИНИИ ЗА ПРЕДЕЛЫ ГРАНИЦ ЗАСТРОЙКИ, ПРИ УСЛОВИИ СОХРАНЕНИЯ СУЩЕСТВУЮЩИХ ТОЧЕК ПОДКЛЮЧЕНИЯ И СОБЛЮДЕНИЯ ДЕЙСТВУЮЩЕГО ГИДРАВЛИЧЕСКОГО РЕЖИМА\nРАЗРАБОТКУ ПРОЕКТА СОГЛАСОВАТЬ С МП "БИШКЕКВОДОКАНАЛ"';
+
+// Автотекст для "Комментарий к канализации" при типе ТУ "на вынос канализационных линий"
+const SEWER_RELOCATION_COMMENT =
+  'ПРОИЗВЕСТИ ВЫНОС КАНАЛИЗАЦИОННОЙ ЛИНИИ ЗА ПРЕДЕЛЫ ГРАНИЦ ЗАСТРОЙКИ, ПРИ УСЛОВИИ СОХРАНЕНИЯ, СУЩЕСТВУЮЩИХ ТОЧЕК ПОДКЛЮЧЕНИЯ И СОБЛЮДЕНИЯ ДЕЙСТВУЮЩЕГО ГИДРАВЛИЧЕСКОГО РЕЖИМА.\nРАЗРАБОТКУ ПРОЕКТА СОГЛАСОВАТЬ С МП "БИШКЕКВОДОКАНАЛ"';
+
 const AddTuForms: FC<{ title: string }> = ({ title }) => {
   const navigate = useNavigate();
   const { tyId } = useParams();
@@ -143,6 +151,10 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
   const selectedTypeId = Form.useWatch('type_ty', form);
   const isIncreaseLoads = typesTyQuery.data?.find((type) => type.id === selectedTypeId)?.title === 'на увеличение нагрузок';
   const isRefusal = typesTyQuery.data?.find((type) => type.id === selectedTypeId)?.title === 'отказы';
+  // Типы "на вынос ..." — сверяем по вхождению слов (устойчиво к формулировке)
+  const selectedTypeTitle = (typesTyQuery.data?.find((type) => type.id === selectedTypeId)?.title || '').toLowerCase();
+  const isWaterRelocation = selectedTypeTitle.includes('вынос') && selectedTypeTitle.includes('водопровод');
+  const isSewerRelocation = selectedTypeTitle.includes('вынос') && selectedTypeTitle.includes('канализац');
 
   const onFinish = useCallback(
     async (values: FormValues) => {
@@ -535,6 +547,33 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
     }
   }, [form, tuQuery]);
 
+  // Автозаполнение комментария к водопроводу при выборе типа "на вынос водопроводной линии".
+  // Только при создании; в режиме редактирования берём значение с бэка (не автозаполняем).
+  // Не перезаписываем, если поле уже заполнено — чтобы сохранить правки сотрудника.
+  useEffect(() => {
+    if (!isCreateMode) return;
+    const current = form.getFieldValue('comment_voda');
+    if (isWaterRelocation) {
+      // Заполняем, если поле пустое (правки сотрудника не трогаем)
+      if (!current) form.setFieldValue('comment_voda', WATER_RELOCATION_COMMENT);
+    } else if (current === WATER_RELOCATION_COMMENT) {
+      // Ушли с типа "вынос водопровода": чистим только неотредактированный автотекст
+      form.setFieldValue('comment_voda', '');
+    }
+  }, [isCreateMode, isWaterRelocation, form]);
+
+  // Аналогично для типа "на вынос канализационных линий" -> "Комментарий к канализации".
+  // Комбинированный тип (и водопровод, и канализация) заполняет оба поля — оба флага true.
+  useEffect(() => {
+    if (!isCreateMode) return;
+    const current = form.getFieldValue('comment_kanal');
+    if (isSewerRelocation) {
+      if (!current) form.setFieldValue('comment_kanal', SEWER_RELOCATION_COMMENT);
+    } else if (current === SEWER_RELOCATION_COMMENT) {
+      form.setFieldValue('comment_kanal', '');
+    }
+  }, [isCreateMode, isSewerRelocation, form]);
+
   const onParentTuBlur = useCallback(async () => {
     const raw = form.getFieldValue('parent_tc_number');
     const value = typeof raw === 'string' ? raw.trim() : String(raw ?? '').trim();
@@ -607,6 +646,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         form={form}
         requiredMark
         name='add-tu-form'
+        // Свободный напор по умолчанию 10 (только при создании; при редактировании берётся с бэка). Редактируется вручную.
+        initialValues={isCreateMode ? { free_pressure_connection_point: 10 } : undefined}
         layout='vertical'
         onFinish={onFinish}
         onFinishFailed={(errorInfo) => console.log(errorInfo)}
@@ -646,7 +687,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Row>
 
         {!isIncreaseLoads && !isRefusal && (
-          <Row gutter={24}>
+          <Row gutter={16}>
             <Col span={24}>
               <Form.Item
                 label={t('addTuForms.form.labels.requestSource')}
@@ -666,7 +707,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         )}
 
         {isRefusal && (
-          <Row gutter={24}>
+          <Row gutter={16}>
             <Col span={24}>
               <Form.Item label={t('addTuForms.form.labels.requestSource')} name='request_source' rules={[{ required: false }]}>
                 <Select size='large' placeholder={t('addTuForms.form.placeholders.requestSource')} showSearch optionFilterProp='children'>
@@ -794,7 +835,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         {isIncreaseLoads && (
           <>
             {/* Источник запроса для "на увеличение нагрузок" */}
-            <Row gutter={24}>
+            <Row gutter={16}>
               <Col span={24}>
                 <Form.Item
                   label={t('addTuForms.form.labels.requestSource')}
@@ -866,7 +907,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
             {/* ФОРМУЛА ДЛЯ "НА УВЕЛИЧЕНИЕ НАГРУЗОК" - ОБЯЗАТЕЛЬНОЕ */}
             <Row gutter={16}>
-              <Col span={12}>
+              <Col span={24}>
                 <Form.Item
                   label={t('addTuForms.form.labels.formula')}
                   name='formula'
@@ -934,7 +975,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           </Form.Item>
 
           <Row gutter={16}>
-            <Col span={12}>
+            <Col span={24}>
               <Form.Item
                 label={t('addTuForms.form.labels.formula')}
                 name='formula'
@@ -1009,7 +1050,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
                 <Option value='проектируемый'>проектируемый</Option>
               </Select>
             </Form.Item>
-            <Row gutter={24}>
+            <Row gutter={16}>
               <Col span={12}>
                 <Form.Item
                   label={t('addTuForms.form.labels.waterPipeDiameter1')}
@@ -1035,7 +1076,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
                 <Option value='проектируемый'>проектируемый</Option>
               </Select>
             </Form.Item>
-            <Row gutter={24}>
+            <Row gutter={16}>
               <Col span={12}>
                 <Form.Item
                   label={t('addTuForms.form.labels.waterPipeDiameter2')}

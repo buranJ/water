@@ -60,6 +60,15 @@ export const reportsApi = createApi({
           Accept: 'application/pdf, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/octet-stream, */*'
         },
         responseHandler: async (response) => {
+          if (!response.ok) {
+            // Возвращаем тело ошибки бэка ({ error: "..." }), чтобы показать причину, а не общий текст
+            const text = await response.text();
+            try {
+              return JSON.parse(text);
+            } catch {
+              return { error: text };
+            }
+          }
           const blob = await response.blob();
           const disposition = response.headers.get('content-disposition');
           let filename: string | null = null;
