@@ -54,7 +54,7 @@ export const InvoicesList: FC<IProps> = ({ invoices }) => {
         throw new Error('Ошибка загрузки файла');
       }
 
-      const blob = result.data;
+      const blob = result.data?.blob;
 
       if (!blob || !(blob instanceof Blob)) {
         throw new Error('Получен неверный формат данных');
@@ -64,7 +64,8 @@ export const InvoicesList: FC<IProps> = ({ invoices }) => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `invoice-${invoice.invoice_number}.${fileExtension}`;
+      // Имя файла берём с бэка (Content-Disposition); шаблон — только запасной вариант
+      link.download = result.data?.filename || `invoice-${invoice.invoice_number}.${fileExtension}`;
 
       document.body.appendChild(link);
       link.click();

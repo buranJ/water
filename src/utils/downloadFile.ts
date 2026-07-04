@@ -1,3 +1,18 @@
+// Достаёт имя файла из заголовка Content-Disposition ответа (filename* или filename).
+export const parseContentDispositionFilename = (disposition: string | null): string | null => {
+  if (!disposition) return null;
+  const starMatch = /filename\*\s*=\s*[^']+'[^']*'([^;]+)/i.exec(disposition);
+  if (starMatch) {
+    try {
+      return decodeURIComponent(starMatch[1]);
+    } catch {
+      return starMatch[1];
+    }
+  }
+  const match = /filename="?([^";]+)"?/i.exec(disposition);
+  return match ? match[1] : null;
+};
+
 // Достраивает полный URL до файла на сервере.
 // file_url с бэкенда часто относительный (/media/...). Без префикса baseUrl
 // относительный fetch уходит на origin фронтенда и возвращает index.html (SPA),
@@ -31,7 +46,10 @@ export const downloadServerFile = async (fileUrl: string, fallbackName?: string)
       throw new Error('Empty file');
     }
 
-    const name = decodeURIComponent(fileUrl.split('/').pop() || fallbackName || 'file');
+    // Имя файла: приоритет — Content-Disposition бэка, иначе имя из URL, иначе fallback
+    const name =
+      parseContentDispositionFilename(response.headers.get('content-disposition')) ||
+      decodeURIComponent(fileUrl.split('/').pop() || fallbackName || 'file');
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;

@@ -45,7 +45,15 @@ export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange }) 
       ),
       dataIndex: 'tu_number',
       key: 'tu_number',
-      render: (text) => <Typography.Text strong>{text}</Typography.Text>,
+      render: (text, record) => {
+        // Для типа "отказы" вместо номера показываем "Отказ"
+        const isRefusal = (record as { type_ty?: { title?: string } })?.type_ty?.title === 'отказы';
+        return (
+          <Typography.Text strong type={isRefusal ? 'danger' : undefined}>
+            {isRefusal ? t('tuDetails.status.rejected', 'Отказ') : text}
+          </Typography.Text>
+        );
+      },
       onCell: clickableCellProps,
       width: 90
     },

@@ -87,16 +87,16 @@ export const ProtocolsExport: FC = () => {
       console.log('Export params:', params);
 
       // Выполняем запрос через mutation
-      const blob = await exportProtocols(params).unwrap();
+      const { blob, filename } = await exportProtocols(params).unwrap();
 
       // Создаём ссылку для скачивания
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
 
-      // Формируем имя файла
+      // Имя файла берём с бэка (Content-Disposition); шаблон — только запасной вариант
       const timestamp = dayjs().format('YYYY-MM-DD_HH-mm');
-      link.download = `protocols_export_${timestamp}.xlsx`;
+      link.download = filename || `protocols_export_${timestamp}.xlsx`;
 
       // Добавляем в DOM, кликаем и удаляем
       document.body.appendChild(link);

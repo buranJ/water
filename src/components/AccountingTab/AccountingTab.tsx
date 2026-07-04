@@ -188,11 +188,12 @@ export const AccountingTab: FC<IProps> = ({ technicalConditionId, data, onOpenPa
 
   const handleDownloadProtocol = async () => {
     try {
-      const result = await downloadProtocol({ technicalConditionId }).unwrap();
-      const url = window.URL.createObjectURL(result);
+      const { blob, filename } = await downloadProtocol({ technicalConditionId }).unwrap();
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `protocol-${technicalConditionId}.xlsx`;
+      // Имя файла берём с бэка (Content-Disposition); шаблон — только запасной вариант
+      link.download = filename || `protocol-${technicalConditionId}.xlsx`;
       document.body.appendChild(link);
       link.click();
       window.URL.revokeObjectURL(url);

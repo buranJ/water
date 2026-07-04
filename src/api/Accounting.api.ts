@@ -20,6 +20,8 @@ import {
   IUpdateProtocolResponse
 } from 'types/entities/accounting';
 
+import { parseContentDispositionFilename } from 'utils/downloadFile';
+
 interface IExportProtocolsParams {
   council_date_start?: string;
   council_date_end?: string;
@@ -85,12 +87,15 @@ export const accountingApi = createApi({
       invalidatesTags: ['Invoice']
     }),
 
-    downloadInvoice: build.query<Blob, { invoiceId: string; requisite?: number | string }>({
+    downloadInvoice: build.query<{ blob: Blob; filename: string | null }, { invoiceId: string; requisite?: number | string }>({
       query: ({ invoiceId, requisite }) => ({
         url: `/buhgalteria/invoices/dublicate/${invoiceId}/`,
         method: 'GET',
         params: requisite != null ? { requisite } : undefined,
-        responseHandler: (response) => response.blob()
+        responseHandler: async (response) => {
+          const blob = await response.blob();
+          return { blob, filename: parseContentDispositionFilename(response.headers.get('content-disposition')) };
+        }
       }),
       keepUnusedDataFor: 0
     }),
@@ -111,7 +116,7 @@ export const accountingApi = createApi({
       invalidatesTags: ['Protocol', 'Invoice']
     }),
 
-    downloadProtocol: build.query<Blob, { technicalConditionId: string }>({
+    downloadProtocol: build.query<{ blob: Blob; filename: string | null }, { technicalConditionId: string }>({
       query: ({ technicalConditionId }) => ({
         url: `/ty/${technicalConditionId}/protocol-excel/`,
         method: 'GET',
@@ -126,7 +131,7 @@ export const accountingApi = createApi({
             throw new Error('Получен пустой файл');
           }
 
-          return blob;
+          return { blob, filename: parseContentDispositionFilename(response.headers.get('content-disposition')) };
         }
       }),
       keepUnusedDataFor: 0
@@ -150,7 +155,7 @@ export const accountingApi = createApi({
       invalidatesTags: ['Payment']
     }),
 
-    exportProtocolsExcel: build.mutation<Blob, IExportProtocolsParams>({
+    exportProtocolsExcel: build.mutation<{ blob: Blob; filename: string | null }, IExportProtocolsParams>({
       query: (params) => ({
         url: '/buhgalteria/protocols/export-excel/',
         method: 'GET',
@@ -172,7 +177,7 @@ export const accountingApi = createApi({
             throw new Error('Получен пустой файл');
           }
 
-          return blob;
+          return { blob, filename: parseContentDispositionFilename(response.headers.get('content-disposition')) };
         }
       })
     }),
