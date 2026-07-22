@@ -14,7 +14,6 @@ interface IProps {
 }
 
 interface IFormValues {
-  protocol_number?: string;
   load: string;
   water_price: string;
   kanal_price: string;
@@ -52,7 +51,6 @@ export const EditProtocolModal: FC<IProps> = ({ visible, onClose, protocolData, 
   useEffect(() => {
     if (visible && protocolData) {
       form.setFieldsValue({
-        protocol_number: protocolData.protocol_number,
         load: protocolData.load,
         water_price: protocolData.water_price,
         kanal_price: protocolData.kanal_price,
@@ -149,10 +147,6 @@ export const EditProtocolModal: FC<IProps> = ({ visible, onClose, protocolData, 
       style={{ top: 20 }}
     >
       <Form form={form} layout='vertical' onFinish={handleSubmit} style={{ marginTop: 16 }}>
-        <Form.Item name='protocol_number' label='Номер протокола'>
-          <Input placeholder='Введите номер протокола' disabled={isLoading} />
-        </Form.Item>
-
         <Title level={5}>Основные параметры</Title>
 
         <Row gutter={16}>

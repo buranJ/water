@@ -1,6 +1,7 @@
 export interface IAccountingProtocol {
   id: number;
   protocol_number?: string;
+  protocol_date?: string;
   load: string;
   water_price: string;
   kanal_price: string;

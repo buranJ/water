@@ -16,6 +16,8 @@ export interface IExportProtocolsParams {
 export interface IUpdateProtocolTableParams {
   protocolId: string;
   body: {
+    protocol_number?: string;
+    protocol_date?: string;
     load?: string;
     customer?: string;
     water_required?: string;

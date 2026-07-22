@@ -1,5 +1,6 @@
 import { FC, useEffect, useState } from 'react';
-import { Button, Col, Divider, Form, Input, InputNumber, message, Modal, Row, Space, Typography } from 'antd';
+import { Button, Col, DatePicker, Divider, Form, Input, InputNumber, message, Modal, Row, Space, Typography } from 'antd';
+import dayjs, { Dayjs } from 'dayjs';
 
 import { useUpdateProtocolTableMutation } from 'api/Buhgalteria.api';
 
@@ -7,6 +8,8 @@ const { Title, Text } = Typography;
 
 interface IProtocolData {
   id: number;
+  protocol_number?: string;
+  protocol_date?: string;
   customer?: string;
   note?: string;
   load?: string;
@@ -30,6 +33,8 @@ interface IProps {
 }
 
 interface IFormValues {
+  protocol_number?: string;
+  protocol_date?: string;
   customer?: string;
   note?: string;
   load?: string;
@@ -59,6 +64,8 @@ export const EditProtocolTableModal: FC<IProps> = ({ visible, onClose, protocolD
   useEffect(() => {
     if (visible && protocolData) {
       const formValues: IFormValues = {
+        protocol_number: protocolData.protocol_number || '',
+        protocol_date: protocolData.protocol_date || undefined,
         customer: protocolData.customer || '',
         note: protocolData.note || '',
         load: protocolData.load || '',
@@ -100,6 +107,14 @@ export const EditProtocolTableModal: FC<IProps> = ({ visible, onClose, protocolD
     try {
       // Подготавливаем данные для API
       const apiBody: Record<string, string | number | undefined> = {};
+
+      // Номер и дата протокола (необязательные)
+      if (values.protocol_number !== undefined && values.protocol_number !== '') {
+        apiBody.protocol_number = values.protocol_number;
+      }
+      if (values.protocol_date) {
+        apiBody.protocol_date = values.protocol_date;
+      }
 
       // Обрабатываем каждое поле отдельно
       if (values.customer !== undefined && values.customer !== '') {
@@ -225,6 +240,24 @@ export const EditProtocolTableModal: FC<IProps> = ({ visible, onClose, protocolD
       style={{ top: 20 }}
     >
       <Form form={form} layout='vertical' onFinish={handleSubmit} onValuesChange={handleValuesChange} style={{ marginTop: 16 }}>
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item name='protocol_number' label='Номер протокола'>
+              <Input placeholder='Введите номер протокола' disabled={isLoading} />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name='protocol_date'
+              label='Дата протокола'
+              normalize={(value: Dayjs) => (value ? value.format('YYYY-MM-DD') : '')}
+              getValueProps={(value: string) => ({ value: value ? dayjs(value) : null })}
+            >
+              <DatePicker style={{ width: '100%' }} format='DD.MM.YYYY' placeholder='Выберите дату' disabled={isLoading} />
+            </Form.Item>
+          </Col>
+        </Row>
+
         <Title level={5}>Основные данные протокола</Title>
 
         <Row gutter={16}>
