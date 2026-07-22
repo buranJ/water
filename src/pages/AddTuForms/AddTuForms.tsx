@@ -32,6 +32,7 @@ import {
   useLazyCheckTuByEntityQuery
 } from 'api/Refusal.api';
 import { t } from 'i18next';
+import { getApiErrorMessage } from 'utils/apiError';
 import { handleEnterFocusNext } from 'utils/formNavigation';
 
 const { Option } = Select;
@@ -438,8 +439,9 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
           const created = await createTy(payloadCreate).unwrap();
           message.success(t('addTuForms.messages.createTuSuccess'));
-          form.resetFields();
-          navigate(`/dashboard/technical-conditions/tu-details/${created.id}`);
+          // Не сбрасываем форму вручную: при успехе уходим со страницы (форма размонтируется),
+          // а при ошибке (см. catch ниже) заполненные поля должны сохраниться.
+          navigate(created?.id != null ? `/dashboard/technical-conditions/tu-details/${created.id}` : '/dashboard/technical-conditions');
           return;
         }
 
@@ -493,7 +495,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         await patchTy({ id: Number(tyId), body: base }).unwrap();
       } catch (e) {
         console.error(e);
-        message.error(t('addTuForms.messages.createTuError'));
+        // Показываем причину ошибки с бэка; форму НЕ сбрасываем — заполненные поля сохраняются
+        message.error(getApiErrorMessage(e, t('addTuForms.messages.createTuError')));
       }
     },
     [
