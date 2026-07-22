@@ -43,6 +43,8 @@ type FormValues = Omit<ITyItem, 'type_ty' | 'customer' | 'application'> & {
   customer: string;
   application: number;
   request_date?: string;
+  incoming_request_number?: string;
+  incoming_request_date?: string;
   payment_deadline?: string;
   // Extra fields used only during creation mapping
   object?: string;
@@ -211,6 +213,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             request_source: values.request_source,
             request_number: values.request_number,
             request_date: values.request_date || dayjs(Date.now()).format('YYYY-MM-DD'),
+            incoming_request_number: values.incoming_request_number,
+            incoming_request_date: values.incoming_request_date,
             payment_deadline: values.payment_deadline,
             type_ty: values.type_ty,
             group: values.group,
@@ -532,6 +536,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         customer: tuQuery.data.customer.full_name,
         application: tuQuery.data.application?.id,
         request_date: toStr(tuQuery.data.request_date as unknown as string | Date | undefined),
+        incoming_request_date: toStr((tuQuery.data as any).incoming_request_date as unknown as string | Date | undefined),
         payment_deadline: toStr(tuQuery.data.payment_deadline as unknown as string | Date | undefined),
         type_ty: getTypeTyId(tuQuery.data.type_ty),
         group: (tuQuery.data as any).group?.id,
@@ -688,7 +693,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
         {!isIncreaseLoads && !isRefusal && (
           <Row gutter={16}>
-            <Col span={24}>
+            <Col span={8}>
               <Form.Item
                 label={t('addTuForms.form.labels.requestSource')}
                 name='request_source'
@@ -701,6 +706,26 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
                     </Option>
                   ))}
                 </Select>
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label={t('addTuForms.form.labels.incomingRequestNumber', 'Входящий номер запроса')}
+                name='incoming_request_number'
+                rules={[{ required: false }]}
+              >
+                <Input size='large' placeholder={t('addTuForms.form.placeholders.incomingRequestNumber', 'Входящий номер')} />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label={t('addTuForms.form.labels.incomingRequestDate', 'Дата входящего запроса')}
+                name='incoming_request_date'
+                rules={[{ required: false }]}
+                normalize={(value: Dayjs) => formatDate(value)}
+                getValueProps={(value: string) => ({ value: parseDate(value) })}
+              >
+                <DatePicker format='DD.MM.YYYY' size='large' placeholder={t('addTuForms.form.placeholders.date', 'Выберите дату')} />
               </Form.Item>
             </Col>
           </Row>

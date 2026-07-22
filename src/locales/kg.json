@@ -376,6 +376,7 @@
       "downloadTu": "ТУ жүктөп алуу",
       "rejectTu": "ТУдан баш тартуу",
       "rejectedTu": "Баш тартылды",
+      "restoreTu": "Калыбына келтирүү",
       "approveTu": "ТУдан бекитуу",
       "downloadContract": "Келишимди жүктөп алуу"
     },
@@ -399,6 +400,8 @@
       "approveFailed": "ТУну бекитүү мүмкүн болгон жок",
       "tuRejected": "ТУ четке кагылды",
       "tuRejectFailed": "ТУну четке кагуу мүмкүн болгон жок",
+      "restored": "ТУ калыбына келтирилди",
+      "restoreFailed": "ТУну калыбына келтирүү мүмкүн болгон жок",
       "rejected": "Баш тартуу түзүлдү",
       "rejectFailed": "Баш тартууну түзүү мүмкүн болгон жок",
       "customerRequiredForContract": "Келишимди жүктөп алуу үчүн кардарды көрсөтүңүз"
@@ -1093,7 +1096,9 @@
     "form": {
       "labels": {
         "requestSource": "Сурам булагы",
-        "requestNumber": "Сурам номери",
+        "requestNumber": "Чыгуучу сурам номери",
+        "incomingRequestNumber": "Кируучу сурам номери",
+        "incomingRequestDate": "Кируучу сурам датасы",
         "requestDate": "Сурам датасы",
         "customer": "Кардар",
         "objectName": "Объекттин аталышы",
@@ -1140,6 +1145,8 @@
       "placeholders": {
         "requestSource": "Объекттин аталышы",
         "requestNumber": "12345",
+        "incomingRequestNumber": "Кируучу номер",
+        "date": "Датаны тандаңыз",
         "requestDate": "YYYY-MM-DD",
         "customer": "Аты-жөнү же уюм",
         "objectName": "Турак үй",

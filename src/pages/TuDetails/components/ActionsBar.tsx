@@ -15,6 +15,7 @@ interface ActionsBarProps {
   onAddLoad: () => void;
   onReject: () => void;
   onApprove: () => void;
+  onRestore?: () => void;
   onRejectTu?: () => void;
   isDownloading: boolean;
   // New props for contract download
@@ -34,6 +35,7 @@ export const ActionsBar: FC<ActionsBarProps> = ({
   // onAddLoad — кнопка "Добавить нагрузку" временно скрыта
   onReject,
   onApprove,
+  onRestore,
   isDownloading,
   onDownloadContract,
   isContractDownloading,
@@ -58,6 +60,11 @@ export const ActionsBar: FC<ActionsBarProps> = ({
   return (
     <Flex wrap justify='end' align='center' gap={16} style={{ marginBottom: 16 }}>
       {hasPermission('change_technicalcondition') && <Link to={'/dashboard/add-tu-forms/' + id}>{t('routers.editTy')}</Link>}
+      {isRefusal && hasPermission('change_technicalcondition') && (
+        <Button type='primary' ghost onClick={onRestore}>
+          {t('tuDetails.actions.restoreTu', 'Восстановить')}
+        </Button>
+      )}
       {hasPermission('view_technicalcondition') && (
         <>
           <Button icon={<DownloadOutlined />} onClick={onDownloadTu} loading={isDownloading} disabled={!id}>

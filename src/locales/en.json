@@ -376,6 +376,7 @@
       "downloadTu": "Download TU",
       "rejectTu": "Reject TU",
       "rejectedTu": "Rejected",
+      "restoreTu": "Restore",
       "approveTu": "Approve TU",
       "downloadContract": "Download contract"
     },
@@ -399,6 +400,8 @@
       "approveFailed": "Failed to approve TU",
       "tuRejected": "TU rejected",
       "tuRejectFailed": "Failed to reject TU",
+      "restored": "TU restored",
+      "restoreFailed": "Failed to restore TU",
       "rejected": "Refusal created",
       "rejectFailed": "Failed to create refusal",
       "customerRequiredForContract": "Please specify a customer to download the contract"
@@ -1093,7 +1096,9 @@
     "form": {
       "labels": {
         "requestSource": "Request source",
-        "requestNumber": "Request number",
+        "requestNumber": "Outgoing request number",
+        "incomingRequestNumber": "Incoming request number",
+        "incomingRequestDate": "Incoming request date",
         "requestDate": "Request date",
         "customer": "Customer",
         "objectName": "Object name",
@@ -1140,6 +1145,8 @@
       "placeholders": {
         "requestSource": "Object name",
         "requestNumber": "12345",
+        "incomingRequestNumber": "Incoming number",
+        "date": "Select date",
         "requestDate": "DD-MM.YYYY",
         "customer": "Full name or organization",
         "objectName": "Residential house",

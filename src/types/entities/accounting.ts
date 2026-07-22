@@ -1,5 +1,6 @@
 export interface IAccountingProtocol {
   id: number;
+  protocol_number?: string;
   load: string;
   water_price: string;
   kanal_price: string;
@@ -129,6 +130,7 @@ export type IGenerateInvoiceResponse = IAccountingInvoice;
 export interface IUpdateProtocolParams {
   protocolId: string;
   body: {
+    protocol_number?: string;
     load: string;
     water_price: string;
     kanal_price: string;

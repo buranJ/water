@@ -376,6 +376,7 @@
       "downloadTu": "Скачать ТУ",
       "rejectTu": "Отказать ТУ",
       "rejectedTu": "Отказано",
+      "restoreTu": "Восстановить",
       "approveTu": "Одобрить ТУ",
       "downloadContract": "Скачать договор"
     },
@@ -399,6 +400,8 @@
       "approveFailed": "Не удалось одобрить ТУ",
       "tuRejected": "ТУ отклонено",
       "tuRejectFailed": "Не удалось отказать ТУ",
+      "restored": "ТУ восстановлено",
+      "restoreFailed": "Не удалось восстановить ТУ",
       "rejected": "Отказ создан",
       "rejectFailed": "Не удалось создать отказ",
       "customerRequiredForContract": "Для скачивания договора укажите заказчика"
@@ -1093,7 +1096,9 @@
     "form": {
       "labels": {
         "requestSource": "Источник запроса",
-        "requestNumber": "Номер запроса",
+        "requestNumber": "Исходящий номер запроса",
+        "incomingRequestNumber": "Входящий номер запроса",
+        "incomingRequestDate": "Дата входящего запроса",
         "requestDate": "Дата запроса",
         "customer": "Заказчик",
         "objectName": "Наименование объекта",
@@ -1140,6 +1145,8 @@
       "placeholders": {
         "requestSource": "Название объекта",
         "requestNumber": "12345",
+        "incomingRequestNumber": "Входящий номер",
+        "date": "Выберите дату",
         "requestDate": "ДД-ММ-ГГГГ",
         "customer": "ФИО или организация",
         "objectName": "Жилой дом",

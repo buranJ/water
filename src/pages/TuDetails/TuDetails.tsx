@@ -199,6 +199,24 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     setIsModalVisible(false);
   };
 
+  // Восстановление отказанного ТУ: тип -> "На рассмотрение" (или первый не-"отказы"), статус -> active
+  const handleRestore = async () => {
+    if (!id) return;
+    try {
+      const types = typesTyQuery.data ?? [];
+      const restoreTypeId = (types.find((ty) => ty.title === 'На рассмотрение') ?? types.find((ty) => ty.title !== 'отказы'))?.id;
+      await patchTy({
+        id: Number(id),
+        body: { status: 'active', ...(restoreTypeId ? { type_ty: restoreTypeId } : {}) }
+      }).unwrap();
+      message.success(t('tuDetails.messages.restored', 'ТУ восстановлено'));
+      refetch();
+    } catch (e) {
+      console.error('Failed to restore TU', e);
+      message.error(t('tuDetails.messages.restoreFailed', 'Не удалось восстановить ТУ'));
+    }
+  };
+
   const handleTabChange = (key: string): void => {
     setActiveTab(key);
     const next = new URLSearchParams(searchParams);
@@ -580,6 +598,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
         onAddLoad={handleAddLoad}
         onReject={handleRejectClick}
         onApprove={handleApproveClick}
+        onRestore={handleRestore}
         onRejectTu={handleRejectTu}
         isDownloading={isDownloading}
         onDownloadContract={handleDownloadContract}
