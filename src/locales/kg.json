@@ -555,6 +555,8 @@
       "formula_id": "Формула (ID)",
       "request_date_start": "Сурам датасы (башталышы)",
       "request_date_end": "Сурам датасы (аягы)",
+      "tech_council_date_start": "ТШ чыгуу датасы: башы",
+      "tech_council_date_end": "ТШ чыгуу датасы: аягы",
       "is_water": "Сууга туташуу",
       "is_kanal": "Канализацияга туташуу",
       "created_start": "Түзүлгөндөн",

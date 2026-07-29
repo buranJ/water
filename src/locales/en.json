@@ -513,6 +513,8 @@
       "formula_id": "Formula (ID)",
       "request_date_start": "Request date from",
       "request_date_end": "Request date to",
+      "tech_council_date_start": "TU issue date: from",
+      "tech_council_date_end": "TU issue date: to",
       "is_water": "Water connection",
       "is_kanal": "Sewer connection",
       "created_start": "Created from",

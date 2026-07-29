@@ -16,6 +16,8 @@ export interface FieldConfig {
     | 'formula_id'
     | 'request_date_start'
     | 'request_date_end'
+    | 'tech_council_date_start'
+    | 'tech_council_date_end'
     | 'is_water'
     | 'is_kanal'
     | 'created_start'
@@ -120,6 +122,8 @@ export const FILTER_CONFIG: Record<ExportEntity, FieldConfig[]> = {
     { name: 'formula_id', label: t('exportData.filters.formula_id'), type: 'number' },
     { name: 'request_date_start', label: t('exportData.filters.request_date_start'), type: 'date' },
     { name: 'request_date_end', label: t('exportData.filters.request_date_end'), type: 'date' },
+    { name: 'tech_council_date_start', label: t('exportData.filters.tech_council_date_start'), type: 'date' },
+    { name: 'tech_council_date_end', label: t('exportData.filters.tech_council_date_end'), type: 'date' },
     { name: 'is_water', label: t('exportData.filters.is_water'), type: 'boolean' },
     { name: 'is_kanal', label: t('exportData.filters.is_kanal'), type: 'boolean' },
     {

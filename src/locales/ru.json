@@ -513,6 +513,8 @@
       "formula_id": "Формула (ID)",
       "request_date_start": "Дата запроса с",
       "request_date_end": "Дата запроса по",
+      "tech_council_date_start": "Исходящая дата ТУ: с",
+      "tech_council_date_end": "Исходящая дата ТУ: по",
       "is_water": "Подключение к воде",
       "is_kanal": "Подключение к канализации",
       "created_start": "Создано с",
