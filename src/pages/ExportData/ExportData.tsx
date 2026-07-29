@@ -1,7 +1,20 @@
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, ReactNode, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
-import { Button, Checkbox, Col, Divider, Form, Input, message, Modal, Row, Select, Space, theme, Typography } from 'antd';
-import { DownloadOutlined, SaveOutlined } from '@ant-design/icons';
+import { Button, Card, Col, Empty, Form, Input, message, Modal, Row, Select, Space, Typography } from 'antd';
+import {
+  AppstoreOutlined,
+  CreditCardOutlined,
+  DownloadOutlined,
+  EnvironmentOutlined,
+  FileDoneOutlined,
+  FileExcelOutlined,
+  FileTextOutlined,
+  FilterOutlined,
+  HistoryOutlined,
+  SaveOutlined,
+  SyncOutlined,
+  UserOutlined
+} from '@ant-design/icons';
 import { DashboardLayout } from 'components/DashboardLayout';
 import type { ExportEntity } from 'types/entities/reports.entities';
 import {
@@ -14,7 +27,7 @@ import {
   prepareFilters,
   prepareIds
 } from './ExportData.config';
-import { FiltersGrid } from './ExportData.helpers';
+import { CheckableButton, FiltersGrid } from './ExportData.helpers';
 
 import { useCreatePresetMutation, useGetPresetsQuery } from 'api/Presets.api';
 import { useExportReportsMutation } from 'api/Reports.api';
@@ -152,8 +165,15 @@ const decodeQSToFormValues = (qs: string): Partial<FormValues> => {
   return out;
 };
 
+const INCLUDE_OPTIONS: { key: 'customer' | 'entity' | 'protocol' | 'invoices' | 'payments'; icon: ReactNode }[] = [
+  { key: 'customer', icon: <UserOutlined /> },
+  { key: 'entity', icon: <EnvironmentOutlined /> },
+  { key: 'protocol', icon: <FileTextOutlined /> },
+  { key: 'invoices', icon: <FileDoneOutlined /> },
+  { key: 'payments', icon: <CreditCardOutlined /> }
+];
+
 const ExportData: FC<{ title: string }> = ({ title }) => {
-  const { token } = theme.useToken();
   const [form] = Form.useForm<FormValues>();
   const navigate = useNavigate();
   const [exportReports, { isLoading }] = useExportReportsMutation();
@@ -292,18 +312,18 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
         form={form}
         layout='vertical'
         onFinish={onFinish}
-        style={{ background: token.colorBgContainer, borderRadius: 8, padding: 16 }}
         initialValues={{
           export: 'xlsx',
           include: { customer: false, entity: false, protocol: false, invoices: false, payments: false },
           include_pending: false
         }}
       >
-        <Row align='middle' justify='space-between' style={{ marginBottom: 12 }}>
-          <Col>
+        <Row align='middle' justify='space-between' wrap gutter={[16, 12]} style={{ marginBottom: 16 }}>
+          <Col flex='auto'>
             <Title level={4} style={{ margin: 0 }}>
               {t('exportData.title')}
             </Title>
+            <Typography.Text type='secondary'>{t('exportData.ui.pageHint')}</Typography.Text>
           </Col>
           <Col>
             <Space size={8} align='center' wrap>
@@ -314,7 +334,7 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
                 size='middle'
                 allowClear
                 placeholder={t('exportData.presets.select')}
-                style={{ minWidth: 280 }}
+                style={{ minWidth: 240 }}
                 loading={presetsLoading}
                 disabled={!presetTarget}
                 value={selectedPresetId}
@@ -330,119 +350,140 @@ const ExportData: FC<{ title: string }> = ({ title }) => {
           </Col>
         </Row>
 
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item
-              label={t('exportData.ui.formatLabel')}
-              name='export'
-              rules={[{ required: true, message: t('exportData.ui.formatRequired') }]}
-            >
-              <Select
-                placeholder={t('exportData.ui.formatPlaceholder')}
-                options={EXPORT_FORMAT_OPTIONS.map((o) => ({
-                  ...o,
-                  label: o.value === 'xlsx' ? t('exportData.formats.excel') : t('exportData.formats.pdf')
-                }))}
-                size='large'
-              />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              label={t('exportData.ui.entityLabel')}
-              name='entity'
-              rules={[{ required: true, message: t('exportData.ui.entityRequired') }]}
-            >
-              <Select
-                placeholder={t('exportData.ui.entityPlaceholder')}
-                options={EXPORT_ENTITY_OPTIONS.map((o) => ({
-                  ...o,
-                  label: t(`exportData.entities.${o.value}`)
-                }))}
-                size='large'
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Divider />
-
-        <Title level={5} style={{ marginTop: 0 }}>
-          {t('exportData.ui.filtersTitle')}
-        </Title>
-        <Typography.Paragraph type='secondary' style={{ marginTop: -8 }}>
-          {t('exportData.ui.filtersHint')}
-        </Typography.Paragraph>
-
-        <FiltersGrid fields={fieldsForEntity} />
-
-        <Row gutter={16}>
-          <Col span={24}>
-            <Form.Item label={t('exportData.ui.idsLabel')} name='ids' tooltip={t('exportData.ui.idsTooltip')}>
-              <Select mode='tags' placeholder={t('exportData.ui.idsPlaceholder')} open={false} />
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Divider />
-
-        <Title level={5}>{t('exportData.ui.includeTitle')}</Title>
-        <Row gutter={16}>
-          <Col span={24}>
-            <Space wrap>
-              <Form.Item name={['include', 'customer']} valuePropName='checked' noStyle>
-                <Checkbox>{t('exportData.ui.include.customer')}</Checkbox>
-              </Form.Item>
-              <Form.Item name={['include', 'entity']} valuePropName='checked' noStyle>
-                <Checkbox>{t('exportData.ui.include.entity')}</Checkbox>
-              </Form.Item>
-              <Form.Item name={['include', 'protocol']} valuePropName='checked' noStyle>
-                <Checkbox>{t('exportData.ui.include.protocol')}</Checkbox>
-              </Form.Item>
-              <Form.Item name={['include', 'invoices']} valuePropName='checked' noStyle>
-                <Checkbox>{t('exportData.ui.include.invoices')}</Checkbox>
-              </Form.Item>
-              <Form.Item name={['include', 'payments']} valuePropName='checked' noStyle>
-                <Checkbox>{t('exportData.ui.include.payments')}</Checkbox>
-              </Form.Item>
+        <Card
+          size='small'
+          style={{ marginBottom: 16 }}
+          title={
+            <Space>
+              <FileExcelOutlined />
+              {t('exportData.ui.paramsTitle')}
             </Space>
-          </Col>
-        </Row>
-
-        {isIncludePendingVisible(selectedEntity) && (
-          <Row gutter={16} style={{ marginTop: 8 }}>
-            <Col span={24}>
-              <Form.Item name='include_pending' valuePropName='checked'>
-                <Checkbox>{t('exportData.ui.include.pending')}</Checkbox>
+          }
+        >
+          <Typography.Paragraph type='secondary' style={{ marginTop: -4 }}>
+            {t('exportData.ui.paramsHint')}
+          </Typography.Paragraph>
+          <Row gutter={16}>
+            <Col xs={24} md={12}>
+              <Form.Item
+                label={t('exportData.ui.formatLabel')}
+                name='export'
+                tooltip={t('exportData.ui.formatTooltip')}
+                rules={[{ required: true, message: t('exportData.ui.formatRequired') }]}
+              >
+                <Select
+                  placeholder={t('exportData.ui.formatPlaceholder')}
+                  options={EXPORT_FORMAT_OPTIONS.map((o) => ({
+                    ...o,
+                    label: o.value === 'xlsx' ? t('exportData.formats.excel') : t('exportData.formats.pdf')
+                  }))}
+                  size='large'
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12}>
+              <Form.Item
+                label={t('exportData.ui.entityLabel')}
+                name='entity'
+                tooltip={t('exportData.ui.entityTooltip')}
+                rules={[{ required: true, message: t('exportData.ui.entityRequired') }]}
+              >
+                <Select
+                  placeholder={t('exportData.ui.entityPlaceholder')}
+                  options={EXPORT_ENTITY_OPTIONS.map((o) => ({
+                    ...o,
+                    label: t(`exportData.entities.${o.value}`)
+                  }))}
+                  size='large'
+                />
               </Form.Item>
             </Col>
           </Row>
-        )}
+        </Card>
 
-        <Divider />
-        {/* get заказчика(поиск по фамилии), обьекты, формулы(селект), тип ту, стадия, статусы */}
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item label={t('exportData.ui.fieldsLabel')} name='fields' tooltip={t('exportData.ui.fieldsTooltip')}>
-              <Select mode='tags' placeholder={t('exportData.ui.fieldsPlaceholder')} />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label={t('exportData.ui.filenameLabel')} name='filename'>
-              <Input placeholder={t('exportData.ui.filenamePlaceholder')} />
-            </Form.Item>
-          </Col>
-        </Row>
+        <Card
+          size='small'
+          style={{ marginBottom: 16 }}
+          title={
+            <Space>
+              <FilterOutlined />
+              {t('exportData.ui.filtersTitle')}
+            </Space>
+          }
+        >
+          <Typography.Paragraph type='secondary' style={{ marginTop: -4 }}>
+            {t('exportData.ui.filtersHint')}
+          </Typography.Paragraph>
 
-        <Row justify='end' gutter={16} style={{ marginTop: 24 }}>
+          {selectedEntity ? (
+            <>
+              <FiltersGrid fields={fieldsForEntity} />
+
+              <Form.Item label={t('exportData.ui.idsLabel')} name='ids' tooltip={t('exportData.ui.idsTooltip')} style={{ marginBottom: 0 }}>
+                <Select mode='tags' placeholder={t('exportData.ui.idsPlaceholder')} open={false} />
+              </Form.Item>
+            </>
+          ) : (
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('exportData.ui.selectEntityFirst')} style={{ padding: '16px 0' }} />
+          )}
+        </Card>
+
+        <Card
+          size='small'
+          style={{ marginBottom: 16 }}
+          title={
+            <Space>
+              <AppstoreOutlined />
+              {t('exportData.ui.extraTitle')}
+            </Space>
+          }
+        >
+          <Typography.Text strong style={{ display: 'block', marginBottom: 8 }}>
+            {t('exportData.ui.includeTitle')}
+          </Typography.Text>
+          <Typography.Paragraph type='secondary' style={{ marginTop: -4 }}>
+            {t('exportData.ui.includeHint')}
+          </Typography.Paragraph>
+          <Space wrap size={[10, 10]}>
+            {INCLUDE_OPTIONS.map((opt) => (
+              <Form.Item key={opt.key} name={['include', opt.key]} valuePropName='checked' getValueFromEvent={(c: boolean) => c} noStyle>
+                <CheckableButton icon={opt.icon}>{t(`exportData.ui.include.${opt.key}`)}</CheckableButton>
+              </Form.Item>
+            ))}
+          </Space>
+
+          {isIncludePendingVisible(selectedEntity) && (
+            <div style={{ marginTop: 12 }}>
+              <Form.Item name='include_pending' valuePropName='checked' getValueFromEvent={(c: boolean) => c} noStyle>
+                <CheckableButton icon={<SyncOutlined />}>{t('exportData.ui.include.pending')}</CheckableButton>
+              </Form.Item>
+            </div>
+          )}
+
+          <Row gutter={16} style={{ marginTop: 20 }}>
+            <Col xs={24} md={12}>
+              <Form.Item label={t('exportData.ui.fieldsLabel')} name='fields' tooltip={t('exportData.ui.fieldsTooltip')}>
+                <Select mode='tags' placeholder={t('exportData.ui.fieldsPlaceholder')} />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12}>
+              <Form.Item label={t('exportData.ui.filenameLabel')} name='filename' tooltip={t('exportData.ui.filenameTooltip')}>
+                <Input placeholder={t('exportData.ui.filenamePlaceholder')} />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Card>
+
+        <Row justify='space-between' align='middle' gutter={[16, 12]} wrap>
           <Col>
-            <Button type='default' onClick={() => navigate('/dashboard/export-data/history')}>
+            <Button type='default' icon={<HistoryOutlined />} onClick={() => navigate('/dashboard/export-data/history')}>
               {t('exportData.exportHistory')}
             </Button>
           </Col>
           <Col>
             <Button
               type='primary'
+              size='large'
               htmlType='submit'
               icon={<DownloadOutlined />}
               loading={isLoading}

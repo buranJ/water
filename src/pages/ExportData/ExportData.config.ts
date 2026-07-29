@@ -18,6 +18,8 @@ export interface FieldConfig {
     | 'request_date_end'
     | 'tech_council_date_start'
     | 'tech_council_date_end'
+    | 'council_date_start'
+    | 'council_date_end'
     | 'is_water'
     | 'is_kanal'
     | 'created_start'
@@ -41,6 +43,8 @@ export interface FieldConfig {
   options?: { value: string; label: string }[];
   placeholder?: string;
   tooltip?: string;
+  // Логическая группа для визуальной компоновки фильтров
+  section?: 'main' | 'dates' | 'connection';
 }
 
 export type FormValues = {
@@ -112,75 +116,85 @@ const APPLICATION_STATUS_OPTIONS = [
 
 export const FILTER_CONFIG: Record<ExportEntity, FieldConfig[]> = {
   technical_conditions: [
-    { name: 'id', label: t('exportData.filters.id'), type: 'number' },
-    { name: 'request_number', label: t('exportData.filters.request_number'), type: 'string' },
-    { name: 'status', label: t('exportData.filters.status'), type: 'select', options: STATUS6B3_OPTIONS },
-    { name: 'stage', label: t('exportData.filters.stage'), type: 'select', options: STAGE_OPTIONS },
-    { name: 'type_ty', label: t('exportData.filters.type_ty'), type: 'number' },
-    { name: 'customer_id', label: t('exportData.filters.customer_id'), type: 'number' },
-    { name: 'entity_id', label: t('exportData.filters.entity_id'), type: 'number' },
-    { name: 'formula_id', label: t('exportData.filters.formula_id'), type: 'number' },
-    { name: 'request_date_start', label: t('exportData.filters.request_date_start'), type: 'date' },
-    { name: 'request_date_end', label: t('exportData.filters.request_date_end'), type: 'date' },
-    { name: 'tech_council_date_start', label: t('exportData.filters.tech_council_date_start'), type: 'date' },
-    { name: 'tech_council_date_end', label: t('exportData.filters.tech_council_date_end'), type: 'date' },
-    { name: 'is_water', label: t('exportData.filters.is_water'), type: 'boolean' },
-    { name: 'is_kanal', label: t('exportData.filters.is_kanal'), type: 'boolean' },
+    { name: 'id', label: t('exportData.filters.id'), type: 'number', section: 'main' },
+    { name: 'request_number', label: t('exportData.filters.request_number'), type: 'string', section: 'main' },
+    { name: 'status', label: t('exportData.filters.status'), type: 'select', options: STATUS6B3_OPTIONS, section: 'main' },
+    { name: 'stage', label: t('exportData.filters.stage'), type: 'select', options: STAGE_OPTIONS, section: 'main' },
+    { name: 'type_ty', label: t('exportData.filters.type_ty'), type: 'number', section: 'main' },
+    { name: 'customer_id', label: t('exportData.filters.customer_id'), type: 'number', section: 'main' },
+    { name: 'entity_id', label: t('exportData.filters.entity_id'), type: 'number', section: 'main' },
+    { name: 'formula_id', label: t('exportData.filters.formula_id'), type: 'number', section: 'main' },
+    { name: 'request_date_start', label: t('exportData.filters.request_date_start'), type: 'date', section: 'dates' },
+    { name: 'request_date_end', label: t('exportData.filters.request_date_end'), type: 'date', section: 'dates' },
+    { name: 'tech_council_date_start', label: t('exportData.filters.tech_council_date_start'), type: 'date', section: 'dates' },
+    { name: 'tech_council_date_end', label: t('exportData.filters.tech_council_date_end'), type: 'date', section: 'dates' },
+    { name: 'council_date_start', label: t('exportData.filters.council_date_start'), type: 'date', section: 'dates' },
+    { name: 'council_date_end', label: t('exportData.filters.council_date_end'), type: 'date', section: 'dates' },
+    { name: 'is_water', label: t('exportData.filters.is_water'), type: 'boolean', section: 'connection' },
+    { name: 'is_kanal', label: t('exportData.filters.is_kanal'), type: 'boolean', section: 'connection' },
     {
       name: 'object_names',
-      label: 'Наименование объекта',
+      label: t('exportData.filters.object_names'),
       type: 'text_array',
-      placeholder: 'Например: Мойка/Лейка/Двухэтажка',
-      tooltip: 'Разделяйте названия объектов символом /'
+      placeholder: t('exportData.placeholders.objectNames'),
+      tooltip: t('exportData.tooltips.object_names'),
+      section: 'connection'
     }
   ],
   entities: [
-    { name: 'id', label: t('exportData.filters.id'), type: 'number' },
-    { name: 'status', label: t('exportData.filters.status'), type: 'select', options: STATUS6B3_OPTIONS },
-    { name: 'customer_id', label: t('exportData.filters.customer_id'), type: 'number' },
-    { name: 'created_start', label: t('exportData.filters.created_start'), type: 'date' },
-    { name: 'created_end', label: t('exportData.filters.created_end'), type: 'date' }
+    { name: 'id', label: t('exportData.filters.id'), type: 'number', section: 'main' },
+    { name: 'status', label: t('exportData.filters.status'), type: 'select', options: STATUS6B3_OPTIONS, section: 'main' },
+    { name: 'customer_id', label: t('exportData.filters.customer_id'), type: 'number', section: 'main' },
+    { name: 'created_start', label: t('exportData.filters.created_start'), type: 'date', section: 'dates' },
+    { name: 'created_end', label: t('exportData.filters.created_end'), type: 'date', section: 'dates' }
   ],
   protocols: [
-    { name: 'id', label: t('exportData.filters.id'), type: 'number' },
-    { name: 'technical_condition_id', label: t('exportData.filters.technical_condition_id'), type: 'number' },
-    { name: 'created_start', label: t('exportData.filters.created_start'), type: 'date' },
-    { name: 'created_end', label: t('exportData.filters.created_end'), type: 'date' }
+    { name: 'id', label: t('exportData.filters.id'), type: 'number', section: 'main' },
+    { name: 'technical_condition_id', label: t('exportData.filters.technical_condition_id'), type: 'number', section: 'main' },
+    { name: 'created_start', label: t('exportData.filters.created_start'), type: 'date', section: 'dates' },
+    { name: 'created_end', label: t('exportData.filters.created_end'), type: 'date', section: 'dates' }
   ],
   customers: [
-    { name: 'id', label: t('exportData.filters.id'), type: 'number' },
-    { name: 'inn', label: t('exportData.filters.inn'), type: 'string' },
-    { name: 'full_name', label: t('exportData.filters.full_name'), type: 'string' },
-    { name: 'status', label: t('exportData.filters.status'), type: 'select', options: CUSTOMER_STATUS_OPTIONS },
-    { name: 'created_start', label: t('exportData.filters.created_start'), type: 'date' },
-    { name: 'created_end', label: t('exportData.filters.created_end'), type: 'date' }
+    { name: 'id', label: t('exportData.filters.id'), type: 'number', section: 'main' },
+    { name: 'inn', label: t('exportData.filters.inn'), type: 'string', section: 'main' },
+    { name: 'full_name', label: t('exportData.filters.full_name'), type: 'string', section: 'main' },
+    { name: 'status', label: t('exportData.filters.status'), type: 'select', options: CUSTOMER_STATUS_OPTIONS, section: 'main' },
+    { name: 'created_start', label: t('exportData.filters.created_start'), type: 'date', section: 'dates' },
+    { name: 'created_end', label: t('exportData.filters.created_end'), type: 'date', section: 'dates' }
   ],
   payments: [
-    { name: 'id', label: t('exportData.filters.id'), type: 'number' },
-    { name: 'status', label: t('exportData.filters.status'), type: 'select', options: PAYMENT_STATUS_OPTIONS },
-    { name: 'invoice_id', label: t('exportData.filters.invoice_id'), type: 'number' },
-    { name: 'payment_number', label: t('exportData.filters.payment_number'), type: 'string' },
-    { name: 'payment_date_start', label: t('exportData.filters.payment_date_start'), type: 'date' },
-    { name: 'payment_date_end', label: t('exportData.filters.payment_date_end'), type: 'date' }
+    { name: 'id', label: t('exportData.filters.id'), type: 'number', section: 'main' },
+    { name: 'status', label: t('exportData.filters.status'), type: 'select', options: PAYMENT_STATUS_OPTIONS, section: 'main' },
+    { name: 'invoice_id', label: t('exportData.filters.invoice_id'), type: 'number', section: 'main' },
+    { name: 'payment_number', label: t('exportData.filters.payment_number'), type: 'string', section: 'main' },
+    { name: 'payment_date_start', label: t('exportData.filters.payment_date_start'), type: 'date', section: 'dates' },
+    { name: 'payment_date_end', label: t('exportData.filters.payment_date_end'), type: 'date', section: 'dates' }
   ],
   invoices: [
-    { name: 'id', label: t('exportData.filters.id'), type: 'number' },
-    { name: 'invoice_number', label: t('exportData.filters.invoice_number'), type: 'string' },
-    { name: 'is_paid', label: t('exportData.filters.is_paid'), type: 'boolean' },
-    { name: 'protocol_id', label: t('exportData.filters.protocol_id'), type: 'number' },
-    { name: 'invoice_type', label: t('exportData.filters.invoice_type'), type: 'select', options: INVOICE_TYPE_OPTIONS },
-    { name: 'invoice_date_start', label: t('exportData.filters.invoice_date_start'), type: 'date' },
-    { name: 'invoice_date_end', label: t('exportData.filters.invoice_date_end'), type: 'date' }
+    { name: 'id', label: t('exportData.filters.id'), type: 'number', section: 'main' },
+    { name: 'invoice_number', label: t('exportData.filters.invoice_number'), type: 'string', section: 'main' },
+    { name: 'is_paid', label: t('exportData.filters.is_paid'), type: 'boolean', section: 'main' },
+    { name: 'protocol_id', label: t('exportData.filters.protocol_id'), type: 'number', section: 'main' },
+    { name: 'invoice_type', label: t('exportData.filters.invoice_type'), type: 'select', options: INVOICE_TYPE_OPTIONS, section: 'main' },
+    { name: 'invoice_date_start', label: t('exportData.filters.invoice_date_start'), type: 'date', section: 'dates' },
+    { name: 'invoice_date_end', label: t('exportData.filters.invoice_date_end'), type: 'date', section: 'dates' }
   ],
   applications: [
-    { name: 'id', label: t('exportData.filters.id'), type: 'number' },
-    { name: 'status', label: t('exportData.filters.status'), type: 'select', options: APPLICATION_STATUS_OPTIONS },
-    { name: 'customer_id', label: t('exportData.filters.customer_id'), type: 'number' },
-    { name: 'entity_id', label: t('exportData.filters.entity_id'), type: 'number' },
-    { name: 'created_start', label: t('exportData.filters.created_start'), type: 'date' },
-    { name: 'created_end', label: t('exportData.filters.created_end'), type: 'date' }
+    { name: 'id', label: t('exportData.filters.id'), type: 'number', section: 'main' },
+    { name: 'status', label: t('exportData.filters.status'), type: 'select', options: APPLICATION_STATUS_OPTIONS, section: 'main' },
+    { name: 'customer_id', label: t('exportData.filters.customer_id'), type: 'number', section: 'main' },
+    { name: 'entity_id', label: t('exportData.filters.entity_id'), type: 'number', section: 'main' },
+    { name: 'created_start', label: t('exportData.filters.created_start'), type: 'date', section: 'dates' },
+    { name: 'created_end', label: t('exportData.filters.created_end'), type: 'date', section: 'dates' }
   ]
 };
+
+// Порядок и метаданные визуальных секций фильтров
+export const FILTER_SECTIONS: { key: NonNullable<FieldConfig['section']>; title: string }[] = [
+  { key: 'main', title: t('exportData.sections.main') },
+  { key: 'dates', title: t('exportData.sections.dates') },
+  { key: 'connection', title: t('exportData.sections.connection') }
+];
 
 function hasFormat(v: unknown): v is { format: (fmt: string) => string } {
   return typeof v === 'object' && v !== null && 'format' in v && typeof (v as { format?: unknown }).format === 'function';

@@ -40,6 +40,8 @@ export interface TechnicalConditionsExportFilters {
   request_date_end?: string;
   tech_council_date_start?: string;
   tech_council_date_end?: string;
+  council_date_start?: string;
+  council_date_end?: string;
   is_water?: boolean;
   is_kanal?: boolean;
 }

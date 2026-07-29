@@ -18,6 +18,8 @@ interface FormValues {
   council_date?: string;
   request_number?: string;
   tech_council_date?: string;
+  outgoing_number?: string;
+  outgoing_date?: string;
   file?: UploadFile[];
   comment?: string;
   customer?: string;
@@ -54,6 +56,8 @@ const AddLandParcelForm: FC<AddLandParcelFormProps> = ({ title }) => {
         council_date: landParcelData.council_date,
         request_number: landParcelData.request_number,
         tech_council_date: landParcelData.tech_council_date,
+        outgoing_number: landParcelData.outgoing_number,
+        outgoing_date: landParcelData.outgoing_date,
         comment: landParcelData.comment,
         customer: landParcelData.customer_name || (landParcelData.customer ? String(landParcelData.customer) : undefined)
       });
@@ -101,6 +105,8 @@ const AddLandParcelForm: FC<AddLandParcelFormProps> = ({ title }) => {
         if (values.council_date) payload.council_date = values.council_date;
         if (values.request_number?.trim()) payload.request_number = values.request_number;
         if (values.tech_council_date) payload.tech_council_date = values.tech_council_date;
+        if (values.outgoing_number?.trim()) payload.outgoing_number = values.outgoing_number;
+        if (values.outgoing_date) payload.outgoing_date = values.outgoing_date;
         if (values.comment?.trim()) payload.comment = values.comment;
         if (customerId !== undefined) payload.customer = customerId;
 
@@ -193,6 +199,25 @@ const AddLandParcelForm: FC<AddLandParcelFormProps> = ({ title }) => {
           <Col span={12}>
             <Form.Item name='customer' label='Заказчик'>
               <Input size='large' placeholder='Введите ФИО заказчика' />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item name='outgoing_number' label='Исходящий номер земельного участка'>
+              <Input size='large' placeholder='Введите исходящий номер' />
+            </Form.Item>
+          </Col>
+
+          <Col span={12}>
+            <Form.Item
+              name='outgoing_date'
+              label='Исходящая дата земельного участка'
+              normalize={(value: Dayjs) => formatDate(value)}
+              getValueProps={(value: string) => ({ value: parseDate(value) })}
+            >
+              <DatePicker size='large' format='DD.MM.YYYY' style={{ width: '100%' }} placeholder='Выберите дату' />
             </Form.Item>
           </Col>
         </Row>

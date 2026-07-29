@@ -104,6 +104,22 @@ export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange, ha
       onCell: clickableCellProps
     },
     {
+      title: 'Исходящий номер ЗУ',
+      dataIndex: 'outgoing_number',
+      key: 'outgoing_number',
+      width: 180,
+      render: (text) => text || '—',
+      onCell: clickableCellProps
+    },
+    {
+      title: 'Исходящая дата ЗУ',
+      dataIndex: 'outgoing_date',
+      key: 'outgoing_date',
+      width: 160,
+      render: (date) => (date ? dayjs(date).format('DD.MM.YYYY') : '—'),
+      onCell: clickableCellProps
+    },
+    {
       title: 'Дата запроса',
       dataIndex: 'council_date',
       key: 'council_date',

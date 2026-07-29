@@ -1,7 +1,25 @@
-import { FC, useMemo, useState } from 'react';
-import { Checkbox, Col, DatePicker, Form, Input, InputNumber, Row, Select, Tooltip } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { FC, ReactNode, useMemo, useState } from 'react';
+import { Button, Col, DatePicker, Form, Input, InputNumber, Row, Select, Tooltip, Typography } from 'antd';
+import { CalendarOutlined, CheckOutlined, ControlOutlined, NodeIndexOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import type { FieldConfig } from './ExportData.config';
+import { FILTER_SECTIONS } from './ExportData.config';
+
+// Кнопка-переключатель для формы (multi-select): ведёт себя как чекбокс, но выглядит как кнопка
+export const CheckableButton: FC<{ checked?: boolean; onChange?: (checked: boolean) => void; icon?: ReactNode; children?: ReactNode }> = ({
+  checked = false,
+  onChange,
+  icon,
+  children
+}) => (
+  <Button
+    type={checked ? 'primary' : 'default'}
+    icon={checked ? <CheckOutlined /> : icon}
+    onClick={() => onChange?.(!checked)}
+    style={{ borderRadius: 999 }}
+  >
+    {children}
+  </Button>
+);
 
 import { useGetAllCustomersQuery } from 'api/Customer.api';
 import { useGetAllFormulasQuery } from 'api/Formula.api';
@@ -36,11 +54,14 @@ export const FiltersGrid: FC<{ fields: FieldConfig[] }> = ({ fields }) => {
     const name = ['filters', fc.name];
     const label = fc.name === 'object_names' ? fc.label : t(`exportData.filters.${fc.name}`) || fc.label;
 
+    // Подсказка: либо явная из конфига, либо из словаря по имени поля (пусто → не показываем)
+    const tip = fc.tooltip || t(`exportData.tooltips.${fc.name}`, '');
+
     // ✅ Label с tooltip если есть
-    const labelNode = fc.tooltip ? (
+    const labelNode = tip ? (
       <span>
         {label}{' '}
-        <Tooltip title={fc.tooltip}>
+        <Tooltip title={tip}>
           <QuestionCircleOutlined style={{ color: '#999' }} />
         </Tooltip>
       </span>
@@ -160,8 +181,14 @@ export const FiltersGrid: FC<{ fields: FieldConfig[] }> = ({ fields }) => {
       case 'boolean':
         return (
           <Col span={12} key={`${fc.name}_${idx}`}>
-            <Form.Item {...commonProps} valuePropName='checked'>
-              <Checkbox />
+            <Form.Item name={name} valuePropName='checked' getValueFromEvent={(c: boolean) => c} style={{ marginBottom: 12 }}>
+              {tip ? (
+                <CheckableButton>
+                  <Tooltip title={tip}>{label}</Tooltip>
+                </CheckableButton>
+              ) : (
+                <CheckableButton>{label}</CheckableButton>
+              )}
             </Form.Item>
           </Col>
         );
@@ -185,5 +212,45 @@ export const FiltersGrid: FC<{ fields: FieldConfig[] }> = ({ fields }) => {
     }
   };
 
-  return <Row gutter={16}>{fields.map((fc, idx) => renderField(fc, idx))}</Row>;
+  // Без разбивки на секции — плоская сетка (обратная совместимость)
+  const hasSections = fields.some((f) => f.section);
+  if (!hasSections) {
+    return <Row gutter={16}>{fields.map((fc, idx) => renderField(fc, idx))}</Row>;
+  }
+
+  const sectionIcon: Record<string, ReactNode> = {
+    main: <ControlOutlined />,
+    dates: <CalendarOutlined />,
+    connection: <NodeIndexOutlined />
+  };
+
+  const groups = FILTER_SECTIONS.map((s) => ({
+    ...s,
+    items: fields.filter((f) => (f.section ?? 'main') === s.key)
+  })).filter((g) => g.items.length);
+
+  return (
+    <>
+      {groups.map((g) => (
+        <div key={g.key} style={{ marginBottom: 20 }}>
+          <Typography.Text
+            type='secondary'
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              marginBottom: 10,
+              fontSize: 12,
+              textTransform: 'uppercase',
+              letterSpacing: 0.4
+            }}
+          >
+            {sectionIcon[g.key]}
+            {g.title}
+          </Typography.Text>
+          <Row gutter={16}>{g.items.map((fc, idx) => renderField(fc, idx))}</Row>
+        </div>
+      ))}
+    </>
+  );
 };

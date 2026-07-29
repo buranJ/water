@@ -154,6 +154,14 @@ const LandParcelDetails: FC<LandParcelDetailsProps> = ({ title }) => {
                 {landParcel.tech_council_date ? dayjs(landParcel.tech_council_date).format('DD.MM.YYYY') : '—'}
               </Descriptions.Item>
 
+              <Descriptions.Item label='Исходящий номер ЗУ'>
+                <Typography.Text copyable={landParcel.outgoing_number ? true : false}>{landParcel.outgoing_number || '—'}</Typography.Text>
+              </Descriptions.Item>
+
+              <Descriptions.Item label='Исходящая дата ЗУ'>
+                {landParcel.outgoing_date ? dayjs(landParcel.outgoing_date).format('DD.MM.YYYY') : '—'}
+              </Descriptions.Item>
+
               <Descriptions.Item label='Файл' span={2}>
                 {landParcel.file ? (
                   <Typography.Link href={landParcel.file} target='_blank' rel='noopener noreferrer'>

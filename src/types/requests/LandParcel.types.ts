@@ -11,6 +11,8 @@ export interface ILandParcel {
   council_date?: string; // ✅ НОВОЕ
   request_number?: string; // ✅ НОВОЕ
   tech_council_date?: string; // ✅ НОВОЕ
+  outgoing_number?: string; // Исходящий номер земельного участка
+  outgoing_date?: string; // Исходящая дата земельного участка
   file?: string; // ✅ НОВОЕ
   comment?: string; // ✅ НОВОЕ
   customer?: number;
@@ -43,6 +45,8 @@ export interface ICreateLandParcelParams {
   council_date?: string; // ✅ НОВОЕ
   request_number?: string; // ✅ НОВОЕ
   tech_council_date?: string; // ✅ НОВОЕ
+  outgoing_number?: string; // Исходящий номер земельного участка
+  outgoing_date?: string; // Исходящая дата земельного участка
   file?: File; // ✅ НОВОЕ (тип File для загрузки)
   comment?: string; // ✅ НОВОЕ
   customer?: number;
@@ -74,4 +78,7 @@ export interface IGetAllLandParcelsParams {
   council_date_end?: string;
   tech_council_date_start?: string;
   tech_council_date_end?: string;
+  outgoing_number?: string;
+  outgoing_date_from?: string;
+  outgoing_date_to?: string;
 }

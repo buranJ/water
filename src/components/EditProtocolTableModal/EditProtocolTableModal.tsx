@@ -120,7 +120,8 @@ export const EditProtocolTableModal: FC<IProps> = ({ visible, onClose, protocolD
       if (values.customer !== undefined && values.customer !== '') {
         apiBody.customer = values.customer;
       }
-      if (values.note !== undefined && values.note !== '') {
+      // Примечание/объект — отправляем всегда (в т.ч. пустую строку), чтобы поле можно было очистить
+      if (values.note !== undefined) {
         apiBody.note = values.note;
       }
       if (values.load !== undefined && values.load !== '') {
