@@ -1072,7 +1072,13 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               {t('addTuForms.form.labels.fireInput1')}
             </Title>
 
-            <Form.Item name='fire_input_1' label={'На пожаротушение объекта подключение выполнить'} rules={[{ required: false }]}>
+            <Form.Item
+              name='fire_input_1'
+              label={'На пожаротушение объекта подключение выполнить'}
+              rules={[{ required: false }]}
+              normalize={(v) => (Array.isArray(v) ? v.slice(-1)[0] : v)}
+              getValueProps={(value: string | undefined) => ({ value: value ? [value] : [] })}
+            >
               <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
                 <Option value='существующий'>существующий</Option>
                 <Option value='проектируемый'>проектируемый</Option>
@@ -1098,7 +1104,13 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Title level={5} style={{ marginTop: '12px' }}>
               {t('addTuForms.form.labels.fireInput2')}
             </Title>
-            <Form.Item name='fire_input_2' label={'На пожаротушение объекта подключение выполнить'} rules={[{ required: false }]}>
+            <Form.Item
+              name='fire_input_2'
+              label={'На пожаротушение объекта подключение выполнить'}
+              rules={[{ required: false }]}
+              normalize={(v) => (Array.isArray(v) ? v.slice(-1)[0] : v)}
+              getValueProps={(value: string | undefined) => ({ value: value ? [value] : [] })}
+            >
               <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
                 <Option value='существующий'>существующий</Option>
                 <Option value='проектируемый'>проектируемый</Option>
