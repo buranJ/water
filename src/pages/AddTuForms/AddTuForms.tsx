@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { FC, useCallback, useEffect } from 'react';
+import { FC, useCallback, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Button, Col, DatePicker, Form, Input, message, Row, Select, Modal, Typography } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
@@ -108,6 +108,17 @@ const getRequestSourceTitle = (rs: unknown): string | undefined => {
   return undefined;
 };
 
+// Пожарный ввод (fire_input_1/2) — на бэк уходит ОДНА строка ("существующий" | "проектируемый"),
+// а не массив. Нормализуем любое значение (строка/массив/undefined) к одной строке.
+const toSingleFire = (v: unknown): string | undefined => {
+  if (Array.isArray(v)) {
+    const last = v.filter((x) => x != null && String(x).trim() !== '').slice(-1)[0];
+    return last != null ? String(last) : undefined;
+  }
+  if (v == null || String(v).trim() === '') return undefined;
+  return String(v);
+};
+
 // Автотекст для "Комментарий к водопроводу" при типе ТУ "на вынос водопроводной линии"
 const WATER_RELOCATION_COMMENT =
   'ПРОИЗВЕСТИ ВЫНОС ВОДОПРОВОДНОЙ ЛИНИИ ЗА ПРЕДЕЛЫ ГРАНИЦ ЗАСТРОЙКИ, ПРИ УСЛОВИИ СОХРАНЕНИЯ СУЩЕСТВУЮЩИХ ТОЧЕК ПОДКЛЮЧЕНИЯ И СОБЛЮДЕНИЯ ДЕЙСТВУЮЩЕГО ГИДРАВЛИЧЕСКОГО РЕЖИМА\nРАЗРАБОТКУ ПРОЕКТА СОГЛАСОВАТЬ С МП "БИШКЕКВОДОКАНАЛ"';
@@ -141,6 +152,9 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
   const [triggerGetTyByNumber] = useLazyGetTyByNumberQuery();
 
   const tuQuery = useGetTyByIdQuery({ tyId: tyId || '' }, { skip: !tyId });
+  // Префилл формы данными ТУ должен применяться ОДИН раз на загруженный id,
+  // иначе рефетч/инвалидация (в т.ч. после ошибки сохранения) затирает правки пользователя.
+  const prefilledTyIdRef = useRef<string | null>(null);
   const [form] = Form.useForm<FormValues>();
 
   const formatDate = useCallback((date: Dayjs | undefined) => date?.format('YYYY-MM-DD') || '', []);
@@ -232,8 +246,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             fire_fighting_outer:
               values.firefightingExpensesOuter != null ? String(values.firefightingExpensesOuter) : values.fire_fighting_outer,
             sewage_amount: values.sewage_amount,
-            fire_input_1: Array.isArray(values.fire_input_1) ? values.fire_input_1.join(', ') : values.fire_input_1,
-            fire_input_2: Array.isArray(values.fire_input_2) ? values.fire_input_2.join(', ') : values.fire_input_2,
+            fire_input_1: toSingleFire(values.fire_input_1),
+            fire_input_2: toSingleFire(values.fire_input_2),
             customer: customerId != null ? String(customerId) : undefined,
             water_pipe: values.water_pipe,
             street_pass_water: values.street_pass_water,
@@ -461,6 +475,9 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           increase_sewage: values.increase_sewage,
           additional_cold_water_required: values.additional_cold_water_required,
           additional_sewage_amount: values.additional_sewage_amount,
+          // Пожарный ввод — гарантированно одной строкой, а не массивом
+          fire_input_1: toSingleFire(values.fire_input_1),
+          fire_input_2: toSingleFire(values.fire_input_2),
           notes: values.notes
         };
 
@@ -525,13 +542,15 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
   useEffect(() => {
     if (isSuccess) {
       message.success(t('addTuForms.messages.createTuSuccess'));
-      form.resetFields();
+      // Форму не сбрасываем: при успехе уходим со страницы (размонтируется),
+      // а лишний resetFields мог обнулять поля до навигации.
       navigate(`/dashboard/technical-conditions/tu-details/${tyId}`);
     }
-  }, [form, isSuccess, navigate, tyId]);
+  }, [isSuccess, navigate, tyId]);
 
   useEffect(() => {
-    if (tuQuery.data) {
+    if (tuQuery.data && tyId && prefilledTyIdRef.current !== String(tyId)) {
+      prefilledTyIdRef.current = String(tyId);
       const toStr = (v: string | Date | undefined) => (typeof v === 'string' ? v : v ? dayjs(v).format('YYYY-MM-DD') : undefined);
 
       form.setFieldsValue({
@@ -553,7 +572,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         notes: tuQuery.data.notes
       } as any);
     }
-  }, [form, tuQuery]);
+  }, [form, tuQuery, tyId]);
 
   // Автозаполнение комментария к водопроводу при выборе типа "на вынос водопроводной линии".
   // Только при создании; в режиме редактирования берём значение с бэка (не автозаполняем).
@@ -609,8 +628,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         pressure_required: (data as any).pressure_required,
         fire_fighting_inner: (data as any).fire_fighting_inner,
         fire_fighting_outer: (data as any).fire_fighting_outer,
-        fire_input_1: (data as any).fire_input_1,
-        fire_input_2: (data as any).fire_input_2,
+        fire_input_1: toSingleFire((data as any).fire_input_1),
+        fire_input_2: toSingleFire((data as any).fire_input_2),
         street_pass_water: (data as any).street_pass_water,
         collector_diametr_water: (data as any).collector_diametr_water,
         provide_water: (data as any).provide_water,
@@ -1072,14 +1091,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               {t('addTuForms.form.labels.fireInput1')}
             </Title>
 
-            <Form.Item
-              name='fire_input_1'
-              label={'На пожаротушение объекта подключение выполнить'}
-              rules={[{ required: false }]}
-              normalize={(v) => (Array.isArray(v) ? v.slice(-1)[0] : v)}
-              getValueProps={(value: string | undefined) => ({ value: value ? [value] : [] })}
-            >
-              <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
+            <Form.Item name='fire_input_1' label={'На пожаротушение объекта подключение выполнить'} rules={[{ required: false }]}>
+              <Select allowClear size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
                 <Option value='существующий'>существующий</Option>
                 <Option value='проектируемый'>проектируемый</Option>
               </Select>
@@ -1104,14 +1117,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <Title level={5} style={{ marginTop: '12px' }}>
               {t('addTuForms.form.labels.fireInput2')}
             </Title>
-            <Form.Item
-              name='fire_input_2'
-              label={'На пожаротушение объекта подключение выполнить'}
-              rules={[{ required: false }]}
-              normalize={(v) => (Array.isArray(v) ? v.slice(-1)[0] : v)}
-              getValueProps={(value: string | undefined) => ({ value: value ? [value] : [] })}
-            >
-              <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
+            <Form.Item name='fire_input_2' label={'На пожаротушение объекта подключение выполнить'} rules={[{ required: false }]}>
+              <Select allowClear size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
                 <Option value='существующий'>существующий</Option>
                 <Option value='проектируемый'>проектируемый</Option>
               </Select>
