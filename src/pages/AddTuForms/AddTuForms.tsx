@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { AutoComplete, Button, Col, DatePicker, Form, Input, message, Row, Select, Modal, Typography } from 'antd';
+import { Button, Col, DatePicker, Form, Input, message, Row, Select, Modal, Typography } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import dayjs, { Dayjs } from 'dayjs';
 import { DashboardLayout } from 'components';
@@ -153,7 +153,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
   const [triggerCheckTuEntity] = useLazyCheckTuByEntityQuery();
   const [triggerGetTyByNumber] = useLazyGetTyByNumberQuery();
   const [triggerObjectNameSuggestions] = useLazyGetObjectNameSuggestionsQuery();
-  const [objectNameOptions, setObjectNameOptions] = useState<{ value: string }[]>([]);
+  const [objectNameOptions, setObjectNameOptions] = useState<string[]>([]);
+  const [isObjectNameDropdownOpen, setIsObjectNameDropdownOpen] = useState(false);
   const objectNameSearchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleObjectNameSearch = useCallback(
@@ -162,14 +163,17 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
       const query = value.trim();
       if (!query) {
         setObjectNameOptions([]);
+        setIsObjectNameDropdownOpen(false);
         return;
       }
       objectNameSearchTimeoutRef.current = setTimeout(async () => {
         try {
           const results = await triggerObjectNameSuggestions({ q: query, limit: 10 }).unwrap();
-          setObjectNameOptions((results || []).map((title) => ({ value: title })));
+          setObjectNameOptions(results || []);
+          setIsObjectNameDropdownOpen((results || []).length > 0);
         } catch {
           setObjectNameOptions([]);
+          setIsObjectNameDropdownOpen(false);
         }
       }, 300);
     },
@@ -187,6 +191,15 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
   // иначе рефетч/инвалидация (в т.ч. после ошибки сохранения) затирает правки пользователя.
   const prefilledTyIdRef = useRef<string | null>(null);
   const [form] = Form.useForm<FormValues>();
+
+  const handleObjectNameSelect = useCallback(
+    (title: string) => {
+      form.setFieldValue('object_name', title);
+      setIsObjectNameDropdownOpen(false);
+      setObjectNameOptions([]);
+    },
+    [form]
+  );
 
   const formatDate = useCallback((date: Dayjs | undefined) => date?.format('YYYY-MM-DD') || '', []);
   const parseDate = useCallback((dateString: string | undefined) => (dateString ? dayjs(dateString) : null), []);
@@ -851,22 +864,56 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item
-              label={t('addTuForms.form.labels.objectName')}
-              name='object_name'
-              rules={[{ required: !isRefusal, message: t('addTuForms.form.validation.specifyObjectName') }]}
-            >
-              <AutoComplete
-                options={objectNameOptions}
-                onSearch={handleObjectNameSearch}
-                filterOption={false}
-                popupMatchSelectWidth
-                listHeight={220}
-                dropdownStyle={{ maxHeight: 220, overflowY: 'auto' }}
+            <div style={{ position: 'relative' }}>
+              <Form.Item
+                label={t('addTuForms.form.labels.objectName')}
+                name='object_name'
+                rules={[{ required: !isRefusal, message: t('addTuForms.form.validation.specifyObjectName') }]}
               >
-                <TextArea size='large' placeholder={t('addTuForms.form.placeholders.objectName')} />
-              </AutoComplete>
-            </Form.Item>
+                <TextArea
+                  size='large'
+                  placeholder={t('addTuForms.form.placeholders.objectName')}
+                  onChange={(e) => handleObjectNameSearch(e.target.value)}
+                  onFocus={() => {
+                    if (objectNameOptions.length > 0) setIsObjectNameDropdownOpen(true);
+                  }}
+                  onBlur={() => setIsObjectNameDropdownOpen(false)}
+                />
+              </Form.Item>
+              {isObjectNameDropdownOpen && objectNameOptions.length > 0 && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    right: 0,
+                    zIndex: 1000,
+                    marginTop: 4,
+                    maxHeight: 240,
+                    overflowY: 'auto',
+                    background: '#fff',
+                    border: '1px solid #d9d9d9',
+                    borderRadius: 8,
+                    boxShadow: '0 6px 16px rgba(0, 0, 0, 0.12)'
+                  }}
+                >
+                  {objectNameOptions.map((title, index) => (
+                    <div
+                      key={`${title}-${index}`}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        handleObjectNameSelect(title);
+                      }}
+                      style={{ padding: '8px 12px', cursor: 'pointer' }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = '#f5f5f5')}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                    >
+                      {title}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </Col>
         </Row>
 
