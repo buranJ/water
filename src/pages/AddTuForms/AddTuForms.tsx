@@ -1,7 +1,7 @@
 /* eslint-disable */
-import { FC, useCallback, useEffect, useRef } from 'react';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { Button, Col, DatePicker, Form, Input, message, Row, Select, Modal, Typography } from 'antd';
+import { AutoComplete, Button, Col, DatePicker, Form, Input, message, Row, Select, Modal, Typography } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import dayjs, { Dayjs } from 'dayjs';
 import { DashboardLayout } from 'components';
@@ -13,6 +13,7 @@ import {
   useGetTyByIdQuery,
   useGetTyGroupsQuery,
   useGetTypesTyQuery,
+  useLazyGetObjectNameSuggestionsQuery,
   useLazyGetTyByNumberQuery,
   usePatchTyMutation
 } from 'api/Ty.api';
@@ -108,7 +109,7 @@ const getRequestSourceTitle = (rs: unknown): string | undefined => {
   return undefined;
 };
 
-// Пожарный ввод (fire_input_1/2) — на бэк уходит ОДНА строка ("существующий" | "проектируемый"),
+// Пожарный ввод (fire_input_1/2) — на бэк уходит ОДНА строка ("существ." | "проектируемый"),
 // а не массив. Нормализуем любое значение (строка/массив/undefined) к одной строке.
 const toSingleFire = (v: unknown): string | undefined => {
   if (Array.isArray(v)) {
@@ -150,6 +151,35 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
   const [triggerCheckTuCustomer] = useLazyCheckTuByCustomerQuery();
   const [triggerCheckTuEntity] = useLazyCheckTuByEntityQuery();
   const [triggerGetTyByNumber] = useLazyGetTyByNumberQuery();
+  const [triggerObjectNameSuggestions] = useLazyGetObjectNameSuggestionsQuery();
+  const [objectNameOptions, setObjectNameOptions] = useState<{ value: string }[]>([]);
+  const objectNameSearchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleObjectNameSearch = useCallback(
+    (value: string) => {
+      if (objectNameSearchTimeoutRef.current) clearTimeout(objectNameSearchTimeoutRef.current);
+      const query = value.trim();
+      if (!query) {
+        setObjectNameOptions([]);
+        return;
+      }
+      objectNameSearchTimeoutRef.current = setTimeout(async () => {
+        try {
+          const results = await triggerObjectNameSuggestions({ q: query, limit: 10 }).unwrap();
+          setObjectNameOptions((results || []).map((title) => ({ value: title })));
+        } catch {
+          setObjectNameOptions([]);
+        }
+      }, 300);
+    },
+    [triggerObjectNameSuggestions]
+  );
+
+  useEffect(() => {
+    return () => {
+      if (objectNameSearchTimeoutRef.current) clearTimeout(objectNameSearchTimeoutRef.current);
+    };
+  }, []);
 
   const tuQuery = useGetTyByIdQuery({ tyId: tyId || '' }, { skip: !tyId });
   // Префилл формы данными ТУ должен применяться ОДИН раз на загруженный id,
@@ -732,7 +762,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Col>
             <Col span={8}>
               <Form.Item
-                label={t('addTuForms.form.labels.incomingRequestNumber', 'Входящий номер запроса')}
+                label={t('addTuForms.form.labels.incomingRequestNumber', 'Входящий номер запроса БВК')}
                 name='incoming_request_number'
                 rules={[{ required: false }]}
               >
@@ -741,7 +771,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Col>
             <Col span={8}>
               <Form.Item
-                label={t('addTuForms.form.labels.incomingRequestDate', 'Дата входящего запроса')}
+                label={t('addTuForms.form.labels.incomingRequestDate', 'Дата входящего запроса БВК')}
                 name='incoming_request_date'
                 rules={[{ required: false }]}
                 normalize={(value: Dayjs) => formatDate(value)}
@@ -815,7 +845,9 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               name='object_name'
               rules={[{ required: !isRefusal, message: t('addTuForms.form.validation.specifyObjectName') }]}
             >
-              <TextArea size='large' placeholder={t('addTuForms.form.placeholders.objectName')} />
+              <AutoComplete options={objectNameOptions} onSearch={handleObjectNameSearch} filterOption={false}>
+                <TextArea size='large' placeholder={t('addTuForms.form.placeholders.objectName')} />
+              </AutoComplete>
             </Form.Item>
           </Col>
         </Row>
@@ -1061,7 +1093,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
                   getValueProps={(value: string | undefined) => ({ value: value ? [value] : [] })}
                 >
                   <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
-                    <Option value='существующий'>существующий</Option>
+                    <Option value='существ.'>существ.</Option>
                     <Option value='проектируемый'>проектируемый</Option>
                   </Select>
                 </Form.Item>
@@ -1093,7 +1125,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
 
             <Form.Item name='fire_input_1' label={'На пожаротушение объекта подключение выполнить'} rules={[{ required: false }]}>
               <Select allowClear size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
-                <Option value='существующий'>существующий</Option>
+                <Option value='существ.'>существ.</Option>
                 <Option value='проектируемый'>проектируемый</Option>
               </Select>
             </Form.Item>
@@ -1119,7 +1151,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             </Title>
             <Form.Item name='fire_input_2' label={'На пожаротушение объекта подключение выполнить'} rules={[{ required: false }]}>
               <Select allowClear size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
-                <Option value='существующий'>существующий</Option>
+                <Option value='существ.'>существ.</Option>
                 <Option value='проектируемый'>проектируемый</Option>
               </Select>
             </Form.Item>
@@ -1165,7 +1197,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
                   getValueProps={(value: string | undefined) => ({ value: value ? [value] : [] })}
                 >
                   <Select mode='tags' size='large' placeholder={t('addTuForms.form.placeholders.selectOption')}>
-                    <Option value='существующий'>существующий</Option>
+                    <Option value='существ.'>существ.</Option>
                     <Option value='проектируемый'>проектируемый</Option>
                   </Select>
                 </Form.Item>

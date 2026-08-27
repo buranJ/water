@@ -378,7 +378,12 @@
       "rejectedTu": "Отказано",
       "restoreTu": "Восстановить",
       "approveTu": "Одобрить ТУ",
-      "downloadContract": "Скачать договор"
+      "downloadContract": "Скачать договор",
+      "tyFile": "Файл ТУ",
+      "uploadTyFile": "Загрузить файл",
+      "replaceTyFile": "Заменить",
+      "deleteTyFile": "Удалить",
+      "deleteTyFileConfirm": "Удалить файл ТУ?"
     },
     "autoLoaded": "Автоматически загружено",
     "contentNotImplemented": "Контент для \"{{title}}\" пока не реализован",
@@ -404,7 +409,11 @@
       "restoreFailed": "Не удалось восстановить ТУ",
       "rejected": "Отказ создан",
       "rejectFailed": "Не удалось создать отказ",
-      "customerRequiredForContract": "Для скачивания договора укажите заказчика"
+      "customerRequiredForContract": "Для скачивания договора укажите заказчика",
+      "tyFileUploaded": "Файл ТУ загружен",
+      "tyFileUploadFailed": "Не удалось загрузить файл ТУ",
+      "tyFileDeleted": "Файл ТУ удалён",
+      "tyFileDeleteFailed": "Не удалось удалить файл ТУ"
     },
     "buttons": {
       "goToApplication": "Перейти к заявке"
@@ -1151,8 +1160,8 @@
       "labels": {
         "requestSource": "Источник запроса",
         "requestNumber": "Исходящий номер запроса",
-        "incomingRequestNumber": "Входящий номер запроса",
-        "incomingRequestDate": "Дата входящего запроса",
+        "incomingRequestNumber": "Входящий номер запроса БВК",
+        "incomingRequestDate": "Дата входящего запроса БВК",
         "requestDate": "Дата запроса",
         "customer": "Заказчик",
         "objectName": "Наименование объекта",
@@ -1263,7 +1272,7 @@
           "archived": "Архивирован"
         },
         "connectionType": {
-          "existing": "существующий",
+          "existing": "существ.",
           "built": "построенный"
         }
       },

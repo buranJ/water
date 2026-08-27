@@ -378,7 +378,12 @@
       "rejectedTu": "Баш тартылды",
       "restoreTu": "Калыбына келтирүү",
       "approveTu": "ТУдан бекитуу",
-      "downloadContract": "Келишимди жүктөп алуу"
+      "downloadContract": "Келишимди жүктөп алуу",
+      "tyFile": "ТУ файлы",
+      "uploadTyFile": "Файл жүктөө",
+      "replaceTyFile": "Алмаштыруу",
+      "deleteTyFile": "Өчүрүү",
+      "deleteTyFileConfirm": "ТУ файлын өчүрөсүзбү?"
     },
     "autoLoaded": "Автоматтык түрдө жүктөлдү",
     "contentNotImplemented": "\"{{title}}\" үчүн контент али ишке ашырыла элек",
@@ -404,7 +409,11 @@
       "restoreFailed": "ТУну калыбына келтирүү мүмкүн болгон жок",
       "rejected": "Баш тартуу түзүлдү",
       "rejectFailed": "Баш тартууну түзүү мүмкүн болгон жок",
-      "customerRequiredForContract": "Келишимди жүктөп алуу үчүн кардарды көрсөтүңүз"
+      "customerRequiredForContract": "Келишимди жүктөп алуу үчүн кардарды көрсөтүңүз",
+      "tyFileUploaded": "ТУ файлы жүктөлдү",
+      "tyFileUploadFailed": "ТУ файлын жүктөө мүмкүн болгон жок",
+      "tyFileDeleted": "ТУ файлы өчүрүлдү",
+      "tyFileDeleteFailed": "ТУ файлын өчүрүү мүмкүн болгон жок"
     },
     "buttons": {
       "goToApplication": "Арызга өтүү"

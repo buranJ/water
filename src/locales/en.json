@@ -378,7 +378,12 @@
       "rejectedTu": "Rejected",
       "restoreTu": "Restore",
       "approveTu": "Approve TU",
-      "downloadContract": "Download contract"
+      "downloadContract": "Download contract",
+      "tyFile": "TU file",
+      "uploadTyFile": "Upload file",
+      "replaceTyFile": "Replace",
+      "deleteTyFile": "Delete",
+      "deleteTyFileConfirm": "Delete TU file?"
     },
     "autoLoaded": "Automatically loaded",
     "contentNotImplemented": "Content for \"{{title}}\" is not implemented yet",
@@ -404,7 +409,11 @@
       "restoreFailed": "Failed to restore TU",
       "rejected": "Refusal created",
       "rejectFailed": "Failed to create refusal",
-      "customerRequiredForContract": "Please specify a customer to download the contract"
+      "customerRequiredForContract": "Please specify a customer to download the contract",
+      "tyFileUploaded": "TU file uploaded",
+      "tyFileUploadFailed": "Failed to upload TU file",
+      "tyFileDeleted": "TU file deleted",
+      "tyFileDeleteFailed": "Failed to delete TU file"
     },
     "buttons": {
       "goToApplication": "Go to application"

@@ -61,10 +61,23 @@ export interface ITyGroup {
   title: string;
 }
 
+export interface ITyFile {
+  id: number;
+  ty: number;
+  file: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface IUploadTyFileParams {
+  ty_id: string;
+  file: File;
+}
+
 export const tyApi = createApi({
   reducerPath: 'tyApi',
   baseQuery: getBaseQuery(),
-  tagTypes: ['Ty', 'TyLoads', 'DopTy'],
+  tagTypes: ['Ty', 'TyLoads', 'DopTy', 'TyFile'],
   endpoints: (build) => ({
     getAllTy: build.query<IGetAllTechnicalConditionResponse, IGetAllTechnicalConditionParams>({
       query: (params) => ({
@@ -137,6 +150,44 @@ export const tyApi = createApi({
         url: '/ty/groups/',
         method: 'GET'
       })
+    }),
+
+    getObjectNameSuggestions: build.query<string[], { q: string; limit?: number }>({
+      query: ({ q, limit = 10 }) => ({
+        url: '/ty/object-name-suggestions/',
+        method: 'GET',
+        params: { q, limit }
+      })
+    }),
+
+    getTyFile: build.query<ITyFile, { ty_id: string }>({
+      query: ({ ty_id }) => ({
+        url: `/ty/${ty_id}/file/`,
+        method: 'GET'
+      }),
+      providesTags: (_result, _error, { ty_id }) => [{ type: 'TyFile', id: ty_id }]
+    }),
+
+    uploadTyFile: build.mutation<ITyFile, IUploadTyFileParams>({
+      query: ({ ty_id, file }) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        return {
+          url: `/ty/${ty_id}/file/`,
+          method: 'POST',
+          body: formData,
+          formData: true
+        };
+      },
+      invalidatesTags: (_result, _error, { ty_id }) => [{ type: 'TyFile', id: ty_id }]
+    }),
+
+    deleteTyFile: build.mutation<void, { ty_id: string }>({
+      query: ({ ty_id }) => ({
+        url: `/ty/${ty_id}/file/`,
+        method: 'DELETE'
+      }),
+      invalidatesTags: (_result, _error, { ty_id }) => [{ type: 'TyFile', id: ty_id }]
     }),
 
     getHistoryTy: build.query<IGetTyHistoryResponse, IGetTyHistoryParams>({
@@ -574,6 +625,10 @@ export const {
   useDeleteTyMutation,
   useGetTypesTyQuery,
   useGetTyGroupsQuery,
+  useLazyGetObjectNameSuggestionsQuery,
+  useGetTyFileQuery,
+  useUploadTyFileMutation,
+  useDeleteTyFileMutation,
   useGetHistoryTyQuery,
   useCreateTyFromApplicationMutation,
   useGenerateActTyMutation,
