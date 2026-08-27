@@ -856,7 +856,14 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               name='object_name'
               rules={[{ required: !isRefusal, message: t('addTuForms.form.validation.specifyObjectName') }]}
             >
-              <AutoComplete options={objectNameOptions} onSearch={handleObjectNameSearch} filterOption={false}>
+              <AutoComplete
+                options={objectNameOptions}
+                onSearch={handleObjectNameSearch}
+                filterOption={false}
+                popupMatchSelectWidth
+                listHeight={220}
+                dropdownStyle={{ maxHeight: 220, overflowY: 'auto' }}
+              >
                 <TextArea size='large' placeholder={t('addTuForms.form.placeholders.objectName')} />
               </AutoComplete>
             </Form.Item>
