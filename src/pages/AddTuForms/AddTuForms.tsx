@@ -47,6 +47,7 @@ type FormValues = Omit<ITyItem, 'type_ty' | 'customer' | 'application'> & {
   request_date?: string;
   incoming_request_number?: string;
   incoming_request_date?: string;
+  phone_number?: string;
   payment_deadline?: string;
   // Extra fields used only during creation mapping
   object?: string;
@@ -279,6 +280,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             fire_input_1: toSingleFire(values.fire_input_1),
             fire_input_2: toSingleFire(values.fire_input_2),
             customer: customerId != null ? String(customerId) : undefined,
+            phone_number: values.phone_number,
             water_pipe: values.water_pipe,
             street_pass_water: values.street_pass_water,
             provide_water: values.provide_water,
@@ -823,7 +825,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Row>
 
         <Row gutter={16}>
-          <Col span={12}>
+          <Col span={8}>
             <Form.Item
               label={t('addTuForms.form.labels.customer')}
               name='customer'
@@ -839,7 +841,16 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               <TextArea size='large' placeholder={t('addTuForms.form.placeholders.customer')} />
             </Form.Item>
           </Col>
-          <Col span={12}>
+          <Col span={8}>
+            <Form.Item
+              label={t('addTuForms.form.labels.phoneNumber', 'Номер телефона')}
+              name='phone_number'
+              rules={[{ required: false }]}
+            >
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.phoneNumber', '+996 XXX XXX XXX')} />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
             <Form.Item
               label={t('addTuForms.form.labels.objectName')}
               name='object_name'
