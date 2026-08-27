@@ -113,8 +113,8 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const dopTyFileInputRef = useRef<HTMLInputElement>(null);
 
   const isTuApproved = objectData?.stage === 'approved';
-  // status_display === false означает, что ТУ в отказе — блок "Дополнения к ТУ" скрываем
-  const showDopTy = (objectData as unknown as { status_display?: unknown })?.status_display !== false;
+  // status_display === 'Inactive' означает, что ТУ в отказе — блок "Дополнения к ТУ" скрываем
+  const showDopTy = String((objectData as unknown as { status_display?: unknown })?.status_display ?? '').toLowerCase() !== 'inactive';
 
   const getActStatusLabel = (st?: IActEnum) => {
     const map: Record<IActEnum, string> = {
