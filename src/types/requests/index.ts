@@ -31,6 +31,8 @@ export type {
 export type {
   ICreateLandParcelParams,
   IDeleteLandParcelParams,
+  IGenerateLandParcelDocumentParams,
+  IGenerateLandParcelDocumentResponse,
   IGetAllLandParcelsParams,
   IGetLandParcelByIdParams,
   ILandParcel,

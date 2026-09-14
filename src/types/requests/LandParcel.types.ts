@@ -64,6 +64,15 @@ export interface IUpdateLandParcelParams {
 export interface IDeleteLandParcelParams {
   id: number | string;
 }
+
+export interface IGenerateLandParcelDocumentParams {
+  id: number | string;
+}
+
+export interface IGenerateLandParcelDocumentResponse {
+  detail: string;
+  file_url: string;
+}
 export interface IGetAllLandParcelsParams {
   page?: number;
   page_size?: number;

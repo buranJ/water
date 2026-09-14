@@ -1,13 +1,19 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Button, Card, Col, Descriptions, message, Modal, Row, Skeleton, Space, Tag, Typography } from 'antd';
-import { DeleteOutlined, EditOutlined, LeftOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, FileAddOutlined, LeftOutlined, UploadOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { DashboardLayout } from 'components';
 import './styles.scss';
 
-import { useDeleteLandParcelMutation, useGetLandParcelByIdQuery } from 'api/LandParcel.api';
+import {
+  useDeleteLandParcelMutation,
+  useGenerateLandParcelDocumentMutation,
+  useGetLandParcelByIdQuery,
+  usePatchLandParcelMutation
+} from 'api/LandParcel.api';
 import { usePermissions } from 'hooks/useAuth';
+import { getApiErrorMessage } from 'utils/apiError';
 
 const { Title } = Typography;
 
@@ -21,6 +27,8 @@ const LandParcelDetails: FC<LandParcelDetailsProps> = ({ title }) => {
   const { hasPermission } = usePermissions();
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [confirmFileAction, setConfirmFileAction] = useState<null | { type: 'generate' } | { type: 'upload'; file: File }>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   console.log('🔍 LandParcelDetails - ID from URL:', id);
 
@@ -32,6 +40,59 @@ const LandParcelDetails: FC<LandParcelDetailsProps> = ({ title }) => {
   }, [landParcel, isLoading, error]);
 
   const [deleteLandParcel, { isLoading: isDeleting }] = useDeleteLandParcelMutation();
+  const [generateDocument, { isLoading: isGenerating }] = useGenerateLandParcelDocumentMutation();
+  const [patchLandParcel, { isLoading: isUploadingFile }] = usePatchLandParcelMutation();
+
+  const runGenerateDocument = async () => {
+    try {
+      const res = await generateDocument({ id: id! }).unwrap();
+      message.success(res.detail || 'Документ успешно сгенерирован');
+    } catch (e) {
+      message.error(getApiErrorMessage(e, 'Не удалось сгенерировать документ'));
+    }
+  };
+
+  const runUploadFile = async (file: File) => {
+    try {
+      await patchLandParcel({ id: id!, body: { file } }).unwrap();
+      message.success('Файл загружен');
+    } catch (e) {
+      message.error(getApiErrorMessage(e, 'Не удалось загрузить файл'));
+    }
+  };
+
+  const handleGenerateClick = () => {
+    if (landParcel?.file) {
+      setConfirmFileAction({ type: 'generate' });
+    } else {
+      runGenerateDocument();
+    }
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    if (landParcel?.file) {
+      setConfirmFileAction({ type: 'upload', file });
+    } else {
+      runUploadFile(file);
+    }
+  };
+
+  const handleConfirmFileReplace = async () => {
+    if (!confirmFileAction) return;
+    if (confirmFileAction.type === 'generate') {
+      await runGenerateDocument();
+    } else {
+      await runUploadFile(confirmFileAction.file);
+    }
+    setConfirmFileAction(null);
+  };
 
   const handleDelete = async () => {
     try {
@@ -163,13 +224,26 @@ const LandParcelDetails: FC<LandParcelDetailsProps> = ({ title }) => {
               </Descriptions.Item>
 
               <Descriptions.Item label='Файл' span={2}>
-                {landParcel.file ? (
-                  <Typography.Link href={landParcel.file} target='_blank' rel='noopener noreferrer'>
-                    Скачать файл
-                  </Typography.Link>
-                ) : (
-                  '—'
-                )}
+                <Space direction='vertical' size={8}>
+                  {landParcel.file ? (
+                    <Typography.Link href={landParcel.file} target='_blank' rel='noopener noreferrer'>
+                      Скачать файл
+                    </Typography.Link>
+                  ) : (
+                    <Typography.Text type='secondary'>Файл не загружен</Typography.Text>
+                  )}
+                  {hasPermission('change_landparcel') && (
+                    <Space wrap>
+                      <Button size='small' icon={<FileAddOutlined />} loading={isGenerating} onClick={handleGenerateClick}>
+                        Сгенерировать документ
+                      </Button>
+                      <Button size='small' icon={<UploadOutlined />} loading={isUploadingFile} onClick={handleUploadClick}>
+                        Загрузить свой файл
+                      </Button>
+                      <input ref={fileInputRef} type='file' style={{ display: 'none' }} onChange={handleFileSelected} />
+                    </Space>
+                  )}
+                </Space>
               </Descriptions.Item>
 
               <Descriptions.Item label='Комментарий' span={2}>
@@ -215,6 +289,19 @@ const LandParcelDetails: FC<LandParcelDetailsProps> = ({ title }) => {
           {landParcel?.customer_name && <Typography.Paragraph type='secondary'>Заказчик: {landParcel.customer_name}</Typography.Paragraph>}
           {landParcel?.address && <Typography.Paragraph type='secondary'>Адрес: {landParcel.address}</Typography.Paragraph>}
           <Typography.Paragraph type='danger'>Это действие нельзя отменить!</Typography.Paragraph>
+        </Modal>
+
+        {/* Replace File Confirmation Modal */}
+        <Modal
+          title='Заменить файл?'
+          open={!!confirmFileAction}
+          onOk={handleConfirmFileReplace}
+          onCancel={() => setConfirmFileAction(null)}
+          okText='Заменить'
+          cancelText='Отмена'
+          confirmLoading={isGenerating || isUploadingFile}
+        >
+          <Typography.Paragraph>Текущий файл будет заменён, продолжить?</Typography.Paragraph>
         </Modal>
       </div>
     </DashboardLayout>

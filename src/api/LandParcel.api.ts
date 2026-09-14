@@ -3,6 +3,8 @@ import { getBaseQuery } from 'common/helpers';
 import type {
   ICreateLandParcelParams,
   IDeleteLandParcelParams,
+  IGenerateLandParcelDocumentParams,
+  IGenerateLandParcelDocumentResponse,
   IGetAllLandParcelsParams,
   IGetLandParcelByIdParams,
   ILandParcel,
@@ -117,6 +119,14 @@ export const landParcelApi = createApi({
         method: 'DELETE'
       }),
       invalidatesTags: ['LandParcel']
+    }),
+
+    generateLandParcelDocument: build.mutation<IGenerateLandParcelDocumentResponse, IGenerateLandParcelDocumentParams>({
+      query: ({ id }) => ({
+        url: `/object/land-parcels/${id}/generate-document/`,
+        method: 'POST'
+      }),
+      invalidatesTags: (_result, _error, { id }) => [{ type: 'LandParcel', id }, 'LandParcel']
     })
   })
 });
@@ -127,5 +137,6 @@ export const {
   useCreateLandParcelMutation,
   useUpdateLandParcelMutation,
   usePatchLandParcelMutation,
-  useDeleteLandParcelMutation
+  useDeleteLandParcelMutation,
+  useGenerateLandParcelDocumentMutation
 } = landParcelApi;
