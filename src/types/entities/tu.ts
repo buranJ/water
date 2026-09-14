@@ -86,6 +86,8 @@ export interface IGetTyById {
   tu_number?: string;
   act?: IActTy | null;
   phone_number?: string;
+  contract_number?: string;
+  contract_date?: string;
   customer: {
     id: string;
     full_name: string;

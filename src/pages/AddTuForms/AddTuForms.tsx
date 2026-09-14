@@ -49,6 +49,8 @@ type FormValues = Omit<ITyItem, 'type_ty' | 'customer' | 'application'> & {
   incoming_request_date?: string;
   phone_number?: string;
   payment_deadline?: string;
+  contract_number?: string;
+  contract_date?: string;
   // Extra fields used only during creation mapping
   object?: string;
   quantity?: number;
@@ -275,6 +277,8 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             incoming_request_number: values.incoming_request_number,
             incoming_request_date: values.incoming_request_date,
             payment_deadline: values.payment_deadline,
+            contract_number: values.contract_number,
+            contract_date: values.contract_date,
             type_ty: values.type_ty,
             group: values.group,
             object_name: values.object_name ?? values.object,
@@ -605,6 +609,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         request_date: toStr(tuQuery.data.request_date as unknown as string | Date | undefined),
         incoming_request_date: toStr((tuQuery.data as any).incoming_request_date as unknown as string | Date | undefined),
         payment_deadline: toStr(tuQuery.data.payment_deadline as unknown as string | Date | undefined),
+        contract_date: toStr((tuQuery.data as any).contract_date as unknown as string | Date | undefined),
         type_ty: getTypeTyId(tuQuery.data.type_ty),
         group: (tuQuery.data as any).group?.id,
         request_source: getRequestSourceTitle((tuQuery.data as any).request_source),
@@ -1308,6 +1313,29 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
             <DatePicker size='large' placeholder={t('addTuForms.form.placeholders.paymentDeadline')} format='DD.MM.YYYY' />
           </Form.Item>
         </div>
+
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item
+              label={t('addTuForms.form.labels.contractNumber', 'Номер договора')}
+              name='contract_number'
+              rules={[{ required: false }]}
+            >
+              <Input size='large' placeholder={t('addTuForms.form.placeholders.contractNumber', 'Номер договора')} />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              label={t('addTuForms.form.labels.contractDate', 'Дата договора')}
+              name='contract_date'
+              rules={[{ required: false }]}
+              normalize={(value: Dayjs) => formatDate(value)}
+              getValueProps={(value: string) => ({ value: parseDate(value) })}
+            >
+              <DatePicker size='large' placeholder={t('addTuForms.form.placeholders.date', 'Выберите дату')} format='DD.MM.YYYY' />
+            </Form.Item>
+          </Col>
+        </Row>
 
         <Row justify='end'>
           <Col>
