@@ -14,6 +14,7 @@ export interface FieldConfig {
     | 'customer_id'
     | 'entity_id'
     | 'formula_id'
+    | 'group_id'
     | 'request_date_start'
     | 'request_date_end'
     | 'tech_council_date_start'
@@ -121,6 +122,7 @@ export const FILTER_CONFIG: Record<ExportEntity, FieldConfig[]> = {
     { name: 'status', label: t('exportData.filters.status'), type: 'select', options: STATUS6B3_OPTIONS, section: 'main' },
     { name: 'stage', label: t('exportData.filters.stage'), type: 'select', options: STAGE_OPTIONS, section: 'main' },
     { name: 'type_ty', label: t('exportData.filters.type_ty'), type: 'number', section: 'main' },
+    { name: 'group_id', label: t('exportData.filters.group_id'), type: 'number', section: 'main' },
     { name: 'customer_id', label: t('exportData.filters.customer_id'), type: 'number', section: 'main' },
     { name: 'entity_id', label: t('exportData.filters.entity_id'), type: 'number', section: 'main' },
     { name: 'formula_id', label: t('exportData.filters.formula_id'), type: 'number', section: 'main' },

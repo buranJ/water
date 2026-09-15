@@ -24,7 +24,7 @@ export const CheckableButton: FC<{ checked?: boolean; onChange?: (checked: boole
 import { useGetAllCustomersQuery } from 'api/Customer.api';
 import { useGetAllFormulasQuery } from 'api/Formula.api';
 import { useGetAllObjectsQuery } from 'api/Object.api';
-import { useGetTypesTyQuery } from 'api/Ty.api';
+import { useGetTyGroupsQuery, useGetTypesTyQuery } from 'api/Ty.api';
 import { t } from 'i18next';
 
 export const FiltersGrid: FC<{ fields: FieldConfig[] }> = ({ fields }) => {
@@ -35,6 +35,7 @@ export const FiltersGrid: FC<{ fields: FieldConfig[] }> = ({ fields }) => {
   // Load dynamic options
   const formulasQuery = useGetAllFormulasQuery({ page: 1 });
   const typesTyQuery = useGetTypesTyQuery();
+  const tyGroupsQuery = useGetTyGroupsQuery();
   const customersQuery = useGetAllCustomersQuery({ page: 1, search: customerSearch || undefined });
   const objectsQuery = useGetAllObjectsQuery({ page: 1, page_size: 20, search: objectSearch || undefined });
 
@@ -44,6 +45,7 @@ export const FiltersGrid: FC<{ fields: FieldConfig[] }> = ({ fields }) => {
     [formulasQuery.data]
   );
   const typeTyOptions = useMemo(() => typesTyQuery.data?.map((t) => ({ value: t.id, label: t.title })) ?? [], [typesTyQuery.data]);
+  const groupOptions = useMemo(() => tyGroupsQuery.data?.map((g) => ({ value: g.id, label: g.title })) ?? [], [tyGroupsQuery.data]);
   const customerOptions = useMemo(
     () => customersQuery.data?.results?.map((c) => ({ value: c.id, label: c.full_name })) ?? [],
     [customersQuery.data]
@@ -110,6 +112,23 @@ export const FiltersGrid: FC<{ fields: FieldConfig[] }> = ({ fields }) => {
               placeholder={t('exportData.placeholders.selectTypeTU') || 'Выберите тип ТУ'}
               optionFilterProp='label'
               loading={typesTyQuery.isLoading}
+            />
+          </Form.Item>
+        </Col>
+      );
+    }
+
+    if (fc.name === 'group_id') {
+      return (
+        <Col span={12} key={`${fc.name}_${idx}`}>
+          <Form.Item {...commonProps}>
+            <Select
+              allowClear
+              showSearch
+              options={groupOptions}
+              placeholder={t('exportData.placeholders.selectGroup') || 'Выберите группу'}
+              optionFilterProp='label'
+              loading={tyGroupsQuery.isLoading}
             />
           </Form.Item>
         </Col>
