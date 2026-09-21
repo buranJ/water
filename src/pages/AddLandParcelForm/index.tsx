@@ -15,6 +15,7 @@ const { TextArea } = Input;
 interface FormValues {
   address?: string;
   purpose?: string;
+  area?: string | number;
   council_date?: string;
   request_number?: string;
   tech_council_date?: string;
@@ -53,6 +54,7 @@ const AddLandParcelForm: FC<AddLandParcelFormProps> = ({ title }) => {
       form.setFieldsValue({
         address: landParcelData.address,
         purpose: landParcelData.purpose,
+        area: landParcelData.area,
         council_date: landParcelData.council_date,
         request_number: landParcelData.request_number,
         tech_council_date: landParcelData.tech_council_date,
@@ -102,6 +104,7 @@ const AddLandParcelForm: FC<AddLandParcelFormProps> = ({ title }) => {
 
         if (values.address?.trim()) payload.address = values.address;
         if (values.purpose?.trim()) payload.purpose = values.purpose;
+        if (values.area !== undefined && values.area !== null && String(values.area).trim() !== '') payload.area = values.area;
         if (values.council_date) payload.council_date = values.council_date;
         if (values.request_number?.trim()) payload.request_number = values.request_number;
         if (values.tech_council_date) payload.tech_council_date = values.tech_council_date;
@@ -223,9 +226,15 @@ const AddLandParcelForm: FC<AddLandParcelFormProps> = ({ title }) => {
         </Row>
 
         <Row gutter={16}>
-          <Col span={24}>
+          <Col span={16}>
             <Form.Item name='address' label='Адрес'>
               <TextArea size='large' rows={2} placeholder='ул. Фрунзе' />
+            </Form.Item>
+          </Col>
+
+          <Col span={8}>
+            <Form.Item name='area' label='Площадь участка'>
+              <Input size='large' type='number' min={0} step='any' placeholder='Введите площадь' />
             </Form.Item>
           </Col>
         </Row>

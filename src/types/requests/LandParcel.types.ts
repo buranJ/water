@@ -8,6 +8,7 @@ export interface ILandParcel {
   customer_name?: string;
   address?: string;
   purpose?: string;
+  area?: string | number; // Площадь участка
   council_date?: string; // ✅ НОВОЕ
   request_number?: string; // ✅ НОВОЕ
   tech_council_date?: string; // ✅ НОВОЕ
@@ -42,6 +43,7 @@ export interface IGetAllLandParcelsParams {
 export interface ICreateLandParcelParams {
   address?: string;
   purpose?: string;
+  area?: string | number; // Площадь участка
   council_date?: string; // ✅ НОВОЕ
   request_number?: string; // ✅ НОВОЕ
   tech_council_date?: string; // ✅ НОВОЕ
