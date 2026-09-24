@@ -9,6 +9,7 @@ export interface ILandParcel {
   address?: string;
   purpose?: string;
   area?: string | number; // Площадь участка
+  status?: string; // Согласовано / Не согласовано / Согласованно под гарантийное письмо
   council_date?: string; // ✅ НОВОЕ
   request_number?: string; // ✅ НОВОЕ
   tech_council_date?: string; // ✅ НОВОЕ
@@ -44,6 +45,7 @@ export interface ICreateLandParcelParams {
   address?: string;
   purpose?: string;
   area?: string | number; // Площадь участка
+  status?: string; // Согласовано / Не согласовано / Согласованно под гарантийное письмо
   council_date?: string; // ✅ НОВОЕ
   request_number?: string; // ✅ НОВОЕ
   tech_council_date?: string; // ✅ НОВОЕ

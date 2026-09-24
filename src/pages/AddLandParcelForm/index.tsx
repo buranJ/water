@@ -1,7 +1,7 @@
 import { FC, useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import type { UploadFile } from 'antd';
-import { Button, Col, DatePicker, Form, Input, message, Row, Upload } from 'antd';
+import { Button, Col, DatePicker, Form, Input, message, Row, Select, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import dayjs, { Dayjs } from 'dayjs';
 import { DashboardLayout } from 'components';
@@ -12,10 +12,17 @@ import { handleEnterFocusNext } from 'utils/formNavigation';
 
 const { TextArea } = Input;
 
+const LAND_PARCEL_STATUS_OPTIONS = [
+  { value: 'Согласовано', label: 'Согласовано' },
+  { value: 'Не согласовано', label: 'Не согласовано' },
+  { value: 'Согласованно под гарантийное письмо', label: 'Согласованно под гарантийное письмо' }
+];
+
 interface FormValues {
   address?: string;
   purpose?: string;
-  area?: string | number;
+  area?: string;
+  status?: string;
   council_date?: string;
   request_number?: string;
   tech_council_date?: string;
@@ -55,6 +62,7 @@ const AddLandParcelForm: FC<AddLandParcelFormProps> = ({ title }) => {
         address: landParcelData.address,
         purpose: landParcelData.purpose,
         area: landParcelData.area,
+        status: landParcelData.status,
         council_date: landParcelData.council_date,
         request_number: landParcelData.request_number,
         tech_council_date: landParcelData.tech_council_date,
@@ -104,7 +112,8 @@ const AddLandParcelForm: FC<AddLandParcelFormProps> = ({ title }) => {
 
         if (values.address?.trim()) payload.address = values.address;
         if (values.purpose?.trim()) payload.purpose = values.purpose;
-        if (values.area !== undefined && values.area !== null && String(values.area).trim() !== '') payload.area = values.area;
+        if (values.area?.trim()) payload.area = values.area;
+        if (values.status) payload.status = values.status;
         if (values.council_date) payload.council_date = values.council_date;
         if (values.request_number?.trim()) payload.request_number = values.request_number;
         if (values.tech_council_date) payload.tech_council_date = values.tech_council_date;
@@ -234,7 +243,7 @@ const AddLandParcelForm: FC<AddLandParcelFormProps> = ({ title }) => {
 
           <Col span={8}>
             <Form.Item name='area' label='Площадь участка'>
-              <Input size='large' type='number' min={0} step='any' placeholder='Введите площадь' />
+              <TextArea size='large' rows={2} placeholder='Введите площадь' />
             </Form.Item>
           </Col>
         </Row>
@@ -242,7 +251,7 @@ const AddLandParcelForm: FC<AddLandParcelFormProps> = ({ title }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item name='purpose' label='Наименование объекта'>
-              <Input size='large' />
+              <TextArea size='large' rows={2} />
             </Form.Item>
           </Col>
 
@@ -253,6 +262,14 @@ const AddLandParcelForm: FC<AddLandParcelFormProps> = ({ title }) => {
                   Загрузить файл
                 </Button>
               </Upload>
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item name='status' label='Статус'>
+              <Select size='large' allowClear placeholder='Выберите статус' options={LAND_PARCEL_STATUS_OPTIONS} />
             </Form.Item>
           </Col>
         </Row>
