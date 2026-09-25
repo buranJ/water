@@ -61,7 +61,7 @@ const AddLandParcelForm: FC<AddLandParcelFormProps> = ({ title }) => {
       form.setFieldsValue({
         address: landParcelData.address,
         purpose: landParcelData.purpose,
-        area: landParcelData.area,
+        area: landParcelData.area != null ? String(landParcelData.area) : undefined,
         status: landParcelData.status,
         council_date: landParcelData.council_date,
         request_number: landParcelData.request_number,
