@@ -108,8 +108,8 @@ export const getColumns: IGetColumnsFn = ({ onClick, filters, onFilterChange }) 
     },
     {
       title: t('applicationDetails.labels.requestDate'),
-      dataIndex: 'request_date',
-      key: 'request_date',
+      dataIndex: 'tech_council_date',
+      key: 'tech_council_date',
       width: 135,
       render: (date) => {
         if (!date) return '—';
