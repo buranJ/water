@@ -160,6 +160,18 @@ export const TuDetails: FC<IProps> = ({ title }) => {
     }
   };
 
+  const handleUnapproveClick = async () => {
+    if (!id) return;
+    try {
+      await patchTy({ id: Number(id), body: { stage: 'review' } }).unwrap();
+      message.success(t('tuDetails.messages.unapproved', 'Одобрение снято'));
+      refetch();
+    } catch (e) {
+      console.error('Failed to unapprove TU', e);
+      message.error(t('tuDetails.messages.unapproveFailed', 'Не удалось снять одобрение'));
+    }
+  };
+
   const handleRejectTu = async () => {
     if (!id) return;
     try {
@@ -600,6 +612,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
         onAddLoad={handleAddLoad}
         onReject={handleRejectClick}
         onApprove={handleApproveClick}
+        onUnapprove={handleUnapproveClick}
         onRestore={handleRestore}
         onRejectTu={handleRejectTu}
         isDownloading={isDownloading}

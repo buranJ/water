@@ -383,7 +383,8 @@
       "uploadTyFile": "Файл жүктөө",
       "replaceTyFile": "Алмаштыруу",
       "deleteTyFile": "Өчүрүү",
-      "deleteTyFileConfirm": "ТУ файлын өчүрөсүзбү?"
+      "deleteTyFileConfirm": "ТУ файлын өчүрөсүзбү?",
+      "unapproveTu": "Бекитүүнү алып салуу"
     },
     "autoLoaded": "Автоматтык түрдө жүктөлдү",
     "contentNotImplemented": "\"{{title}}\" үчүн контент али ишке ашырыла элек",
@@ -413,7 +414,9 @@
       "tyFileUploaded": "ТУ файлы жүктөлдү",
       "tyFileUploadFailed": "ТУ файлын жүктөө мүмкүн болгон жок",
       "tyFileDeleted": "ТУ файлы өчүрүлдү",
-      "tyFileDeleteFailed": "ТУ файлын өчүрүү мүмкүн болгон жок"
+      "tyFileDeleteFailed": "ТУ файлын өчүрүү мүмкүн болгон жок",
+      "unapproved": "Бекитүү алынып салынды",
+      "unapproveFailed": "Бекитүүнү алып салуу мүмкүн болгон жок"
     },
     "buttons": {
       "goToApplication": "Арызга өтүү"
@@ -447,7 +450,8 @@
       "hasInvoice": "Эсеп",
       "overdue": "Мөөнөтү өтүп кеткен",
       "dueInDays": "Төлөө мөөнөтүнө чейин калган күндөр",
-      "tuWithLoads": "Жүктөрдү жогорулатуу бар ТУ"
+      "tuWithLoads": "Жүктөрдү жогорулатуу бар ТУ",
+      "protocolNumber": "Протокол номери"
     },
     "presets": {
       "select": "Үлгүнү тандаңыз",

@@ -383,7 +383,8 @@
       "uploadTyFile": "Загрузить файл",
       "replaceTyFile": "Заменить",
       "deleteTyFile": "Удалить",
-      "deleteTyFileConfirm": "Удалить файл ТУ?"
+      "deleteTyFileConfirm": "Удалить файл ТУ?",
+      "unapproveTu": "Снять одобрение"
     },
     "autoLoaded": "Автоматически загружено",
     "contentNotImplemented": "Контент для \"{{title}}\" пока не реализован",
@@ -413,7 +414,9 @@
       "tyFileUploaded": "Файл ТУ загружен",
       "tyFileUploadFailed": "Не удалось загрузить файл ТУ",
       "tyFileDeleted": "Файл ТУ удалён",
-      "tyFileDeleteFailed": "Не удалось удалить файл ТУ"
+      "tyFileDeleteFailed": "Не удалось удалить файл ТУ",
+      "unapproved": "Одобрение снято",
+      "unapproveFailed": "Не удалось снять одобрение"
     },
     "buttons": {
       "goToApplication": "Перейти к заявке"
@@ -704,7 +707,8 @@
       "hasInvoice": "Счёт",
       "overdue": "Просроченные",
       "dueInDays": "Дни до срока оплаты",
-      "tuWithLoads": "ТУ с увеличением нагрузок"
+      "tuWithLoads": "ТУ с увеличением нагрузок",
+      "protocolNumber": "Номер протокола"
     },
     "presets": {
       "select": "Выберите шаблон",

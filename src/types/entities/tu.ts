@@ -324,6 +324,7 @@ export interface ITyListQueryParams {
   object_name?: string;
   address?: string;
   author_name?: string;
+  protocol_number?: string;
 }
 
 export interface ITypesTY {

@@ -15,6 +15,7 @@ interface ActionsBarProps {
   onAddLoad: () => void;
   onReject: () => void;
   onApprove: () => void;
+  onUnapprove?: () => void;
   onRestore?: () => void;
   onRejectTu?: () => void;
   isDownloading: boolean;
@@ -35,6 +36,7 @@ export const ActionsBar: FC<ActionsBarProps> = ({
   // onAddLoad — кнопка "Добавить нагрузку" временно скрыта
   onReject,
   onApprove,
+  onUnapprove,
   onRestore,
   isDownloading,
   onDownloadContract,
@@ -166,22 +168,25 @@ export const ActionsBar: FC<ActionsBarProps> = ({
               {t('tuDetails.actions.rejectedTu', 'Отказано')}
             </Button>
           )
-        : data.stage !== 'approved' &&
-          data.status !== 'inactive' &&
-          data.status !== 'archived' && (
-            <>
-              {hasPermission('delete_technicalcondition') && (
-                <Button danger onClick={onReject}>
-                  {t('tuDetails.actions.rejectTu')}
-                </Button>
-              )}
-              {hasPermission('change_technicalcondition') && (
-                <Button onClick={onApprove} type='primary'>
-                  {t('tuDetails.actions.approveTu')}
-                </Button>
-              )}
-            </>
-          )}
+        : data.stage === 'approved'
+          ? hasPermission('change_technicalcondition') && (
+              <Button onClick={onUnapprove}>{t('tuDetails.actions.unapproveTu', 'Снять одобрение')}</Button>
+            )
+          : data.status !== 'inactive' &&
+            data.status !== 'archived' && (
+              <>
+                {hasPermission('delete_technicalcondition') && (
+                  <Button danger onClick={onReject}>
+                    {t('tuDetails.actions.rejectTu')}
+                  </Button>
+                )}
+                {hasPermission('change_technicalcondition') && (
+                  <Button onClick={onApprove} type='primary'>
+                    {t('tuDetails.actions.approveTu')}
+                  </Button>
+                )}
+              </>
+            )}
     </Flex>
   );
 };

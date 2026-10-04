@@ -218,6 +218,9 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
   const selectedTypeTitle = (typesTyQuery.data?.find((type) => type.id === selectedTypeId)?.title || '').toLowerCase();
   const isWaterRelocation = selectedTypeTitle.includes('вынос') && selectedTypeTitle.includes('водопровод');
   const isSewerRelocation = selectedTypeTitle.includes('вынос') && selectedTypeTitle.includes('канализац');
+  // При выносе только одной сети лишнее количество (воду или стоки) не заполняем
+  const isWaterRequiredDisabled = isSewerRelocation && !isWaterRelocation;
+  const isSewageAmountDisabled = isWaterRelocation && !isSewerRelocation;
 
   const onFinish = useCallback(
     async (values: FormValues) => {
@@ -650,6 +653,12 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
       form.setFieldValue('comment_kanal', '');
     }
   }, [isCreateMode, isSewerRelocation, form]);
+
+  useEffect(() => {
+    if (!isCreateMode) return;
+    if (isWaterRequiredDisabled) form.setFieldValue('water_required', undefined);
+    if (isSewageAmountDisabled) form.setFieldValue('sewage_amount', undefined);
+  }, [isCreateMode, isWaterRequiredDisabled, isSewageAmountDisabled, form]);
 
   const onParentTuBlur = useCallback(async () => {
     const raw = form.getFieldValue('parent_tc_number');
@@ -1086,9 +1095,11 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               <Form.Item
                 label={t('addTuForms.form.labels.waterRequired')}
                 name='water_required'
-                rules={[{ required: !isIncreaseLoads && !isRefusal, message: t('addTuForms.form.validation.required') }]}
+                rules={[
+                  { required: !isIncreaseLoads && !isRefusal && !isWaterRequiredDisabled, message: t('addTuForms.form.validation.required') }
+                ]}
               >
-                <Input size='large' placeholder={t('addTuForms.form.placeholders.waterRequired')} />
+                <Input size='large' disabled={isWaterRequiredDisabled} placeholder={t('addTuForms.form.placeholders.waterRequired')} />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -1118,9 +1129,9 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
           <Form.Item
             label={t('addTuForms.form.labels.sewageAmount')}
             name='sewage_amount'
-            rules={[{ required: !isIncreaseLoads && !isRefusal, message: t('addTuForms.form.validation.required') }]}
+            rules={[{ required: !isIncreaseLoads && !isRefusal && !isSewageAmountDisabled, message: t('addTuForms.form.validation.required') }]}
           >
-            <Input size='large' placeholder={t('addTuForms.form.placeholders.sewageAmount')} />
+            <Input size='large' disabled={isSewageAmountDisabled} placeholder={t('addTuForms.form.placeholders.sewageAmount')} />
           </Form.Item>
 
           <Row gutter={16}>

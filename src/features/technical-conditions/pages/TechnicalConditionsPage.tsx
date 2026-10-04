@@ -32,6 +32,7 @@ interface TUFilterValues {
   address?: string;
   payment_amount?: number;
   tu_with_loads?: boolean;
+  protocol_number?: string;
 }
 
 export const TechnicalConditionsPage = () => {
@@ -63,6 +64,7 @@ export const TechnicalConditionsPage = () => {
   const addressParam = s('address');
   const paymentAmountStr = s('payment_amount');
   const tuWithLoadsStr = s('tu_with_loads');
+  const protocolNumber = s('protocol_number');
 
   // Column header filters from URL (server-side if backend supports)
   const tuNumberParam = s('tu_number');
@@ -95,7 +97,8 @@ export const TechnicalConditionsPage = () => {
     tu_number: tuNumberParam,
     customer_name: customerNameParam,
     object_name: objectNameParam,
-    author_name: authorNameParam
+    author_name: authorNameParam,
+    protocol_number: protocolNumber
   };
 
   // ✅ НОВАЯ ЛОГИКА: Обрабатываем has_invoice и is_viewed
