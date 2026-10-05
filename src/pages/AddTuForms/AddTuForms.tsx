@@ -938,7 +938,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               name='address'
               rules={[{ required: !isRefusal, message: t('addTuForms.form.validation.specifyAddress') }]}
             >
-              <Input size='large' placeholder={t('addTuForms.form.placeholders.address')} />
+              <TextArea size='large' rows={2} placeholder={t('addTuForms.form.placeholders.address')} />
             </Form.Item>
           </Col>
           <Col span={8}>
