@@ -301,14 +301,24 @@
         "toReview": "Кароо үчүн",
         "approve": "Бекитүү",
         "finish": "Аяктоо",
-        "download": "Акты жүктөп алуу"
+        "download": "Акты жүктөп алуу",
+        "save": "Сактоо"
       },
       "messages": {
         "mustBeApproved": "Аракет ТУ бекитилгенден кийин гана жеткиликтүү",
         "statusUpdated": "Акт статусы жаңыртылды",
         "statusUpdateFailed": "Акт статусун өзгөртүү мүмкүн болгон жок",
+        "updated": "Акттын маалыматы жаңыланды",
+        "updateFailed": "Акттын маалыматын жаңылоо мүмкүн болгон жок",
         "fileRequired": "Акт файлын тандаңыз",
         "uploadSuccess": "Акт жүктөлдү"
+      },
+      "editTitle": "Актыны түзөтүү",
+      "labels": {
+        "filename": "Файлдын аталышы",
+        "filenamePlaceholder": "Файлдын аталышын киргизиңиз",
+        "date": "Дата",
+        "datePlaceholder": "Датаны тандаңыз"
       },
       "modal": {
         "title": "Акты жүктөө",

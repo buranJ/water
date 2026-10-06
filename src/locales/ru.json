@@ -301,14 +301,24 @@
         "toReview": "На рассмотрение",
         "approve": "Утвердить",
         "finish": "Завершить",
-        "download": "Скачать акт"
+        "download": "Скачать акт",
+        "save": "Сохранить"
       },
       "messages": {
         "mustBeApproved": "Действие доступно только после утверждения ТУ",
         "statusUpdated": "Статус акта обновлён",
         "statusUpdateFailed": "Не удалось изменить статус акта",
+        "updated": "Данные акта обновлены",
+        "updateFailed": "Не удалось обновить данные акта",
         "fileRequired": "Выберите файл акта",
         "uploadSuccess": "Акт загружен"
+      },
+      "editTitle": "Редактирование акта",
+      "labels": {
+        "filename": "Название файла",
+        "filenamePlaceholder": "Введите название файла",
+        "date": "Дата",
+        "datePlaceholder": "Выберите дату"
       },
       "modal": {
         "title": "Загрузить акт",

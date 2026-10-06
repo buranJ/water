@@ -301,14 +301,24 @@
         "toReview": "Send for review",
         "approve": "Approve",
         "finish": "Finish",
-        "download": "Download act"
+        "download": "Download act",
+        "save": "Save"
       },
       "messages": {
         "mustBeApproved": "Action is available only after TU is approved",
         "statusUpdated": "Act status updated",
         "statusUpdateFailed": "Failed to change act status",
+        "updated": "Act data updated",
+        "updateFailed": "Failed to update act data",
         "fileRequired": "Select an act file",
         "uploadSuccess": "Act uploaded"
+      },
+      "editTitle": "Edit act",
+      "labels": {
+        "filename": "File name",
+        "filenamePlaceholder": "Enter file name",
+        "date": "Date",
+        "datePlaceholder": "Select date"
       },
       "modal": {
         "title": "Upload act",

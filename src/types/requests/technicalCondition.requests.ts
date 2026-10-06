@@ -119,6 +119,8 @@ export interface IActTyResponse {
   file: string;
   status: IActEnum;
   ty: number;
+  filename?: string;
+  date?: string;
 }
 
 /**
@@ -127,7 +129,9 @@ export interface IActTyResponse {
 export interface IPatchActTyParams {
   id: number | string; // ACT id
   body: {
-    status: IActEnum;
+    status?: IActEnum;
+    filename?: string;
+    date?: string;
   };
 }
 

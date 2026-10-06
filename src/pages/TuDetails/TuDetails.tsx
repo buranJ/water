@@ -1,6 +1,7 @@
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router';
-import { Alert, Button, Card, Col, Flex, message, Row, Spin, Tabs, TabsProps, Typography } from 'antd';
+import { Alert, Button, Card, Col, DatePicker, Flex, Form, Input, message, Modal, Row, Spin, Tabs, TabsProps, Typography } from 'antd';
+import dayjs, { Dayjs } from 'dayjs';
 import { CheckCircleTwoTone, ClockCircleTwoTone, EditTwoTone, FileOutlined, QuestionCircleTwoTone } from '@ant-design/icons';
 import { ActionsBar } from './components/ActionsBar';
 import { DataSection } from './components/DataSection';
@@ -92,7 +93,9 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const [triggerLoadIncrease, { isFetching: isLoadIncreaseDownloading }] = useLazyDownloadLoadIncreaseDocxQuery();
   const [triggerContractDownload, { isFetching: isContractDownloading }] = useLazyDownloadContractDocxQuery();
   const [patchTy] = usePatchTyMutation();
-  const [patchActTy] = usePatchActTyMutation();
+  const [patchActTy, { isLoading: isActPatching }] = usePatchActTyMutation();
+  const [isActEditOpen, setIsActEditOpen] = useState(false);
+  const [actEditForm] = Form.useForm<{ filename?: string; date?: Dayjs | null }>();
   const [createAct, { isLoading: isActCreating }] = useCreateActTyMutation();
   const [updateActTy, { isLoading: isActUpdating }] = useUpdateActTyMutation();
   // const [triggerGetAct, { isFetching: isActFetching }] = useLazyGetActTyByIdQuery();
@@ -129,7 +132,7 @@ export const TuDetails: FC<IProps> = ({ title }) => {
   const getActStatusIcon = (st?: IActEnum) => {
     switch (st) {
       case 'draft':
-        return <EditTwoTone twoToneColor='#fa8c16' />;
+        return <EditTwoTone twoToneColor='#fa8c16' style={{ fontSize: 18, cursor: 'pointer' }} onClick={handleOpenActEdit} />;
       case 'review':
         return <ClockCircleTwoTone twoToneColor='#327BE8' />;
       case 'approved':
@@ -408,6 +411,37 @@ export const TuDetails: FC<IProps> = ({ title }) => {
 
   const handleUploadActClick = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleOpenActEdit = () => {
+    const act = objectData?.act;
+    if (!act) return;
+    const fileName = act.file ? decodeURIComponent(act.file.split('/').pop() || '') : '';
+    actEditForm.setFieldsValue({
+      filename: act.filename ?? fileName,
+      date: act.date ? dayjs(act.date) : null
+    });
+    setIsActEditOpen(true);
+  };
+
+  const handleSaveActEdit = async () => {
+    if (!objectData?.act?.id) return;
+    const values = actEditForm.getFieldsValue();
+    try {
+      await patchActTy({
+        id: objectData.act.id,
+        body: {
+          filename: values.filename?.trim() || undefined,
+          date: values.date ? values.date.format('YYYY-MM-DD') : undefined
+        }
+      }).unwrap();
+      message.success(t('tuDetails.act.messages.updated', 'Данные акта обновлены'));
+      setIsActEditOpen(false);
+      refetch();
+    } catch (e) {
+      console.error('[ACT EDIT] failed', e);
+      message.error(t('tuDetails.act.messages.updateFailed', 'Не удалось обновить данные акта'));
+    }
   };
 
   const onFileSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -809,6 +843,26 @@ export const TuDetails: FC<IProps> = ({ title }) => {
       </Row>
 
       <RejectApplicationModal open={isModalVisible} onCancel={handleModalCancel} onReject={handleRejectSubmit} />
+
+      <Modal
+        title={t('tuDetails.act.editTitle', 'Редактирование акта')}
+        open={isActEditOpen}
+        onOk={handleSaveActEdit}
+        onCancel={() => setIsActEditOpen(false)}
+        okText={t('tuDetails.act.actions.save', 'Сохранить')}
+        cancelText={t('common.cancel', 'Отмена')}
+        confirmLoading={isActPatching}
+        destroyOnClose
+      >
+        <Form form={actEditForm} layout='vertical'>
+          <Form.Item name='filename' label={t('tuDetails.act.labels.filename', 'Название файла')}>
+            <Input placeholder={t('tuDetails.act.labels.filenamePlaceholder', 'Введите название файла')} />
+          </Form.Item>
+          <Form.Item name='date' label={t('tuDetails.act.labels.date', 'Дата')}>
+            <DatePicker format='DD.MM.YYYY' style={{ width: '100%' }} placeholder={t('tuDetails.act.labels.datePlaceholder', 'Выберите дату')} />
+          </Form.Item>
+        </Form>
+      </Modal>
       <AddLoadModal visible={isAddLoadVisible} onClose={() => setIsAddLoadVisible(false)} tyId={id || ''} />
     </DashboardLayout>
   );

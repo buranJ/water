@@ -80,6 +80,8 @@ export interface IActTy {
   file: string;
   status: IActEnum;
   ty?: number;
+  filename?: string;
+  date?: string;
 }
 
 export interface IGetTyById {
