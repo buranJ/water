@@ -932,16 +932,23 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
         </Row>
 
         <Row gutter={16}>
-          <Col span={8}>
+          <Col span={24}>
             <Form.Item
               label={t('addTuForms.form.labels.address')}
               name='address'
               rules={[{ required: !isRefusal, message: t('addTuForms.form.validation.specifyAddress') }]}
             >
-              <TextArea size='large' rows={2} placeholder={t('addTuForms.form.placeholders.address')} />
+              <TextArea
+                size='large'
+                autoSize={{ minRows: 4, maxRows: 10 }}
+                placeholder={t('addTuForms.form.placeholders.address')}
+              />
             </Form.Item>
           </Col>
-          <Col span={8}>
+        </Row>
+
+        <Row gutter={16}>
+          <Col span={12}>
             <Form.Item
               label={t('addTuForms.form.labels.techConditionType')}
               name='type_ty'
@@ -957,7 +964,7 @@ const AddTuForms: FC<{ title: string }> = ({ title }) => {
               </Select>
             </Form.Item>
           </Col>
-          <Col span={8}>
+          <Col span={12}>
             <Form.Item label={t('addTuForms.form.labels.group', 'Группа')} name='group'>
               <Select
                 size='large'
